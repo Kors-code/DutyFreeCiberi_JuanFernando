@@ -1,0 +1,35 @@
+<mat-toolbar>
+    <button mat-button [matMenuTriggerFor]="menuRef"><mat-icon class="mat-18">menu</mat-icon> <span>{{identity?.name}}</span> </button>
+    
+  <span>Duty Free Parnerth</span>
+  <span class="example-spacer"></span>
+
+</mat-toolbar>
+<mat-menu #menuRef="matMenu">
+    <button mat-menu-item  routerLink="/">
+      <mat-icon class="mat-18">home</mat-icon>  
+      INICIO
+    </button>
+    <button mat-menu-item  routerLink="/Configuracion">
+        <mat-icon class="mat-18">settings</mat-icon>  
+        CONFIGURACION
+    </button>
+    <button mat-menu-item  routerLink="/Users">
+        <mat-icon class="mat-18">group</mat-icon>  
+        USUARIOS
+    </button>
+    <button mat-menu-item routerLink="/Pass">
+      <mat-icon class="mat-18">lock</mat-icon>CAMBIAR CONTRASEÑA
+    </button>
+    <button mat-menu-item routerLink="/import-Data">
+      <mat-icon class="mat-18">cloud_upload</mat-icon>IMPORTAR DATOS
+    </button> 
+    <button mat-menu-item routerLink="/Data-Base">
+      <mat-icon class="mat-18">note</mat-icon>REGISTROS
+    </button>
+
+  <button  mat-menu-item  (click)="Logout()">
+      <mat-icon class="mat-18">close</mat-icon>  
+      CERRAR SESIÓN
+  </button>  
+</mat-menu>

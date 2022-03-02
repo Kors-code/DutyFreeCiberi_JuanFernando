@@ -1,0 +1,166 @@
+
+<mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
+<mat-card style="width: 80%; margin: 15px auto;">
+    <mat-card-header style="text-align: center;">
+        <mat-icon mat-card-avatar color="accent">group</mat-icon>
+        <mat-card-title class="mat-title">Usuarios</mat-card-title>
+      </mat-card-header>  
+  
+    <mat-divider></mat-divider>
+
+  <mat-card-actions  style="text-align: center;">
+    
+      <button mat-button  (click)="listado('listado')" class="L10 bgc-blue-600" matTooltip="Listado" matTooltipPosition="below">
+        <mat-icon layout-padding>list</mat-icon> Listado
+      </button>
+     <button mat-button (click)="nuevo()" class="L10 bgc-blue-600" matTooltip="Nuevo Usuario" matTooltipPosition="below">
+        <mat-icon layout-padding>person_add</mat-icon> Nuevo usuario
+    </button> 
+    <button *ngIf="user._id" mat-button (click)="changePass(user.email)" class="L10 bgc-blue-600" matTooltip="Restablecer Contraseña" matTooltipPosition="below">
+      <mat-icon layout-padding>lock</mat-icon> Reestablecer Clave
+  </button> 
+  </mat-card-actions>
+    <div *ngIf="fadeDiv == 'listado'">
+      <ng-template mat-tab-label><mat-icon layout-padding>group</mat-icon>Usuarios</ng-template>
+      <div class="mat-padding">
+          <mat-card-content style="background: white;">
+              <mat-divider></mat-divider>
+              <mat-list>
+                  <ng-template let-item let-last="last" ngFor [ngForOf]="companyUsers">
+                    <mat-list-item (click)="passUser(item)">
+                      <img mat-list-avatar src="/assets/m.svg">
+                      <h3 mat-line > {{item.name}} {{item.surname}} </h3>
+                      <p mat-line>
+                          {{item.email}}
+                      </p>
+                      <h1 style="color:rebeccapurple" *ngIf="item.email == 'prueba@pb.com'">este</h1>
+                      <!-- <p mat-line> {{item.ciudad}} </p>
+                      <button  [routerLink]="['../operacion/', item._id]" mat-icon-button  matTooltip="Detalle de Operacion" matTooltipPosition="above">
+                          <mat-icon >business</mat-icon>
+                      </button> -->
+                    </mat-list-item>
+                    <mat-divider *ngIf="!last" mat-inset></mat-divider>
+                  </ng-template>
+                </mat-list>
+          </mat-card-content>
+      </div>
+    </div>  
+    <div *ngIf="fadeDiv == 'register'" style="text-align: center; background: white;">
+      <mat-card-content>
+        <h4>Nuevo Usuario</h4>
+      <mat-card-content style="margin-top: 20px;" >
+            <div  style="width: 80%; margin-top: 20px;">   
+                <mat-select style="margin-top: 20px;" (change)="changeRol()"  flex-gt-xs="80" placeholder="Rol" name="userRol" [(ngModel)]="user.rol"  required style="font-size: 1.3em;">
+                  <mat-option *ngFor="let item of Roles" [value]="item.titulo">
+                    {{item.titulo}}
+                  </mat-option>
+                </mat-select>
+                
+              </div>
+          <div >
+            <mat-form-field style="width: 80%">
+              <input matInput  placeholder="Identificacion" type="text" name="useridentificacion" [(ngModel)]="user.identificacion" required>
+              
+            </mat-form-field>
+          </div>
+          <div >
+            <mat-form-field style="width: 80%">
+              <input matInput placeholder="Nombres" type="text" name="username" [(ngModel)]="user.name" required>
+             
+            </mat-form-field>
+          </div>
+          <div >
+            <mat-form-field style="width: 80%">
+              <input matInput  placeholder="Apellidos" type="text" name="usersurname" [(ngModel)]="user.surname" required>
+              
+            </mat-form-field>
+          </div>
+          <div >
+            <mat-form-field style="width: 80%">
+              <input pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$" matInput  placeholder="Email" type="text" name="useremail" [(ngModel)]="user.email" required>
+            </mat-form-field>
+          </div>
+
+              <mat-expansion-panel style="width: 80%; margin: 0 auto;">
+                <mat-expansion-panel-header>
+                  <mat-panel-title>
+                     {{user.modulos.length}} MODULOS
+                  </mat-panel-title>
+                </mat-expansion-panel-header>
+                <mat-card>
+                     
+                  <div style="display: flex; justify-content: space-between; align-items: center;">  
+                        <mat-select (selectionChange)="changeModulo()" placeholder="Modulo" name="moduloss" [(ngModel)]="modulos"  required style="font-size: 1.3em;">
+                          <mat-option *ngFor="let item of Modulos" [value]="item">
+                            {{item.titulo}}
+                          </mat-option>
+                        </mat-select>
+                        <button mat-raised-button (click)="addTodoModulo()" color="warn" style="margin:10px auto; color: white; width: 200px;"  matTooltip="Todos los Modulos" matTooltipPosition="below">
+                          <mat-icon layout-padding>add</mat-icon> Agregar Todo
+                      </button>
+                      </div>
+                  <mat-card-content>
+                      <mat-list>
+                              <ng-template  let-item let-last="last" let-i = "index" ngFor [ngForOf]="user.modulos"> 
+                                <mat-divider style="width: 60%; margin: 0 auto;"></mat-divider>
+                                <mat-list-item >
+                                    <mat-icon class="clicked" mat-list-icon (click)="deleteModulo(i)" style="background: tomato;color: white;">delete</mat-icon>
+                                    <h4 mat-line >{{item.titulo}} - </h4>
+                                    <mat-checkbox name="edit" [(ngModel)]="item.escribir" style="margin-left: 15px;"> Escribir </mat-checkbox>
+                                    <mat-checkbox name="edit" [(ngModel)]="item.editar" style="margin-left: 15px;"> Editar </mat-checkbox>
+                                    <mat-checkbox name="delete" [(ngModel)]="item.eliminar" style="margin-left: 15px;"> Eliminar </mat-checkbox>
+                                </mat-list-item>
+                             
+                              </ng-template>
+                      </mat-list>
+                  </mat-card-content>
+                      
+                </mat-card>
+              </mat-expansion-panel> 
+
+              <!-- <mat-expansion-panel style="width: 80%; margin: 0 auto;">
+                   <mat-expansion-panel-header>
+                  <mat-panel-title>
+                      {{user.operaciones.length}} OPERACIONES
+                  </mat-panel-title>
+                </mat-expansion-panel-header>
+
+                  <mat-form-field>
+                      <mat-select (selectionChange)="addOperacion()" placeholder="Operaciones" name="operacionUser" [(ngModel)]="operacionuser">
+                        <mat-option *ngFor="let item of operaciones" [value]="item">
+                            {{item.titulo}} {{item.ciudad}}
+                        </mat-option>
+                      </mat-select>
+                    </mat-form-field>
+                    <mat-list>
+                      <ng-template let-item let-last="last" let-i="index" ngFor [ngForOf]="user.operaciones">
+                        <mat-list-item>
+              
+                          <h3 mat-line > {{item.titulo}} </h3>
+                     
+                          <button (click)="deleteOperacion(i)" mat-icon-button  matTooltip="Eliminar" matTooltipPosition="above">
+                              <mat-icon>close</mat-icon>
+                          </button>
+                        </mat-list-item>
+
+                      </ng-template>
+                    </mat-list>
+
+                  
+                </mat-expansion-panel>        -->
+      </mat-card-content>
+      <mat-card-actions>    
+         <!-- <mat-checkbox *ngIf="operacion.tipo == 'Producción y Comercialización'"  class="push-left-mat" [(ngModel)]="user.confirm">Vendedor</mat-checkbox> -->
+        <div >
+          <button *ngIf="!user._id"  mat-raised-button color="accent" [disabled]="!user.email" (click)="Register()" class="text-upper">Registrar<mat-icon class="L10">send</mat-icon></button>
+          <button *ngIf="user._id"  mat-raised-button color="accent" [disabled]="" (click)="update()" class="text-upper">Editar<mat-icon class="L10">save</mat-icon></button>
+          <button *ngIf="user._id"  mat-raised-button style="background: tomato;color:white;" [disabled]="" (click)="deleteUser()" class="text-upper">Eliminar<mat-icon class="L10">delete</mat-icon></button>
+        </div>
+      </mat-card-actions>
+      </mat-card-content>
+    </div>
+</mat-card>
+
+
+    
+

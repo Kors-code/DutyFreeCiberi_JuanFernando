@@ -1,0 +1,28 @@
+
+  <mat-progress-bar mode="indeterminate" *ngIf="log" ></mat-progress-bar>
+<mat-paginator *ngIf="paginacion" [length]="paginacion.total_results"
+[pageSize]="paginacion.page_size"
+(page)="pageEventC($event)"
+aria-label="Select page">
+</mat-paginator>
+<button mat-button (click)="getFacturasSiigo(1)"> <mat-icon>refresh</mat-icon> Recargar</button>
+<table *ngIf="dataSource.length != 0" class="mat-elevation-z8" style="width: 90%; margin: 0 auto;">
+  <tr>
+    <th>DB</th>
+    <th>FECHA</th>
+    <th>DOCUMENTO</th>
+    <th>IMPORTE</th>
+    <th>PRODUCTOS</th>
+    <th>DETALLE</th>
+  </tr>
+  <tr *ngFor="let item of dataSource, let i = index ">
+    <td style="text-align: center;border-bottom: 1px solid grey;"> <mat-icon (click)="pasRegistro(item.id)" class="selec">link</mat-icon></td>
+    <td style="text-align: center;border-bottom: 1px solid grey;">{{item.date}}</td>
+    <td style="text-align: center;border-bottom: 1px solid grey;">{{item.name}}</td>
+    <td style="text-align: right;border-bottom: 1px solid grey;">{{item.total | number}}</td>
+    <td style="text-align: center;border-bottom: 1px solid grey;">{{item.items.length}}</td>
+    <td style="text-align: center;border-bottom: 1px solid grey;"><mat-icon (click)="verRegistro(item)" class="selec">remove_red_eye</mat-icon></td>
+  </tr>
+
+ 
+</table>

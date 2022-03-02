@@ -1,0 +1,12 @@
+@import '~@angular/material/theming';
+@include mat-core();
+
+$custom-primary: mat-palette($mat-grey);
+$custom-accent:  mat-palette($mat-blue);
+$custom-warn:  mat-palette($mat-orange);
+
+$custom-theme: mat-light-theme($custom-primary, $custom-accent, $custom-warn);
+
+@include angular-material-theme($custom-theme);
+
+@import "~jsoneditor/dist/jsoneditor.min.css";

@@ -1,0 +1,17 @@
+<!-- <button  mat-mini-fab color="accent" [disabled]="" (click)="cancelar()" style="margin-right:10px;" ><mat-icon>close</mat-icon></button>  -->
+<!-- <div>
+    <ng-template let-doc let-i="index" ngFor [ngForOf]="values">
+        <mat-form-field appearance="fill">
+            <ng-template let-key let-x="index" ngFor [ngForOf]="keys">
+                <mat-label *ngIf="x == i">{{key}}</mat-label>
+            </ng-template>
+            <input matInput placeholder="{{doc}}" value="{{doc}}">
+        </mat-form-field>
+    </ng-template>
+</div> -->
+<mat-card style="max-height: 85vh;overflow-y:scroll ;">
+    <button  mat-button color="primary" [disabled]="" (click)="cancelar()" style="margin-right:10px;" ><mat-icon>cancel</mat-icon> Cerrar</button>
+    <button *ngIf="data.coll != 'noting'" mat-button color="accent" [disabled]="" (click)="UpdateRegistro()" style="margin-right:10px;" ><mat-icon>save</mat-icon> Guardar</button>
+    <button  *ngIf="data.coll != 'noting'" mat-button color="warn" [disabled]="" (click)="deleteRegistro()" style="margin-right:10px;" ><mat-icon>delete</mat-icon> Eliminar</button>
+    <json-editor [options]="editorOptions" [data]="info" (change)="getData($event)"></json-editor>
+</mat-card>

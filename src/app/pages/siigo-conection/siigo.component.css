@@ -1,0 +1,17 @@
+.pointer:hover{
+    cursor:pointer;
+    background:grey;
+}
+
+.json{
+    cursor: pointer;
+}
+
+.list{
+    height: 100vh;
+  }
+  .selec:hover{
+    color: rgba(29, 29, 240, 0.52);
+    cursor:pointer;
+}  
+  

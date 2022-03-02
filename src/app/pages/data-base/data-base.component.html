@@ -1,0 +1,107 @@
+<mat-card style="overflow-x: scroll;">
+  <mat-progress-bar mode="indeterminate" *ngIf="log" ></mat-progress-bar>
+    <h3 style="text-align: center;">
+    
+        <button mat-button [matMenuTriggerFor]="menuRef"><mat-icon class="mat-18">list_number</mat-icon> <span>Colecciones</span> </button>
+        {{ key }} :
+        <button   *ngIf="key" mat-button color="accent" [disabled]="" (click)="getDataCollections(key)" style="margin-right:10px;" ><mat-icon>search</mat-icon>Todos los Datos</button>     
+        <button *ngIf="key" mat-button [matMenuTriggerFor]="menuRef2"><mat-icon class="mat-18">menu</mat-icon> <span>Filtro</span> </button> 
+        {{campo }} : 
+        <input *ngIf="key" type="text" placeholder="Buscar" style="font-size:x-large; text-align: center; margin: 0 10px;" [(ngModel)]="search">
+        
+        <button *ngIf="campo != ''"  mat-mini-fab  (click)="buscarRegistro()" class=" bgc-green-600  L10" matTooltip="Buscar" matTooltipPosition="below">
+            <mat-icon> search </mat-icon></button>
+              <div style="display: flex; justify-content: center;" *ngIf="paginacion?.page">
+                <button mat-button *ngIf="paginacion?.prevPage" (click)="getRegistros(paginacion?.prevPage)" class="L10 bgc-blue-300" matTooltip="Atras" matTooltipPosition="below">
+                  <mat-icon layout-padding>arrow_back</mat-icon> Aterior {{paginacion?.prevPage}}
+                </button>  
+                <button mat-button   class="L10 bgc-blue-300" matTooltip="Pagina Actual" matTooltipPosition="below">
+                  Pagina: {{paginacion?.page}} de {{paginacion?.totalPages}}
+                </button>    
+                <button mat-button *ngIf="paginacion?.nextPage" (click)="getRegistros(paginacion?.nextPage)" class="L10 bgc-blue-300" matTooltip="CAPITAL" matTooltipPosition="below">
+                   proxima {{paginacion?.nextPage}} <mat-icon layout-padding>arrow_forward</mat-icon>
+                </button>  
+              </div>
+              {{documentos.length}} Registros      
+        </h3>
+        <button *ngIf="subir != -1" flex mat-raised-button color="accent" [disabled]="progreso != 0"  (click)="authSiigo(key)" class="text-upper" style="width: 90%; margin:15px auto;margin-left: 20px;">  Subir  Registros Siigo <mat-icon>update_file</mat-icon></button>
+        <span *ngIf="progreso != 0" style="color: blue;">{{progreso | number:'0.0-2'}}% </span> <mat-progress-bar *ngIf="progreso != 0" mode="determinate" [value]="progreso" color="accent" style="width: 90%; margin: 0 auto;"></mat-progress-bar>
+    <mat-menu #menuRef="matMenu">
+        <ng-template let-doc let-i="index" ngFor [ngForOf]="collections">
+            <button *ngIf="doc != 'users' && doc != 'documentos' && doc != 'operaciones'" mat-menu-item (click)="passDataCollections(doc)">
+                <mat-icon class="mat-18">check</mat-icon>  
+                {{doc}}   
+            </button>
+        </ng-template> 
+    </mat-menu>
+
+    <mat-menu #menuRef2="matMenu">
+      <button  mat-menu-item (click)="getRegistroCollections('')">
+        <mat-icon class="mat-18">data_saver_off</mat-icon>  
+        Procesadas Siigo
+      </button>
+      <button  mat-menu-item (click)="getRegistroCollections('')">
+        <mat-icon class="mat-18">data_saver_on</mat-icon>  
+        Pendientes Siigo
+      </button>
+      <ng-template let-doc let-i="index" ngFor [ngForOf]="headers">
+          <button  mat-menu-item (click)="getRegistroCollections(doc)">
+              <mat-icon class="mat-18">check</mat-icon>  
+              {{doc}}   
+          </button>
+      </ng-template> 
+  </mat-menu>
+
+    <table *ngIf="documentos.length != 0" mat-table [dataSource]="documentos" class="mat-elevation-z8">
+      <!--- Note that these columns can be defined in any order.
+            The actual rendered columns are set as a property on the row definition" -->
+    
+      <!-- Position Column -->
+      <ng-container matColumnDef="folio">
+        <th mat-header-cell *matHeaderCellDef> No. </th>
+        <td mat-cell *matCellDef="let element"> {{element.Folio}} </td>
+      </ng-container>
+    
+      <!-- Name Column -->
+      <ng-container matColumnDef="fecha">
+        <th mat-header-cell *matHeaderCellDef> Fecha </th>
+        <td mat-cell *matCellDef="let element"> {{element.Fecha}} </td>
+      </ng-container>
+    
+      <!-- Weight Column -->
+      <ng-container matColumnDef="vendedor">
+        <th mat-header-cell *matHeaderCellDef> Vendedor </th>
+        <td mat-cell *matCellDef="let element"> {{element.Nombre_del_vendedor}} </td>
+      </ng-container>
+    
+      <!-- Symbol Column -->
+      <ng-container matColumnDef="siigo">
+        <th mat-header-cell *matHeaderCellDef> siigo </th>
+        <td mat-cell *matCellDef="let element"> <mat-icon *ngIf="!element.Siigo?.name">cancel</mat-icon> <mat-icon *ngIf="element.Siigo?.name">done_all</mat-icon></td>
+      </ng-container>
+      <ng-container matColumnDef="facsiigo">
+        <th mat-header-cell *matHeaderCellDef> Factura </th>
+        <td mat-cell *matCellDef="let element"> {{element.Siigo?.name}} </td>
+      </ng-container>
+      <ng-container matColumnDef="importe">
+        <th mat-header-cell *matHeaderCellDef> Importe Usd <span style="color:blue">{{totalUsd | number}}</span> </th>
+        <td mat-cell *matCellDef="let element"> {{element.Importe}} </td>
+      </ng-container>
+      <ng-container matColumnDef="trm">
+        <th mat-header-cell *matHeaderCellDef> TRM   </th>
+        <td mat-cell *matCellDef="let element"> {{element.TRM | number}} </td>
+      </ng-container>
+      <ng-container matColumnDef="cop">
+        <th mat-header-cell *matHeaderCellDef> COP <span style="color:blue"> {{totalCop | number}}</span>  </th>
+        <td mat-cell *matCellDef="let element"> {{element.COP | number }} </td>
+      </ng-container>
+      <ng-container matColumnDef="ver">
+        <th mat-header-cell *matHeaderCellDef> Ver </th>
+        <td mat-cell *matCellDef="let element"> <mat-icon class="selec" (click)="passRegistro(element)"> edit </mat-icon> </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+    
+    
+</mat-card>

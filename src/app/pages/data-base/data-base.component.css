@@ -1,0 +1,17 @@
+.json{
+    cursor: pointer;
+}
+
+.listProveedores{
+    height: 100vh;
+  }
+
+.selec:hover{
+    color: rgba(29, 29, 240, 0.52);
+    cursor:pointer;
+}  
+
+table {
+    width: 100%;
+  }
+  

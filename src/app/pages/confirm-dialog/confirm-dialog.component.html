@@ -1,0 +1,12 @@
+<mat-card-content style="font-family: Arial, Helvetica, sans-serif;">
+    <h1><mat-icon class="mat-18" class="R20">{{data.icon}}</mat-icon> {{data.titulo}} </h1>
+    <h3>{{data.info}}</h3>
+    <mat-form-field  *ngIf="data.type == 'Cancel_Delete'" style="width: 100%;">
+        <textarea matInput placeholder="Motivo" name="motivo" [(ngModel)]="motivos"></textarea>
+    </mat-form-field>
+    <mat-card-actions style="text-align:end;">
+            <button *ngIf="data.type == 'Cancel' || data.type == 'Cancel_Delete'" mat-raised-button color="primary" style="color:white;" (click)="cancelar()">No Cancelar</button>
+            <button *ngIf="data.type != 'Cancel_Delete'" mat-raised-button color="accent" (click)="confirmar()">Ok Continuar</button>
+            <button *ngIf="data.type == 'Cancel_Delete'" mat-raised-button color="accent" (click)="confirmarDelete(motivos)">Ok Continuar</button>  
+    </mat-card-actions>
+</mat-card-content>
