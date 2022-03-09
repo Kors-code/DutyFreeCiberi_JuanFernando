@@ -32,6 +32,89 @@ function registerInfo(req, res){
         });
 }
 
+async function agregarPresupuesto(req, res){
+    var params = req.body;
+    var coll = 'Presupuestos';
+    console.log(params)
+    const url = 'mongodb://localhost:27017';
+    const client = new MongoClient(url);
+    const dbName = 'DutyFree';
+   
+        await client.connect();
+        console.log('Connected successfully to server');
+        const db = client.db(dbName);
+        const collection = db.collection(coll);
+       
+        const insertResult = await collection.insertOne(params);
+        console.log('Inserted documents =>', insertResult);
+        res.status(200).send(insertResult);
+}
+
+async function getDataPresupuesto(req, res){
+    var params = req.body;
+    var coll = 'Presupuestos';
+    // console.log(params)
+    const url = 'mongodb://localhost:27017';
+    const client = new MongoClient(url);
+    const dbName = 'DutyFree';
+   
+        await client.connect();
+        console.log('Connected successfully to server');
+        const db = client.db(dbName);
+        const collection = await db.collection(coll);
+        let arrayCollections = []
+        var reg = await collection.find().forEach(element => {
+            arrayCollections.push(element)
+         });
+        // console.log(reg)
+        res.status(200).send(arrayCollections);
+}
+
+
+async function getDataPresupuestoTag(req, res){
+    var params = req.params.tag;
+    var coll = 'Presupuestos';
+    // console.log(params)
+    const url = 'mongodb://localhost:27017';
+    const client = new MongoClient(url);
+    const dbName = 'DutyFree';
+        await client.connect();
+        console.log('Connected successfully to server');
+        const db = client.db(dbName);
+        const collection = await db.collection(coll);
+        let arrayCollections = []
+        var reg = await collection.find({tag:params}).forEach(element => {
+            arrayCollections.push(element)
+         });
+        // console.log(reg)
+        res.status(200).send(arrayCollections);
+}
+
+async function updateDataPresupuesto(req, res){
+    var params = req.body;
+    var coll = 'Presupuestos';
+    console.log('console update PRES')
+    // console.log(params)
+    const url = 'mongodb://localhost:27017';
+    const client = new MongoClient(url);
+    const dbName = 'DutyFree';
+   
+        await client.connect();
+        console.log('Connected successfully to server');
+        const db = client.db(dbName);
+        const collection = await db.collection(coll);
+
+        collection.findOneAndUpdate({_id : ObjectId(params._id)},{$set:{params}},{ upsert: false }, function(err,doc) {
+            if (err) { throw err; }
+            else { 
+                console.log(doc)
+                res.status(200).send(doc); }
+          });
+
+        // var reg = await collection.mod({_id:params._id}, params, { returnNewDocument: true })
+        
+}
+
 async function agregarInfo(req, res){
     var params = req.body;
     var coll = req.params.tag;
@@ -220,6 +303,36 @@ async function consultarInfoCategoria(req, res){
                         Unidades:{$sum: '$Cantidad'},
                         Codigo: {$addToSet : "$Clasi"},
                         Cop: {$sum: '$COP'},
+                        Cost: {$sum: {$toInt: "$Costo_de_v"}},
+                        Detalle: {$addToSet : { 
+                            vendedor: "$Nombre_del_vendedor",
+                            cod_vend: "$Codi",
+                            valor: {$sum: '$COP'},
+                            usd:{$sum: '$Importe'},
+                            und: {$sum: '$Cantidad'},
+                        }},
+                        
+                    }}
+                ]).toArray(function(err, items) {
+            res.status(200).send(items);
+        });
+}
+
+async function consultarInfoCategoriaTienda(req, res){
+        var params = req.body;
+        var coll = req.params.tag;
+         console.log(params)
+        await client.connect();
+        console.log('Connected successfully to server');
+        const collection = db.collection(coll);
+        collection.aggregate([
+                    { $group: {
+                        _id: {sub:"$Descr",pv:"$PDV"},
+                        Ventas:{$sum:'$Importe'},
+                        Unidades:{$sum: '$Cantidad'},
+                        Codigo: {$addToSet : "$Clasi"},
+                        Cop: {$sum: '$COP'},
+                        Cost: {$sum: {$toInt: "$Costo_de_v"}},
                         Detalle: {$addToSet : { 
                             vendedor: "$Nombre_del_vendedor",
                             cod_vend: "$Codi",
@@ -299,8 +412,6 @@ async function getfacturacionSiigo(req, res){
 }
 
 
-
-
 async function getInformeVendedor(req, res){
     var params = req.body;
          console.log(params)
@@ -312,16 +423,17 @@ async function getInformeVendedor(req, res){
                     { $group: {
                         _id: "$Codi",
                         Ventas:{$sum: '$Importe'},
+                        VentasCop:{$sum: '$COP'},
                         Vendedor: {$addToSet : "$Nombre_del_vend"},
                         Unidades:{$sum: '$Cantidad'},
+                        Cost: {$sum: {$toInt: '$Costo_de_v'}},
                         Detalle: {$addToSet : { 
                             categ: "$Descr",
                             cod_categ: "$Clasi",
                             valor: {$sum: '$Importe'},
+                            valorCop: {$sum: '$COP'},
                             und: {$sum: '$Cantidad'},
                         }},
-                        
-    
                     }},
                 ]).toArray(function(err, items) {
             res.status(200).send(items);
@@ -396,13 +508,19 @@ module.exports = {
     getDataCollectionEstado,
     agregarInfo,
     consultarInfoCategoria,
+    consultarInfoCategoriaTienda,
     getCollections,
     getDataCollection,
     getHeadersCollection,
     getDataCollectionKey,
     updateDataCollection,
     consultarInfoFolio,
-    deleteDataCollection
+    deleteDataCollection,
+
+    agregarPresupuesto,
+    getDataPresupuesto,
+    getDataPresupuestoTag,
+    updateDataPresupuesto
 }
 
 

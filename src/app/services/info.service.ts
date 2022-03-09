@@ -132,6 +132,16 @@ export class InfoService {
     
     }
 
+    getInformeCategoriasTienda(tag:string){
+        // let paramas = JSON.stringify(register);
+        let headers = new HttpHeaders({
+            // 'Content-Type': 'application/json',
+            'Authorization': this.getToken()
+        });
+        return this._http.get<responseN>(this.url+'info-categrias-tienda/'+ tag, {headers:headers});
+    
+    }
+
 
     getInformeFolio(tag:string){
         // let paramas = JSON.stringify(register);
@@ -171,6 +181,46 @@ export class InfoService {
             'Authorization': this.getToken()
         });
         return this._http.delete<response>(this.url +'info/'+ tag +'/'+del, {headers:headers})
+    }
+
+
+    // PRESUPUESTO
+
+    agregarPresupuesto(register:any){
+        let paramas = JSON.stringify(register);
+        let headers = new HttpHeaders({
+            'content-Type':'application/json',
+            'Authorization': this.getToken()
+        });
+        return this._http.post<agregar>(this.url+'presupuesto/', paramas, {headers:headers});
+    }
+
+    getPresupuestos(){
+        // let paramas = JSON.stringify(register);
+        let headers = new HttpHeaders({
+            // 'Content-Type': 'application/json',
+            'Authorization': this.getToken()
+        });
+        return this._http.get<any>(this.url+'presupuestos', {headers:headers});
+    }
+
+    getPresupuestoTag(tag:string){
+        // let paramas = JSON.stringify(register);
+        let headers = new HttpHeaders({
+            // 'Content-Type': 'application/json',
+            'Authorization': this.getToken()
+        });
+        return this._http.get<any>(this.url+'presupuestos-tag/'+tag, {headers:headers});
+    }
+
+    updatePresupuesto(update:any){
+        let params = JSON.stringify(update);
+        let headers = new HttpHeaders({
+            'Content-Type': 'application/json',
+            'Authorization': this.getToken()
+        });
+        return this._http.put<response>(this.url +'presupuesto/',
+                params, {headers:headers})
     }
     
 

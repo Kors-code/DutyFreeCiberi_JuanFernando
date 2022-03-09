@@ -4,7 +4,6 @@ plataforma de integracion macro-pro  siigo web
 
 ## Getting started
 
-
 Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
 
 ## Add your files

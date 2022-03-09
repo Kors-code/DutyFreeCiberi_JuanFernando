@@ -4,17 +4,84 @@
 
   <mat-menu #menuRef="matMenu">
     <ng-template let-doc let-i="index" ngFor [ngForOf]="collections">
-        <button *ngIf="doc != 'users' && doc != 'documentos' && doc != 'operaciones'" mat-menu-item (click)="passDataCollections(doc)">
+        <button *ngIf="doc != 'users' && doc != 'documentos' && doc != 'operaciones' && doc != 'Presupuestos'" mat-menu-item (click)="passDataCollections(doc)">
             <mat-icon class="mat-18">check</mat-icon>  
             {{doc}}   
         </button>
     </ng-template> 
   </mat-menu>
 </div>
-  <mat-tab-group *ngIf="informeCateg">
-    
+  <mat-tab-group *ngIf="informeCateg" mat-align-tabs="center">
+    <mat-tab label="Presupuesto">
+      <mat-card-content>
+
+        <table style="width: 90%; margin: 0 auto; font-size: 1.3em;" class="mat-elevation-z8">
+          <thead style="background-color:rgb(63, 62, 62) ; color:white; padding: 15px; font-size: 1em; border-radius: 10px;">
+            <tr>
+              <th>PRESUPUESTO </th>
+              <th>{{presupuesto.tag}} </th>
+              <th>COP:  <span style="color: chartreuse;">{{presupuesto.presupuesto_cop  | number:'0.0-0'}}</span></th>
+              <th>USD:  <span style="color: chartreuse;">{{presupuesto.presupuesto_usd  | number:'0.0-0'}}</span></th>
+              <th>DIAS: <span style="color: chartreuse;">{{presupuesto.dias  | number:'0.0-0'}}</span> </th>
+              <th  colspan="2">ESTADO: {{presupuesto.estado}}</th>
+            </tr>
+            <tr>
+              <th colspan="2">Resultados</th>
+              <th>VT Cop <span style="color: chartreuse;">{{presupuesto.ventas  | number:'0.0-0'}}</span></th>
+              <th>VT Usd <span style="color: chartreuse;">{{presupuesto.ventas_usd  | number:'0.0-0'}}</span></th>
+              <th>FALTA <span style="color: chartreuse;">{{presupuesto.ventas_usd - presupuesto.presupuesto_usd | number:'0.0-0'}}</span></th>
+              <th colspan="2">CUMPLIMIENTO <span style="color: chartreuse;">{{(presupuesto.presupuesto_usd / presupuesto.ventas_usd)*100 | number:'0.0-0'}}%</span></th>
+            </tr>
+            <tr>
+              <th colspan="1"> CATEGORIA</th>
+              <th colspan="1"> % PART PT</th>
+              <th colspan="1"> PPT USD</th>
+              <th colspan="1"> VENTAS</th>
+              <th colspan="1"> CUMPLIMIENTO</th>
+              <th colspan="1"> RESTA</th>
+              <th colspan="1"> % VENTAS</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of presupuesto.categorias" class="pointer">
+             <td>{{item.titulo}}</td>
+             <td style="text-align:center">{{item.participacion}}%</td>
+             <td style="text-align:right">{{item.presupuesto_usd  | number:'0.0-0'}}</td>
+             <td style="text-align:right">{{item.ventas  | number:'0.0-0'}}</td>
+             <td style="text-align:center">{{(item.ventas / item.presupuesto_usd)*100 | number:'0.0-0'}}%</td>
+             <td style="text-align:right">{{(item.ventas - item.presupuesto_usd) | number:'0.0-0'}}</td>
+             <td style="text-align:center">{{(item.ventas / presupuesto.ventas_usd) * 100 | number:'0.0-0'}}%</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div style="width: 90%; margin: 0 auto;">
+          <h2 tyle="text-align: center;">CUMPLIMIENTO PRESUPUESTAL {{coleccion}}</h2>
+          <ngx-charts-bar-horizontal-2d
+          [view]="viewBa"
+          [scheme]="colorScheme"
+          [results]="multy"
+          [gradient]="gradient"
+          [xAxis]="showXAxis"
+          [yAxis]="showYAxis"
+          [legend]="showLegend"
+          [showXAxisLabel]="showXAxisLabel"
+          [showYAxisLabel]="showYAxisLabel"
+          [xAxisLabel]="xAxisLabel"
+          [yAxisLabel]="yAxisLabel"
+          [legendTitle]="legendTitle"
+          (select)="onSelect($event)"
+          (activate)="onActivate($event)"
+          (deactivate)="onDeactivate($event)">
+        </ngx-charts-bar-horizontal-2d>
+      </div>
+       
+    </mat-card-content>
+
+    </mat-tab>
     <mat-tab label="Categoria"> 
       <div>
+        <h1 style="text-align: center;">RESULTADOS POR SUBCATEGORIAS  {{coleccion}} </h1>
         <table style="width: 90%; margin: 0 auto; font-size: 1.3em;" class="mat-elevation-z8">
           <thead style="background-color:rgb(63, 62, 62) ; color:white; padding: 15px; font-size: 1.3em; border-radius: 10px;">
             <tr style="border-radius:20px">
@@ -25,6 +92,9 @@
               <td style="text-align:center; padding:5px; ">Total Ventas</td>
               <td style="text-align:center; padding:5px; ">Total COP</td>
               <td style="text-align:center; padding:5px; ">Part % </td>
+              <td style="text-align:center; padding:5px; ">Costo</td>
+              <td style="text-align:center; padding:5px; ">Utilidad</td>
+              <td style="text-align:center; padding:5px; ">Marge</td>
 
             </tr>
           </thead>
@@ -38,6 +108,10 @@
                 <td style="text-align:right;">{{item.Ventas | number:'0.0-2' }}</td>
                 <td style="text-align:right;">{{item.Cop  | number:'0.0-2'}}</td>
                 <td style="text-align:right;">{{(item.Cop / totalCategoriaCop) *100  | number:'0.0-2'}} %</td>
+                <td style="text-align:right;">{{item.Cost  | number:'0.0-2'}}</td>
+                <td style="text-align:right;">{{item.Cop  -item.Cost | number:'0.0-2'}}</td>
+                <td style="text-align:right;">{{((item.Cop  -item.Cost)/ item.Cop)*100 | number:'0.0-2'}}%</td>
+
               </tr>
             </ng-template>
             <tr>
@@ -56,8 +130,168 @@
               <th style="text-align:right">
                 {{totalCategoriaCop| number:'0.0-0'}}
               </th>
+              <th></th>
+              <th>
+                {{totalCategoriaCosto  | number:'0.0-0'}}
+              </th>
+              <th>
+                {{totalCategoriaCop -totalCategoriaCosto  | number:'0.0-0'}}
+              </th>
+              <th>
+                {{((totalCategoriaCop -totalCategoriaCosto)/totalCategoriaCop)*100  | number:'0.0-2'}}%
+              </th>
 
             </tr>
+          </tbody>
+        </table>
+        <h1 style="text-align: center;">RESULTADOS POR SUBCATEGORIAS TIENDA {{coleccion}} </h1>
+        <table style="width: 90%; margin: 0 auto; font-size: 1.3em;" class="mat-elevation-z8"  matSort (matSortChange)="sortData($event)">
+          <thead style="background-color:rgb(117, 115, 115) ; color:white; padding: 15px; font-size: 1.3em; border-radius: 10px;">
+            <tr style="border-radius:20px">
+              <td style="text-align:center; padding:5px;"> TIENDA</td>
+              <td style="text-align:center; padding:5px;">Codigo</td>
+              <td  style="text-align:center; padding:5px; " mat-sort-header="categoria"><mat-icon>sort</mat-icon>  Categoria</td>
+              <td style="text-align:center; padding:5px; " mat-sort-header="unds"> <mat-icon>sort</mat-icon> Unds</td>
+              <td style="text-align:center; padding:5px; ">Part % </td>
+              <td style="text-align:center; padding:5px; "  mat-sort-header="ventas"><mat-icon>sort</mat-icon>  Total Ventas</td>
+              <td style="text-align:center; padding:5px; ">Total COP</td>
+              <td style="text-align:center; padding:5px; ">Part % </td>
+              <td style="text-align:center; padding:5px; "  mat-sort-header="costo"> <mat-icon>sort</mat-icon> Costo</td>
+              <td style="text-align:center; padding:5px; ">Utilidad</td>
+              <td style="text-align:center; padding:5px; ">Marge</td>
+
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th></th>
+            <th colspan="2">
+              TOTAL VENTAS 
+            </th>
+            
+            <th style="text-align:right">
+              {{totalCategoriaUnd | number:'0.0-0'}}
+            </th>
+            <td></td>
+            <th style="text-align:right">
+              {{totalCategoria | number:'0.0-0'}}
+            </th>
+            <th style="text-align:right">
+              {{totalCategoriaCop| number:'0.0-0'}}
+            </th>
+            <th></th>
+            <th>
+              {{totalCategoriaCosto  | number:'0.0-0'}}
+            </th>
+            <th>
+              {{totalCategoriaCop -totalCategoriaCosto  | number:'0.0-0'}}
+            </th>
+            <th>
+              {{((totalCategoriaCop -totalCategoriaCosto)/totalCategoriaCop)*100  | number:'0.0-2'}}%
+            </th>
+
+          </tr>
+            <ng-template let-item let-last="last" ngFor [ngForOf]="informeCategTieda">
+              <tr *ngIf="item._id.pv == 'MDE D'" (click)="passRegistro(item)" class="pointer">
+                <td>{{item._id.pv}}</td>
+                <td style="text-align:center;">{{item.Codigo}}</td>
+                <td>{{item._id.sub}} </td>
+                <td style="text-align:right;">{{item.Unidades}}</td>
+                <td style="text-align:right;">{{(item.Unidades / totalCategoriaUnd) *100 | number:'0.0-2'}} %</td>
+                <td style="text-align:right;">{{item.Ventas | number:'0.0-2' }}</td>
+                <td style="text-align:right;">{{item.Cop  | number:'0.0-2'}}</td>
+                <td style="text-align:right;">{{(item.Cop / totalCategoriaCop) *100  | number:'0.0-2'}} %</td>
+                <td style="text-align:right;">{{item.Cost  | number:'0.0-2'}}</td>
+                <td style="text-align:right;">{{item.Cop  -item.Cost | number:'0.0-2'}}</td>
+                <td style="text-align:right;">{{((item.Cop  -item.Cost)/ item.Cop)*100 | number:'0.0-2'}}%</td>
+
+              </tr>
+            </ng-template>
+            <tr>
+              <th></th>
+            <th colspan="2">
+              TOTAL VENTAS TIENDA D
+            </th>
+            
+            <th style="text-align:right">
+              {{totalTiendaDund | number:'0.0-0'}}
+            </th>
+            <td></td>
+            
+            <th style="text-align:right">
+              {{totalTiendaDUsd | number:'0.0-0'}}
+            </th>
+
+            <th>  {{totalTiendaD | number:'0.0-0'}}</th>
+            <th>
+              {{(totalTiendaD/totalCategoriaCop)*100  | number:'0.0-2'}}%
+
+            </th>
+            <th>
+              {{costoTiendaD  | number:'0.0-0'}}
+            </th>
+            
+            <th>
+              {{totalTiendaD - costoTiendaA  | number:'0.0-0'}}
+            </th>
+            
+            <th>
+              {{((totalTiendaD - costoTiendaD)/totalTiendaD)*100  | number:'0.0-2'}}%
+            </th>
+
+          </tr>
+            <ng-template let-item let-last="last" ngFor [ngForOf]="informeCategTieda">
+              <tr  *ngIf="item._id.pv == 'MDE A'" (click)="passRegistro(item)" class="pointer">
+                <td>{{item._id.pv}}</td>
+                <td style="text-align:center;">{{item.Codigo}}</td>
+                <td>{{item._id.sub}} </td>
+                <td style="text-align:right;">{{item.Unidades}}</td>
+                <td style="text-align:right;">{{(item.Unidades / totalCategoriaUnd) *100 | number:'0.0-2'}} %</td>
+                <td style="text-align:right;">{{item.Ventas | number:'0.0-2' }}</td>
+                <td style="text-align:right;">{{item.Cop  | number:'0.0-2'}}</td>
+                <td style="text-align:right;">{{(item.Cop / totalCategoriaCop) *100  | number:'0.0-2'}} %</td>
+                <td style="text-align:right;">{{item.Cost  | number:'0.0-2'}}</td>
+                <td style="text-align:right;">{{item.Cop  -item.Cost | number:'0.0-2'}}</td>
+                <td style="text-align:right;">{{((item.Cop  -item.Cost)/ item.Cop)*100 | number:'0.0-2'}}%</td>
+
+              </tr>
+            </ng-template>
+            <tr>
+              <tr>
+                <th></th>
+              <th colspan="2">
+                TOTAL VENTAS TIENDA A
+              </th>
+              
+              <th style="text-align:right">
+                {{totalTiendaDund | number:'0.0-0'}}
+              </th>
+              <td></td>
+              
+              <th style="text-align:right">
+                {{totalTiendaAUsd | number:'0.0-0'}}
+              </th>
+  
+              <th>  {{totalTiendaA | number:'0.0-0'}}</th>
+              <th>
+                {{( totalTiendaA/totalCategoriaCop)*100  | number:'0.0-2'}}%
+  
+              </th>
+              <th>
+                {{costoTiendaA  | number:'0.0-0'}}
+              </th>
+              
+              <th>
+                {{totalTiendaA - costoTiendaA  | number:'0.0-0'}}
+              </th>
+              
+              <th>
+                {{((totalTiendaA - costoTiendaA)/totalTiendaA)*100  | number:'0.0-2'}}%
+              </th>
+  
+            </tr>
+              
+             
           </tbody>
         </table>
       </div>

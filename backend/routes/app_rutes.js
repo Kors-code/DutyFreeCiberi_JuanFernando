@@ -60,6 +60,7 @@ api.post('/key-collections/:tag',md_auth.ensureAuth, infoController.getDataColle
 api.post('/update-document/:tag',md_auth.ensureAuth, infoController.updateDataCollection);
 // api.get('/info-categrias',md_auth.ensureAuth, infoController.getInformeCategoria);
 api.get('/info-categrias/:tag',md_auth.ensureAuth, infoController.consultarInfoCategoria);
+api.get('/info-categrias-tienda/:tag',md_auth.ensureAuth, infoController.consultarInfoCategoriaTienda);
 api.get('/info-folio/:tag',md_auth.ensureAuth, infoController.consultarInfoFolio);
 api.get('/info-collection-estado/:tag/:estado',md_auth.ensureAuth, infoController.getDataCollectionEstado);
 api.get('/facturacion-siigo/:tag',md_auth.ensureAuth, infoController.getfacturacionSiigo);
@@ -71,7 +72,12 @@ api.post('/auth-siigo', md_auth.ensureAuth,  siigoController.authSiigo);
 api.get('/up-invoice/:tag',md_auth.ensureAuth, siigoController.sendInvoiceSiigo);
 api.get('/invoice-siigo/:tag',md_auth.ensureAuth, siigoController.getFacturacionSiigo);
 
+// PRESUPUESTOS
+api.post('/presupuesto', md_auth.ensureAuth,  infoController.agregarPresupuesto);
+api.get('/presupuestos', md_auth.ensureAuth,  infoController.getDataPresupuesto);
+api.get('/presupuestos-tag/:tag', md_auth.ensureAuth,  infoController.getDataPresupuestoTag);
 
+api.put('/presupuesto', md_auth.ensureAuth,  infoController.updateDataPresupuesto);
 
 module.exports = api;
 

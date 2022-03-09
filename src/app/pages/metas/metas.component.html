@@ -1,2 +1,82 @@
-<p>metas works!</p>
-<json-editor [options]="editorOptions" [data]="presupuesto" (change)="getData($event)"></json-editor>
+<mat-tab-group  mat-align-tabs="center">
+    
+    <mat-tab>
+        <ng-template mat-tab-label>
+            <mat-icon class="example-tab-icon">details</mat-icon>
+                PRESUPUESTO
+          </ng-template>
+          <div style="display: flex; justify-content: center;">
+            <button *ngIf="presupuesto._id == ''" mat-button color="accent" [disabled]="" (click)="registerPresupuesto()" style="margin-right:10px;" ><mat-icon>save</mat-icon> Guardar</button>
+            <button *ngIf="presupuesto._id != ''" mat-button color="accent" [disabled]="" (click)="updatePresupuesto()" style="margin-right:10px;" ><mat-icon>edit</mat-icon> Editar</button>
+            <button   mat-button color="warn" [disabled]="" (click)="deleteRegistro()" style="margin-right:10px;" ><mat-icon>delete</mat-icon> Eliminar</button>
+          </div>
+
+          <mat-card>
+              <mat-form-field appearance="fill" style="text-align: center; font-size: 1.3em; margin-right: 20px;">
+                <mat-label>Tag Base Datos</mat-label>
+                <input matInput placeholder="Data Base" type="text" name="tag" [(ngModel)]="presupuesto.tag">
+              </mat-form-field>
+              <mat-form-field appearance="fill" style="text-align: center; font-size: 1.3em; margin-right: 20px;">
+                <mat-label>Presupuesto COP</mat-label>
+                <input matInput placeholder="Ventas COP" type="number" name="presupuesto_cop" [(ngModel)]="presupuesto.presupuesto_cop">
+              </mat-form-field>
+              <mat-form-field appearance="fill" style="text-align: center; font-size: 1.3em; margin-right: 20px;">
+                <mat-label>Presupuesto USD</mat-label>
+                <input matInput placeholder="Ventas USD" type="number" name="presupuesto_usd" [(ngModel)]="presupuesto.presupuesto_usd">
+              </mat-form-field>
+              <mat-form-field appearance="fill" style="text-align: center; font-size: 1.3em; margin-right: 20px;">
+                <mat-label>Dias Periodo</mat-label>
+                <input matInput placeholder="Ventas USD" type="number" name="dias" [(ngModel)]="presupuesto.dias">
+              </mat-form-field>
+              <button *ngIf="presupuesto._id == ''" mat-button color="accent" [disabled]="" (click)="Presupuestar()" style="margin-right:10px;" ><mat-icon>send</mat-icon> Generar</button>
+              <div>
+                  <h3>Presupuesto COP Dia: {{presupuesto.presupuesto_dia_cop  | number:'0.0-0'}}</h3>
+                  <h3>Presupuesto USD Dia: {{presupuesto.presupuesto_dia_usd  | number:'0.0-0'}}</h3>
+              </div>
+              <mat-accordion>
+                <mat-expansion-panel hideToggle *ngFor="let item of presupuesto.categorias">
+                  <mat-expansion-panel-header>
+                    <mat-panel-title>
+                      Categoria: {{item.titulo}} $ {{item.presupuesto_usd  | number:'0.0-0'}}
+                    </mat-panel-title>
+                    
+                  </mat-expansion-panel-header>
+                  <mat-card-content>
+                    <mat-form-field appearance="fill" style="text-align: center; font-size: 1.3em; margin-right: 20px;">
+                        <mat-label>Participacion %</mat-label>
+                        <input matInput placeholder="Participacion" type="number" name="dias" [(ngModel)]="item.participacion">
+                      </mat-form-field> 
+                  </mat-card-content>
+                  <h3>Presupuesto COP: {{item.presupuesto_cop  | number:'0.0-0'}}</h3>
+                  <h3>Presupuesto USD: {{item.presupuesto_usd  | number:'0.0-0'}}</h3>
+
+                  <h3>Presupuesto COP Dia: {{item.presupuesto_dia_cop  | number:'0.0-0'}}</h3>
+                  <h3>Presupuesto USD Dia: {{item.presupuesto_dia_usd  | number:'0.0-0'}}</h3>
+                </mat-expansion-panel>
+               
+              </mat-accordion>
+
+          </mat-card>
+         
+            <json-editor [options]="editorOptions" [data]="presupuesto" (change)="getData($event)"></json-editor>
+    </mat-tab>
+    <mat-tab>
+        <ng-template mat-tab-label>
+        <mat-icon class="example-tab-icon">indeterminate_check_box</mat-icon>
+            ACTIVOS
+        </ng-template>
+        <mat-card-content>
+           
+                <h1 (click)="passPresupuesto(item)"  *ngFor="let item of presupuestos">{{item.tag}}</h1>
+        
+        </mat-card-content>
+    </mat-tab>
+    <mat-tab>
+        <ng-template mat-tab-label>
+        <mat-icon class="example-tab-icon">done_all</mat-icon>
+            CERRADOS
+        </ng-template>
+    </mat-tab>
+</mat-tab-group> 
+
+

@@ -12,3 +12,8 @@ export var GLOBAL = {
     version:'1.1.1',
     company: 'ciberi.co'
 }
+
+// produccion max-size err;
+// node --max_old_space_size=8192 ./node_modules/@angular/cli/bin/ng build --prod --build-optimizer
+
+// electron-packager . --platform=win32 --arch=x64 --icon=./build/DFP.png
