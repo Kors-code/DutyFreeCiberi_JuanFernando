@@ -13,10 +13,10 @@ let PDF = require('handlebars-pdf')
 
 async function sendInvoiceSiigo1(req, res){
     let io = req.app.get('io');
-    console.log('entro Registro Facturas')
+    //console.log('entro Registro Facturas')
     var params = req.body;
     var coll = req.params.tag;
-     console.log(params)
+     //console.log(params)
     var unirest = require('unirest');
     var token;
     var req = unirest('POST', 'https://api.siigo.com/auth')
@@ -30,9 +30,9 @@ async function sendInvoiceSiigo1(req, res){
       .end(async function (resp){ 
         if (resp.error) throw new Error(resp.error); 
         token = resp.body.access_token;
-        console.log(token);
+        //console.log(token);
         await client.connect();
-        console.log('Connected successfully to server');
+        //console.log('Connected successfully to server');
         const collection = db.collection(coll);
         collection.aggregate([ {$match: {Estado:'Activa'}},
                     { $group: {
@@ -51,11 +51,11 @@ async function sendInvoiceSiigo1(req, res){
                 ]).toArray(function(err, items){
                     var  array = items;
                     var index = 0
-                    console.log('items activos: '+ array.length)
+                    //console.log('items activos: '+ array.length)
                     if(items.length != 0){
                     const myInterval = setInterval(function () {
                       const element = array[index];
-                      console.log('elemento', element)
+                      //console.log('elemento', element)
                       if(element){
                         element.Detalle.forEach(elemento => {
                           elemento.taxes = [],
@@ -112,21 +112,21 @@ async function sendInvoiceSiigo1(req, res){
                           ]
                         }))
                         .end(function (respuesta) { 
-                            console.log(respuesta.body)
+                            //console.log(respuesta.body)
                             index ++  
                           if (respuesta.error) {
                             io.emit('UpSiigo', {length:array.length, i:index}); 
                             collection.updateMany({Folio:element._id},{$set: {Siigo:respuesta.error}},{ upsert: false })
-                            console.log(respuesta.error)
+                            //console.log(respuesta.error)
                           }
                           if(respuesta.body.id){
                             io.emit('UpSiigo', {length:array.length, i:index}); 
                             collection.updateMany({Folio:element._id},{$set: {Siigo:respuesta.body, Estado:respuesta.body.id}},{ upsert: false })
-                            console.log('Respuesta Siigo', respuesta.raw_body);
+                            //console.log('Respuesta Siigo', respuesta.raw_body);
                             // io.emit('UpSiigo', {length:array.length, i:index}); 
                           }
                           if(index == array.length){ 
-                            console.log('cerro proceso ' +index + ' Registros')
+                            //console.log('cerro proceso ' +index + ' Registros')
                             clearInterval(myInterval);
                             res.status(200).send('Cerro Proceso Registro Siigo ' +index + ' Registros');
                           }
@@ -143,10 +143,12 @@ async function sendInvoiceSiigo1(req, res){
 
 async function sendInvoiceSiigo(req, res){
   let io = req.app.get('io');
-  console.log('entro Registro Facturas')
   var params = req.body;
   var coll = req.params.tag;
-  //  console.log(params)
+
+  //  console.log('params '+ params)
+  //  console.log(params.user)
+
   var unirest = require('unirest');
   var token;
   var req = unirest('POST', 'https://api.siigo.com/auth')
@@ -154,287 +156,333 @@ async function sendInvoiceSiigo(req, res){
       'Content-Type': 'application/json'
     })
     .send(JSON.stringify({
-      "username": "siigoapi@pruebas.com",
-      "access_key": "OWE1OGNkY2QtZGY4ZC00Nzg1LThlZGYtNmExMzUzMmE4Yzc1OjR1NyluZlIlOE4="
+      "username": params.user,
+      "access_key": params.key
     }))
     .end(async function (resp){ 
-      if (resp.error) throw new Error(resp.error); 
-      token = resp.body.access_token;
-      console.log(token);
-      await client.connect();
-      console.log('Connected successfully to server');
-      const collection = db.collection(coll);
-
-      collection.aggregate([ {$match: {Estado:'Activa'}},
-                  { $group: {
-                      _id: "$Folio",
-                      Usd:{$sum:'$Importe'},
-                      Unidades:{$sum: '$Cantidad'},
-                      Cop: {$sum: '$COP'},
-                      Hora: {$addToSet: '$Hora'},
-                      _Fecha: {$addToSet: '$Fecha'},
-                      TRM: {$addToSet: '$TRM'},
-                      Vendedor:{$addToSet: '$Nombre_del_vend'},
-                      Costumer:{$addToSet: '$Costumer'},
-                      Fecha: {$addToSet:{
-                          D:'$Day',
-                          M:'$Month',
-                          Y:'$Year'
-                      }},
-                      Detalle: { $addToSet : { 
-                          description: "$Descripcion_1",
-                          code: "$Clasi",
-                          price: {$sum:{$divide: [ '$COP', "$Cantidad" ]}},
-                          quantity: {$sum: '$Cantidad'},
-                          importe: {$sum: '$Importe'},
-                      }},
-                  }}
-              ]).toArray(function(err, items){
-                  var  array = items;
-                  var index = 0
-                  console.log('items activos: '+ items.length)
-                  if(array.length != 0){
-                    items.forEach(element => {
-                      console.log('elemento', element)
-                      const date = element.Fecha[0]
-                      console.log(date)     
-                      var newF = '';     
-                      if(element){
-                         newF = newF + date.Y +'-'
-                        let mes =  date.M   
-                        if(mes == 'ENE'){
-                          newF = newF + '01-'+  date.D
-                        }      
-                        if(mes == 'FEB'){
-                          newF = newF + '02-'+  date.D
-                        } 
-                        console.log(newF)
-                          element.Detalle.forEach(elemento => {
-                          elemento.taxes = [],
-                          elemento.code = 'Sku-1'
-                      });
-                        var req2 = unirest('POST', 'https://api.siigo.com/v1/invoices')
-                        .headers({
-                          'Content-Type': 'application/json',
-                          'Partner-ID': 'TestNat',
-                          'Authorization': 'Bearer '+token
-                        })
-                        .send(JSON.stringify({
-                          "document": {
-                            "id": 27138
-                          },
-                          "date": newF,
-                          "customer": {
-                            "person_type": "Person",
-                            "id_type": "13",
-                            "identification": "222222222",
-                            "branch_office": "0",
-                            "name": [
-                              "xxxxxx",
-                              "xxxxxxx"
-                            ],
-                            "address": {
-                              "address": "xxxxx",
-                              "city": {
-                                "country_code": "Co",
-                                "state_code": "11",
-                                "city_code": "11001"
-                              }
+      if (resp.error){
+        console.log(resp.error); 
+        res.status(404).send({message: 'Error ' +resp.error }); 
+      } else{
+        token = resp.body.access_token;
+        //console.log(token);
+        await client.connect();
+        //console.log('Connected successfully to server');
+        const collection = db.collection(coll);
+  
+        collection.aggregate([ {$match: {Estado:'Activa'}},
+                    { $group: {
+                        _id: "$Folio",
+                        Usd:{$sum:'$Importe'},
+                        Unidades:{$sum: '$Cantidad'},
+                        Cop: {$sum: '$COP'},
+                        Hora: {$addToSet: '$Hora'},
+                        _Fecha: {$addToSet: '$Fecha'},
+                        TRM: {$addToSet: '$TRM'},
+                        Vendedor:{$addToSet: '$Nombre_del_vend'},
+                        Costumer:{$addToSet: '$Costumer'},
+                        Fecha: {$addToSet:{
+                            D:'$Day',
+                            M:'$Month',
+                            Y:'$Year'
+                        }},
+                        Detalle: { $addToSet : { 
+                            description: "$Detalle",
+                            code: "$Clasi",
+                            price: {$sum:{$divide: [ '$COP', "$Cantidad" ]}},
+                            quantity: {$sum: '$Cantidad'},
+                            importe: {$sum: '$Importe'},
+                        }},
+                    }}
+                ]).toArray(function(err, items){
+                    var  array = items;
+                    var index = 0
+                    //console.log('items activos: '+ items.length)
+                    if(array.length != 0){
+                      items.forEach(element => {
+                        console.log(element)
+                        const date = element.Fecha[0]
+                        let folio = element._id.slice(4)
+                        console.log(folio)     
+                        var newF = '';     
+                        if(element){
+                           newF = newF + date.Y +'-'
+                          let mes =  date.M   
+                          if(mes == 'ENE'){
+                            newF = newF + '01-'+  date.D
+                          }      
+                          if(mes == 'FEB'){
+                            newF = newF + '02-'+  date.D
+                          } 
+                          if(mes == 'MAR'){
+                            newF = newF + '03-'+  date.D
+                          }
+                          if(mes == 'ABR'){
+                            newF = newF + '04-'+  date.D
+                          }  
+                          if(mes == 'MAY'){
+                            newF = newF + '05-'+  date.D
+                          } 
+                          if(mes == 'JUN'){
+                            newF = newF + '06-'+  date.D
+                          } 
+                          if(mes == 'JUL'){
+                            newF = newF + '07-'+  date.D
+                          } 
+                          if(mes == 'AGO'){
+                            newF = newF + '02-'+  date.D
+                          } 
+                          //console.log(newF)
+                            element.Detalle.forEach(elemento => {
+                            elemento.taxes = [],
+                            elemento.code = 'Sku-1'
+                        });
+                          var req2 = unirest('POST', 'https://api.siigo.com/v1/invoices')
+                          .headers({
+                            'Content-Type': 'application/json',
+                            'Partner-ID': 'TestNat',
+                            'Authorization': 'Bearer '+token
+                          })
+                          .send(JSON.stringify({
+                            "document": {
+                              "id": 27138
                             },
-                            "phones": [
+                            "date": newF,
+                            "number": undefined,
+                            "customer": {
+                              "person_type": "Person",
+                              "id_type": "13",
+                              "identification": "222222222",
+                              "branch_office": "0",
+                              "name": [
+                                "xxxxxx",
+                                "xxxxxxx"
+                              ],
+                              "address": {
+                                "address": "xxxxx",
+                                "city": {
+                                  "country_code": "Co",
+                                  "state_code": "11",
+                                  "city_code": "11001"
+                                }
+                              },
+                              "phones": [
+                                {
+                                  "number": "000000"
+                                }
+                              ],
+                              "contacts": [
+                                {
+                                  "first_name": "xxxxx",
+                                  "last_name": "xxxxx",
+                                  "email": "manuel.camacho@contacto.com"
+                                }
+                              ]
+                            },
+                            "seller": 629,
+                            "items": element.Detalle,
+                            "payments": [
                               {
-                                "number": "000000"
-                              }
-                            ],
-                            "contacts": [
-                              {
-                                "first_name": "xxxxx",
-                                "last_name": "xxxxx",
-                                "email": "manuel.camacho@contacto.com"
+                                "id": "5635",
+                                "value": element.Cop, 
                               }
                             ]
-                          },
-                          "seller": 629,
-                          "items": element.Detalle,
-                          "payments": [
-                            {
-                              "id": "5635",
-                              "value": element.Cop, 
+                          }))
+                          .end(function (respuesta) { 
+                              console.log(respuesta.body)
+                            if (respuesta.error){
+                              index ++  
+                              io.emit('UpSiigo', {length:array.length, i:index}); 
+                              collection.updateMany({Folio:element._id},{$set: {Siigo:respuesta.body}},{ upsert: false })
+                              //console.log(respuesta.error)
                             }
-                          ]
-                        }))
-                        .end(function (respuesta) { 
-                            console.log(respuesta.body)
-                          if (respuesta.error){
-                            index ++  
-                            io.emit('UpSiigo', {length:array.length, i:index}); 
-                            collection.updateMany({Folio:element._id},{$set: {Siigo:respuesta.error}},{ upsert: false })
-                            console.log(respuesta.error)
-                          }
-                          if(respuesta.body.id){
-                            index ++  
-                            io.emit('UpSiigo', {length:array.length, i:index}); 
-                            collection.updateMany({Folio:element._id},{$set: {Siigo:respuesta.body, Estado:respuesta.body.id}},{ upsert: false })
-                            console.log('Respuesta Siigo', respuesta.raw_body);
-
-                    
-                            let document = {
-                              template: `
-                              <div style="   
-                                  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', 'Geneva', 'Verdana', 'sans-serif';
-                                  max-width: 500px;  
-                                  color: #585858;
-                                  font-size:10px;
-                                  background-color: #fff;
-                                  border-radius: 6px;"
-                                  margin: 0 auto>
-                                    <h4>DUTY FREE PARTNERS COLOMBIA, SAS <br>
-                                      AEROPUERTO INTERNACIONAL JOSE MARIA CORDOVA <br>
-                                      LOCALES: 23,23A,23B,23C <br>
-                                      VEREDA SAJONIA, RIONEGRO ANTIOQUIA <br>
-                                      NIT: 901.195.686-7 <br>
-                                      FOLIO:{{folio}} FECHA:{{fecha}} HORA:{{hora}} <br>
-                                      _______________________________________________ 
-                                    </h4>
-                                    <table style="max-width: 500px; font-size:0.9em;">
-                                      <tr>
-                                        <th> Unds </th>
-                                        <th> Descripcion </th>
-                                        <th> Total</th>
-                                      </tr>
-                                      {{#each products}}
-                                      <tr>
-                                        <td style="text-align: center; border-bottom: 1px solid grey;">
-                                            {{quantity}}
-                                        </td>
+                            if(respuesta.body.id){
+                              index ++  
+                              io.emit('UpSiigo', {length:array.length, i:index}); 
+                              collection.updateMany({Folio:element._id},{$set: {Siigo:respuesta.body, Estado:respuesta.body.id}},{ upsert: false })
+                              //console.log('Respuesta Siigo', respuesta.raw_body);
+                              let document = {
+                                template: `
+                                <div style="   
+                                    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', 'Geneva', 'Verdana', 'sans-serif';
+                                    max-width: 500px;  
+                                    color: #585858;
+                                    font-size:14px;
+                                    background-color: #fff;
+                                    border-radius: 6px;"
+                                    margin: 0 auto>
+                                      <h4>DUTY FREE PARTNERS COLOMBIA, SAS <br>
+                                        AEROPUERTO INTERNACIONAL JOSE MARIA CORDOVA <br>
+                                        LOCALES: 23,23A,23B,23C <br>
+                                        VEREDA SAJONIA, RIONEGRO ANTIOQUIA <br>
+                                        NIT: 901.195.686-7 <br>
+                                        FOLIO:{{folio}} FECHA:{{fecha}} HORA:{{hora}} <br>
+                                        _______________________________________________ 
+                                      </h4>
+                                      <table style="max-width: 500px; font-size:0.9em;">
+                                        <tr>
+                                          <th> Unds </th>
+                                          <th> Descripcion </th>
+                                          <th> Total</th>
+                                        </tr>
+                                        {{#each products}}
+                                        <tr>
                                           <td style="text-align: center; border-bottom: 1px solid grey;">
-                                              {{description}}
+                                              {{quantity}}
                                           </td>
-                                  
-                                          <td style="text-align: right; border-bottom: 1px solid grey;">
-                                              {{ importe }}
-                                          </td>
-                                      </tr>
-                                   {{/each}}
+                                            <td style="text-align: center; border-bottom: 1px solid grey;">
+                                                {{description}}
+                                            </td>
                                     
-                                    </table>
-                                    <h3>
-                                        TRM USD:$ {{trm}} TOTAL DLL: $ {{usd}}  <br>
-                                        TOTAL COP: $ {{cop}} <br>                                   
-                                    </h3>
-                                    {{#each costumer}}
-                                        <div style="text-align:left;max-width: 500px; margin:0 auto; ">
-                                        _______________________________________________  <br>
-                                          PAX INFO <br>
-                                          Nombre: {{NOMBRE_DE_PAX}} <br>
-                                          Origen: {{ORIGEN}} <br>
-                                          Destino: {{DESTIN}} <br>
-                                          Aerolinea: {{AEROLINEA}} <br>
-                                          Vuelo: {{VUELO}} <br>
-                                          Asiento:{{ASIENT}} <br>
-                                          Passport: {{PASAPORTE}} Pais: {{costumer.NACION}} <br>
-                                          STEB Bag: {{STEB_BAG}} <br>
+                                            <td style="text-align: right; border-bottom: 1px solid grey;">
+                                                {{ importe }}
+                                            </td>
+                                        </tr>
+                                     {{/each}}
+                                      
+                                      </table>
+                                      <h3>
+                                          TRM USD:$ {{trm}} TOTAL DLL: $ {{usd}}  <br>
+                                          TOTAL COP: $ {{cop}} <br>                                   
+                                      </h3>
+                                      {{#each costumer}}
+                                          <div style="text-align:left;max-width: 500px; margin:0 auto; ">
+                                          _______________________________________________  <br>
+                                            PAX INFO <br>
+                                            Nombre: {{NOMBRE_DE_PAX}} <br>
+                                            Origen: {{ORIGEN}} <br>
+                                            Destino: {{DESTIN}} <br>
+                                            Aerolinea: {{AEROLINEA}} <br>
+                                            Vuelo: {{VUELO}} <br>
+                                            Asiento:{{ASIENT}} <br>
+                                            Passport: {{PASAPORTE}} Pais: {{costumer.NACION}} <br>
+                                            STEB Bag: {{STEB_BAG}} <br>
+                                            _______________________________________________ 
+                                          </div>
+                                      {{/each}}
+                                      <p>
+                                          "VENTA DE EXPORTACION" <br>
                                           _______________________________________________ 
-                                        </div>
-                                    {{/each}}
-                                    <p>
-                                        "VENTA DE EXPORTACION" <br>
-                                        _______________________________________________ 
-                                    </p>
-                                    
-                                    <p> Todos los datos personales recopilados <br>
-                                        no seran distribuidos o utilizados <br>
-                                        con prpositos diferentes a dar <br>
-                                        cumplimiento a regulaciones nacionales <br>
-                                        _______________________________________________ 
-                                    </p>
-
-                                        <h5> NO SOMOS GRANDES CONTRIBUYENTES <br>
-                                          RESPONSABLE DE IVA/NO SOMOS AUTORRETENEDORES <br>
-                                          AUTORIZACION NUMERACION DE FACTURACION <br>
-                                          18764011034538 FECHA:2021/02/26 HABILITA <br>
-                                          DFA014674 A DFA999999 / VIGENCIA 18 MESES <br>
-                                        </h5>
-                                       
-                                        <p> _______________________________________________</p>
-                                        <h5>IMPRESO SOFTWARE MACROPRO <br>
-                                            FACTURA DE VENTA POS:{{folio}} <br>
-                                            MACROPRO SOFTWARE S.A. DE C.V. ID:MSO0105111G1 <br>
-                                        </h5>
-                                    <p> 
-                                        _______________________________________________ <br>
-                                        Atendido por:{{vendedor}} <br>
-                                        Servicio al cliente: <br>
-                                        +57(317)432-6895 <br>
-                                        contactomde@skyfreeshop.org <br>
-                                        www.dutyfreepartners.com <br>
-                                    </p>
-                               </div>
-                              `,
-                              context: {
-                                folio: element._id,
-                                fecha: element._Fecha,
-                                hora: element.Hora,
-                                products:element.Detalle,
-                                vendedor: element.Vendedor,
-                                costumer: element.Costumer,
-                                cop:element.Cop.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."),
-                                trm:element.TRM.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."),
-                                usd:element.Usd.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."),
-
-                              },
-                              path: "../PDF/"+coll+'/' + element._id+".pdf"
+                                      </p>
+                                      
+                                      <p> Todos los datos personales recopilados <br>
+                                          no seran distribuidos o utilizados <br>
+                                          con prpositos diferentes a dar <br>
+                                          cumplimiento a regulaciones nacionales <br>
+                                          _______________________________________________ 
+                                      </p>
+  
+                                          <h5> NO SOMOS GRANDES CONTRIBUYENTES <br>
+                                            RESPONSABLE DE IVA/NO SOMOS AUTORRETENEDORES <br>
+                                            AUTORIZACION NUMERACION DE FACTURACION <br>
+                                            18764011034538 FECHA:2021/02/26 HABILITA <br>
+                                            DFA014674 A DFA999999 / VIGENCIA 18 MESES <br>
+                                          </h5>
+                                         
+                                          <p> _______________________________________________</p>
+                                          <h5>IMPRESO SOFTWARE MACROPRO <br>
+                                              FACTURA DE VENTA POS:{{folio}} <br>
+                                              MACROPRO SOFTWARE S.A. DE C.V. ID:MSO0105111G1 <br>
+                                          </h5>
+                                      <p> 
+                                          _______________________________________________ <br>
+                                          Atendido por:{{vendedor}} <br>
+                                          Servicio al cliente: <br>
+                                          +57(317)432-6895 <br>
+                                          contactomde@skyfreeshop.org <br>
+                                          www.dutyfreepartners.com <br>
+                                      </p>
+                                 </div>
+                                `,
+                                context: {
+                                  folio: element._id,
+                                  fecha: element._Fecha,
+                                  hora: element.Hora,
+                                  products:element.Detalle,
+                                  vendedor: element.Vendedor,
+                                  costumer: element.Costumer,
+                                  cop:element.Cop.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."),
+                                  trm:element.TRM.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."),
+                                  usd:element.Usd.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."),
+  
+                                },
+                                path: "../PDF/"+coll+'/' + element._id+".pdf"
+                              }
+  
+                              PDF.create(document)
+                              .then(pdfG => {
+                                  //console.log(pdfG)
+                              })
+                              .catch(error => {
+                                  console.error(error)      
+                              })
+                              // io.emit('UpSiigo', {length:array.length, i:index}); 
                             }
+                            if(index == array.length){ 
+                              //console.log('cerro proceso ' +index + ' Registros')
+                              res.status(200).send('Cerro Proceso Registro Siigo ' +index + ' Registros');
+                            }
+                          });
+                        }
+                      });
+                  }else{
+                      res.status(200).send('Sin Documentos para Procesar Siigo');
+                  }   
+        },err=>{
+          //console.log(err)
+          res.status(500).send('error '+ err);
+        });
+      }
 
-                            PDF.create(document)
-                            .then(pdfG => {
-                                console.log(pdfG)
-                            })
-                            .catch(error => {
-                                console.error(error)      
-                            })
-                            // io.emit('UpSiigo', {length:array.length, i:index}); 
-                          }
-                          if(index == array.length){ 
-                            console.log('cerro proceso ' +index + ' Registros')
-                            res.status(200).send('Cerro Proceso Registro Siigo ' +index + ' Registros');
-                          }
-                        });
-                      }
-                    });
-                }else{
-                    res.status(200).send('Sin Documentos para Procesar Siigo');
-                }   
-      },err=>{
-        console.log(err)
-        res.status(500).send('error '+ err);
-      });
+
     });
 }
 
 function getFacturacionSiigo(req, res){
   var pg = req.params.tag;
   var unirest = require('unirest');
-  var req = unirest('GET', 'https://api.siigo.com/v1/invoices?page='+pg)
+  var params = req.body;
+  console.log(params)
+  var token;
+  var req = unirest('POST', 'https://api.siigo.com/auth')
     .headers({
-      'Authorization': 'Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6IkFFNjY0RkJCMkY4OUMwQjhEOTgxMTYwQTVBMEVEMjhCNjk3MDkzQUNSUzI1NiIsInR5cCI6ImF0K2p3dCIsIng1dCI6InJtWlB1eS1Kd0xqWmdSWUtXZzdTaTJsd2s2dyJ9.eyJuYmYiOjE2NDYzMTM0MDAsImV4cCI6MTY0NjM5OTgwMCwiaXNzIjoiaHR0cDovL21zLXNlY3VyaXR5c2VydmljZTo1MDAwIiwiYXVkIjoiaHR0cDovL21zLXNlY3VyaXR5c2VydmljZTo1MDAwL3Jlc291cmNlcyIsImNsaWVudF9pZCI6IlNpaWdvQVBJIiwic3ViIjoiMTAxODMxNSIsImF1dGhfdGltZSI6MTY0NjMxMzQwMCwiaWRwIjoibG9jYWwiLCJuYW1lIjoic2lpZ29hcGlAcHJ1ZWJhcy5jb20iLCJtYWlsX3NpaWdvIjoic2lpZ29hcGlAcHJ1ZWJhcy5jb20iLCJjbG91ZF90ZW5hbnRfY29tcGFueV9rZXkiOiJTaWlnb0FQSSIsInVzZXJzX2lkIjoiNjI5IiwidGVuYW50X2lkIjoiMHgwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDM5MjIwMSIsInVzZXJfbGljZW5zZV90eXBlIjoiMCIsInBsYW5fdHlwZSI6IjE0IiwidGVuYW50X3N0YXRlIjoiMSIsIm11bHRpdGVuYW50X2lkIjoiNDA4IiwiY29tcGFuaWVzIjoiMCIsImFwaV9zdWJzY3JpcHRpb25fa2V5IjoiMTRmNGZkZWMxZTI5NDE0MGJkNzlmZTdjMGQ2MDQ0MDMiLCJhY2NvdW50YW50IjoiZmFsc2UiLCJqdGkiOiI4QkIzNkE4MTRCOTdGQjZCQTE2MUQwOTExOUJDM0Q5MCIsImlhdCI6MTY0NjMxMzQwMCwic2NvcGUiOlsiU2lpZ29BUEkiXSwiYW1yIjpbImN1c3RvbSJdfQ.TwVo7abBhIMXH8fS_NOZjHmkBm3LQK6mjTGpFvprUDEp1xJD5iuAiSjJJWwktzOcwPgMYiOtn8GooJiChvjplS8UjfC5hLSCp6djjT3TBd__ql28rT3AYCUelvpxWoIGk0SiojIjtU7JPafP_o4--AIohMC6nCzfrwX6zfb0_bM_pe-9GXuGPpR0C820V0azt12Natk0JFd5XfXJt9rC3FgKwqRD0lPATWrTHdPXY18cagVuhcnIWR5cjvySMO26rcDGcOREjmCx7p8jQP1_chWdihXM59leFQuB5qOwsQ67zeZjjbnLPlCqj2m0xk1y03Osm7EWnWbDHrHqGS4yfQ'
+      'Content-Type': 'application/json'
     })
-    .send("")
-    .end(function (resp) { 
-      if (resp.error){
-        console.log(resp.error)
-        res.status(404).send({message: 'Error ' +resp.error }); 
-      }  
-      console.log(res.raw_body);
-      res.status(200).send(resp.body)
-     
-    });
+    .send(JSON.stringify({
+      "username": params.user,
+      "access_key": params.key
+    }))
+    .end(async function (resp){ 
+      if (resp.error) throw new Error(resp.error); 
+      token = resp.body.access_token;
+
+      var req2 = unirest('GET', 'https://api.siigo.com/v1/invoices?page='+pg)
+      .headers({
+        'Authorization': 'Bearer ' + token
+      })
+      .send("")
+      .end(function (respu) { 
+        if (resp.error){
+          //console.log(resp.error)
+          res.status(404).send({message: 'Error ' +resp.error }); 
+        }  
+        //console.log(res.raw_body);
+        res.status(200).send(respu.body)
+       
+      });
+    
+    })
+
+
+
+
+
   
 
 }
 
 function authSiigo (req, res){
-    console.log('entro siigo')
+    //console.log('entro siigo')
     var unirest = require('unirest');
     var req = unirest('POST', 'https://siigonube.siigo.com:50050/connect/token')
     .headers({
@@ -448,7 +496,7 @@ function authSiigo (req, res){
     .send('scope=WebApi offline_access')
     .end(function (resp) { 
         if (res.error) throw new Error(res.error); 
-        console.log(res.raw_body);
+        //console.log(res.raw_body);
        res.status(200).send(resp);
     });
 }
@@ -604,7 +652,7 @@ async function PdfFactura(req, res){
   
   PDF.create(document)
       .then(resp => {
-          console.log(resp)
+          //console.log(resp)
           res.status(200).send({info:'Factura Creada Correctamente'});
       })
       .catch(error => {

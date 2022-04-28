@@ -10,6 +10,7 @@ import { MongoDbService } from 'src/app/services/mongodbservice';
 import { SiigoService } from '../../services/siigo.service'
 import {MatSort} from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import { Config } from 'src/app/models/config';
 
 interface Articulo{
   
@@ -21,6 +22,7 @@ interface Articulo{
 })
 export class ImportarInfoComponent implements OnInit {
   newDataUp:any;
+  config:any;
   displayedColumns: string[] = ['folio', 'unds', 'cop', 'detail'];
   @ViewChild(MatSort, {static: true}) sort!: MatSort;
   constructor( public dialog: MatDialog, @Inject(DOCUMENT) doc: any,
@@ -29,16 +31,18 @@ export class ImportarInfoComponent implements OnInit {
               // public _mongoService: MongoDbService
               public _siigoService:SiigoService
     ) { 
+      this.config = new Config();
       this.trmApi =  new TrmApi("aEOKmLbbPROhCr6iDiieAGCqt");
       this.trmApi
         .latest()
         .then((data:any) =>  console.log(this.trm =  data.valor))
         .catch((error:any) =>  console.log(error));
-      console.log(this.trm);
+      ////console.log(this.trm);
 
     }
 
   ngOnInit(): void {
+    this.getConfig()
     // this._mongoService.main();
   }
   log= false;
@@ -49,6 +53,20 @@ export class ImportarInfoComponent implements OnInit {
   register = 0;
   trm:any;
   trmApi:any;
+
+  getConfig(){
+    this._infoServce.getConfig().subscribe(
+      res=>{
+        if(res.length != 0){
+          this.config = res[0];
+          localStorage.setItem('categ',JSON.stringify(this.config.categorias))
+
+          ////console.log(this.config)
+        }
+       
+      }
+    )
+  }
 
 
   geXlsDocument(e:any) {
@@ -66,7 +84,7 @@ export class ImportarInfoComponent implements OnInit {
       this.data = (XLSX.utils.sheet_to_json(ws, { header: 1 }));
 
       // this.data.flat()  
-      // console.log(this.data);
+      // ////console.log(this.data);
       this.log= false;
 
     };
@@ -78,7 +96,6 @@ export class ImportarInfoComponent implements OnInit {
    documentos:Articulo[] = [];
    dataSource:any;
    getfacturacionSiigo(){
-
     this.log= true;
     this._infoServce.getfacturacionSiigo(this.tag).subscribe(
       res=>{
@@ -88,11 +105,11 @@ export class ImportarInfoComponent implements OnInit {
         console.table(res);
         this.log= false;
       }
-    )
+    );
    }
 
    sortData(event:any){
-     // console.log(event)
+     // ////console.log(event)
    }
 
   
@@ -117,8 +134,8 @@ export class ImportarInfoComponent implements OnInit {
       const wsC: XLSX.WorkSheet = wb.Sheets[wsnameC];
       this.dataCostumer = (XLSX.utils.sheet_to_json(wsC, { header: 1 }));
 
-      // console.log('Data',this.data);
-      // console.log('Costumer',this.dataCostumer);
+      // ////console.log('Data',this.data);
+      // ////console.log('Costumer',this.dataCostumer);
       this.convertirJson()
       this.log= false;
     };
@@ -132,15 +149,22 @@ export class ImportarInfoComponent implements OnInit {
   authSiigo(tag:string){
     this.progreso = 1;
     this.newDataUp =  this._socketService.listen('UpSiigo').subscribe((data:any)=>{
-      // console.log(data);
+      // ////console.log(data);
       this.progreso = (data.i / data.length)*100
-      // console.log(this.progreso)
+      // ////console.log(this.progreso)
     })
-    this._siigoService.sendInvoicesPeriodo(tag).subscribe(
+
+
+    let credenciales={
+      user:this.config.siigoUser,
+      key:this.config.siigoKey
+    }
+
+    this._siigoService.sendInvoicesPeriodo(credenciales, tag).subscribe(
       res => {
-        // console.log(res)
+        // ////console.log(res)
       },err=>{
-        // console.log(err.status)
+        // ////console.log(err.status)
         if(err.status == 200){
           let data = {titulo: 'Confirmaciòn', info:err.error.text, type: 'Confirm', icon:'done_all'}
   
@@ -149,7 +173,7 @@ export class ImportarInfoComponent implements OnInit {
           });
         
           dialogRef.afterClosed().subscribe(result => {
-            
+            // this.getfacturacionSiigo()
           })
         }
       }
@@ -157,7 +181,7 @@ export class ImportarInfoComponent implements OnInit {
   }
 
   saveInfoSocket(){
-    // console.log(JSON.stringify(this.registros))
+    // ////console.log(JSON.stringify(this.registros))
     this._socketService.emit('dataUpNow', JSON.stringify(this.registros))
   }
 
@@ -203,7 +227,7 @@ export class ImportarInfoComponent implements OnInit {
           this._infoServce.saveInfo(this.registros[i]).subscribe(
             res=>{
               this.register ++
-              // console.log(res)
+              // ////console.log(res)
               if(this.register ==  this.registros.length){
                
                 let data: Object
@@ -249,7 +273,7 @@ export class ImportarInfoComponent implements OnInit {
     for(var i = 1;i < this.dataCostumer.length; i++){
       let arr = this.dataCostumer[i];
       let par = Object.values(arr);
-      let reg = []
+      let reg = [];
       for (let i = 0; i < keysC.length; i++) {
         let obje = [keysC[i], par[i] || '' ]
         reg.push(obje)
@@ -268,7 +292,7 @@ export class ImportarInfoComponent implements OnInit {
 
       let fecha =  this.registros[i].Fecha;
       let split = fecha.split("/");
-      // // console.log(split)
+      // // ////console.log(split)
       this.registros[i].Importe = Number(this.registros[i].Importe)
       this.registros[i].Estado = 'Activa';
       
@@ -276,25 +300,26 @@ export class ImportarInfoComponent implements OnInit {
       this.registros[i].Siigo = [];
       this.registros[i].TRM = this.trm;
       this.registros[i].COP = Math.round(this.trm * this.registros[i].Importe);
-      console.log(this.registros[i].Costo_de_v)
+      ////console.log(this.registros[i].Costo_de_v)
       this.registros[i].Costo_de_v =  this.registros[i].Costo_de_v.replace(/,/g, '')
       this.registros[i].Costo_de_v = Number(this.registros[i].Costo_de_v)
-      // console.log(this.registros[i])
+      // ////console.log(this.registros[i])
       
-      console.log(Number(this.registros[i].Costo_de_v))
+      ////console.log(this.registros[i])
 
       if(parseInt(split[0]) <= 9){
         this.registros[i].Day = '0'+ split[0];
-        // console.log( this.registros[i].Day)
+        // ////console.log( this.registros[i].Day)
       }else{
         this.registros[i].Day = split[0];
-        // console.log( this.registros[i].Day)
+        // ////console.log( this.registros[i].Day)
       }
       this.registros[i].Month = split[1];
       this.registros[i].Year = '20'+split[2];
+      this.registros[i].Detalle = 'FAC '+this.registros[i].Folio + ' ' + this.registros[i].Descripcion_1 + ' ' +this.registros[i].Month + ' CANT: ' +this.registros[i].Cantidad + ' TRM: '+this.registros[i].TRM + ' USD: '+this.registros[i].Importe ;
     }
     this.log= false;
-    // console.log(this.registros)
+    // ////console.log(this.registros)
   }
 
 }

@@ -10,3 +10,22 @@
 .example-margin{
     margin: 20px 10px;
 }
+
+._100{
+    background:rgb(7, 231, 7);
+    text-align:center;
+    color: black;
+}
+
+._50{
+    background:tomato;
+    text-align:center;
+    color: black;
+}
+
+._90{
+    background:orange;
+    text-align:center;
+    color: black;
+}
+

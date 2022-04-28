@@ -1,12 +1,23 @@
 <mat-toolbar>
     <button mat-button [matMenuTriggerFor]="menuRef"><mat-icon class="mat-18">menu</mat-icon> <span>{{identity?.name}}</span> </button>
     
-  <span>Duty Free Parnerth</span>
+  <span>DUTY FREE PARTNERS COLOMBIA</span>
   <span class="example-spacer"></span>
 
 </mat-toolbar>
 <mat-menu #menuRef="matMenu">
-    <button mat-menu-item  routerLink="/">
+  <button mat-menu-item  routerLink="../" style="display: flex;">
+    <img style="width: 50px; margin-top: 5px;" src="assets/house.svg" >
+    <span style="margin-left: 10px;"> Inicio</span>
+  </button>
+  <ng-template let-item let-last="last" ngFor [ngForOf]="identity.modulos">
+    <button mat-menu-item  routerLink="../{{item.link}}" style="display: flex;">
+      <img style="width: 50px; margin-top: 5px;" src="/assets/{{item.img}}">
+      <span style="margin-left: 10px;"> {{item.titulo}}</span>
+    </button>
+    <mat-divider></mat-divider>
+  </ng-template>
+    <!-- <button mat-menu-item  routerLink="/">
       <mat-icon class="mat-18">home</mat-icon>  
       INICIO
     </button>
@@ -26,7 +37,7 @@
     </button> 
     <button mat-menu-item routerLink="/Data-Base">
       <mat-icon class="mat-18">note</mat-icon>REGISTROS
-    </button>
+    </button> -->
 
   <button  mat-menu-item  (click)="Logout()">
       <mat-icon class="mat-18">close</mat-icon>  

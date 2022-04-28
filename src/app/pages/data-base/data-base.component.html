@@ -28,10 +28,10 @@
         <span *ngIf="progreso != 0" style="color: blue;">{{progreso | number:'0.0-2'}}% </span> <mat-progress-bar *ngIf="progreso != 0" mode="determinate" [value]="progreso" color="accent" style="width: 90%; margin: 0 auto;"></mat-progress-bar>
     <mat-menu #menuRef="matMenu">
         <ng-template let-doc let-i="index" ngFor [ngForOf]="collections">
-            <button *ngIf="doc != 'users' && doc != 'documentos' && doc != 'operaciones'" mat-menu-item (click)="passDataCollections(doc)">
-                <mat-icon class="mat-18">check</mat-icon>  
-                {{doc}}   
-            </button>
+          <button *ngIf="doc != 'users' && doc != 'documentos' && doc != 'operaciones' && doc != 'Presupuestos'  && doc != 'Config'" mat-menu-item (click)="passDataCollections(doc)">
+            <mat-icon class="mat-18">check</mat-icon>  
+            {{doc}}   
+        </button>
         </ng-template> 
     </mat-menu>
 
@@ -71,7 +71,7 @@
       <!-- Weight Column -->
       <ng-container matColumnDef="vendedor">
         <th mat-header-cell *matHeaderCellDef> Vendedor </th>
-        <td mat-cell *matCellDef="let element"> {{element.Nombre_del_vendedor}} </td>
+        <td mat-cell *matCellDef="let element"> {{element.Nombre_del_vend}} </td>
       </ng-container>
     
       <!-- Symbol Column -->

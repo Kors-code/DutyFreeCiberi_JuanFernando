@@ -51,7 +51,7 @@ export class UsersComponent implements OnInit {
                 // this.operacion = this._userService.getPredetermidaOperacion();
                 this.Modulos = new Permisos().permisos;
 
-                console.log(this.Modulos)
+                //console.log(this.Modulos)
 
   }
 
@@ -69,11 +69,11 @@ export class UsersComponent implements OnInit {
   }
 
   getCategorias(){
-    //  console.log('categorias');
+    //  //console.log('categorias');
           // this._productosService.getCategorias(this.pCompany._id).subscribe(
           //     result => {
           //       // this.filterCatMarca = result.categorias;
-          //       // console.log(result)
+          //       // //console.log(result)
           //       if(!result.categorias){
                  
           //       }else{
@@ -88,7 +88,7 @@ export class UsersComponent implements OnInit {
           //     if(errorMessage != null){
           //         var body = JSON.parse(error._body);
           //         this.errorMessage = body.message;
-          //         //  console.log(error);
+          //         //  //console.log(error);
            
                 
           //     }
@@ -100,8 +100,8 @@ export class UsersComponent implements OnInit {
 
   // categoria:ParametroProducto = new ParametroProducto();
   addCategoria(item:any, categ:any){
-    // console.log(item);
-    // console.log(categ);
+    // //console.log(item);
+    // //console.log(categ);
     item.categorias.push(categ);
     // this.categoria = new ParametroProducto();
   }
@@ -118,12 +118,12 @@ export class UsersComponent implements OnInit {
   changeModulo(){
     this.user.modulos.unshift(this.modulos);
     this.modulos = undefined;
-    // console.log(this.user)
+    // //console.log(this.user)
   }
 
   changePass(item:any){
     this._userService.restablecerPassword(item).subscribe(res=>{
-      console.log(res)
+      //console.log(res)
       if(res){
         this.user = new User();
      
@@ -149,7 +149,7 @@ export class UsersComponent implements OnInit {
   deleteModulo(i: number){
     this.user.modulos.splice(i,1);
     this.modulos = undefined;
-    // console.log(this.user)
+    // //console.log(this.user)
   }
 
 
@@ -162,7 +162,7 @@ export class UsersComponent implements OnInit {
       let name = user.name.toLowerCase();
       if(name.indexOf(search) >= 0){
         usuariosArr.push(user);
-        // console.log(negociosArr)
+        // //console.log(negociosArr)
       }
     }
     return this.companyUsers = usuariosArr;
@@ -176,12 +176,12 @@ export class UsersComponent implements OnInit {
     this.companyUsers= [];
   
     if(search == 'todos'){
-      // console.log('entro')
+      // //console.log('entro')
       return this.companyUsers = this.originUsers;
     }
     search = search.toLowerCase();
     if(search == 'activo'){
-      // console.log(search)
+      // //console.log(search)
     let usuariosArr: User[] = [];
     for( let user of this.originUsers){
       let estado = user.estado.toLowerCase();
@@ -192,7 +192,7 @@ export class UsersComponent implements OnInit {
     return this.companyUsers = usuariosArr;
     }
     if(search == 'stoped'){
-      // console.log(search)
+      // //console.log(search)
     let usuariosArr: User[] = [];
     for( let user of this.originUsers){
       let estado = user.estado.toLowerCase();
@@ -216,14 +216,14 @@ Register(){
   this.user.confirm = false;
 
   // this.user.company.push(this.pCompany._id);
-  //  console.log(this.user);
-  //  console.log(form);
+  //  //console.log(this.user);
+  //  //console.log(form);
   this.loading  = true;
    this._userService.saveUser(this.user).subscribe(
      response => {
        let user = response.user;
         // this.user = user;
-        // console.log(response);
+        // //console.log(response);
         if(!user._id){
         //   this._dialogService.openAlert({
         //   message: 'No se Realizo el Registro del Usuario' + this.user.name,
@@ -258,7 +258,7 @@ Register(){
        if(errorMessage != null){
            var body = JSON.parse(error._body);
            this.errorMessage = body.message;
-           console.log(error);
+           //console.log(error);
           // this._dialogService.openAlert({
           //   message: '' + this.errorMessage,
           //   title: 'Error',
@@ -280,7 +280,7 @@ add(){
 
       //  for(var i = 0;i < this.identityOperacines.length; i++){
       //   if(this.identityOperacines[i]._id == this.operacion._id){
-      //     // console.log(i);
+      //     // //console.log(i);
       //     this.identityOperacines.splice(i, 1);
       //   }
       //  }
@@ -297,14 +297,14 @@ passUser(item:any){
 delete(item:any){
     // for(var i = 0;i < this.operaciones.length; i++){
     //   if(this.operaciones[i]._id == item){
-    //     // console.log(i);
+    //     // //console.log(i);
     //     this.operaciones.splice(i, 1);
-    //     // console.log(this.destinatarios);
+    //     // //console.log(this.destinatarios);
     //      this.user.deleteOperacion(i);
     //      this.nuevo();
     //   }
-        // console.log(this.user);
-        // console.log(this.companies);
+        // //console.log(this.user);
+        // //console.log(this.companies);
     // }
     
 }
@@ -336,7 +336,7 @@ getUsers(){
   this._userService.getUsers().subscribe(
     res =>{
       this.loading  = false;
-      console.log(res)
+      //console.log(res)
       this.fadeDiv = 'listado'
       // this.listado('listado')
       this.companyUsers = res.usuarios
@@ -353,7 +353,7 @@ getUsers(){
 deleteOperacion(i: number){
   this.user.operaciones.splice(i,1);
 
-  console.log(this.user)
+  //console.log(this.user)
 }
 
 listado(item: string){
@@ -375,7 +375,7 @@ fade(item: string): void {
 
 genero(item: any){
   // this.image.Location = item;
-  // console.log(this.user)
+  // //console.log(this.user)
 }
 
 changeRol(){
@@ -389,7 +389,7 @@ changeRol(){
       this.user.origen= 'Vinculado'
     }
   }
-  // console.log(this.user);
+  // //console.log(this.user);
 }
 
 update(){ 
@@ -398,7 +398,7 @@ update(){
  this._userService.updateUser(this.user).subscribe(
    Response => {
      // this.user = Response.user;
-    //  console.log(Response);
+    //  //console.log(Response);
      if(!Response.user){
       //  this._dialogService.openAlert({
       //      message: 'Informacion No Actualizada, Intente Nuevamente!' ,
@@ -429,7 +429,7 @@ update(){
      if(errorMessage != null){
          var body = JSON.parse(error._body);
          this.errorMessage = body.message;
-          // console.log(error);
+          // //console.log(error);
     
      }
      //  this._loadingService.resolve(); 
@@ -440,10 +440,10 @@ update(){
 
 deleteUser(){
   this.loading  = true;
-  // console.log(this.user)
+  // //console.log(this.user)
   this._userService.deleteUser(this.user._id).subscribe(
     (    res: any) => {
-      // console.log(res)
+      // //console.log(res)
       this.fadeDiv = 'listado';
       this.loading = false;
       let data: Object
@@ -479,7 +479,7 @@ deleteUser(){
 //       this._operacionesService.getOperaciones().subscribe(
 //         (        res: { operaciones: Operacion; })=>{
 //           this.operaciones = res.operaciones;
-//           // console.log(res)
+//           // //console.log(res)
 //         }
 //       )
 

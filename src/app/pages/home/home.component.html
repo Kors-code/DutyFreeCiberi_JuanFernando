@@ -25,9 +25,8 @@
   <img src="assets/DFP.jpg" width="200px" height="200px" >
   <div style="display: flex; justify-content: space-around; flex-wrap: wrap;"> 
     <ng-template let-item let-last="last" ngFor [ngForOf]="identity.modulos">
-      <mat-card-content class="card" routerLink="../{{item.link}}">
-         
-          <mat-card-content style="display: flex; flex-wrap: wrap; justify-content: center;">
+      <mat-card-content class="card">
+          <mat-card-content style="display: flex; flex-wrap: wrap; justify-content: center;"  routerLink="../{{item.link}}">
             <img mat-card-image   style="width: 100px; margin: 15px 10px;" src="/assets/{{item.img}}">
            <div>
             <h3  style="text-align: center;">{{item.titulo}}</h3>

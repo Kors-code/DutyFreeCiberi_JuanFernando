@@ -32,6 +32,66 @@ function registerInfo(req, res){
         });
 }
 
+async function agregarConfiguracion(req, res){
+    var params = req.body;
+    var coll = 'Config';
+    console.log('entro agregr config')
+    const url = 'mongodb://localhost:27017';
+    const client = new MongoClient(url);
+    const dbName = 'DutyFree';
+   
+        await client.connect();
+        console.log('Connected successfully to server');
+        const db = client.db(dbName);
+        const collection = db.collection(coll);
+        const insertResult = await collection.insertOne(params);
+        console.log('Inserted documents =>', insertResult);
+        res.status(200).send(insertResult);
+}
+
+async function getDataConfig(req, res){
+    var params = req.body;
+    var coll = 'Config';
+    // console.log(params)
+    const url = 'mongodb://localhost:27017';
+    const client = new MongoClient(url);
+    const dbName = 'DutyFree';
+   
+        await client.connect();
+        console.log('Connected successfully to server');
+        const db = client.db(dbName);
+        const collection = await db.collection(coll);
+        let arrayCollections = []
+        var reg = await collection.find().forEach(element => {
+            arrayCollections.push(element)
+         });
+        res.status(200).send(arrayCollections);
+}
+
+async function updateDataConfiguracion(req, res){
+    var params = req.body;
+    var coll = 'Config';
+   
+    console.log('75 config '+ params._id)
+    const url = 'mongodb://localhost:27017';
+    const client = new MongoClient(url);
+    const dbName = 'DutyFree';
+   
+        await client.connect();
+        console.log('Connected successfully to server');
+        const db = client.db(dbName);
+        const collection = await db.collection(coll);
+
+        collection.updateOne({_id:ObjectId(params._id)},{$set:{tiendas:params.tiendas, siigoUser:params.siigoUser, siigoKey:params.siigoKey, tags:params.tags, empleados:params.empleados, categorias:params.categorias}},{ upsert: false }, function(err,doc) {
+            if (err) { throw err; }
+            else { 
+                console.log(doc)
+                client.close();
+                res.status(200).send(doc); }
+          });        
+}
+
+
 async function agregarPresupuesto(req, res){
     var params = req.body;
     var coll = 'Presupuestos';
@@ -104,7 +164,25 @@ async function updateDataPresupuesto(req, res){
         const db = client.db(dbName);
         const collection = await db.collection(coll);
 
-        collection.findOneAndUpdate({_id : ObjectId(params._id)},{$set:{params}},{ upsert: false }, function(err,doc) {
+        collection.findOneAndUpdate({_id : ObjectId(params._id)},{$set:{
+            tag:params.tag,
+            estado:params.estado,
+            ventas:params.ventas,
+            comisiones:params.comisiones,
+            ventas_usd:params.ventas_usd,
+            TRM:params.TRM,
+            dias:params.dias,
+            capacidadVentas:params.capacidadVentas,
+            presupuesto_cop:params.presupuesto_cop,
+            presupuesto_usd:params.presupuesto_usd,
+            presupuesto_dia_cop:params.presupuesto_dia_cop,
+            presupuesto_dia_usd:params.presupuesto_dia_usd,
+            cumplimiento_cop:params.cumplimiento_cop,
+            cumplimiento_usd:params.cumplimiento_usd,
+            tiendas:params.tiendas,
+            vendedores:params.vendedores,
+            categorias:params.categorias,
+        }},{ upsert: false }, function(err,doc) {
             if (err) { throw err; }
             else { 
                 console.log(doc)
@@ -262,6 +340,31 @@ async function updateDataCollection(req, res){
         
 }
 
+async function updateDataVendedorCollection(req, res){
+    var params = req.body;
+    var coll = req.params.tag;
+    console.log('console update' + coll)
+    console.log(params)
+    const url = 'mongodb://localhost:27017';
+    const client = new MongoClient(url);
+    const dbName = 'DutyFree';
+   
+        await client.connect();
+        console.log('Connected successfully to server');
+        const db = client.db(dbName);
+        const collection = await db.collection(coll);
+
+        collection.findOneAndUpdate({_id : ObjectId(params._id)},{$set:{Nombre_del_vend: params.Nombre_del_vend,Codi :params.Codi }},{ upsert: false }, function(err,doc) {
+            if (err) { throw err; }
+            else { 
+                console.log(doc)
+                res.status(200).send(doc); }
+          });
+
+        // var reg = await collection.mod({_id:params._id}, params, { returnNewDocument: true })
+        
+}
+
 async function deleteDataCollection(req, res){
     var params = req.body;
     var coll = req.params.tag;
@@ -305,14 +408,16 @@ async function consultarInfoCategoria(req, res){
                         Cop: {$sum: '$COP'},
                         Cost: {$sum: {$toInt: "$Costo_de_v"}},
                         Detalle: {$addToSet : { 
-                            vendedor: "$Nombre_del_vendedor",
+                            vendedor: "$Nombre_del_vend",
                             cod_vend: "$Codi",
                             valor: {$sum: '$COP'},
                             usd:{$sum: '$Importe'},
                             und: {$sum: '$Cantidad'},
                         }},
                         
-                    }}
+                    }},{
+                        $sort : { Ventas: -1 }
+                      }
                 ]).toArray(function(err, items) {
             res.status(200).send(items);
         });
@@ -341,7 +446,9 @@ async function consultarInfoCategoriaTienda(req, res){
                             und: {$sum: '$Cantidad'},
                         }},
                         
-                    }}
+                    }},{
+                        $sort : { Ventas: -1 }
+                      }
                 ]).toArray(function(err, items) {
             res.status(200).send(items);
         });
@@ -412,6 +519,34 @@ async function getfacturacionSiigo(req, res){
 }
 
 
+async function getInformePresupuesoVendedor(req, res){
+    var params = req.body;
+         console.log(params)
+        await client.connect();
+        console.log('Connected successfully to server');
+        var coll = req.params.tag;
+        const collection = db.collection(coll);
+        collection.aggregate([
+                    { $group: {
+                        _id: {clasi:"$Clasi"},
+                        Ventas:{$sum: '$Importe'},
+                        VentasCop:{$sum: '$COP'},
+                        Vendedor:"$Nombre_del_vend",
+                        Unidades:{$sum: '$Cantidad'},
+                        Cost: {$sum: {$toInt: '$Costo_de_v'}},
+                        // Detalle: {$addToSet : { 
+                        //     categ: "$Descr",
+                        //     cod_categ: "$Clasi",
+                        //     valor: '$Importe',
+                        //     valorCop: {$sum: '$COP'},
+                        //     und: {$sum: '$Cantidad'},
+                        // }},
+                    }},
+                ]).toArray(function(err, items) {
+            res.status(200).send(items);
+        });
+}
+
 async function getInformeVendedor(req, res){
     var params = req.body;
          console.log(params)
@@ -434,7 +569,9 @@ async function getInformeVendedor(req, res){
                             valorCop: {$sum: '$COP'},
                             und: {$sum: '$Cantidad'},
                         }},
-                    }},
+                    }},{
+                        $sort : { Ventas: -1 }
+                      }
                 ]).toArray(function(err, items) {
             res.status(200).send(items);
         });
@@ -504,6 +641,7 @@ module.exports = {
     getRegistros,
     getInfoDato,
     getInformeVendedor,
+    getInformePresupuesoVendedor,
     getfacturacionSiigo,
     getDataCollectionEstado,
     agregarInfo,
@@ -520,7 +658,12 @@ module.exports = {
     agregarPresupuesto,
     getDataPresupuesto,
     getDataPresupuestoTag,
-    updateDataPresupuesto
+    updateDataPresupuesto,
+
+    agregarConfiguracion,
+    getDataConfig,
+    updateDataConfiguracion,
+    updateDataVendedorCollection
 }
 
 

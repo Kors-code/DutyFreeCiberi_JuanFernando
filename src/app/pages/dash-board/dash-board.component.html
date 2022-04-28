@@ -1,10 +1,11 @@
 
+<mat-progress-bar mode="indeterminate" *ngIf="log" ></mat-progress-bar> 
 <div style="display: flex; justify-content: center;">
   <button mat-button [matMenuTriggerFor]="menuRef"><mat-icon class="mat-18">menu</mat-icon> <span>Colecciones</span> </button>
 
   <mat-menu #menuRef="matMenu">
     <ng-template let-doc let-i="index" ngFor [ngForOf]="collections">
-        <button *ngIf="doc != 'users' && doc != 'documentos' && doc != 'operaciones' && doc != 'Presupuestos'" mat-menu-item (click)="passDataCollections(doc)">
+        <button *ngIf="doc != 'users' && doc != 'documentos' && doc != 'operaciones' && doc != 'Presupuestos'  && doc != 'Config'" mat-menu-item (click)="passDataCollections(doc)">
             <mat-icon class="mat-18">check</mat-icon>  
             {{doc}}   
         </button>
@@ -13,24 +14,24 @@
 </div>
   <mat-tab-group *ngIf="informeCateg" mat-align-tabs="center">
     <mat-tab label="Presupuesto">
-      <mat-card-content>
-
+      <mat-card-content *ngIf="presupuesto">
+        <h1 style="text-align: center;"> {{presupuesto.categorias.length}} CATEGORIAS</h1>
         <table style="width: 90%; margin: 0 auto; font-size: 1.3em;" class="mat-elevation-z8">
           <thead style="background-color:rgb(63, 62, 62) ; color:white; padding: 15px; font-size: 1em; border-radius: 10px;">
             <tr>
-              <th>PRESUPUESTO </th>
-              <th>{{presupuesto.tag}} </th>
-              <th>COP:  <span style="color: chartreuse;">{{presupuesto.presupuesto_cop  | number:'0.0-0'}}</span></th>
-              <th>USD:  <span style="color: chartreuse;">{{presupuesto.presupuesto_usd  | number:'0.0-0'}}</span></th>
-              <th>DIAS: <span style="color: chartreuse;">{{presupuesto.dias  | number:'0.0-0'}}</span> </th>
-              <th  colspan="2">ESTADO: {{presupuesto.estado}}</th>
+              <td>PRESUPUESTO </td>
+              <td>{{presupuesto.tag}} </td>
+              <td>COP:  <span style="color: chartreuse;">{{presupuesto.presupuesto_cop  | number:'0.0-0'}}</span></td>
+              <td>USD:  <span style="color: chartreuse;">{{presupuesto.presupuesto_usd  | number:'0.0-0'}}</span></td>
+              <td>DIAS: <span style="color: chartreuse;">{{presupuesto.dias  | number:'0.0-0'}}</span> </td>
+              <td  colspan="2">ESTADO: {{presupuesto.estado}}</td>
             </tr>
             <tr>
-              <th colspan="2">Resultados</th>
-              <th>VT Cop <span style="color: chartreuse;">{{presupuesto.ventas  | number:'0.0-0'}}</span></th>
-              <th>VT Usd <span style="color: chartreuse;">{{presupuesto.ventas_usd  | number:'0.0-0'}}</span></th>
-              <th>FALTA <span style="color: chartreuse;">{{presupuesto.ventas_usd - presupuesto.presupuesto_usd | number:'0.0-0'}}</span></th>
-              <th colspan="2">CUMPLIMIENTO <span style="color: chartreuse;">{{(presupuesto.presupuesto_usd / presupuesto.ventas_usd)*100 | number:'0.0-0'}}%</span></th>
+              <td colspan="2">Resultados</td>
+              <td>VT Cop <span style="color: chartreuse;">{{presupuesto.ventas  | number:'0.0-0'}}</span></td>
+              <td>VT Usd <span style="color: chartreuse;">{{presupuesto.ventas_usd  | number:'0.0-0'}}</span></td>
+              <td>FALTA <span style="color: chartreuse;">{{presupuesto.ventas_usd - presupuesto.presupuesto_usd | number:'0.0-0'}}</span></td>
+              <td colspan="2" >CUMPLIMIENTO <span style="color: chartreuse;">{{( presupuesto.ventas_usd / presupuesto.presupuesto_usd)*100 | number:'0.0-0'}}%</span></td>
             </tr>
             <tr>
               <th colspan="1"> CATEGORIA</th>
@@ -48,35 +49,145 @@
              <td style="text-align:center">{{item.participacion}}%</td>
              <td style="text-align:right">{{item.presupuesto_usd  | number:'0.0-0'}}</td>
              <td style="text-align:right">{{item.ventas  | number:'0.0-0'}}</td>
-             <td style="text-align:center">{{(item.ventas / item.presupuesto_usd)*100 | number:'0.0-0'}}%</td>
+             <td  class="normal"  [class._50]="(item.ventas / item.presupuesto_usd) <= 0.80"   [class._100]="(item.ventas / item.presupuesto_usd) >= 0.99" [class._90]="(item.ventas / item.presupuesto_usd) >= 0.80 && (item.ventas / item.presupuesto_usd) <= 0.99" >{{(item.ventas / item.presupuesto_usd)*100 | number:'0.0-0'}}%</td>
              <td style="text-align:right">{{(item.ventas - item.presupuesto_usd) | number:'0.0-0'}}</td>
              <td style="text-align:center">{{(item.ventas / presupuesto.ventas_usd) * 100 | number:'0.0-0'}}%</td>
             </tr>
           </tbody>
         </table>
 
-        <div style="width: 90%; margin: 0 auto;">
-          <h2 tyle="text-align: center;">CUMPLIMIENTO PRESUPUESTAL {{coleccion}}</h2>
-          <ngx-charts-bar-horizontal-2d
-          [view]="viewBa"
-          [scheme]="colorScheme"
-          [results]="multy"
-          [gradient]="gradient"
-          [xAxis]="showXAxis"
-          [yAxis]="showYAxis"
-          [legend]="showLegend"
-          [showXAxisLabel]="showXAxisLabel"
-          [showYAxisLabel]="showYAxisLabel"
-          [xAxisLabel]="xAxisLabel"
-          [yAxisLabel]="yAxisLabel"
-          [legendTitle]="legendTitle"
-          (select)="onSelect($event)"
-          (activate)="onActivate($event)"
-          (deactivate)="onDeactivate($event)">
-        </ngx-charts-bar-horizontal-2d>
-      </div>
-       
+        <div style="width: 90%; margin: 0 auto; " class="mat-elevation-z8">
+          <h1 style="text-align: center;"> {{presupuesto.tiendas.length}} TIENDAS</h1>
+          <mat-accordion *ngIf="presupuesto.tiendas.length != 0">
+            <mat-expansion-panel hideToggle *ngFor="let item of presupuesto.tiendas">
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  {{item.tienda}} Participacion {{item.part}}% PPTO $ {{ item.presupuesto_usd  | number:'0.0-0'}} USD $ {{ item.usd  | number:'0.0-0'}} <span>  CUMP {{ (item.usd / item.presupuesto_usd)  *100 | number:'0.0-2'}}%</span>
+                </mat-panel-title>
+              </mat-expansion-panel-header>
+              <mat-card-content>
+                <table style="width: 90%; margin: 0 auto;" class="mat-elevation-z8">
+                  <thead style="background-color:rgb(63, 62, 62) ; color:white; padding: 15px; font-size: 1em; border-radius: 10px;">
+                  <tr>
+                    <td> Ventas USD </td> <td style="text-align: center;"> <span style="color: chartreuse;">{{item.usd  | number:'0.0-2'}}</span></td>
+                    <td> Presupuesto USD </td> <td style="text-align: center;"> <span style="color: chartreuse;">{{item.presupuesto_usd  | number:'0.0-2'}}</span></td>
+                    <td> Cumplimiento </td> <td style="text-align: center;"> <span style="color: chartreuse;">{{ (item.usd / item.presupuesto_usd)  *100 | number:'0.0-2'}}%</span></td>
+                  </tr>
+   
+                  </thead>
+                </table>
+                <table style="width: 90%; margin: 0 auto;font-size: 1.3em;" class="mat-elevation-z8">
+                  <thead>
+                    <th>CATEGORÍA</th>
+                    <th>% PART</th>
+                    <th>PPTO</th>
+                    <th>VENTAS</th>
+                    <th>RESTA</th>
+                    <th>%CUMPLIM</th>
+                  
+                  </thead>
+               
+                  <tbody *ngFor="let cat of item.ptto" style="background-color:rgb(63, 62, 62) ; color:white; padding: 15px; font-size: 1em; border-radius: 10px;">
+                    <tr>
+                      <td>{{cat.titulo}}</td>
+                      <td style="text-align: center;">{{cat.participacion  | number:'0.0-2'}}%</td>
+                      <td style="text-align:right;">{{cat.presupuesto_usd | number:'0.0-0'}}</td>
+                      <td style="text-align:right;">{{cat.ventas | number:'0.0-0'}}</td>
+                      <td style="text-align:right;">{{cat.ventas - cat.presupuesto_usd  | number:'0.0-2'}}</td>
+                      <td [class._50]="(cat.ventas / cat.presupuesto_usd) <= 0.80" [class._90]="(cat.ventas / cat.presupuesto_usd) >= 0.80 && (cat.ventas / cat.presupuesto_usd) <= 0.99" [class._100]="(cat.ventas / cat.presupuesto_usd) >= 1">{{(cat.ventas / cat.presupuesto_usd)*100  | number:'0.0-2'}} %</td>
+                     
+                    </tr>
+                  </tbody>
+                </table> 
+               
+                    <!-- <table *ngFor="let cat of item.ptto" style="width: 90%; margin: 0 auto;" class="mat-elevation-z8">
+                      <thead style="background-color:rgb(63, 62, 62) ; color:white; padding: 15px; font-size: 1em; border-radius: 10px;">
+                    
+                        <tr>
+                          <td colspan="2"> {{cat.participacion}}% Categoria: {{cat.titulo}} $ {{cat.presupuesto_usd  | number:'0.0-0'}}
+                  
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>Presupuesto USD:  <span style="color: chartreuse;">{{cat.presupuesto_usd  | number:'0.0-0'}}</span></td>
+                        
+                        <td>USD Dia:  <span style="color: chartreuse;">{{cat.presupuesto_dia_usd  | number:'0.0-0'}}</span></td>
+  
+                        </tr>
+              
+                      </thead>
+                    </table>  -->
+          
+           
+
+              </mat-card-content>
+            </mat-expansion-panel>
+          </mat-accordion>
+        </div>
+
+        <div style="width: 90%; margin: 0 auto; " class="mat-elevation-z8">
+          <h1 style="text-align: center;"> {{presupuesto.vendedores.length}} VENDEDORES $ {{totalVendedores |  number:'0.0-2'}} COMISION {{(totalCoisiones / totalVendedores)* 100 |  number:'0.0-2'}}% $  {{totalCoisiones |  number:'0.0-2'}}  </h1>
+          <mat-accordion *ngIf="presupuesto.vendedores.length != 0">
+            <mat-expansion-panel hideToggle *ngFor="let item of presupuesto.vendedores">
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  %CUMPLIM:  <span style="color: blue; margin-left: 10px; margin-right: 10px;">{{item.Cumplimiento * 100  | number:'0.0-2'}}%  </span>
+                  {{item.codigo}} - {{item.name}}  PPTO$ {{item.USD  | number:'0.0-0'}} VENTAS {{item.Ventas | number:'0.0-0' }} 
+                </mat-panel-title>
+              </mat-expansion-panel-header>
+              <mat-card-content>
+                <table style="width: 90%; margin: 0 auto;" class="mat-elevation-z8">
+                  <thead style="background-color:rgb(63, 62, 62) ; color:white; padding: 15px; font-size: 1em; border-radius: 10px;">
+                  <tr>
+                    <td> Ventas USD </td> <td style="text-align: center;"> <span style="color: chartreuse;">{{item.Ventas  | number:'0.0-2'}}</span></td>
+                    <td> Presupuesto USD </td> <td style="text-align: center;"> <span style="color: chartreuse;">{{item.USD  | number:'0.0-2'}}</span></td>
+                    <td> Cumplimiento </td> <td style="text-align: center;"> <span style="color: chartreuse;">{{item.Cumplimiento * 100  | number:'0.0-2'}}%</span></td>
+                  </tr>
+                  <tr>
+                    <td>Comisiones</td> 
+                    <td style="text-align: center;"><span style="color: chartreuse;">{{item.Comisiones  | number:'0.0-2'}}</span></td>
+                    <td style="text-align: center;">%</td> 
+                    <td style="text-align: center;"><span style="color: chartreuse;"> {{(item.Comisiones / item.Ventas)* 100   | number:'0.0-2'}} %</span></td>
+                    <td>
+                      <button mat-button (click)="passVendedor(item)"><mat-icon>person</mat-icon></button>
+                    </td>
+                  </tr>
+                  </thead>
+                </table>
+
+                <table style="width: 90%; margin: 0 auto; font-size: 1.3em;" class="mat-elevation-z8">
+                  <thead>
+                    <th>CATEGORÍA</th>
+                    <th>% PART</th>
+                    <th>PPTO</th>
+                    <th>VENTAS</th>
+                    <th>RESTA</th>
+                    <th>%CUMPLIM</th>
+                    <th>% COMISIÓN </th>
+                    <th>COMISIÓN USD</th>
+                  </thead>
+               
+                  <tbody *ngFor="let cat of item.categorias" style="background-color:rgb(63, 62, 62) ; color:white; padding: 15px; font-size: 1em; border-radius: 10px;">
+                    <tr>
+                      <td>{{cat.titulo}}</td>
+                      <td style="text-align: center;">{{cat.participacion  | number:'0.0-2'}}%</td>
+                      <td style="text-align:right;">{{cat.presupuesto_usd | number:'0.0-0'}}</td>
+                      <td style="text-align:right;">{{cat.ventas | number:'0.0-0'}}</td>
+                      <td style="text-align:right;">{{cat.ventas - cat.presupuesto_usd  | number:'0.0-2'}}</td>
+                      <td [class._50]="(cat.ventas / cat.presupuesto_usd) <= 0.80" [class._90]="(cat.ventas / cat.presupuesto_usd) >= 0.80 && (cat.ventas / cat.presupuesto_usd) <= 0.99" [class._100]="(cat.ventas / cat.presupuesto_usd) >= 1">{{(cat.ventas / cat.presupuesto_usd)*100  | number:'0.0-2'}} %</td>
+                      <td style="text-align: center;">{{(cat.comisionesUsd / cat.ventas)*100 | number:'0.0-2'}}%</td>
+                      <td style="text-align:right;">{{cat.comisionesUsd | number:'0.0-2'}}</td>
+                    </tr>
+                  </tbody>
+                </table> 
+
+              </mat-card-content>
+            </mat-expansion-panel>
+           
+          </mat-accordion>
+        </div>
     </mat-card-content>
+    
 
     </mat-tab>
     <mat-tab label="Categoria"> 
@@ -301,6 +412,22 @@
 
     <mat-tab label="Vendedores">
       <div style="display:flex; justify-content:center; flex-wrap: wrap; margin-top: 20px; width: 90%; margin: 0 auto;" class="mat-elevation-z8">
+        <section class="section">
+          <mat-checkbox class="example-margin" [(ngModel)]="showLabels">Etiquetas</mat-checkbox>
+          <mat-checkbox class="example-margin" [(ngModel)]="gradient">Gradiente</mat-checkbox>
+          <mat-checkbox class="example-margin" [(ngModel)]="showLegend">Leyenda</mat-checkbox>
+          <mat-checkbox class="example-margin" [(ngModel)]="isDoughnut">Dona</mat-checkbox>
+          <mat-form-field appearance="fill" class="example-margin">
+            <mat-label>Descargar</mat-label>
+            <mat-select [disabled]="">
+              <mat-option (click)="downloadFile(downloadVendedores, 'Vendedores')"><mat-icon>cloud_download</mat-icon> Descargar Info Vendedores</mat-option>
+            </mat-select>
+          </mat-form-field>
+    
+          
+        </section>
+        
+
         <ngx-charts-advanced-pie-chart
         [view]="view"
         [results]="single"
@@ -321,6 +448,7 @@
               <td style="text-align:center; padding:5px; ">Unds</td>
               <td style="text-align:center; padding:5px; ">USD</td>
               <td style="text-align:center; padding:5px; ">PART %</td>
+              <td style="text-align:center; padding:5px; ">ITEM PROMEDIO</td>
             </tr>
           </thead>
           <tbody>
@@ -340,6 +468,8 @@
                 <td style="text-align:center;">{{item.Unidades}}</td>
                 <td style="text-align:right;">{{item.Ventas | number:'0.0-0'}}</td>
                 <td style="text-align:right;">{{(item.Ventas / totalVendedores)*100 | number:'0.0-2'}}%</td>
+               
+                <td style="text-align:right;"> $ {{item.Ventas / item.Unidades | number:'0.0-2'}}</td>
               </tr>
            
       
@@ -385,6 +515,26 @@
     </mat-tab>
 
     <mat-tab label="Grafico"> 
+      <div style="width: 90%; margin: 0 auto;">
+        <h2 tyle="text-align: center;">CUMPLIMIENTO PRESUPUESTAL {{coleccion}}</h2>
+        <ngx-charts-bar-horizontal-2d
+        [view]="viewBa"
+        [scheme]="colorScheme"
+        [results]="multy"
+        [gradient]="gradient"
+        [xAxis]="showXAxis"
+        [yAxis]="showYAxis"
+        [legend]="showLegend"
+        [showXAxisLabel]="showXAxisLabel"
+        [showYAxisLabel]="showYAxisLabel"
+        [xAxisLabel]="xAxisLabel"
+        [yAxisLabel]="yAxisLabel"
+        [legendTitle]="legendTitle"
+        (select)="onSelect($event)"
+        (activate)="onActivate($event)"
+        (deactivate)="onDeactivate($event)">
+      </ngx-charts-bar-horizontal-2d>
+    </div> 
      
     </mat-tab>
   </mat-tab-group>

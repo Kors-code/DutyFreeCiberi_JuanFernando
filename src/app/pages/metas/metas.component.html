@@ -1,64 +1,196 @@
-<mat-tab-group  mat-align-tabs="center">
+<mat-progress-bar mode="indeterminate" *ngIf="log" ></mat-progress-bar> 
+<mat-tab-group  mat-align-tabs="center" [selectedIndex]="selected.value"
+(selectedIndexChange)="selected.setValue($event)" >
     
     <mat-tab>
         <ng-template mat-tab-label>
-            <mat-icon class="example-tab-icon">details</mat-icon>
+            <mat-icon class="example-tab-icon">data_exploration</mat-icon>
                 PRESUPUESTO
           </ng-template>
           <div style="display: flex; justify-content: center;">
             <button *ngIf="presupuesto._id == ''" mat-button color="accent" [disabled]="" (click)="registerPresupuesto()" style="margin-right:10px;" ><mat-icon>save</mat-icon> Guardar</button>
             <button *ngIf="presupuesto._id != ''" mat-button color="accent" [disabled]="" (click)="updatePresupuesto()" style="margin-right:10px;" ><mat-icon>edit</mat-icon> Editar</button>
-            <button   mat-button color="warn" [disabled]="" (click)="deleteRegistro()" style="margin-right:10px;" ><mat-icon>delete</mat-icon> Eliminar</button>
+            <button *ngIf="presupuesto._id != ''" mat-button color="accent" [disabled]="" (click)="nuevoPresupuesto()" style="margin-right:10px;" ><mat-icon>add</mat-icon> Nuevo</button>
+           
           </div>
 
-          <mat-card>
-              <mat-form-field appearance="fill" style="text-align: center; font-size: 1.3em; margin-right: 20px;">
+          <mat-card class="mat-elevation-z8" style="width: 80%; text-align: center; margin: 0 auto;" >
+            <mat-form-field appearance="fill" style="text-align: center; font-size: 1.3em; margin-right: 20px;">
+              <mat-label>TRM Esperada</mat-label>
+              <input matInput placeholder="TRM" type="number" name="trm" [(ngModel)]="trm">
+            </mat-form-field>
+            <mat-form-field appearance="fill" style="margin-right: 20px;">
+              <mat-label>Tag Base Datos</mat-label>
+              <mat-select [(ngModel)]="presupuesto.tag">
+                <mat-option *ngFor="let item of config.tags" [value]="item.tag">
+                  {{item.tag}}
+                </mat-option>
+
+              </mat-select>
+            </mat-form-field>    
+            <!-- <mat-form-field appearance="fill" style="text-align: center; font-size: 1.3em; margin-right: 20px;">
                 <mat-label>Tag Base Datos</mat-label>
                 <input matInput placeholder="Data Base" type="text" name="tag" [(ngModel)]="presupuesto.tag">
-              </mat-form-field>
-              <mat-form-field appearance="fill" style="text-align: center; font-size: 1.3em; margin-right: 20px;">
-                <mat-label>Presupuesto COP</mat-label>
-                <input matInput placeholder="Ventas COP" type="number" name="presupuesto_cop" [(ngModel)]="presupuesto.presupuesto_cop">
-              </mat-form-field>
-              <mat-form-field appearance="fill" style="text-align: center; font-size: 1.3em; margin-right: 20px;">
+              </mat-form-field> -->
+              <mat-form-field (change)="cambiarCop()" appearance="fill" style="text-align: center; font-size: 1.3em; margin-right: 20px; margin-right: 20px;">
                 <mat-label>Presupuesto USD</mat-label>
                 <input matInput placeholder="Ventas USD" type="number" name="presupuesto_usd" [(ngModel)]="presupuesto.presupuesto_usd">
               </mat-form-field>
+              <!-- <mat-form-field appearance="fill" style="text-align: center; font-size: 1.3em; margin-right: 20px;">
+                <mat-label>Presupuesto COP</mat-label>
+                <input matInput placeholder="Ventas COP" type="number" name="presupuesto_cop" [(ngModel)]="presupuesto.presupuesto_cop">
+              </mat-form-field> -->
+            
               <mat-form-field appearance="fill" style="text-align: center; font-size: 1.3em; margin-right: 20px;">
                 <mat-label>Dias Periodo</mat-label>
-                <input matInput placeholder="Ventas USD" type="number" name="dias" [(ngModel)]="presupuesto.dias">
+                <input matInput [disabled]="presupuesto.presupuesto_usd == 0" placeholder="Ventas USD" type="number" name="dias" [(ngModel)]="presupuesto.dias">
               </mat-form-field>
-              <button *ngIf="presupuesto._id == ''" mat-button color="accent" [disabled]="" (click)="Presupuestar()" style="margin-right:10px;" ><mat-icon>send</mat-icon> Generar</button>
-              <div>
-                  <h3>Presupuesto COP Dia: {{presupuesto.presupuesto_dia_cop  | number:'0.0-0'}}</h3>
-                  <h3>Presupuesto USD Dia: {{presupuesto.presupuesto_dia_usd  | number:'0.0-0'}}</h3>
-              </div>
-              <mat-accordion>
+              <!-- <input type="file" multiple="false" (change)="onFileChange($event)" style="font-size: 1.3em;"> -->
+
+              <button *ngIf="!presupuesto._id" [disabled]="!presupuesto.dias" mat-raised-button color="accent" [disabled]="" (click)="Presupuestar()" style="margin-right:10px;" > Generar <mat-icon>send</mat-icon> </button>
+              
+              <table style="width: 90%; margin: 0 auto; font-size: 1.3em;" class="mat-elevation-z8">
+                <thead style="background-color:rgb(63, 62, 62) ; color:white; padding: 15px; font-size: 1em; border-radius: 10px;">
+                  <tr>
+                    <td>Presupuesto USD Dia: <span style="color: chartreuse;">{{presupuesto.presupuesto_dia_usd  | number:'0.0-0'}}</span> </td>
+                    <td>Presupuesto COP Dia: <span style="color: chartreuse;">{{presupuesto.presupuesto_dia_cop  | number:'0.0-0'}}</span></td>
+                  </tr>
+                  <tr>
+                    <td>Intensidad de Servicio:  <span style="color: chartreuse;">{{presupuesto.capacidadVentas  | number:'0.0-0'}}</span></td>
+                    <td>Coeficiente de Venta Pto <span style="color: chartreuse;">{{presupuesto.presupuesto_usd / presupuesto.capacidadVentas  | number:'0.0-0'}}</span></td>
+                  </tr>
+                  <tr *ngIf="catParticipacion != 0 ">
+                    <td>Suma Participaciones <span style="color: red;">{{catParticipacion | number:'0.0-3'}}%</span></td>
+                  </tr>
+                </thead>
+              </table>
+
+              <mat-accordion *ngIf="presupuesto.presupuesto_dia_usd != 0">
                 <mat-expansion-panel hideToggle *ngFor="let item of presupuesto.categorias">
                   <mat-expansion-panel-header>
                     <mat-panel-title>
-                      Categoria: {{item.titulo}} $ {{item.presupuesto_usd  | number:'0.0-0'}}
+                     {{item.participacion}}% Categoria: {{item.titulo}} $ {{item.presupuesto_usd  | number:'0.0-0'}}
                     </mat-panel-title>
                     
                   </mat-expansion-panel-header>
                   <mat-card-content>
                     <mat-form-field appearance="fill" style="text-align: center; font-size: 1.3em; margin-right: 20px;">
                         <mat-label>Participacion %</mat-label>
-                        <input matInput placeholder="Participacion" type="number" name="dias" [(ngModel)]="item.participacion">
+                        <input matInput placeholder="Participacion" type="number" name="dias" [(ngModel)]="item.participacion" (change)="cambioParticipacion(item)">
                       </mat-form-field> 
                   </mat-card-content>
-                  <h3>Presupuesto COP: {{item.presupuesto_cop  | number:'0.0-0'}}</h3>
-                  <h3>Presupuesto USD: {{item.presupuesto_usd  | number:'0.0-0'}}</h3>
+                  <table style="width: 90%; margin: 0 auto;" class="mat-elevation-z8">
+                    <thead style="background-color:rgb(63, 62, 62) ; color:white; padding: 15px; font-size: 1em; border-radius: 10px;">
+                      <tr>
+                        <td>Presupuesto USD:  <span style="color: chartreuse;">{{item.presupuesto_usd  | number:'0.0-0'}}</span></td>
+                        <td>Presupuesto COP:  <span style="color: chartreuse;">{{item.presupuesto_cop  | number:'0.0-0'}}</span></td>
+                        
+                        <td>USD Dia:  <span style="color: chartreuse;">{{item.presupuesto_usd  | number:'0.0-0'}}</span></td>
+                        <td>COP Dia:  <span style="color: chartreuse;">{{item.presupuesto_dia_cop  | number:'0.0-0'}}</span></td>
 
-                  <h3>Presupuesto COP Dia: {{item.presupuesto_dia_cop  | number:'0.0-0'}}</h3>
-                  <h3>Presupuesto USD Dia: {{item.presupuesto_dia_usd  | number:'0.0-0'}}</h3>
+                      </tr>
+                   
+                  
+              
+                    </thead>
+                  </table> 
+        
                 </mat-expansion-panel>
                
+              </mat-accordion>
+              <h1> {{presupuesto.tiendas.length}} TIENDAS  </h1>
+              <mat-accordion *ngIf="presupuesto.tiendas.length != 0">
+                <mat-expansion-panel hideToggle *ngFor="let item of presupuesto.tiendas">
+                  <mat-expansion-panel-header>
+                    <mat-panel-title>
+                      {{item.tienda}} Participacion {{item.part}}% PPTO $ {{item.presupuesto_usd  | number:'0.0-0'}}
+                    </mat-panel-title>
+                  </mat-expansion-panel-header>
+                  <mat-card-content>
+               
+                   
+                        <table *ngFor="let cat of item.ptto" style="width: 90%; margin: 0 auto;" class="mat-elevation-z8">
+                          <thead style="background-color:rgb(63, 62, 62) ; color:white; padding: 15px; font-size: 1em; border-radius: 10px;">
+                        
+                            <tr>
+                              <td colspan="2"> {{cat.participacion}}% Categoria: {{cat.titulo}} $ {{cat.presupuesto_usd  | number:'0.0-0'}}
+                                <!-- <mat-form-field appearance="fill" style="text-align: center; font-size: 1.3em; margin-right: 20px;">
+                                  <mat-label>Participacion %</mat-label>
+                                  <input matInput placeholder="Participacion" type="number" name="part" [(ngModel)]="cat.participacion">
+                                </mat-form-field>  -->
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>Presupuesto USD:  <span style="color: chartreuse;">{{cat.presupuesto_usd  | number:'0.0-0'}}</span></td>
+                            
+                            <td>USD Dia:  <span style="color: chartreuse;">{{cat.presupuesto_dia_usd  | number:'0.0-0'}}</span></td>
+      
+                            </tr>
+                  
+                          </thead>
+                        </table> 
+              
+               
+
+                  </mat-card-content>
+                </mat-expansion-panel>
+              </mat-accordion>
+              <h1> {{presupuesto.vendedores.length}} VENDEDORES
+                <!-- <button mat-button color="accent" (click)="TotalizarPtoEmpleados()">
+                  CALCULAR
+                </button> -->
+
+              </h1>
+              <mat-accordion *ngIf="presupuesto.vendedores.length != 0">
+                <ng-template let-item let-i="index" ngFor [ngForOf]="presupuesto.vendedores">
+                <mat-expansion-panel hideToggle>
+                  <mat-expansion-panel-header>
+                    <mat-panel-title>
+                     {{item.codigo}} - {{item.name}}  PPTO $ {{item.USD  | number:'0.0-0'}} Dias {{item.Dias}} Pto Dia {{item.USD / item.Dias  | number:'0.0-0'}}
+                    </mat-panel-title>
+                    
+                  </mat-expansion-panel-header>
+                  <mat-card-content>
+                    <mat-card-content>
+                      <mat-form-field appearance="fill" style="text-align: center; font-size: 1.3em; margin-right: 20px;">
+                          <mat-label>Dias Programados</mat-label>
+                          <input  (change)="TotalizarPtoEmpleados()" matInput  placeholder="Dias Programados" type="number" name="dias" [(ngModel)]="item.Dias">
+                        </mat-form-field> 
+                        <button   mat-button color="warn" [disabled]="" (click)="deleteEmpleado(i)" style="margin-right:10px;" ><mat-icon>delete</mat-icon> Eliminar</button>
+                    </mat-card-content>
+                    <mat-accordion>
+                      <mat-expansion-panel hideToggle *ngFor="let cat of item.categorias">
+                        <mat-expansion-panel-header>
+                          <mat-panel-title>
+                           {{cat.participacion}}% Categoria: {{cat.titulo}} $ {{cat.presupuesto_usd  | number:'0.0-0'}}
+                          </mat-panel-title>
+                          
+                        </mat-expansion-panel-header>
+                        <table style="width: 90%; margin: 0 auto;" class="mat-elevation-z8">
+                          <thead style="background-color:rgb(63, 62, 62) ; color:white; padding: 15px; font-size: 1em; border-radius: 10px;">
+                            <tr>
+                              <td>Presupuesto USD:  <span style="color: chartreuse;">{{cat.presupuesto_usd  | number:'0.0-0'}}</span></td>
+                            
+                            <td>USD Dia:  <span style="color: chartreuse;">{{cat.presupuesto_dia_usd  | number:'0.0-0'}}</span></td>
+      
+                            </tr>
+                  
+                          </thead>
+                        </table> 
+              
+                      </mat-expansion-panel>
+                     
+                    </mat-accordion>
+                  </mat-card-content>
+     
+        
+                </mat-expansion-panel>
+                </ng-template>
               </mat-accordion>
 
           </mat-card>
          
-            <json-editor [options]="editorOptions" [data]="presupuesto" (change)="getData($event)"></json-editor>
+            <!-- <json-editor [options]="editorOptions" [data]="presupuesto" (change)="getData($event)"></json-editor> -->
     </mat-tab>
     <mat-tab>
         <ng-template mat-tab-label>
@@ -66,8 +198,20 @@
             ACTIVOS
         </ng-template>
         <mat-card-content>
-           
-                <h1 (click)="passPresupuesto(item)"  *ngFor="let item of presupuestos">{{item.tag}}</h1>
+          <mat-list>
+            <div mat-subheader>Periodos</div>
+            <mat-list-item *ngFor="let folder of presupuestos" style="cursor: pointer;">
+              <mat-icon mat-list-icon>folder</mat-icon>
+              <div mat-line (click)="passPresupuesto(folder)">{{folder.tag}}</div>
+              <div mat-line (click)="passPresupuesto(folder)"> {{folder.presupuesto_usd | number}} </div>
+              <mat-divider></mat-divider>
+            </mat-list-item>
+          
+         
+        
+          </mat-list>
+<!--            
+                <h1   *ngFor="let item of presupuestos">{{item.tag}}</h1> -->
         
         </mat-card-content>
     </mat-tab>

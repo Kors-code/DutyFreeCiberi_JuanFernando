@@ -45,24 +45,24 @@ export class SiigoService {
         return this._http.post<any>(this.url+'auth-siigo', paramas, {headers:headers});
     }
 
-    sendInvoicesPeriodo(tag:string){
-        // let paramas = JSON.stringify(register);
+    sendInvoicesPeriodo(register:any,tag:string){
+        let paramas = JSON.stringify(register);
         let headers = new HttpHeaders({
-            // 'Content-Type': 'application/json',
+            'Content-Type': 'application/json',
             'Authorization': this.getToken()
         });
-        return this._http.get<responseN>(this.url+'up-invoice/'+ tag, {headers:headers});
+        return this._http.post<responseN>(this.url+'up-invoice/'+ tag, paramas,{headers:headers});
     
     }
 
 
-    getFacturasSiigo(tag:number){
-          // let paramas = JSON.stringify(register);
+    getFacturasSiigo(register:any,tag:number){
+          let paramas = JSON.stringify(register);
           let headers = new HttpHeaders({
-            // 'Content-Type': 'application/json',
+            'Content-Type': 'application/json',
             'Authorization': this.getToken()
         });
-        return this._http.get<paginacion>(this.url+'invoice-siigo/'+ tag, {headers:headers});
+        return this._http.post<paginacion>(this.url+'invoice-siigo/'+ tag,paramas, {headers:headers});
     }
 
     getDataCollectionsEstado(tag:string,estado:string){

@@ -15,7 +15,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { ImportarInfoComponent } from './pages/importar-info/importar-info.component';
 import { DataBaseComponent, DialogDataJson } from './pages/data-base/data-base.component';
-import { DashBoardComponent } from './pages/dash-board/dash-board.component';
+import { DashBoardComponent, DialogDataVendedor } from './pages/dash-board/dash-board.component';
 import { MetasComponent } from './pages/metas/metas.component';
 import { NgxJsonViewerModule } from 'ngx-json-viewer';
 import { NgJsonEditorModule } from 'ang-jsoneditor' ;
@@ -36,7 +36,8 @@ import { SiigoComponent } from './pages/siigo-conection/siigo.component';
     DataBaseComponent,
     DashBoardComponent,
     MetasComponent,
-    SiigoComponent
+    SiigoComponent,
+    DialogDataVendedor
   ],
   imports: [
     BrowserModule,
@@ -52,6 +53,6 @@ import { SiigoComponent } from './pages/siigo-conection/siigo.component';
   ],
   providers: [],
   bootstrap: [AppComponent],
-  entryComponents:[DialogConfirm, DialogDataJson]
+  entryComponents:[DialogConfirm, DialogDataJson, DialogDataVendedor]
 })
 export class AppModule { }

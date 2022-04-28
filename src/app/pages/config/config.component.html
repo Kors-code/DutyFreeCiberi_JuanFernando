@@ -1,26 +1,290 @@
-
 <mat-card>
-<h1>Configuracion</h1>
-<mat-accordion class="example-headers-align" multi>
+<h1 style="text-align: center;">Configuracion
+  <button *ngIf="!config._id"   mat-raised-button aria-label="Clear" color="accent" (click)="guardarConfigurcion()">
+    <mat-icon>save</mat-icon> Guardar Configuracion</button>
+  <button *ngIf="config._id"  mat-raised-button aria-label="Clear" color="accent" (click)="updateConfiguracion()">
+      <mat-icon>save</mat-icon> Editar Configuracion</button>
+</h1>
+  <mat-accordion class="example-headers-align" multi>
     <mat-expansion-panel>
       <mat-expansion-panel-header>
         <mat-panel-title>
-            Importar Informacion
+          <mat-icon>upload_file</mat-icon>  Siigo API
         </mat-panel-title>
         <mat-panel-description>
-            Tags de importacion
-          <mat-icon>upload_file</mat-icon>
+            Coneccion Siigo 
         </mat-panel-description>
       </mat-expansion-panel-header>
       <mat-card-content> 
-        <mat-form-field class="example-form-field" appearance="fill">
-            <mat-label>Clearable input</mat-label>
-            <input matInput type="text" [(ngModel)]="value">
-            <button *ngIf="value" matSuffix mat-icon-button aria-label="Clear" (click)="value=''">
-              <mat-icon>add</mat-icon>
-            </button>
+        <mat-form-field style="margin-right: 25px;" appearance="fill">
+            <mat-label>siigoUser</mat-label>
+            <input matInput type="text" [(ngModel)]="config.siigoUser">
+          </mat-form-field>
+          <mat-form-field style="width: 60%;" appearance="fill">
+            <mat-label>siigoKey</mat-label>
+            <input matInput type="text" [(ngModel)]="config.siigoKey">
           </mat-form-field>
       </mat-card-content>
     </mat-expansion-panel>
-</mat-accordion>
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <mat-icon>list</mat-icon>
+              IMPORTAR INFORMACION
+          </mat-panel-title>
+          <mat-panel-description>
+              Tags de importacion
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <mat-card-content> 
+          <mat-checkbox class="example-margin" [(ngModel)]="checked">Activo</mat-checkbox>
+          <mat-form-field style="margin-right: 20px;" appearance="fill">
+              <mat-label>TAG-INFO</mat-label>
+              <input matInput type="text" [(ngModel)]="tag">
+              <button *ngIf="tag" matSuffix mat-icon-button aria-label="Clear" (click)="addTag()">
+                <mat-icon>add</mat-icon>
+              </button>
+            </mat-form-field>
+        </mat-card-content>
+        <mat-card-content>
+
+          <mat-nav-list>
+            <ng-template let-item let-i="index" ngFor [ngForOf]="config.tags">
+              <mat-list-item >
+                <button mat-icon-button (click)="deleteTag(i)">
+                  <mat-icon>delete</mat-icon>
+               </button>
+                <mat-checkbox class="example-margin" [(ngModel)]="item.Activo">Activo</mat-checkbox>
+                 <h5 style="margin:0 10px;">{{ item.tag }}</h5>
+                
+              </mat-list-item>
+            </ng-template>
+           
+            
+          </mat-nav-list>
+
+        </mat-card-content>
+
+      </mat-expansion-panel>
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <mat-icon>list</mat-icon>  CATEGORIAS PRESUPUESTO <span style="color: red; margin-left: 20px;" *ngIf="catParticipacion != 0 ">{{catParticipacion | number:'0.0-3'}}%</span>
+          </mat-panel-title>
+          <mat-panel-description>
+              Categorias Ventas;
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <mat-card-content *ngIf="categoria._id != 0 || nuevo "> 
+          <div style="display: flex; align-items: flex-end; width: 100%;">
+            <button *ngIf="categoria._id == 0" matSuffix mat-icon-button aria-label="Clear" (click)="addCategoria()">
+              <mat-icon>add</mat-icon>
+            </button>
+            <button *ngIf="categoria._id != 0" matSuffix mat-icon-button aria-label="Clear" (click)="editCategoria()">
+              <mat-icon>edit</mat-icon>
+            </button>
+          </div>
+          <mat-form-field style="margin-right: 25px;" appearance="fill">
+            <mat-label>titulo</mat-label>
+            <input matInput type="text" [(ngModel)]="categoria.titulo">
+          </mat-form-field>
+          <mat-form-field style="margin-right: 25px;" appearance="fill">
+            <mat-label>participacion</mat-label>
+            <input matInput type="number" (change)="cambioParticipacion(categoria)" [(ngModel)]="categoria.participacion" >
+          </mat-form-field>
+          <mat-card-content style="display:flex;">
+            <h5>Sub categorias</h5>
+            <mat-form-field class="example-form-field" appearance="fill">
+              <mat-label>Cod Sub Categoria</mat-label>
+              <input matInput type="number" [(ngModel)]="subscat">
+              <button *ngIf="subscat" matSuffix mat-icon-button aria-label="Clear" (click)="addSubscat()">
+                <mat-icon>add</mat-icon>
+              </button>
+            </mat-form-field>
+            <mat-nav-list>
+              <ng-template let-item let-i="index" ngFor [ngForOf]="categoria.subscat">
+                <mat-list-item >
+                  <button mat-icon-button (click)="deleteSubscat(i)">
+                    <mat-icon>delete</mat-icon>
+                 </button>
+                   <h5 style="margin:0 10px;">{{ item }}</h5>
+                </mat-list-item>
+              </ng-template> 
+            </mat-nav-list>
+          </mat-card-content>
+          <mat-card-content style="display:flex;">
+            <h5>Sub Cumplimientos
+              <div style="display: flex;">
+                <button matSuffix mat-icon-button aria-label="Clear" (click)="addCumpli()">
+                  <mat-icon>add</mat-icon>
+                </button>
+                <button matSuffix mat-icon-button aria-label="Clear" (click)="editCumplimiento()">
+                  <mat-icon>edit</mat-icon>
+                </button>
+              </div>
+            
+            </h5>
+            <mat-form-field class="example-form-field" appearance="fill">
+              <mat-label>inicia</mat-label>
+              <input matInput type="number" [(ngModel)]="cumplimiento.inicia">
+            </mat-form-field>
+            <mat-form-field class="example-form-field" appearance="fill">
+              <mat-label>finaliza</mat-label>
+              <input matInput type="number" [(ngModel)]="cumplimiento.finaliza">
+            </mat-form-field>
+            <mat-form-field class="example-form-field" appearance="fill">
+              <mat-label>asesor</mat-label>
+              <input matInput type="number" [(ngModel)]="cumplimiento.asesor">
+            </mat-form-field>
+            <mat-form-field class="example-form-field" appearance="fill">
+              <mat-label>asesorSking</mat-label>
+              <input matInput type="number" [(ngModel)]="cumplimiento.asesorSking">
+            </mat-form-field>
+            <mat-form-field class="example-form-field" appearance="fill">
+              <mat-label>lider</mat-label>
+              <input matInput type="number" [(ngModel)]="cumplimiento.lider">
+            </mat-form-field>
+            <mat-form-field class="example-form-field" appearance="fill">
+              <mat-label>subGerente</mat-label>
+              <input matInput type="number" [(ngModel)]="cumplimiento.subGerente">
+            </mat-form-field>
+    
+  
+          </mat-card-content>
+          <mat-nav-list>
+            <ng-template let-item let-i="index" ngFor [ngForOf]="categoria.cumplimientos">
+              <mat-list-item >
+                <button mat-icon-button (click)="deleteCumplimiento(i)">
+                  <mat-icon>delete</mat-icon>
+               </button>
+                 <h5 (click)="pasCumplimiento(item)"  style="margin:0 10px;">Inicia %: {{ item.inicia }} finaliza %: {{ item.inicia }} 
+                  asesor % {{ item.asesor }} 
+                  asesorSking % {{ item.asesorSking }} 
+                  lider % {{ item.lider }} 
+                  subGerente % {{ item.subGerente }} </h5>
+              </mat-list-item>
+            </ng-template>
+           
+            
+          </mat-nav-list>
+  
+        
+        </mat-card-content>
+        <mat-card-content *ngIf="categoria._id == 0 &&!nuevo ">
+          <h2>Listado Categorias 
+            <button matSuffix mat-icon-button aria-label="Clear" (click)="nuevo = true">
+              <mat-icon>add</mat-icon>
+            </button>
+          </h2>
+          <mat-nav-list>
+            <ng-template let-item let-i="index" ngFor [ngForOf]="config.categorias">
+              
+              <mat-list-item >
+                <button mat-icon-button (click)="deleteCategoria(i)">
+                  <mat-icon>delete</mat-icon>
+               </button>
+                 <h5 style="margin:0 10px;" (click)="pasCategoria(item)" >
+                  {{item.titulo}} Participacion {{item.participacion}}%
+                </h5>
+              </mat-list-item>
+            </ng-template>
+           
+            
+          </mat-nav-list>
+          
+
+        </mat-card-content>
+
+      </mat-expansion-panel>
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <mat-icon>list</mat-icon> TIENDAS PARTICIPACION PRESUPUESTO
+          </mat-panel-title>
+          <mat-panel-description>
+            Puntos de venta a Analizar
+          
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <mat-card-content> 
+          <mat-form-field style="margin-right: 25px;" appearance="fill">
+            <mat-label>titulo</mat-label>
+            <input matInput type="text" [(ngModel)]="tienda">
+          </mat-form-field>
+          <mat-form-field style="margin-right: 25px;" appearance="fill">
+            <mat-label>participacion</mat-label>
+            <input matInput type="number" [(ngModel)]="tiendaParticipacion">
+            <button matSuffix mat-icon-button aria-label="Clear" (click)="addTienda()">
+              <mat-icon>add</mat-icon>
+            </button>
+            <button matSuffix mat-icon-button aria-label="Clear" (click)="editTienda()">
+              <mat-icon>cancel</mat-icon>
+            </button>
+          </mat-form-field>
+        </mat-card-content>
+        <mat-nav-list>
+          <ng-template let-item let-i="index" ngFor [ngForOf]="config.tiendas">
+            <mat-list-item >
+              <button mat-icon-button (click)="deleteTienda(i)">
+                <mat-icon>delete</mat-icon>
+             </button>
+               <h5 style="margin:0 10px;" (click)="pastienda(item)" > {{ item.tienda }} Participacion %: {{ item.part }} 
+              </h5>
+            </mat-list-item>
+          </ng-template> 
+        </mat-nav-list>
+      </mat-expansion-panel>
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <mat-icon>list</mat-icon> EMPLEADOS PRESUPUESTO
+          </mat-panel-title>
+          <mat-panel-description>
+            Listado de Colaboradores
+        
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <mat-card-content> 
+          <mat-form-field style="margin-right: 20px;" appearance="fill">
+              <mat-label>identificacion</mat-label>
+              <input matInput type="text" [(ngModel)]="empleado.identificacion">
+            </mat-form-field>
+            <mat-form-field style="margin-right: 20px;" appearance="fill">
+              <mat-label>contrato</mat-label>
+              <input matInput type="text" [(ngModel)]="empleado.contrato">
+            </mat-form-field>
+            <mat-form-field style="margin-right: 20px;" appearance="fill">
+              <mat-label>codigo</mat-label>
+              <input matInput type="text" [(ngModel)]="empleado.codigo">
+            </mat-form-field>
+            <mat-form-field style="margin-right: 20px;" appearance="fill">
+              <mat-label>Nombres Completos</mat-label>
+              <input matInput type="text" [(ngModel)]="empleado.name">
+              <button matSuffix mat-icon-button aria-label="Clear" (click)="addEmpleado()">
+                <mat-icon>add</mat-icon>
+              </button>
+              <button matSuffix mat-icon-button aria-label="Clear" (click)="editEmpleado()">
+                <mat-icon>edit</mat-icon>
+              </button>
+            </mat-form-field>
+        </mat-card-content>
+        <mat-card-content>
+          <mat-nav-list>
+          <ng-template let-item let-i="index" ngFor [ngForOf]="config.empleados">
+            <mat-list-item  style="display: flex;">
+
+             
+               <h5  mat-line style="margin:0 10px; cursor: pointer;"  >
+                <button mat-icon-button  (click)="deleteEmpleado(i)" >
+                  <mat-icon>delete</mat-icon>
+                </button>
+                <span (click)="pasEmpleado(item)"> {{ item.name }}</span>
+                
+                  </h5>
+            </mat-list-item>
+          </ng-template> 
+          </mat-nav-list>
+        </mat-card-content>
+      </mat-expansion-panel>
+  </mat-accordion>
 </mat-card>

@@ -6,6 +6,7 @@ import { JsonEditorComponent, JsonEditorOptions } from 'ang-jsoneditor';
 import { DialogConfirm } from '../confirm-dialog/confirm-dialog.component';
 import { SocketIOService } from '../../services/socketIo.service';
 import { SiigoService } from 'src/app/services/siigo.service';
+import { Config } from 'src/app/models/config';
 
 @Component({
   selector: 'app-data-base',
@@ -22,22 +23,40 @@ export class DataBaseComponent implements OnInit {
   search:any
   paginacion:any;
   log:boolean = false;
+  config:any;
   displayedColumns: string[] = ['folio', 'fecha', 'vendedor', 'siigo', 'facsiigo','importe', 'trm', 'cop', 'ver'];
   constructor(public _infoService:InfoService,  public _socketService:SocketIOService,
     public _siigoService:SiigoService,
-    public dialog: MatDialog, @Inject(DOCUMENT) doc: any,) { }
+    public dialog: MatDialog, @Inject(DOCUMENT) doc: any,) {
+      this.config = new Config();
+     }
 
   ngOnInit(): void {
-    // this.getRegistros(1);
+    this.getConfig();
     this.getCollections();
   }
+
+  getConfig(){
+    this._infoService.getConfig().subscribe(
+      res=>{
+        if(res.length != 0){
+          this.config = res[0];
+          // localStorage.setItem('categ',JSON.stringify(this.config.categorias))
+
+          ////console.log(this.config)
+        }
+       
+      }
+    )
+  }
+
 
 
   getCollections(){
     this._infoService.getCollections().subscribe(
       res=>{
         this.collections = res
-        console.log(res)
+        ////console.log(res)
       }
     )
   }
@@ -51,7 +70,7 @@ export class DataBaseComponent implements OnInit {
     this.key = tag;
     this._infoService.getDataCollections(tag).subscribe(
       res=>{
-        console.log(res)
+        ////console.log(res)
         this.documentos = res;
         this.headers= Object.keys(this.documentos[0])
         this.subir = this.documentos.map(function(e: { Estado: any; }) { return e.Estado; }).indexOf('Activa');
@@ -62,8 +81,10 @@ export class DataBaseComponent implements OnInit {
           this.totalCop= this.totalCop + element.COP
           this.totalUsd= this.totalUsd + element.Importe
         });
-       
 
+        if(this.subir != -1){
+          // this.authSiigo(this.key)
+        }
         this.log = false;
       }
     )
@@ -78,7 +99,7 @@ export class DataBaseComponent implements OnInit {
     this._infoService.getHeadersCollections(tag).subscribe(
       res =>{
         this.headers = res
-        console.log(res)
+        ////console.log(res)
       }
     )
   }
@@ -86,13 +107,13 @@ export class DataBaseComponent implements OnInit {
   campo = "";
   getRegistroCollections(doc:string){
     this.campo = doc;
-    console.log(doc)
+    ////console.log(doc)
 
 
   }
 
   public getRegistros(pg:number){
-    console.log(pg)
+    ////console.log(pg)
     let data = {
       options: {
         page: pg,
@@ -104,12 +125,12 @@ export class DataBaseComponent implements OnInit {
     }
     this._infoService.getRegistros(data).subscribe(
       res =>{
-        console.log(res)
+        ////console.log(res)
         this.documentos = res.docs;
         this.headers= Object.keys(this.documentos[0].info)
-        console.log(this.documentos);
+        ////console.log(this.documentos);
         this.paginacion= res;
-        console.log(this.paginacion)
+        ////console.log(this.paginacion)
       }
     )
   }
@@ -125,21 +146,30 @@ export class DataBaseComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
 
+      //console.log(result)
+      if(result == item){
+        //console.log('igual')
+      }else{
+        //console.log('cambio')
+        this.getDataCollections(this.key)
+      }
+      item = result
+
     })
-    // console.log(event)
+    // ////console.log(event)
   }
 
 
   buscarRegistro(){
     let registro = [[this.campo, this.search]];
-    console.log(registro)
+    ////console.log(registro)
     let obj = Object.fromEntries(registro)
-    console.log(obj)
+    ////console.log(obj)
 
     this._infoService.getDataCollectionsKey(obj, this.key).subscribe(
       res=>{
         this.documentos = res;
-        console.log(res)
+        ////console.log(res)
       }
     )
  
@@ -158,25 +188,31 @@ export class DataBaseComponent implements OnInit {
   authSiigo(tag:string){
     this.progreso = 1;
     this.newDataUp =  this._socketService.listen('UpSiigo').subscribe((data:any)=>{
-      console.log(data);
+      ////console.log(data);
       this.progreso = (data.i / data.length)*100
-      console.log(this.progreso)
+      ////console.log(this.progreso)
     })
-    this._siigoService.sendInvoicesPeriodo(tag).subscribe(
+    let credenciales={
+      user:this.config.siigoUser,
+      key:this.config.siigoKey
+    }
+    ////console.log(credenciales)
+    this._siigoService.sendInvoicesPeriodo(credenciales, tag).subscribe(
       res => {
-        console.log(res)
+        ////console.log(res)
       },err=>{
-        console.log(err.status)
+        ////console.log(err.status)
         if(err.status == 200){
-          let data = {titulo: 'Confirmaciòn', info:err.error.text, type: 'Confirm', icon:'done_all'}
+          this.getDataCollections(this.key)
+          // let data = {titulo: 'Confirmaciòn', info:err.error.text, type: 'Confirm', icon:'done_all'}
   
-          let dialogRef = this.dialog.open(DialogConfirm,{
-            data: data
-          });
+          // let dialogRef = this.dialog.open(DialogConfirm,{
+          //   data: data
+          // });
         
-          dialogRef.afterClosed().subscribe(result => {
-            this.getDataCollections(this.key)
-          })
+          // dialogRef.afterClosed().subscribe(result => {
+          //   this.getDataCollections(this.key)
+          // })
         }
       }
     )
@@ -205,7 +241,7 @@ export class DialogDataJson {
     public dialogRef: MatDialogRef<DialogDataJson>,
     public dialog: MatDialog, @Inject(DOCUMENT) doc: any,
     @Inject(MAT_DIALOG_DATA) public data: any) {
-      console.log(data)
+      ////console.log(data)
       this.editorOptions = new JsonEditorOptions()
       this.editorOptions.modes = ['code', 'text', 'tree', 'view']; // set all allowed modes
     //this.options.mode = 'code'; //set only one mode
@@ -213,7 +249,7 @@ export class DialogDataJson {
       this.keys = Object.keys(data.reg)
       this.values = Object.values(data.reg)
       this.info = data.reg
-      // console.log(this.keys)
+      // ////console.log(this.keys)
      }
 
   onNoClick(): void {
@@ -221,7 +257,7 @@ export class DialogDataJson {
   }
 
   cancelar(){
-    this.dialogRef.close();
+    this.dialogRef.close(this.info);
   }
   
   confirmar(){
@@ -235,33 +271,37 @@ export class DialogDataJson {
   doc:any
   getData(event:Event){
     this.doc = event;
-    console.log(this.doc)
+    //console.log(this.doc)
   }
 
   UpdateRegistro(){
-    console.log(this.doc);
-    this._infoService.updateRegistro(this.doc, this.data.coll).subscribe(
+    //console.log(this.doc);
+    if(this.doc){
+      this.info = this.doc
+    }
+    this._infoService.updateRegistroVendedor(this.info, this.data.coll).subscribe(
       res=>{
+        // this.doc = res
+        //console.log(res)
         let data: Object
         data = {titulo: 'Exito', info:'Se Actualizo la Informacion Correctamente', icon:'done_all' }
 
         let dialogRef = this.dialog.open(DialogConfirm,{
           data: data
-        
-        });
   
+        });  
         dialogRef.afterClosed().subscribe(result => {
 
-          // this.loading  = false;
+
         })
-        console.log(res)
+        ////console.log(res)
       }
     )
     
   }
 
   deleteRegistro(){
-    console.log(this.doc);
+    ////console.log(this.doc);
     this._infoService.deleteRegistro(this.info._id, this.data.coll).subscribe(
       res=>{
         let data: Object
@@ -276,7 +316,7 @@ export class DialogDataJson {
 
           // this.loading  = false;
         })
-        console.log(res)
+        ////console.log(res)
       }
     )
     

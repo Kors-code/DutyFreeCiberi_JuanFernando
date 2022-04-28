@@ -6,11 +6,19 @@
       <mat-label>TRM</mat-label>
       <input matInput placeholder="TRM" type="number" name="trm" [(ngModel)]="trm">
     </mat-form-field>
-    <mat-form-field appearance="fill" style="text-align: center; font-size: 1.3em; margin-right: 20px;">
+    <mat-form-field appearance="fill">
+      <mat-label>Tag Base Datos</mat-label>
+      <mat-select [(ngModel)]="tag">
+        <mat-option *ngFor="let item of config.tags" [value]="item.tag">
+          {{item.tag}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>  
+    <!-- <mat-form-field appearance="fill" style="text-align: center; font-size: 1.3em; margin-right: 20px;">
       <mat-label>Tag Base Datos</mat-label>
       <input matInput placeholder="Data Base" type="text" name="tag" [(ngModel)]="tag">
-    </mat-form-field>
-      <input *ngIf="tag" type="file" multiple="false" (change)="onFileChange($event)" style="font-size: 1.3em;">
+    </mat-form-field> -->
+      <input *ngIf="tag" type="file" multiple="false" (change)="onFileChange($event)" style="font-size: 1.3em; margin-left: 10px;">
       
   </div>
 

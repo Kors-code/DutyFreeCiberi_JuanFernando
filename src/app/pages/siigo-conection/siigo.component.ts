@@ -2,6 +2,7 @@ import { DOCUMENT } from '@angular/common';
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
+import { Config } from 'src/app/models/config';
 import { InfoService } from '../../services/info.service';
 import { SiigoService } from '../../services/siigo.service';
 import { DialogDataJson } from '../data-base/data-base.component';
@@ -31,36 +32,58 @@ export class SiigoComponent implements OnInit {
   dataSource:data[] = [];
   paginacion:any;
   log=false;
+  config:any;
   constructor(public _infoService:InfoService,
     public _siigoService:SiigoService,
     public dialog: MatDialog, @Inject(DOCUMENT) doc: any,) {
+      this.config = new Config();
 
   }
   
   ngOnInit(): void {
-    this.getFacturasSiigo(1);
+   
+    this.getConfig();
   }
 
 
-  authSiigo(){
-    this._siigoService.sendInvoicesPeriodo('ENE-22').subscribe(
-      res => {
-        // console.log(res)
+  getConfig(){
+    this._infoService.getConfig().subscribe(
+      res=>{
+        if(res.length != 0){
+          this.config = res[0];
+          // localStorage.setItem('categ',JSON.stringify(this.config.categorias))
+ this.getFacturasSiigo(1);
+          //console.log(this.config)
+        }
+       
       }
     )
   }
 
+
+  // authSiigo(){
+  //   this._siigoService.sendInvoicesPeriodo('ENE-22').subscribe(
+  //     res => {
+  //       // //console.log(res)
+  //     }
+  //   )
+  // }
+
   getFacturasSiigo(n:number){
     this.log = true
-    this._siigoService.getFacturasSiigo(n).subscribe(
+    let credenciales={
+      user:this.config.siigoUser,
+      key:this.config.siigoKey
+    }
+    this._siigoService.getFacturasSiigo(credenciales, n).subscribe(
       res => {
         this.paginacion= res.pagination
         this.dataSource =  res.results;
         this.displayedColumns =  Object.keys(this.dataSource[0]);
 
-        console.log(this.displayedColumns)
+        //console.log(this.displayedColumns)
         
-        console.log(res)
+        //console.log(res)
         this.log = false
       }
     )
@@ -75,7 +98,7 @@ export class SiigoComponent implements OnInit {
   pageEvent:PageEvent = new PageEvent();
 
   pageEventC(event:any){
-    console.log(event)
+    //console.log(event)
     this.getFacturasSiigo(event.pageIndex);
   }
 
@@ -86,7 +109,7 @@ export class SiigoComponent implements OnInit {
   }
 
   verRegistro(item:any){
-    console.log(item)
+    //console.log(item)
     let registro = {reg:item, coll:'noting'} 
     let dialogRef = this.dialog.open(DialogDataJson,{
       data: registro
@@ -103,15 +126,13 @@ export class SiigoComponent implements OnInit {
     this._siigoService.getDataCollectionsEstado('FEB',item).subscribe(
       res=>{
         this.log = false;
-        console.log(res)
+        //console.log(res)
         if(res.length != 0){
           this.verRegistro(res);
         }
       }
     )
-    console.log(
-      item
-    )
+    //console.log(item)
   }
 
  }

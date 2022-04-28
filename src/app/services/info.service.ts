@@ -68,6 +68,16 @@ export class InfoService {
     
     }
 
+    getInformePresupuestoVendedor(tag:string){
+        // let paramas = JSON.stringify(register);
+        let headers = new HttpHeaders({
+            // 'Content-Type': 'application/json',
+            'Authorization': this.getToken()
+        });
+        return this._http.get<responseN>(this.url+'info-vendedor-ppto/'+tag, {headers:headers});
+    
+    }
+
     getCollections(){
         // let paramas = JSON.stringify(register);
         let headers = new HttpHeaders({
@@ -175,6 +185,16 @@ export class InfoService {
                 params, {headers:headers})
     }
 
+    updateRegistroVendedor(update:any, tag:string){
+        let params = JSON.stringify(update);
+        let headers = new HttpHeaders({
+            'Content-Type': 'application/json',
+            'Authorization': this.getToken()
+        });
+        return this._http.post<response>(this.url +'update-document-vendedor/'+ tag,
+                params, {headers:headers})
+    }
+
     deleteRegistro(del:any, tag:string){
         let headers = new HttpHeaders({
             'Content-Type': 'application/json',
@@ -220,6 +240,34 @@ export class InfoService {
             'Authorization': this.getToken()
         });
         return this._http.put<response>(this.url +'presupuesto/',
+                params, {headers:headers})
+    }
+
+
+    agregarConfiguracion(register:any){
+        let paramas = JSON.stringify(register);
+        let headers = new HttpHeaders({
+            'content-Type':'application/json',
+            'Authorization': this.getToken()
+        });
+        return this._http.post<agregar>(this.url+'configuracion/', paramas, {headers:headers});
+    }
+
+    getConfig(){
+        let headers = new HttpHeaders({
+            // 'Content-Type': 'application/json',
+            'Authorization': this.getToken()
+        });
+        return this._http.get<any>(this.url+'configuracion/', {headers:headers});
+    }
+
+    updateConfiguracion(update:any){
+        let params = JSON.stringify(update);
+        let headers = new HttpHeaders({
+            'Content-Type': 'application/json',
+            'Authorization': this.getToken()
+        });
+        return this._http.put<response>(this.url +'configuracion/',
                 params, {headers:headers})
     }
     

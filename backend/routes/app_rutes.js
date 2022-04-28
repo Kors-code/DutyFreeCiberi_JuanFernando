@@ -1,5 +1,6 @@
 'use strict'
 
+
 var express = require('express');
 var UserController = require('../controllers/users');
 var infoController = require('../controllers/info');
@@ -53,11 +54,13 @@ api.post('/info-paginate',md_auth.ensureAuth, infoController.getRegistros);
 api.put('/update-info',  md_auth.ensureAuth, infoController.updateInfo);
 api.post('/info-search',md_auth.ensureAuth, infoController.getInfoDato);
 api.get('/info-vendedor/:tag',md_auth.ensureAuth, infoController.getInformeVendedor);
+api.get('/info-vendedor-ppto/:tag',md_auth.ensureAuth, infoController.getInformePresupuesoVendedor);
 api.get('/info-collections',md_auth.ensureAuth, infoController.getCollections);
 api.get('/data-collections/:tag',md_auth.ensureAuth, infoController.getDataCollection);
 api.get('/headers-collections/:tag',md_auth.ensureAuth, infoController.getHeadersCollection);
 api.post('/key-collections/:tag',md_auth.ensureAuth, infoController.getDataCollectionKey);
 api.post('/update-document/:tag',md_auth.ensureAuth, infoController.updateDataCollection);
+api.post('/update-document-vendedor/:tag',md_auth.ensureAuth, infoController.updateDataVendedorCollection);
 // api.get('/info-categrias',md_auth.ensureAuth, infoController.getInformeCategoria);
 api.get('/info-categrias/:tag',md_auth.ensureAuth, infoController.consultarInfoCategoria);
 api.get('/info-categrias-tienda/:tag',md_auth.ensureAuth, infoController.consultarInfoCategoriaTienda);
@@ -69,8 +72,8 @@ api.delete('/info/:tag/:doc',md_auth.ensureAuth, infoController.deleteDataCollec
 // SIIGO RUTAS
 
 api.post('/auth-siigo', md_auth.ensureAuth,  siigoController.authSiigo);
-api.get('/up-invoice/:tag',md_auth.ensureAuth, siigoController.sendInvoiceSiigo);
-api.get('/invoice-siigo/:tag',md_auth.ensureAuth, siigoController.getFacturacionSiigo);
+api.post('/up-invoice/:tag',md_auth.ensureAuth, siigoController.sendInvoiceSiigo);
+api.post('/invoice-siigo/:tag',md_auth.ensureAuth, siigoController.getFacturacionSiigo);
 
 // PRESUPUESTOS
 api.post('/presupuesto', md_auth.ensureAuth,  infoController.agregarPresupuesto);
@@ -78,6 +81,15 @@ api.get('/presupuestos', md_auth.ensureAuth,  infoController.getDataPresupuesto)
 api.get('/presupuestos-tag/:tag', md_auth.ensureAuth,  infoController.getDataPresupuestoTag);
 
 api.put('/presupuesto', md_auth.ensureAuth,  infoController.updateDataPresupuesto);
+
+
+// CONFIGURACION
+api.post('/configuracion', md_auth.ensureAuth,  infoController.agregarConfiguracion);
+api.get('/configuracion', md_auth.ensureAuth,  infoController.getDataConfig);
+
+api.put('/configuracion', md_auth.ensureAuth,  infoController.updateDataConfiguracion);
+
+
 
 module.exports = api;
 

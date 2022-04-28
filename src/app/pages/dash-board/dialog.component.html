@@ -11,7 +11,8 @@
 </div> -->
 <mat-card style="max-height: 85vh;overflow-y:scroll ;">
     <button  mat-button color="primary" [disabled]="" (click)="cancelar()" style="margin-right:10px;" ><mat-icon>cancel</mat-icon> Cerrar</button>
-    <button *ngIf="data.coll != 'noting'" mat-button color="accent" [disabled]="" (click)="UpdateRegistro()" style="margin-right:10px;" ><mat-icon>save</mat-icon> Guardar Vendedor</button>
+    <!-- <button *ngIf="data.coll != 'noting'" mat-button color="accent" [disabled]="" (click)="UpdateRegistro()" style="margin-right:10px;" ><mat-icon>save</mat-icon> Guardar Vendedor</button> -->
     <!-- <button  *ngIf="data.coll != 'noting'" mat-button color="warn" [disabled]="" (click)="deleteRegistro()" style="margin-right:10px;" ><mat-icon>delete</mat-icon> Eliminar</button> -->
+   <!-- <h5>ttal Detalle . {{totalEmpleado}}</h5> -->
     <json-editor [options]="editorOptions" [data]="info" (change)="getData($event)"></json-editor>
 </mat-card>
