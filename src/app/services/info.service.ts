@@ -123,6 +123,16 @@ export class InfoService {
     
     }
 
+    getDataCollectionsVendedor(obj:any, tag:string){
+        let paramas = JSON.stringify(obj);
+        let headers = new HttpHeaders({
+            'Content-Type': 'application/json',
+            'Authorization': this.getToken()
+        });
+        return this._http.post<any>(this.url+'cumplimiento-vendedor/'+ tag, paramas, {headers:headers});
+    
+    }
+
     getfacturacionSiigo(tag:string){
         let headers = new HttpHeaders({
             'Content-Type': 'application/json',

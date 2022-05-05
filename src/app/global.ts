@@ -13,6 +13,10 @@ export var GLOBAL = {
     company: 'ciberi.co'
 }
 
+
+// Ofid.Marquez@dutyfreepartners.com
+// DAzOTExYzYtYzNiOC00MGUxLWIyNDAtYThhMmJlZmQzZmQ3OjN9eFh4OVdpVlk=
+
 // produccion max-size err;
 // node --max_old_space_size=8192 ./node_modules/@angular/cli/bin/ng build --prod --build-optimizer
 

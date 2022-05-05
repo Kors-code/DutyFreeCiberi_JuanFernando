@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { ConfigComponent } from './pages/config/config.component';
+import { CumplimientoComponent } from './pages/cumplimiento/cumplimiento.component';
 import { DashBoardComponent } from './pages/dash-board/dash-board.component';
 import { DataBaseComponent } from './pages/data-base/data-base.component';
 import { HomeComponent } from './pages/home/home.component';
@@ -41,6 +42,9 @@ const routes: Routes = [
   },{
     component:SiigoComponent,
     path: 'Siigo-conection'
+  },{
+    component:CumplimientoComponent,
+    path: 'Cumplimieto', 
   }
 
 ];

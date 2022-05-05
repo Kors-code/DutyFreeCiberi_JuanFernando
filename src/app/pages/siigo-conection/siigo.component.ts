@@ -18,7 +18,9 @@ interface data{
   name: string,
   date: string,
   total:number,
-  items:any[]
+  items:any[],
+  number:number,
+  observations: string,
 }
 
 
@@ -31,6 +33,7 @@ export class SiigoComponent implements OnInit {
   displayedColumns: string[] = ['id','document', 'number', "name" ,"date", "customer","cost_center", "seller", "total","balance","items","payments", "mail","metadata"];
   dataSource:data[] = [];
   paginacion:any;
+  paginacion2:any;
   log=false;
   config:any;
   constructor(public _infoService:InfoService,
@@ -41,10 +44,8 @@ export class SiigoComponent implements OnInit {
   }
   
   ngOnInit(): void {
-   
     this.getConfig();
   }
-
 
   getConfig(){
     this._infoService.getConfig().subscribe(
@@ -52,7 +53,8 @@ export class SiigoComponent implements OnInit {
         if(res.length != 0){
           this.config = res[0];
           // localStorage.setItem('categ',JSON.stringify(this.config.categorias))
- this.getFacturasSiigo(1);
+          this.getFacturasSiigo(1);
+          this.getComprobantesSiigo(1)
           //console.log(this.config)
         }
        
@@ -77,14 +79,44 @@ export class SiigoComponent implements OnInit {
     }
     this._siigoService.getFacturasSiigo(credenciales, n).subscribe(
       res => {
+        console.log(res)
         this.paginacion= res.pagination
         this.dataSource =  res.results;
-        this.displayedColumns =  Object.keys(this.dataSource[0]);
+        if(this.dataSource.length !=0){
+          this.displayedColumns =  Object.keys(this.dataSource[0]);
+        }
+      
 
         //console.log(this.displayedColumns)
         
         //console.log(res)
         this.log = false
+      }
+    )
+  }
+
+  dataSourceComprobantes:data[] = [];
+  getComprobantesSiigo(n:number){
+    this.log = true
+    let credenciales={
+      user:this.config.siigoUser,
+      key:this.config.siigoKey
+    }
+    this._siigoService.getComprobantesSiigo(credenciales,n).subscribe(
+      res => {
+        console.log(res)
+        this.paginacion2= res.pagination
+        this.dataSourceComprobantes =  res.results;
+        // if(this.dataSource.length !=0){
+        //   this.displayedColumns =  Object.keys(this.dataSource[0]);
+        // }
+      
+        //console.log(this.displayedColumns)
+        
+        //console.log(res)
+        this.log = false
+      },err=>{
+        console.log(err)
       }
     )
   }
@@ -98,8 +130,13 @@ export class SiigoComponent implements OnInit {
   pageEvent:PageEvent = new PageEvent();
 
   pageEventC(event:any){
-    //console.log(event)
+    console.log(event)
     this.getFacturasSiigo(event.pageIndex);
+  }
+
+  pageEventCompo(event:any){
+    console.log(event)
+    this.getComprobantesSiigo(event.pageIndex);
   }
 
   setPageSizeOptions(setPageSizeOptionsInput: string) {
@@ -121,18 +158,18 @@ export class SiigoComponent implements OnInit {
     })
   }
 
+
   pasRegistro(item:string){
     this.log = true
     this._siigoService.getDataCollectionsEstado('FEB',item).subscribe(
       res=>{
         this.log = false;
-        //console.log(res)
+        console.log(res)
         if(res.length != 0){
           this.verRegistro(res);
         }
       }
     )
-    //console.log(item)
   }
 
  }

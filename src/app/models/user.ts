@@ -1,7 +1,5 @@
 
 export class User{
-       
-
 
     constructor(
         public _id: any = undefined,
@@ -134,6 +132,15 @@ export class Permisos {
                 description:"Gestiona la conexion de informacion a plataforma Siigo",
                 link:'/Siigo-conection',
                 img:'siigo.png',
+                editar:true,
+                eliminar:true,
+                escribir:true,
+            },
+            {   
+                titulo:"Cumplimiento",
+                description:"Resultados y tendencia de cumplimiento ",
+                link:'/Cumplimieto',
+                img:'cumplimiento.svg',
                 editar:true,
                 eliminar:true,
                 escribir:true,

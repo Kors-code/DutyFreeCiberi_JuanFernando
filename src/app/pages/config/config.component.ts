@@ -21,6 +21,7 @@ cumplimiento:Cumplimiento;
 empleado:Empleado
 tag = ''
 nuevo= false;
+Roles = ['Ventas', 'Sking', 'Lider', 'Sub Gerente', 'Gerente']
   constructor(public dialog: MatDialog, @Inject(DOCUMENT) doc: any,
   public _infoService:InfoService,) {
     this.config = new Config();

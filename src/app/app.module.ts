@@ -21,6 +21,7 @@ import { NgxJsonViewerModule } from 'ngx-json-viewer';
 import { NgJsonEditorModule } from 'ang-jsoneditor' ;
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { SiigoComponent } from './pages/siigo-conection/siigo.component';
+import { CumplimientoComponent } from './pages/cumplimiento/cumplimiento.component';
 
 @NgModule({
   declarations: [
@@ -37,7 +38,8 @@ import { SiigoComponent } from './pages/siigo-conection/siigo.component';
     DashBoardComponent,
     MetasComponent,
     SiigoComponent,
-    DialogDataVendedor
+    DialogDataVendedor,
+    CumplimientoComponent
   ],
   imports: [
     BrowserModule,

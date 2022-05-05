@@ -102,7 +102,6 @@ export class ImportarInfoComponent implements OnInit {
         this.documentos = res
         this.dataSource = new MatTableDataSource<Articulo>(this.documentos);
         this.dataSource.sort = this.sort
-        console.table(res);
         this.log= false;
       }
     );
@@ -112,7 +111,6 @@ export class ImportarInfoComponent implements OnInit {
      // ////console.log(event)
    }
 
-  
    onFileChange(evt: any) {
     this.log= true;
     const target : DataTransfer =  <DataTransfer>(evt.target);

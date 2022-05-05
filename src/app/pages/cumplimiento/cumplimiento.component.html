@@ -1,0 +1,27 @@
+
+<div>
+    <h1 style="text-align: center;">DETALLE CUMPLIMIENTO PRESUPUESTAL</h1>
+    <mat-card-content style="margin-top: 10px; text-align: center; width: 90%; margin: 0 auto; ">
+        <form #loginForm="ngForm">
+          <div layout="row">
+            <mat-form-field style="width: 90%; text-align: center">
+              <input  matInput #userEmailElement #userEmailControl="ngModel"  placeholder="Identificacion" type="number" name="useremail" [(ngModel)]="id" required>
+            </mat-form-field>
+          </div>
+          <div layout="row">
+            <mat-form-field style="width: 90%; text-align: center">
+              <input matInput #userEmailElement #userEmailControl="ngModel"  placeholder="codigo" type="number" name="useremail" [(ngModel)]="codigo" required>
+            </mat-form-field>
+          </div>
+         </form>
+        <div id="invalid-auth-msg" *ngIf="invalidError" class="tc-red-600 text-center" flex>The username or password is incorrect. Please try again.</div>
+      <mat-divider></mat-divider>
+      <mat-card-actions style=" display: flex; justify-content: center;">
+        <button flex mat-raised-button color="accent" [disabled]="" (click)="getDataCollectionVendedor()" class="text-upper">VER RESULTADO <mat-icon layout-padding>send</mat-icon></button>
+      </mat-card-actions> 
+    </mat-card-content>
+
+</div>    
+<!--</mat-content>-->
+
+

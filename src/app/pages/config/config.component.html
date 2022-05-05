@@ -112,7 +112,7 @@
               </ng-template> 
             </mat-nav-list>
           </mat-card-content>
-          <mat-card-content style="display:flex;">
+          <mat-card-content style="display:flex; flex-wrap: wrap;">
             <h5>Sub Cumplimientos
               <div style="display: flex;">
                 <button matSuffix mat-icon-button aria-label="Clear" (click)="addCumpli()">
@@ -260,16 +260,55 @@
             <mat-form-field style="margin-right: 20px;" appearance="fill">
               <mat-label>Nombres Completos</mat-label>
               <input matInput type="text" [(ngModel)]="empleado.name">
-              <button matSuffix mat-icon-button aria-label="Clear" (click)="addEmpleado()">
-                <mat-icon>add</mat-icon>
-              </button>
-              <button matSuffix mat-icon-button aria-label="Clear" (click)="editEmpleado()">
-                <mat-icon>edit</mat-icon>
-              </button>
+              
             </mat-form-field>
+            <mat-form-field appearance="fill" style="margin-right: 20px;">
+              <mat-label>Rol</mat-label>
+              <mat-select [(ngModel)]="empleado.rol">
+                <ng-template let-item let-i="index" ngFor [ngForOf]="Roles">
+                <mat-option [value]="item">
+                  {{ item }}
+                </mat-option>
+                </ng-template>
+              </mat-select>
+            </mat-form-field>
+            <button matSuffix mat-icon-button aria-label="Clear" (click)="addEmpleado()">
+              <mat-icon>add</mat-icon>
+            </button>
+            <button matSuffix mat-icon-button aria-label="Clear" (click)="editEmpleado()">
+              <mat-icon>edit</mat-icon>
+            </button>
         </mat-card-content>
         <mat-card-content>
-          <mat-nav-list>
+
+          <table style="width: 90%; margin: 0 auto;" class="mat-elevation-z8">
+            <thead style="background-color:rgb(63, 62, 62) ; color:white; padding: 15px; font-size: 1em; border-radius: 10px;">
+           
+              <tr>
+                <th>IDENTIFICACION</th>
+                <th>NOMBRES</th>
+                <th>CODIGO VENTAS</th>
+                <th>CONTRATO</th>
+                <th>ROL</th>
+                <th></th>
+              </tr>
+            </thead>
+            <ng-template let-item let-i="index" ngFor [ngForOf]="config.empleados">
+              <tr>
+                <td (click)="pasEmpleado(item)" style="text-align: center;cursor: pointer;">{{ item.identificacion }}  </td>
+                <td (click)="pasEmpleado(item)" style="text-align: center;cursor: pointer;">{{ item.name }}</td>
+                <td (click)="pasEmpleado(item)" style="text-align: center;cursor: pointer;">{{ item.codigo }}</td>
+                <td (click)="pasEmpleado(item)" style="text-align: center;cursor: pointer;">{{ item.contrato }} </td>
+                <td (click)="pasEmpleado(item)" style="text-align: center;cursor: pointer;">{{ item.rol }}</td>
+                <td style="text-align: center;cursor: pointer;"> <button mat-icon-button  (click)="deleteEmpleado(i)" >
+                  <mat-icon>delete</mat-icon>
+                </button></td>
+              </tr>
+            </ng-template>
+
+          </table>
+
+          <!-- <mat-nav-list>
           <ng-template let-item let-i="index" ngFor [ngForOf]="config.empleados">
             <mat-list-item  style="display: flex;">
 
@@ -278,12 +317,12 @@
                 <button mat-icon-button  (click)="deleteEmpleado(i)" >
                   <mat-icon>delete</mat-icon>
                 </button>
-                <span (click)="pasEmpleado(item)"> {{ item.name }}</span>
+                <span (click)="pasEmpleado(item)">   </span>
                 
                   </h5>
             </mat-list-item>
           </ng-template> 
-          </mat-nav-list>
+          </mat-nav-list> -->
         </mat-card-content>
       </mat-expansion-panel>
   </mat-accordion>

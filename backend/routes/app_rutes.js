@@ -68,12 +68,17 @@ api.get('/info-folio/:tag',md_auth.ensureAuth, infoController.consultarInfoFolio
 api.get('/info-collection-estado/:tag/:estado',md_auth.ensureAuth, infoController.getDataCollectionEstado);
 api.get('/facturacion-siigo/:tag',md_auth.ensureAuth, infoController.getfacturacionSiigo);
 
+api.post('/cumplimiento-vendedor/:tag', infoController.getDataCollectionVendedor);
+
 api.delete('/info/:tag/:doc',md_auth.ensureAuth, infoController.deleteDataCollection);
+
+
 // SIIGO RUTAS
 
 api.post('/auth-siigo', md_auth.ensureAuth,  siigoController.authSiigo);
 api.post('/up-invoice/:tag',md_auth.ensureAuth, siigoController.sendInvoiceSiigo);
 api.post('/invoice-siigo/:tag',md_auth.ensureAuth, siigoController.getFacturacionSiigo);
+api.post('/journals-siigo/:tag',md_auth.ensureAuth, siigoController.getComprobantesSiigo);
 
 // PRESUPUESTOS
 api.post('/presupuesto', md_auth.ensureAuth,  infoController.agregarPresupuesto);

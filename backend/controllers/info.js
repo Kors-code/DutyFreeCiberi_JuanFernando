@@ -253,6 +253,27 @@ async function getDataCollection(req, res){
         res.status(200).send(arrayCollections);
 }
 
+async function getDataCollectionVendedor(req, res){
+    var params = req.body;
+    var coll = req.params.tag;
+    // console.log(params)
+    const url = 'mongodb://localhost:27017';
+    const client = new MongoClient(url);
+    const dbName = 'DutyFree';
+   
+        await client.connect();
+        console.log('Connected successfully to server');
+        const db = client.db(dbName);
+        const collection = await db.collection(coll);
+        let arrayCollections = []
+        var reg = await collection.find({Codi: params.cod}).forEach(element => {
+            // console.log(element)    
+            arrayCollections.push(element)
+         });
+        // console.log(reg)
+        res.status(200).send(arrayCollections);
+}
+
 async function getDataCollectionEstado(req, res){
     var estado = req.params.estado;
     var coll = req.params.tag;
@@ -644,6 +665,7 @@ module.exports = {
     getInformePresupuesoVendedor,
     getfacturacionSiigo,
     getDataCollectionEstado,
+    getDataCollectionVendedor,
     agregarInfo,
     consultarInfoCategoria,
     consultarInfoCategoriaTienda,

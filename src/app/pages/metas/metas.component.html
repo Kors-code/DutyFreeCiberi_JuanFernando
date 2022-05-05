@@ -98,7 +98,7 @@
                 </mat-expansion-panel>
                
               </mat-accordion>
-              <h1> {{presupuesto.tiendas.length}} TIENDAS  </h1>
+              <h1  *ngIf="presupuesto.tiendas.length != 0"> {{presupuesto.tiendas.length}} TIENDAS  </h1>
               <mat-accordion *ngIf="presupuesto.tiendas.length != 0">
                 <mat-expansion-panel hideToggle *ngFor="let item of presupuesto.tiendas">
                   <mat-expansion-panel-header>
@@ -135,12 +135,23 @@
                   </mat-card-content>
                 </mat-expansion-panel>
               </mat-accordion>
-              <h1> {{presupuesto.vendedores.length}} VENDEDORES
-                <!-- <button mat-button color="accent" (click)="TotalizarPtoEmpleados()">
-                  CALCULAR
-                </button> -->
-
-              </h1>
+              <h1 *ngIf="presupuesto.vendedores.length != 0"> {{presupuesto.vendedores.length}} VENDEDORES </h1>
+              <div *ngIf="presupuesto.vendedores.length != 0" style="display: flex;">
+              
+                <mat-form-field appearance="fill" style="margin-right: 20px; width: 80%;">
+                  <mat-label>LISTADO</mat-label>
+                  <mat-select [(ngModel)]="newEmpleado">
+                    <ng-template let-item let-i="index" ngFor [ngForOf]="config.empleados">
+                    <mat-option *ngIf="verEmpleado(item)" [value]="item">
+                      {{ item.codigo }} - {{ item.name }}
+                    </mat-option>
+                    </ng-template>
+                  </mat-select>
+                </mat-form-field>
+                <button *ngIf="newEmpleado" mat-button (click)="addEmpleado()" ><mat-icon class="mat-18">add</mat-icon> <span>Agregar</span> </button> 
+              </div>
+             
+              
               <mat-accordion *ngIf="presupuesto.vendedores.length != 0">
                 <ng-template let-item let-i="index" ngFor [ngForOf]="presupuesto.vendedores">
                 <mat-expansion-panel hideToggle>

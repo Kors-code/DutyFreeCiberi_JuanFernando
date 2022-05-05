@@ -1,15 +1,61 @@
 
-  <mat-progress-bar mode="indeterminate" *ngIf="log" ></mat-progress-bar>
+<mat-progress-bar mode="indeterminate" *ngIf="log" ></mat-progress-bar>
+<mat-tab-group  mat-align-tabs="center">
+    
+<mat-tab>
+  <ng-template mat-tab-label>
+      <mat-icon class="example-tab-icon">data_exploration</mat-icon>
+          COMPROBANTES
+    </ng-template>
+    <div style="display: flex; justify-content: center;">
+      <mat-paginator *ngIf="paginacion2" [length]="paginacion2.total_results"
+      [pageSize]="paginacion2.page_size"
+      (page)="pageEventC($event)"
+      aria-label="Selecina pagina">
+      </mat-paginator>
+      <button mat-button (click)="getComprobantesSiigo(1)"> <mat-icon>refresh</mat-icon> Recargar</button>
+
+    </div>
+ 
+<table *ngIf="dataSource.length != 0" class="mat-elevation-z8" style="width: 90%; margin: 0 auto;">
+  <tr>
+   
+    <th>FECHA</th>
+    <!-- <th>PREFIJO</th> -->
+    <th>DOCUMENTO</th>
+    <th>NUMERO</th>
+    <th>DESCRIBCION</th>
+    <th>PRODUCTOS</th>
+    <th>DETALLE</th>
+  </tr>
+  <tr *ngFor="let item of dataSourceComprobantes, let i = index ">
+    <td style="text-align: center;border-bottom: 1px solid grey;">{{item.date}}</td>
+    <td style="text-align: center;border-bottom: 1px solid grey;">{{item.name}}</td>
+    <td style="text-align: center;border-bottom: 1px solid grey;">{{item.number}}</td>
+    <td style="text-align: center;border-bottom: 1px solid grey;">{{item.observations}}</td>
+    <td style="text-align: center;border-bottom: 1px solid grey;">{{item.items.length}}</td>
+    <td style="text-align: center;border-bottom: 1px solid grey;"><mat-icon (click)="verRegistro(item)" class="selec">remove_red_eye</mat-icon></td>
+  </tr>
+</table>
+</mat-tab>
+<mat-tab>
+        <ng-template mat-tab-label>
+            <mat-icon class="example-tab-icon">data_exploration</mat-icon>
+                FACTURAS
+          </ng-template>
+<div style="display: flex; justify-content: center;">
 <mat-paginator *ngIf="paginacion" [length]="paginacion.total_results"
 [pageSize]="paginacion.page_size"
-(page)="pageEventC($event)"
-aria-label="Select page">
+(page)="pageEventCompo($event)"
+aria-label="Selecina pagina">
 </mat-paginator>
 <button mat-button (click)="getFacturasSiigo(1)"> <mat-icon>refresh</mat-icon> Recargar</button>
+</div>
 <table *ngIf="dataSource.length != 0" class="mat-elevation-z8" style="width: 90%; margin: 0 auto;">
   <tr>
     <th>DB</th>
     <th>FECHA</th>
+    <!-- <th>PREFIJO</th> -->
     <th>DOCUMENTO</th>
     <th>IMPORTE</th>
     <th>PRODUCTOS</th>
@@ -18,6 +64,7 @@ aria-label="Select page">
   <tr *ngFor="let item of dataSource, let i = index ">
     <td style="text-align: center;border-bottom: 1px solid grey;"> <mat-icon (click)="pasRegistro(item.id)" class="selec">link</mat-icon></td>
     <td style="text-align: center;border-bottom: 1px solid grey;">{{item.date}}</td>
+    <!-- <td style="text-align: center;border-bottom: 1px solid grey;">{{item.prefix}}</td> -->
     <td style="text-align: center;border-bottom: 1px solid grey;">{{item.name}}</td>
     <td style="text-align: right;border-bottom: 1px solid grey;">{{item.total | number}}</td>
     <td style="text-align: center;border-bottom: 1px solid grey;">{{item.items.length}}</td>
@@ -26,3 +73,5 @@ aria-label="Select page">
 
  
 </table>
+    </mat-tab>
+</mat-tab-group>

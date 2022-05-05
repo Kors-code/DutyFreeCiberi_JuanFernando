@@ -17,8 +17,8 @@ export class Config{
 export class Empleado {
     constructor(
         public _id: any = undefined,
-        public identificacion: any = new Date().getTime(),
-        public contrato: string = 'SD100',
+        public identificacion: any = 0,
+        public contrato: any = 0,
         public codigo: string = '',
         public Dias: number = 0,
         public name: string = '',
@@ -29,6 +29,7 @@ export class Empleado {
         public categorias: Categoria[] = [],
         public COP: number = 0,
         public Ventas: number = 0,
-        public USD:number = 0
+        public USD:number = 0,
+        public rol:string = 'Ventas',
     ){}
 }

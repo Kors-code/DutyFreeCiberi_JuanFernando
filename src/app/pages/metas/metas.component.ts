@@ -96,7 +96,19 @@ export class MetasComponent implements OnInit {
     //////console.log(this.pres)
     this._infoService.updatePresupuesto(this.presupuesto).subscribe(
       res=>{
-        //console.log(res)
+        console.log(res)
+        if(res){
+          let data = {titulo: 'Exito', info:'Se guardaron los cambios en el presupuesto ', type: 'Confirm', icon:'done_all'}
+  
+          let dialogRef = this.dialog.open(DialogConfirm,{
+            data: data
+          });
+        
+          dialogRef.afterClosed().subscribe(result => {
+            // this.getfacturacionSiigo()
+          })
+        }
+
         this.getPresupuestos()
       }
     )
@@ -282,7 +294,6 @@ export class MetasComponent implements OnInit {
 
   }
 
-
   registros:any = [];
   registrosCostumer:any = [];
   presupuestarEmpleados(){
@@ -292,9 +303,32 @@ export class MetasComponent implements OnInit {
     this.presupuesto.tiendas = this.config.tiendas
   }
 
+
+  newEmpleado:any
+
   deleteEmpleado(i: any){
     this.presupuesto.vendedores.splice(i,1)
     this.TotalizarPtoEmpleados()
+  }
+
+  addEmpleado(){
+    this.presupuesto.vendedores.push(
+      this.newEmpleado
+    )
+    this.TotalizarPtoEmpleados()
+    this.newEmpleado = ''
+  }
+
+  verEmpleado(item: any){
+    // console.log(item)
+    let pos = this.presupuesto.vendedores.map(function(e:any) { return e.identificacion; }).indexOf(item.identificacion);
+    // console.log(pos)
+    if(pos == -1){
+      return true
+    }else{
+      return false
+    }
+  
   }
 
 }
