@@ -65,6 +65,15 @@ export class SiigoService {
       return this._http.post<paginacion>(this.url+'journals-siigo/'+ tag,paramas, {headers:headers});
     }
 
+    saveComprobantesSiigo(register:any,){
+        let paramas = JSON.stringify(register);
+        let headers = new HttpHeaders({
+          'Content-Type': 'application/json',
+          'Authorization': this.getToken()
+      });
+      return this._http.post<any>(this.url+'journals',paramas, {headers:headers});
+    }
+
     getFacturasSiigo(register:any,tag:number){
           let paramas = JSON.stringify(register);
           let headers = new HttpHeaders({

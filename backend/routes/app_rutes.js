@@ -79,6 +79,7 @@ api.post('/auth-siigo', md_auth.ensureAuth,  siigoController.authSiigo);
 api.post('/up-invoice/:tag',md_auth.ensureAuth, siigoController.sendInvoiceSiigo);
 api.post('/invoice-siigo/:tag',md_auth.ensureAuth, siigoController.getFacturacionSiigo);
 api.post('/journals-siigo/:tag',md_auth.ensureAuth, siigoController.getComprobantesSiigo);
+api.post('/journals',md_auth.ensureAuth, siigoController.sendComprobanteSiigo);
 
 // PRESUPUESTOS
 api.post('/presupuesto', md_auth.ensureAuth,  infoController.agregarPresupuesto);

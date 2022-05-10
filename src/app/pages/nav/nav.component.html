@@ -10,13 +10,16 @@
     <img style="width: 50px; margin-top: 5px;" src="assets/house.svg" >
     <span style="margin-left: 10px;"> Inicio</span>
   </button>
-  <ng-template let-item let-last="last" ngFor [ngForOf]="identity.modulos">
-    <button mat-menu-item  routerLink="../{{item.link}}" style="display: flex;">
-      <img style="width: 50px; margin-top: 5px;" src="/assets/{{item.img}}">
-      <span style="margin-left: 10px;"> {{item.titulo}}</span>
-    </button>
-    <mat-divider></mat-divider>
-  </ng-template>
+  <span *ngIf="identity">
+    <ng-template let-item let-last="last" ngFor [ngForOf]="identity.modulos">
+      <button mat-menu-item  routerLink="../{{item.link}}" style="display: flex;">
+        <img style="width: 50px; margin-top: 5px;" src="/assets/{{item.img}}">
+        <span style="margin-left: 10px;"> {{item.titulo}}</span>
+      </button>
+      <mat-divider></mat-divider>
+    </ng-template>
+  </span>
+
     <!-- <button mat-menu-item  routerLink="/">
       <mat-icon class="mat-18">home</mat-icon>  
       INICIO

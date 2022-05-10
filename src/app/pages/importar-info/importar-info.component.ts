@@ -54,6 +54,88 @@ export class ImportarInfoComponent implements OnInit {
   trm:any;
   trmApi:any;
 
+  cuentas:any[] = [
+    {
+      cod:10,
+      name:'Perfumes Unisex',
+      Debit:61359510,
+      Credit:14350110,
+    },
+    {
+      cod:11,
+      name:'Perfumes Mujer',
+      Debit:61359511,
+      Credit:14350111,
+    },
+    {
+      cod:12,
+      name:'Perfumes Hombre',
+      Debit:61359512,
+      Credit:14350112,
+    },
+     {
+      cod:13,
+      name:'Cosmetica y Cuidado Piel',
+      Debit:61359513,
+      Credit:14350113,
+    },
+    {
+      cod:14,
+      name:'Relojes',
+      Debit:61359514,
+      Credit:14350114,
+    },
+    {
+      cod:15,
+      name:'Joyeria',
+      Debit:61359515,
+      Credit:14350115,
+    },
+    {
+      cod:16,
+      name:'Gafas de Sol',
+      Debit:61359516,
+      Credit:14350116,
+    },
+    {
+      cod:17,
+      name:'Tabaco',
+      Debit:61359517,
+      Credit:14350117,
+    },
+    {
+      cod:18,
+      name:'Licor y Vino',
+      Debit:61359518,
+      Credit:14350118,
+    },
+    {
+      cod:19,
+      name:'Regalos y Accesorios',
+      Debit:61359519,
+      Credit:14350119,
+    },
+    {
+      cod:21,
+      name:'Electronica',
+      Debit:61359521,
+      Credit:14350121,
+    },
+    {
+      cod:22,
+      name:'Chocolates',
+      Debit:61359522,
+      Credit:14350122,
+    },
+       {
+      cod:98,
+      name:'Regalos a Clientes',
+      Debit:14350122,
+      Credit:14350122,
+    }
+  ]; 
+		
+
   getConfig(){
     this._infoServce.getConfig().subscribe(
       res=>{
@@ -67,7 +149,6 @@ export class ImportarInfoComponent implements OnInit {
       }
     )
   }
-
 
   geXlsDocument(e:any) {
 
@@ -143,7 +224,6 @@ export class ImportarInfoComponent implements OnInit {
   }
 
   progreso = 0
-  
   authSiigo(tag:string){
     this.progreso = 1;
     this.newDataUp =  this._socketService.listen('UpSiigo').subscribe((data:any)=>{
@@ -253,6 +333,7 @@ export class ImportarInfoComponent implements OnInit {
 
   registros:any = [];
   registrosCostumer:any = [];
+  itemsContable:any = [];
   convertirJson(){
     this.log= true;
     let keys = Object.values(this.data[0])
@@ -315,9 +396,62 @@ export class ImportarInfoComponent implements OnInit {
       this.registros[i].Month = split[1];
       this.registros[i].Year = '20'+split[2];
       this.registros[i].Detalle = 'FAC '+this.registros[i].Folio + ' ' + this.registros[i].Descripcion_1 + ' ' +this.registros[i].Month + ' CANT: ' +this.registros[i].Cantidad + ' TRM: '+this.registros[i].TRM + ' USD: '+this.registros[i].Importe ;
+      
+      let pos2 = this.cuentas.map(function(e: { cod: any; }) { return e.cod; }).indexOf(this.registros[i].Clasi);
+      
+
+      let dtaComprobante = {
+        account:{
+          code:this.cuentas[pos2].Debit,
+          movement:'Debit'
+        },
+        customer:{
+          identification:222222222,
+        },
+        product:{
+          code:this.registros[i].Clasi,
+          name:this.cuentas[pos2].name,
+          quantity:0,
+          description:this.registros[i].Detalle,
+          value:this.registros[i].COP,
+        },
+      }
+      this.itemsContable.push(dtaComprobante)
+
+      let dtaComprobante2 = {
+        account:{
+          code:this.cuentas[pos2].Credit,
+          movement:'Credit'
+        },
+        customer:{
+          identification:222222222,
+        },
+        product:{
+          code:this.registros[i].Clasi,
+          name:this.registros[i].Descr,
+          quantity:0,
+          description:this.registros[i].Detalle,
+          value:this.registros[i].COP,
+        },
+      }
+      this.itemsContable.push(dtaComprobante2)  
     }
     this.log= false;
-    // ////console.log(this.registros)
+    console.log(this.itemsContable)
+  }
+
+  saveComprobantesSiigo(){
+    let credenciales={
+      user:this.config.siigoUser,
+      key:this.config.siigoKey,
+      data:this.itemsContable
+    }
+    this._siigoService.saveComprobantesSiigo(credenciales).subscribe(
+      res=>{
+
+        console.log(res)
+      }
+    )
   }
 
 }

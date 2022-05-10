@@ -506,7 +506,7 @@ async function sendInvoiceSiigo(req, res){
                       newF = newF + '07-'+  date.D
                     } 
                     if(mes == 'AGO'){
-                      newF = newF + '02-'+  date.D
+                      newF = newF + '08-'+  date.D
                     } 
                     //console.log(newF)
                       element.Detalle.forEach(elemento => {
@@ -521,7 +521,7 @@ async function sendInvoiceSiigo(req, res){
                               font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', 'Geneva', 'Verdana', 'sans-serif';
                               max-width: 800px;  
                               color: #585858;
-                              font-size:18px;
+                              font-size:16px;
                               background-color: #fff;
                               border-radius: 6px;"
                               margin: 0 auto>
@@ -662,7 +662,7 @@ function sendComprobanteSiigo(req, res){
       if (resp.error) throw new Error(resp.error); 
       token = resp.body.access_token;
 
-      var req2 = unirest('POST', 'https://api.siigo.com/v1/invoices')
+      var req2 = unirest('POST', 'https://api.siigo.com/v1/journals')
       .headers({
         'Content-Type': 'application/json',
         'Partner-ID': 'TestNat',
@@ -670,26 +670,22 @@ function sendComprobanteSiigo(req, res){
       })
       .send(JSON.stringify({
         document: {
-          id: 5086
+          id: 28456
         },
-        date: 5086,
-        items:[],
+        date: '2022-05-09',
+        items:params.data,
       }))
       .end(function (respu) { 
         if (resp.error){
-          //console.log(resp.error)
+          console.log(resp.error)
           res.status(404).send({message: 'Error ' +resp.error }); 
         }  
-        //console.log(res.raw_body);
+        console.log(res.raw_body);
         res.status(200).send(respu.body)
        
       });
     
     })
-
-
-
-
 
   
 
@@ -966,5 +962,6 @@ module.exports ={
     authSiigo,
     sendInvoiceSiigo,
     getFacturacionSiigo,
-    getComprobantesSiigo
+    getComprobantesSiigo,
+    sendComprobanteSiigo
 }
