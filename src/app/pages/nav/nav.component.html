@@ -1,12 +1,15 @@
 <mat-toolbar>
-    <button mat-button [matMenuTriggerFor]="menuRef"><mat-icon class="mat-18">menu</mat-icon> <span>{{identity?.name}}</span> </button>
+    <button *ngIf="identity" mat-button [matMenuTriggerFor]="menuRef"><mat-icon class="mat-18">menu</mat-icon> <span>{{identity?.name}}</span> </button>
     
-  <span>DUTY FREE PARTNERS COLOMBIA</span>
+
   <span class="example-spacer"></span>
+  <span>DFP APP 1.2</span>
+  <mat-icon *ngIf="Online == true " style="color:green; margin-left:10px; margin-right:10px;" matTooltip="En Línea" >wifi</mat-icon>
+  <mat-icon *ngIf="Online == false " style="color:red; margin-left:10px; margin-right:10px;" matTooltip="Sin Conexiòn" >signal_wifi_off</mat-icon>
 
 </mat-toolbar>
 <mat-menu #menuRef="matMenu">
-  <button mat-menu-item  routerLink="../" style="display: flex;">
+  <button *ngIf="identity" mat-menu-item  routerLink="../" style="display: flex;">
     <img style="width: 50px; margin-top: 5px;" src="assets/house.svg" >
     <span style="margin-left: 10px;"> Inicio</span>
   </button>

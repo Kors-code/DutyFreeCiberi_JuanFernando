@@ -13,20 +13,30 @@
           {{item.tag}}
         </mat-option>
       </mat-select>
-    </mat-form-field>  
-    <!-- <mat-form-field appearance="fill" style="text-align: center; font-size: 1.3em; margin-right: 20px;">
-      <mat-label>Tag Base Datos</mat-label>
-      <input matInput placeholder="Data Base" type="text" name="tag" [(ngModel)]="tag">
-    </mat-form-field> -->
+    </mat-form-field> 
+
+   
       <input *ngIf="tag" type="file" multiple="false" (change)="onFileChange($event)" style="font-size: 1.3em; margin-left: 10px;">
       
   </div>
 
-  <button *ngIf="registros.length != 0" flex mat-raised-button color="accent" [disabled]="log"  (click)="saveInfoCompleto()" class="text-upper" style="width: 90%; margin:15px auto;margin-left: 20px;"> {{registros.length}} Documentos - Registrar Informacion<mat-icon layout-padding>send</mat-icon></button>
+  <!-- <button *ngIf="registros.length != 0" flex mat-raised-button color="accent" [disabled]="log"  (click)="saveInfoCompleto()" class="text-upper" style="width: 90%; margin:15px auto;margin-left: 20px;"> {{registros.length}} Documentos - Registrar Informacion<mat-icon layout-padding>send</mat-icon></button> -->
   <button *ngIf="dataSource" flex mat-raised-button color="accent" [disabled]="progreso != 0"  (click)="authSiigo(tag)" class="text-upper" style="width: 90%; margin:15px auto;margin-left: 20px;">  Generar PDF {{documentos.length}} Respaldo POS <mat-icon>update_file</mat-icon></button>
-  <button *ngIf="itemsContable" flex mat-raised-button color="accent" [disabled]="progreso != 0"  (click)="saveComprobantesSiigo()" class="text-upper" style="width: 90%; margin:15px auto;margin-left: 20px;"> Subir Comprobantes {{itemsContable.length}} Siigo <mat-icon>update_file</mat-icon></button>
+  <div *ngIf="lotesCmprobantes.length !=0" style="display: flex; text-align: center;">
+    <mat-form-field appearance="fill" style="text-align: center; font-size: 1em; margin-right: 20px;">
+      <mat-label>Fecha Comprobante</mat-label>
+      <input matInput placeholder="Data Base" type="date" name="tag" [(ngModel)]="date">
+    </mat-form-field>
+    <mat-form-field appearance="fill" style="text-align: center; font-size: 1em; margin-right: 20px;">
+      <mat-label>observaciones</mat-label>
+      <input matInput [disabled]="!date" placeholder="Data Base" type="text" name="observaciones" [(ngModel)]="obs">
+    </mat-form-field>
+    <button  flex mat-raised-button color="warn" [disabled]="!obs"  (click)="procesarInformacion()" class="text-upper" style="width: 90%; margin:15px auto;margin-left: 20px; color: white;"> Subir <span style="font-size: 1.3em; color:blue">{{lotesCmprobantes.length}}</span> Comprobantes  Siigo <mat-icon>save</mat-icon></button>
+  </div>
+
  <span *ngIf="progreso != 0" style="color: blue;">{{progreso | number:'0.0-2'}}% </span> <mat-progress-bar *ngIf="progreso != 0" mode="determinate" [value]="progreso" color="accent" style="width: 90%; margin: 0 auto;"></mat-progress-bar>
-  <table *ngIf="dataSource" mat-table [dataSource]="dataSource"  matSort class="mat-elevation-z8" style="width: 90%; margin: 0 auto;">
+  
+ <table *ngIf="dataSource" mat-table [dataSource]="dataSource"  matSort class="mat-elevation-z8" style="width: 90%; margin: 0 auto;">
     <!--- Note that these columns can be defined in any order.
           The actual rendered columns are set as a property on the row definition" -->
   

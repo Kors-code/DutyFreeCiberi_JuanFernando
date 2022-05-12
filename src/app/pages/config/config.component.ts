@@ -203,4 +203,36 @@ Roles = ['Ventas', 'Sking', 'Lider', 'Sub Gerente', 'Gerente']
     this.config.empleados.splice(i,1);
   }
 
+  search=''
+  buscarRegistro(item:string){
+   let ex = item.indexOf(this.search) >= 0
+  //  console.log(ex)
+   if(ex){
+    return true
+   }else{
+    return false
+   }
+   
+   
+  }
+
+  buscarRegistro2(search:string) {
+    // this.getNegocios();
+    search = search.toLowerCase();
+      // //(search);
+    if(search != ''){
+    let productosArr: any[] = [];
+    for( let producto of this.config.empleados){
+      let titulo = producto.name.toLowerCase();
+      if(titulo.indexOf(search) >= 0){
+        productosArr.push(producto);
+      }
+    }
+    // return this.productos = productosArr;
+    }else{
+
+      // return this.productos = this.arrProductos;
+      }
+  }
+
 }

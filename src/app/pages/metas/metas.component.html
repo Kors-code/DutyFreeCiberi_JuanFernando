@@ -15,10 +15,10 @@
           </div>
 
           <mat-card class="mat-elevation-z8" style="width: 80%; text-align: center; margin: 0 auto;" >
-            <mat-form-field appearance="fill" style="text-align: center; font-size: 1.3em; margin-right: 20px;">
+            <!-- <mat-form-field appearance="fill" style="text-align: center; font-size: 1.3em; margin-right: 20px;">
               <mat-label>TRM Esperada</mat-label>
               <input matInput placeholder="TRM" type="number" name="trm" [(ngModel)]="trm">
-            </mat-form-field>
+            </mat-form-field> -->
             <mat-form-field appearance="fill" style="margin-right: 20px;">
               <mat-label>Tag Base Datos</mat-label>
               <mat-select [(ngModel)]="presupuesto.tag">
@@ -135,15 +135,17 @@
                   </mat-card-content>
                 </mat-expansion-panel>
               </mat-accordion>
-              <h1 *ngIf="presupuesto.vendedores.length != 0"> {{presupuesto.vendedores.length}} VENDEDORES </h1>
-              <div *ngIf="presupuesto.vendedores.length != 0" style="display: flex;">
+              <h1 *ngIf="presupuesto.vendedores.length != 0"> {{presupuesto.vendedores.length}} VENDEDORES 
+                <input type="text" placeholder="Buscar" style="font-size:x-large; text-align: center; margin: 0 10px;" [(ngModel)]="search">  
+              </h1>
+              <div *ngIf="presupuesto.vendedores.length != 0" style="display: flex; justify-content: center;">
               
                 <mat-form-field appearance="fill" style="margin-right: 20px; width: 80%;">
                   <mat-label>LISTADO</mat-label>
                   <mat-select [(ngModel)]="newEmpleado">
                     <ng-template let-item let-i="index" ngFor [ngForOf]="config.empleados">
                     <mat-option *ngIf="verEmpleado(item)" [value]="item">
-                      {{ item.codigo }} - {{ item.name }}
+                      {{ item.codigo }} - {{ item.name }} - {{ item.rol }}
                     </mat-option>
                     </ng-template>
                   </mat-select>
@@ -151,13 +153,13 @@
                 <button *ngIf="newEmpleado" mat-button (click)="addEmpleado()" ><mat-icon class="mat-18">add</mat-icon> <span>Agregar</span> </button> 
               </div>
              
-              
+             
               <mat-accordion *ngIf="presupuesto.vendedores.length != 0">
                 <ng-template let-item let-i="index" ngFor [ngForOf]="presupuesto.vendedores">
-                <mat-expansion-panel hideToggle>
+                <mat-expansion-panel hideToggle *ngIf="buscarRegistro(item.name)">
                   <mat-expansion-panel-header>
                     <mat-panel-title>
-                     {{item.codigo}} - {{item.name}}  PPTO $ {{item.USD  | number:'0.0-0'}} Dias {{item.Dias}} Pto Dia {{item.USD / item.Dias  | number:'0.0-0'}}
+                      {{i + 1}} - {{item.codigo}} - {{item.name}} <span style="color: rgb(8, 183, 8); margin: 0 10px;">Dias {{item.Dias}}</span> <span style="color: rgb(8, 183, 8); margin: 0 10px;"> PPTO $ {{item.USD  | number:'0.0-0'}} Pto Dia {{item.USD / item.Dias  | number:'0.0-0'}}</span>  rol  {{ item.rol }}
                     </mat-panel-title>
                     
                   </mat-expansion-panel-header>

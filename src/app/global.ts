@@ -1,6 +1,6 @@
 export var GLOBAL = {
-    // url: '/api/', 
-    url_app: 'http://localhost:1165/api/',
+    url_app: '/api/', 
+    // url_app: 'http://localhost:1165/api/',
     // url_socket: 'ws://localhost:38081',
     // url_app: 'https://ciberi.co/api/',  
     url: 'https://ciberi.co/api/',
@@ -9,13 +9,13 @@ export var GLOBAL = {
     // url_app: 'http://192.168.0.10/api/',
     // url_socket: 'http://localhost:38081',
     app:true,
-    version:'1.1.1',
+    version:'1.2',
     company: 'ciberi.co'
 }
 
 
 // Ofid.Marquez@dutyfreepartners.com
-// DAzOTExYzYtYzNiOC00MGUxLWIyNDAtYThhMmJlZmQzZmQ3OjN9eFh4OVdpVlk=
+// ZDAzOTExYzYtYzNiOC00MGUxLWIyNDAtYThhMmJlZmQzZmQ3Om1rI0x6MkxCNFg=
 
 
 // siigoapi@pruebas.com

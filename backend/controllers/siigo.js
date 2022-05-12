@@ -645,10 +645,9 @@ async function sendInvoiceSiigo(req, res){
 }
 
 function sendComprobanteSiigo(req, res){
-  var pg = req.params.tag;
   var unirest = require('unirest');
   var params = req.body;
-  console.log(params)
+  // console.log(params)
   var token;
   var req = unirest('POST', 'https://api.siigo.com/auth')
     .headers({
@@ -670,19 +669,22 @@ function sendComprobanteSiigo(req, res){
       })
       .send(JSON.stringify({
         document: {
-          id: 28456
+          id: params.iddoc
         },
-        date: '2022-05-09',
+        date: params.date,
         items:params.data,
+        observations: params.obs
       }))
       .end(function (respu) { 
-        if (resp.error){
-          console.log(resp.error)
-          res.status(404).send({message: 'Error ' +resp.error }); 
-        }  
-        console.log(res.raw_body);
-        res.status(200).send(respu.body)
-       
+        // console.log(respu)
+        if (respu.error){
+          // console.log(respu.error)
+
+          res.status(400).send({message: 'Error ' +respu.raw_body }); 
+        }else{
+          res.status(200).send(respu.body)
+        }
+        console.log(respu.raw_body);
       });
     
     })

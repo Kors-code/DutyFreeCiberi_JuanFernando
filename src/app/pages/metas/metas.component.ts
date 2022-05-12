@@ -167,6 +167,9 @@ export class MetasComponent implements OnInit {
     //   // //////console.log(this.presupuesto.capacidadVentas)
      
     // }
+    this.presupuesto.vendedores.sort(function(a, b){
+      return b.USD - a.USD;
+    });
    
     // item.presupuestoUs = this.presupuesto.presupuesto_usd 
   
@@ -329,6 +332,19 @@ export class MetasComponent implements OnInit {
       return false
     }
   
+  }
+
+  search=''
+  buscarRegistro(item:string){
+   let ex = item.indexOf(this.search) >= 0
+  //  console.log(ex)
+   if(ex){
+    return true
+   }else{
+    return false
+   }
+   
+   
   }
 
 }

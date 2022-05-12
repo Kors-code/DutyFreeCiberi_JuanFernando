@@ -1,6 +1,18 @@
+<mat-progress-bar mode="indeterminate" *ngIf="log" ></mat-progress-bar> 
+<div style="display: flex; justify-content: center;">
+  <button mat-button [matMenuTriggerFor]="menuRef"><mat-icon class="mat-18">menu</mat-icon> <span>Colecciones</span> </button>
 
-<div>
-    <h1 style="text-align: center;">DETALLE CUMPLIMIENTO PRESUPUESTAL</h1>
+  <mat-menu #menuRef="matMenu">
+    <ng-template let-doc let-i="index" ngFor [ngForOf]="collections">
+        <button *ngIf="doc != 'users' && doc != 'documentos' && doc != 'operaciones' && doc != 'Presupuestos'  && doc != 'Config'" mat-menu-item (click)="passDataCollections(doc)">
+            <mat-icon class="mat-18">check</mat-icon>  
+            {{doc}}   
+        </button>
+    </ng-template> 
+  </mat-menu>
+</div>
+<div *ngIf="presupuesto._id">
+    <h3 style="text-align: center;">CUMPLIMIENTO PRESUPUESTAL {{coleccion}} DIA {{dia}}</h3>
     <mat-card-content style="margin-top: 10px; text-align: center; width: 90%; margin: 0 auto; ">
         <form #loginForm="ngForm">
           <div layout="row">
@@ -8,20 +20,117 @@
               <input  matInput #userEmailElement #userEmailControl="ngModel"  placeholder="Identificacion" type="number" name="useremail" [(ngModel)]="id" required>
             </mat-form-field>
           </div>
-          <div layout="row">
+          <!-- <div layout="row">
             <mat-form-field style="width: 90%; text-align: center">
               <input matInput #userEmailElement #userEmailControl="ngModel"  placeholder="codigo" type="number" name="useremail" [(ngModel)]="codigo" required>
             </mat-form-field>
-          </div>
+          </div> -->
          </form>
         <div id="invalid-auth-msg" *ngIf="invalidError" class="tc-red-600 text-center" flex>The username or password is incorrect. Please try again.</div>
       <mat-divider></mat-divider>
-      <mat-card-actions style=" display: flex; justify-content: center;">
+      <!-- <mat-card-actions style=" display: flex; justify-content: center;">
         <button flex mat-raised-button color="accent" [disabled]="" (click)="getDataCollectionVendedor()" class="text-upper">VER RESULTADO <mat-icon layout-padding>send</mat-icon></button>
-      </mat-card-actions> 
+      </mat-card-actions>  -->
     </mat-card-content>
 
 </div>    
+
+<div>
+  <!-- <h1 style="text-align: center;"> {{presupuesto.vendedores.length}} VENDEDORES $ {{totalVendedores |  number:'0.0-2'}} COMISION {{(totalCoisiones / totalVendedores)* 100 |  number:'0.0-2'}}% $  {{totalCoisiones |  number:'0.0-2'}}  </h1> -->
+      <mat-card-content *ngFor="let item of presupuesto.vendedores">
+        <div *ngIf="id == item.identificacion">
+          <h3  style="text-align: center; margin: 10px 10px"> <span style="color: blue; margin-left: 10px; margin-right: 10px;">{{item.Cumplimiento * 100  | number:'0.0-2'}}%  </span>
+            {{item.name}} 
+            
+          
+          </h3>
+          <mat-chip-list aria-label="Fish selection" style="display:flex;justify-content: center;">
+            <mat-chip *ngIf="acumulado" color="accent" (click)="acumulador()">
+              <mat-chip-avatar>
+                <img src="assets/metas.svg" alt="Photo of a Shiba Inu"/>
+            </mat-chip-avatar>
+              ACUMULADO</mat-chip>
+              <mat-chip color="warn" *ngIf="!acumulado" (click)="acumulador()">
+                <mat-chip-avatar>
+                  <img src="assets/metas.svg" alt="Photo of a Shiba Inu"/>
+              </mat-chip-avatar>
+                TENDENCIA</mat-chip>
+        
+            
+          </mat-chip-list>
+          <table style="width: 90%; margin: 0 auto; font-size: 1.3em;" class="mat-elevation-z8">
+            <thead style="background-color:rgb(63, 62, 62) ; color:white; padding: 15px; font-size: 1em; border-radius: 10px;">
+            <tr>
+              <td> Ventas USD </td> <td style="text-align: center;"> <span style="color: chartreuse;">{{item.Ventas  | number:'0.0-2'}}</span></td>
+              <td> PPTO USD </td> <td style="text-align: center;"> <span style="color: chartreuse;">{{item.USD  | number:'0.0-2'}}</span></td>
+              <!-- <td> % </td> <td style="text-align: center;"> <span style="color: chartreuse;">{{item.Cumplimiento * 100  | number:'0.0-2'}}%</span></td> -->
+            </tr>
+            <tr>
+              <td>Comisiones</td> 
+              <td style="text-align: center;"><span style="color: chartreuse;">{{item.Comisiones  | number:'0.0-2'}}</span></td>
+              <td style="text-align: center;">%</td> 
+              <td style="text-align: center;"><span style="color: chartreuse;"> {{(item.Comisiones / item.Ventas)* 100   | number:'0.0-2'}} %</span></td>
+              <!-- <td>
+                <button mat-button><mat-icon>person</mat-icon></button>
+        
+              </td> -->
+            </tr>
+            </thead>
+          </table>
+  
+          <table *ngIf="acumulado" style="width: 90%; margin: 0 auto; overflow-x: scroll;" class="mat-elevation-z8">
+            <thead>
+              <th>CATEGORÍA</th>
+              <th>% PART</th>
+              <th>PPTO</th>
+              <th>VENTAS</th>
+              <th>RESTA</th>
+              <th>%CUMPLIM</th>
+              <th>% COMISIÓN </th>
+              <th>COMISIÓN USD</th>
+            </thead>
+            <tbody *ngFor="let cat of item.categorias" style="background-color:rgb(63, 62, 62) ; color:white; padding: 15px; font-size: 1em; border-radius: 10px;">
+              <tr>
+                <td>{{cat.titulo}}</td>
+                <td style="text-align: center;">{{cat.participacion  | number:'0.0-2'}}%</td>
+                <td style="text-align:right;">{{cat.presupuesto_usd | number:'0.0-0'}}</td>
+                <td style="text-align:right;">{{cat.ventas | number:'0.0-0'}}</td>
+                <td style="text-align:right;">{{cat.ventas - cat.presupuesto_usd  | number:'0.0-2'}}</td>
+                <td [class._50]="(cat.ventas / cat.presupuesto_usd) <= 0.80" [class._90]="(cat.ventas / cat.presupuesto_usd) >= 0.80 && (cat.ventas / cat.presupuesto_usd) <= 0.99" [class._100]="(cat.ventas / cat.presupuesto_usd) >= 1">{{(cat.ventas / cat.presupuesto_usd)*100  | number:'0.0-2'}} %</td>
+                <td style="text-align: center;">{{(cat.comisionesUsd / cat.ventas)*100 | number:'0.0-2'}}%</td>
+                <td style="text-align:right;">{{cat.comisionesUsd | number:'0.0-2'}}</td>
+              </tr>
+            </tbody>
+          </table> 
+
+          <table  *ngIf="!acumulado" style="width: 90%; margin: 0 auto; overflow-x: scroll;" class="mat-elevation-z8">
+            <thead>
+              <th>CATEGORÍA</th>
+              <th>% PART</th>
+              <th>PPTO</th>
+              <th>VENTAS</th>
+              <th>RESTA</th>
+              <th>%CUMPLIM</th>
+              <th>$ PROYECTADO </th>
+              <th>% ESPERADO</th>
+            </thead>
+            <tbody *ngFor="let cat of item.categorias" style="background-color:rgb(63, 62, 62) ; color:white; padding: 15px; font-size: 1em; border-radius: 10px;">
+              <tr>
+                <td>{{cat.titulo}}</td>
+                <td style="text-align: center;">{{cat.participacion  | number:'0.0-2'}}%</td>
+                <td style="text-align:right;">{{(cat.presupuesto_usd / presupuesto.dias)* dia | number:'0.0-0'}}</td>
+                <td style="text-align:right;">{{cat.ventas | number:'0.0-0'}}</td>
+                <td style="text-align:right;">{{cat.ventas - ((cat.presupuesto_usd / presupuesto.dias)* dia)  | number:'0.0-2'}}</td>
+                <td [class._50]="(cat.ventas / ((cat.presupuesto_usd / presupuesto.dias)* dia)) <= 0.80" [class._90]="(cat.ventas / ((cat.presupuesto_usd / presupuesto.dias)* dia)) >= 0.80 && (cat.ventas / ((cat.presupuesto_usd / presupuesto.dias)* dia)) <= 0.99" [class._100]="(cat.ventas / ((cat.presupuesto_usd / presupuesto.dias)* dia)) >= 1">{{(cat.ventas / ((cat.presupuesto_usd / presupuesto.dias)* dia) )*100  | number:'0.0-2'}} %</td>
+                <td style="text-align: center;">{{(cat.ventas / dia)* presupuesto.dias | number:'0.0-0'}}</td>
+                <td style="text-align:right;">{{(((cat.ventas / dia)* presupuesto.dias)/ cat.presupuesto_usd)* 100 | number:'0.0-2'}}%</td>
+              </tr>
+            </tbody>
+          </table> 
+        </div>
+      </mat-card-content>
+
+</div>
 <!--</mat-content>-->
 
 

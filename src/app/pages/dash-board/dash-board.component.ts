@@ -207,16 +207,15 @@ export class DashBoardComponent implements OnInit {
           this.totalCoisiones =0
           for (let g = 0; g < this.presupuesto.vendedores.length; g++) {
             const element = this.presupuesto.vendedores[g];
-
             for (let t = 0; t < element.categorias.length; t++) {
               const cat = element.categorias[t];
               element.Comisiones =  element.Comisiones + cat.comisionesUsd
               this.totalCoisiones =  this.totalCoisiones + cat.comisionesUsd
-              
             }
-            // //console.log(element)
-            
           }
+          this.presupuesto.vendedores.sort(function(a, b){
+            return b.USD - a.USD;
+          });
         }
         this.log = false;
       }
@@ -615,6 +614,19 @@ compare(a: number | string, b: number | string, isAsc: boolean) {
     a.click();
     window.URL.revokeObjectURL(url);
     a.remove();
+  }
+
+  search=''
+  buscarRegistro(item:string){
+   let ex = item.indexOf(this.search) >= 0
+  //  console.log(ex)
+   if(ex){
+    return true
+   }else{
+    return false
+   }
+   
+   
   }
 
   

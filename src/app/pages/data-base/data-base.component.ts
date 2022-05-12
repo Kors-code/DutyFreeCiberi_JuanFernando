@@ -70,7 +70,7 @@ export class DataBaseComponent implements OnInit {
     this.key = tag;
     this._infoService.getDataCollections(tag).subscribe(
       res=>{
-        ////console.log(res)
+        console.log(res)
         this.documentos = res;
         this.headers= Object.keys(this.documentos[0])
         this.subir = this.documentos.map(function(e: { Estado: any; }) { return e.Estado; }).indexOf('Activa');

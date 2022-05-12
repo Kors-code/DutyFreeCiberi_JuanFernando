@@ -12,10 +12,11 @@ export class NavComponent implements OnInit {
   public identity:any;
   constructor(private _router: Router,
     private _userService:UserService,) {
-    this.identity = this._userService.getIdentity();
+   
    }
 
   ngOnInit(): void {
+    this.identity = this._userService.getIdentity();
   }
 
   Logout(){
@@ -24,6 +25,22 @@ export class NavComponent implements OnInit {
   
     this.identity = null;
     this._router.navigate(['/']);
+  }
+
+  ngDoCheck() {
+    this.onLine();
+  }
+
+  Online: boolean = false
+  onLine(){
+    if(navigator.onLine){
+      this.Online = true;
+      // this.identity = this._userService.getIdentity();
+      }else {
+        this.Online = false;
+        // this.identity = this._userService.getIdentity();
+      }
+
   }
 
 }

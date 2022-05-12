@@ -46,7 +46,7 @@
 <div style="display: flex; justify-content: center;">
 <mat-paginator *ngIf="paginacion" [length]="paginacion.total_results"
 [pageSize]="paginacion.page_size"
-(page)="pageEventCompo($event)"
+(page)="pageEventC($event)"
 aria-label="Selecina pagina">
 </mat-paginator>
 <button mat-button (click)="getFacturasSiigo(1)"> <mat-icon>refresh</mat-icon> Recargar</button>

@@ -90,7 +90,7 @@ export class SiigoComponent implements OnInit {
         //console.log(this.displayedColumns)
         
         //console.log(res)
-        this.log = false
+        // this.log = false
       }
     )
   }
@@ -117,6 +117,7 @@ export class SiigoComponent implements OnInit {
         this.log = false
       },err=>{
         console.log(err)
+        this.log = false
       }
     )
   }
@@ -131,12 +132,12 @@ export class SiigoComponent implements OnInit {
 
   pageEventC(event:any){
     console.log(event)
-    this.getFacturasSiigo(event.pageIndex);
+    this.getComprobantesSiigo(event.pageIndex + 1);
   }
 
   pageEventCompo(event:any){
     console.log(event)
-    this.getComprobantesSiigo(event.pageIndex);
+    this.getFacturasSiigo(event.pageIndex +1);
   }
 
   setPageSizeOptions(setPageSizeOptionsInput: string) {

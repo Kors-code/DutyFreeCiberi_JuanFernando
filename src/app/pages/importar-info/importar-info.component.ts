@@ -23,6 +23,8 @@ interface Articulo{
 export class ImportarInfoComponent implements OnInit {
   newDataUp:any;
   config:any;
+  date:any;
+  obs:any;
   displayedColumns: string[] = ['folio', 'unds', 'cop', 'detail'];
   @ViewChild(MatSort, {static: true}) sort!: MatSort;
   constructor( public dialog: MatDialog, @Inject(DOCUMENT) doc: any,
@@ -37,8 +39,6 @@ export class ImportarInfoComponent implements OnInit {
         .latest()
         .then((data:any) =>  console.log(this.trm =  data.valor))
         .catch((error:any) =>  console.log(error));
-      ////console.log(this.trm);
-
     }
 
   ngOnInit(): void {
@@ -58,80 +58,94 @@ export class ImportarInfoComponent implements OnInit {
     {
       cod:10,
       name:'Perfumes Unisex',
-      Debit:61359510,
-      Credit:14350110,
+      Debit:'61359510',
+      Credit:'14350110',
+      Venta:'41359510'
     },
     {
       cod:11,
       name:'Perfumes Mujer',
-      Debit:61359511,
-      Credit:14350111,
+      Debit:'61359511',
+      Credit:'14350111',
+      Venta:'41359511'
     },
     {
       cod:12,
       name:'Perfumes Hombre',
-      Debit:61359512,
-      Credit:14350112,
+      Debit:'61359512',
+      Credit:'14350112',
+      Venta:'41359512'
     },
      {
       cod:13,
       name:'Cosmetica y Cuidado Piel',
-      Debit:61359513,
-      Credit:14350113,
+      Debit:'61359513',
+      Credit:'14350113',
+      Venta:'41359513'
+      
     },
     {
       cod:14,
       name:'Relojes',
-      Debit:61359514,
-      Credit:14350114,
+      Debit:'61359514',
+      Credit:'14350114',
+      Venta:'41359514'
     },
     {
       cod:15,
       name:'Joyeria',
-      Debit:61359515,
-      Credit:14350115,
+      Debit:'61359515',
+      Credit:'14350115',
+      Venta:'41359515'
     },
     {
       cod:16,
       name:'Gafas de Sol',
-      Debit:61359516,
-      Credit:14350116,
+      Debit:'61359516',
+      Credit:'14350116',
+      Venta:'41359516'
     },
     {
       cod:17,
       name:'Tabaco',
-      Debit:61359517,
-      Credit:14350117,
+      Debit:'61359517',
+      Credit:'14350117',
+      Venta:'41359517'
     },
     {
       cod:18,
       name:'Licor y Vino',
-      Debit:61359518,
-      Credit:14350118,
+      Debit:'61359518',
+      Credit:'14350118',
+      Venta:'41359518'
     },
     {
       cod:19,
       name:'Regalos y Accesorios',
-      Debit:61359519,
-      Credit:14350119,
+      Debit:'61359519',
+      Credit:'14350119',
+      Venta:'41359519'
     },
     {
       cod:21,
       name:'Electronica',
-      Debit:61359521,
-      Credit:14350121,
+      Debit:'61359521',
+      Credit:'14350121',
+      Venta:'41359521'
     },
     {
       cod:22,
       name:'Chocolates',
-      Debit:61359522,
-      Credit:14350122,
+      Debit:'61359522',
+      Credit:'14350122',
+      Venta:'41359522'
     },
        {
       cod:98,
       name:'Regalos a Clientes',
-      Debit:14350122,
-      Credit:14350122,
+      Debit:'61359598',
+      Credit:'14350198',
+      Venta:'41359598'
     }
   ]; 
 		
@@ -265,20 +279,20 @@ export class ImportarInfoComponent implements OnInit {
 
 
   tag:string = '';
-  saveInfoCompleto(){
+  saveInfoCompleto(registros: any){
     this.log= true;
-    this._infoServce.agregarInfo(this.registros, this.tag).subscribe(
+    this._infoServce.agregarInfo(registros, this.tag).subscribe(
       res =>{
         let dato = res
-         let data = {titulo: 'Confirmaciòn', info:'Se Registraron ' + res.insertedCount + ' de ' + this.registros.length, type: 'Confirm', icon:'done_all'}
+         let data = {titulo: 'Confirmaciòn', info:'Se Registraron ' + res.insertedCount + ' de ' + registros.length, type: 'Confirm', icon:'done_all'}
   
             let dialogRef = this.dialog.open(DialogConfirm,{
               data: data
             });
           
             dialogRef.afterClosed().subscribe(result => {
-              this.getfacturacionSiigo();    
-              this.registros = [];
+              // this.getfacturacionSiigo();    
+              // this.registros = [];
               this.data = [];
               this.files2 = [];
               this.log= false;
@@ -333,7 +347,10 @@ export class ImportarInfoComponent implements OnInit {
 
   registros:any = [];
   registrosCostumer:any = [];
+  lotesCmprobantes:any = [];
+  lote:any = [];
   itemsContable:any = [];
+  itemsFacturaVentas:any = [];
   convertirJson(){
     this.log= true;
     let keys = Object.values(this.data[0])
@@ -397,61 +414,199 @@ export class ImportarInfoComponent implements OnInit {
       this.registros[i].Year = '20'+split[2];
       this.registros[i].Detalle = 'FAC '+this.registros[i].Folio + ' ' + this.registros[i].Descripcion_1 + ' ' +this.registros[i].Month + ' CANT: ' +this.registros[i].Cantidad + ' TRM: '+this.registros[i].TRM + ' USD: '+this.registros[i].Importe ;
       
-      let pos2 = this.cuentas.map(function(e: { cod: any; }) { return e.cod; }).indexOf(this.registros[i].Clasi);
-      
-
-      let dtaComprobante = {
-        account:{
-          code:this.cuentas[pos2].Debit,
-          movement:'Debit'
-        },
-        customer:{
-          identification:222222222,
-        },
-        product:{
-          code:this.registros[i].Clasi,
-          name:this.cuentas[pos2].name,
-          quantity:0,
-          description:this.registros[i].Detalle,
-          value:this.registros[i].COP,
-        },
-      }
-      this.itemsContable.push(dtaComprobante)
-
-      let dtaComprobante2 = {
-        account:{
-          code:this.cuentas[pos2].Credit,
-          movement:'Credit'
-        },
-        customer:{
-          identification:222222222,
-        },
-        product:{
-          code:this.registros[i].Clasi,
-          name:this.registros[i].Descr,
-          quantity:0,
-          description:this.registros[i].Detalle,
-          value:this.registros[i].COP,
-        },
-      }
-      this.itemsContable.push(dtaComprobante2)  
     }
     this.log= false;
-    console.log(this.itemsContable)
+   
+    // console.log(this.itemsContable)
+    let lotes = 200
+    // console.log(lotes)
+  
+    this.chunckArrayInGroups(this.registros, lotes)
+    // this.lote = []
+    // this.lotesCmprobantes = []
+    // for (let i = 0; i < this.registros.length; i++) {
+    //   let pedazo = this.registros[i];
+    //   if(this.lote.length << 201){
+    //     this.lote.push(pedazo)
+    //     console.log(this.lote)
+    //   }else{
+    //     this.lotesCmprobantes.push(this.lote)
+    //     this.lote = []
+    //     this.lote.push(pedazo)
+    //   }
+    //   // this.lotesCmprobantes.push(pedazo);
+    // }
+    
+ 
+
   }
 
-  saveComprobantesSiigo(){
+   chunckArrayInGroups(arr:any[], size:number) {
+    var chunk = [], i; // declara array vacio e indice de for
+    for (i = 0; i <= arr.length; i+= size) // loop que recorre el array 
+      chunk.push(arr.slice(i, i + size)); // push al array el tramo desde el indice del loop hasta el valor size + el indicador 
+      console.log(chunk)
+      return this.lotesCmprobantes = chunk;
+   
+  }
+
+  generarRegistros(registros: any[]){
+    // console.log( registros)
+    this.itemsContable =[]
+    this.itemsFacturaVentas=[]
+    for(var i = 0;i < registros.length; i++){
+      let pos2 = this.cuentas.map(function(e: { cod: any; }) { return e.cod; }).indexOf(registros[i].Clasi);
+      console.log(pos2)
+      if(pos2 != -1){
+        let dtaComprobante = {
+          account:{
+            code:this.cuentas[pos2].Debit,
+            movement:'Debit'
+          },
+          customer:{
+            identification:'222222222',
+          },
+          product:{
+            code:registros[i].Clasi +'',
+            name:registros[i].Detalle,
+            quantity:0,
+            description:registros[i].Detalle,
+            value:registros[i].COP,
+          },
+          value:registros[i].COP,
+          description:registros[i].Detalle,
+        }
+        this.itemsContable.push(dtaComprobante)
+  
+        let dtaComprobante2 = {
+          account:{
+            code:this.cuentas[pos2].Credit,
+            movement:'Credit'
+          },
+          customer:{
+            identification:'222222222',
+          },
+          product:{
+            code:registros[i].Clasi +'',
+            name:registros[i].Detalle,
+            quantity:0,
+            description:registros[i].Detalle,
+            value:registros[i].COP,
+          },  
+          value:registros[i].COP,
+          description:registros[i].Detalle,
+        }
+
+        this.itemsContable.push(dtaComprobante2)  
+        let tienda :any
+        if(registros[i].PDV == 'MDE A'){
+          tienda = 673
+        }else{
+          tienda = 675
+        }
+
+        let dtaComprobanteVenta = {
+          account:{
+            code:this.cuentas[pos2].Venta,
+            movement:'Credit'
+          },
+          customer:{
+            identification:'222222222',
+          },
+          cost_center: tienda, 
+          product:{
+            code:registros[i].Clasi +'',
+            name:registros[i].Detalle,
+            quantity:0,
+            description:registros[i].Detalle,
+            value:registros[i].COP,
+          },
+          description:registros[i].Detalle,  
+          value:registros[i].COP,
+        }
+
+        this.itemsFacturaVentas.push(dtaComprobanteVenta)
+
+        let dtaComprobanteVentaDeb = {
+          account:{
+            code:'13050501',
+            movement:'Debit'
+          },
+          customer:{
+            identification:'222222222',
+          },
+          due:{
+            prefix: 'C',
+            consecutive: 1,
+            quote: 1,
+            date: this.date,
+          },
+          description:registros[i].Detalle,
+          cost_center: 21013, 
+          value:registros[i].COP,
+        }
+        this.itemsFacturaVentas.push(dtaComprobanteVentaDeb)
+      }
+    }
+
+    // console.log(this.date)
+    // console.log( this.itemsContable)
+    // console.log( this.itemsFacturaVentas)
     let credenciales={
       user:this.config.siigoUser,
       key:this.config.siigoKey,
-      data:this.itemsContable
+      data: this.itemsContable,
+      date:this.date,
+      obs:this.obs,
+      iddoc:5086,
     }
+
+    console.log(credenciales)
+    let credencialesVentas={
+      user:this.config.siigoUser,
+      key:this.config.siigoKey,
+      data: this.itemsFacturaVentas,
+      date:this.date,
+      obs:this.obs,
+      iddoc:31800,
+    }
+
     this._siigoService.saveComprobantesSiigo(credenciales).subscribe(
       res=>{
-
         console.log(res)
+        this._siigoService.saveComprobantesSiigo(credencialesVentas).subscribe(
+          resp=>{
+            for(var i = 0;i < registros.length; i++){
+              res.items = null
+              resp.items = null
+              registros[i].Siigo.push(res)
+              registros[i].Siigo.push(resp)
+              registros[i].Estado = 'Siigo'
+            }
+            this.saveInfoCompleto(registros)
+          })
+        
+      },err =>{
+        let data = {titulo: 'Error', info:err.error.message, type: 'Confirm', icon:'error'}
+  
+        let dialogRef = this.dialog.open(DialogConfirm,{
+          data: data
+        });
+      
+        dialogRef.afterClosed().subscribe(result => {
+
+        })
+        console.log(err)
       }
     )
   }
+
+  procesarInformacion(){
+    this.lotesCmprobantes.forEach((element: any[]) => {
+      this.generarRegistros(element)
+    });
+  }
+
+
 
 }
