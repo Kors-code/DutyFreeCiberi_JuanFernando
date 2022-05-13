@@ -11,6 +11,7 @@ import { SiigoService } from '../../services/siigo.service'
 import {MatSort} from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Config } from 'src/app/models/config';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 interface Articulo{
   
@@ -31,7 +32,8 @@ export class ImportarInfoComponent implements OnInit {
               public _infoServce:InfoService,
               public _socketService:SocketIOService,
               // public _mongoService: MongoDbService
-              public _siigoService:SiigoService
+              public _siigoService:SiigoService,
+              private _snackBar: MatSnackBar
     ) { 
       this.config = new Config();
       this.trmApi =  new TrmApi("aEOKmLbbPROhCr6iDiieAGCqt");
@@ -45,6 +47,13 @@ export class ImportarInfoComponent implements OnInit {
     this.getConfig()
     // this._mongoService.main();
   }
+
+  openSnackBar(message: string, action: string = 'Ok') {
+    this._snackBar.open(message, action, {
+      duration: 3000,
+    });
+  }
+
   log= false;
   data:any[] = []; 
   dataCostumer:any[] = []; 
@@ -284,20 +293,24 @@ export class ImportarInfoComponent implements OnInit {
     this._infoServce.agregarInfo(registros, this.tag).subscribe(
       res =>{
         let dato = res
-         let data = {titulo: 'Confirmaciòn', info:'Se Registraron ' + res.insertedCount + ' de ' + registros.length, type: 'Confirm', icon:'done_all'}
-  
+        this.procesado++
+        console.log(this.procesado)
+        if(this.procesado <= this.lotesCmprobantes.length){
+          if(this.procesado << this.lotesCmprobantes.length){
+            this.generarRegistros(this.lotesCmprobantes[this.procesado])
+            let data = {titulo: 'Progreso '+ this.procesado + ' de ' + this.lotesCmprobantes.length, info:'Se Registraron ' + res.insertedCount + ' de ' + registros.length, type: 'Confirm', icon:'done_all'}
             let dialogRef = this.dialog.open(DialogConfirm,{
               data: data
             });
-          
-            dialogRef.afterClosed().subscribe(result => {
-              // this.getfacturacionSiigo();    
-              // this.registros = [];
-              this.data = [];
-              this.files2 = [];
-              this.log= false;
-              // this.tag = '';
-          })
+          }else{
+            this.log = false
+            let data = {titulo: 'Registro Exitoso '+ this.procesado + 'de ' + this.lotesCmprobantes.length, info:'Se Registraron ' + res.insertedCount + ' de ' + registros.length, type: 'Confirm', icon:'done_all'}
+            let dialogRef = this.dialog.open(DialogConfirm,{
+              data: data
+            });
+          }
+        }
+        
       })
   }
  
@@ -447,16 +460,17 @@ export class ImportarInfoComponent implements OnInit {
       chunk.push(arr.slice(i, i + size)); // push al array el tramo desde el indice del loop hasta el valor size + el indicador 
       console.log(chunk)
       return this.lotesCmprobantes = chunk;
-   
   }
 
   generarRegistros(registros: any[]){
-    // console.log( registros)
+    console.log( registros)
+    if(registros){
+    this.log = true
     this.itemsContable =[]
     this.itemsFacturaVentas=[]
     for(var i = 0;i < registros.length; i++){
       let pos2 = this.cuentas.map(function(e: { cod: any; }) { return e.cod; }).indexOf(registros[i].Clasi);
-      console.log(pos2)
+      // console.log(pos2)
       if(pos2 != -1){
         let dtaComprobante = {
           account:{
@@ -468,13 +482,13 @@ export class ImportarInfoComponent implements OnInit {
           },
           product:{
             code:registros[i].Clasi +'',
-            name:registros[i].Detalle,
+            name: 'CMV FAC '+ registros[i].Folio +' SKU '+ registros[i].Codigo_1 +' ' + registros[i].Descripcion_1 +' CANT: '+ registros[i].Cantidad,
             quantity:0,
-            description:registros[i].Detalle,
-            value:registros[i].COP,
+            description:'CMV FAC '+ registros[i].Folio +' SKU '+ registros[i].Codigo_1 +' ' + registros[i].Descripcion_1 +' CANT: '+ registros[i].Cantidad,
+            value:registros[i].Costo_de_v,
           },
-          value:registros[i].COP,
-          description:registros[i].Detalle,
+          value:registros[i].Costo_de_v,
+          description:'CMV FAC '+ registros[i].Folio +' SKU '+ registros[i].Codigo_1 +' ' + registros[i].Descripcion_1 +' CANT: '+ registros[i].Cantidad,
         }
         this.itemsContable.push(dtaComprobante)
   
@@ -488,13 +502,13 @@ export class ImportarInfoComponent implements OnInit {
           },
           product:{
             code:registros[i].Clasi +'',
-            name:registros[i].Detalle,
+            name:'CMV FAC '+ registros[i].Folio +' SKU '+ registros[i].Codigo_1 +' ' + registros[i].Descripcion_1 +' CANT: '+ registros[i].Cantidad,
             quantity:0,
-            description:registros[i].Detalle,
-            value:registros[i].COP,
+            description:'CMV FAC '+ registros[i].Folio +' SKU '+ registros[i].Codigo_1 +' ' + registros[i].Descripcion_1 +' CANT: '+ registros[i].Cantidad,
+            value:registros[i].Costo_de_v,
           },  
-          value:registros[i].COP,
-          description:registros[i].Detalle,
+          value:registros[i].Costo_de_v,
+          description:'CMV FAC '+ registros[i].Folio +' SKU '+ registros[i].Codigo_1 +' ' + registros[i].Descripcion_1 +' CANT: '+ registros[i].Cantidad,
         }
 
         this.itemsContable.push(dtaComprobante2)  
@@ -546,6 +560,8 @@ export class ImportarInfoComponent implements OnInit {
           value:registros[i].COP,
         }
         this.itemsFacturaVentas.push(dtaComprobanteVentaDeb)
+      }else{
+        console.log('Registo no encontrado '+ registros[i].Clasi)
       }
     }
 
@@ -561,7 +577,7 @@ export class ImportarInfoComponent implements OnInit {
       iddoc:5086,
     }
 
-    console.log(credenciales)
+    // console.log(credenciales)
     let credencialesVentas={
       user:this.config.siigoUser,
       key:this.config.siigoKey,
@@ -574,8 +590,10 @@ export class ImportarInfoComponent implements OnInit {
     this._siigoService.saveComprobantesSiigo(credenciales).subscribe(
       res=>{
         console.log(res)
+        this.openSnackBar('CMV GENERADO CORRECTAMENTE','EXITO')
         this._siigoService.saveComprobantesSiigo(credencialesVentas).subscribe(
           resp=>{
+            this.openSnackBar('COMPROVANTE DE VENTA GENERADO CORRECTAMENTE','EXITO')
             for(var i = 0;i < registros.length; i++){
               res.items = null
               resp.items = null
@@ -587,6 +605,7 @@ export class ImportarInfoComponent implements OnInit {
           })
         
       },err =>{
+        this.log = true
         let data = {titulo: 'Error', info:err.error.message, type: 'Confirm', icon:'error'}
   
         let dialogRef = this.dialog.open(DialogConfirm,{
@@ -599,14 +618,59 @@ export class ImportarInfoComponent implements OnInit {
         console.log(err)
       }
     )
+
+    }else{
+      this.log = false
+      let data = {titulo: 'Registro Exitoso '+ this.procesado + 'de ' + this.lotesCmprobantes.length, info:'Se Registraron los comprobantes correctamente ', type: 'Confirm', icon:'done_all'}
+      let dialogRef = this.dialog.open(DialogConfirm,{
+        data: data
+      });
+
+
+    }
   }
 
+  procesado = 0
   procesarInformacion(){
-    this.lotesCmprobantes.forEach((element: any[]) => {
-      this.generarRegistros(element)
-    });
+    this.procesado = 0
+    this.generarRegistros(this.lotesCmprobantes[0])
   }
 
+  costo(doc: any[]){
+    let valor = 0
+    doc.forEach(element => {
+      valor = valor + element.Costo_de_v
+    });
+    return valor
+  }
+
+  venta(doc: any[]){
+    let valor = 0
+    doc.forEach(element => {
+      valor = valor + element.COP
+    });
+    return valor
+  }
+
+  totalVentas(){
+    let valor = 0
+    this.registros.forEach((element: { COP: number; }) => {
+      valor = valor + element.COP
+    });
+    return valor
+  }
+
+  totalCostos(){
+    let valor = 0
+    this.registros.forEach((element: { Costo_de_v: number; }) => {
+      valor = valor + element.Costo_de_v
+    });
+    return valor
+  }
+
+  reload(){
+    window.location.reload();
+  }
 
 
 }

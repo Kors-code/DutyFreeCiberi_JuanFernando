@@ -196,18 +196,18 @@ async function updateDataPresupuesto(req, res){
 async function agregarInfo(req, res){
     var params = req.body;
     var coll = req.params.tag;
-    console.log(params)
+    // console.log(params)
     const url = 'mongodb://localhost:27017';
     const client = new MongoClient(url);
     const dbName = 'DutyFree';
    
         await client.connect();
-        console.log('Connected successfully to server');
+        // console.log('Connected successfully to server');
         const db = client.db(dbName);
         const collection = db.collection(coll);
        
         const insertResult = await collection.insertMany(params);
-        console.log('Inserted documents =>', insertResult);
+        // console.log('Inserted documents =>', insertResult);
         res.status(200).send(insertResult);
 }
 
@@ -262,7 +262,7 @@ async function getDataCollectionVendedor(req, res){
     const dbName = 'DutyFree';
    
         await client.connect();
-        console.log('Connected successfully to server');
+        // console.log('Connected successfully to server');
         const db = client.db(dbName);
         const collection = await db.collection(coll);
         let arrayCollections = []
@@ -652,8 +652,6 @@ function getInfoDato(req, res){
                     }
                 });  
 }
-
-
 
 
 module.exports = {

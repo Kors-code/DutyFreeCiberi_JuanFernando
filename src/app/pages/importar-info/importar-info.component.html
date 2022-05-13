@@ -1,6 +1,8 @@
 <mat-card>
   <mat-progress-bar mode="indeterminate" *ngIf="log" ></mat-progress-bar> 
-  <h2 style="text-align: center;">Importar Información SIIGO</h2>
+  <h2 style="text-align: center;">Importar Información SIIGO
+  <span>{{procesado}}</span>
+  </h2>
   <div style="display: flex; flex-wrap: wrap; justify-content: center; align-items: center;">
     <mat-form-field appearance="fill" style="text-align: center; font-size: 1.3em; margin-right: 20px;">
       <mat-label>TRM</mat-label>
@@ -14,15 +16,12 @@
         </mat-option>
       </mat-select>
     </mat-form-field> 
-
-   
       <input *ngIf="tag" type="file" multiple="false" (change)="onFileChange($event)" style="font-size: 1.3em; margin-left: 10px;">
-      
   </div>
 
   <!-- <button *ngIf="registros.length != 0" flex mat-raised-button color="accent" [disabled]="log"  (click)="saveInfoCompleto()" class="text-upper" style="width: 90%; margin:15px auto;margin-left: 20px;"> {{registros.length}} Documentos - Registrar Informacion<mat-icon layout-padding>send</mat-icon></button> -->
   <button *ngIf="dataSource" flex mat-raised-button color="accent" [disabled]="progreso != 0"  (click)="authSiigo(tag)" class="text-upper" style="width: 90%; margin:15px auto;margin-left: 20px;">  Generar PDF {{documentos.length}} Respaldo POS <mat-icon>update_file</mat-icon></button>
-  <div *ngIf="lotesCmprobantes.length !=0" style="display: flex; text-align: center;">
+  <div *ngIf="lotesCmprobantes.length !=0" style="display: flex; flex-wrap: wrap; justify-content: center; width: 100%;margin: 0 auto;">
     <mat-form-field appearance="fill" style="text-align: center; font-size: 1em; margin-right: 20px;">
       <mat-label>Fecha Comprobante</mat-label>
       <input matInput placeholder="Data Base" type="date" name="tag" [(ngModel)]="date">
@@ -31,7 +30,31 @@
       <mat-label>observaciones</mat-label>
       <input matInput [disabled]="!date" placeholder="Data Base" type="text" name="observaciones" [(ngModel)]="obs">
     </mat-form-field>
-    <button  flex mat-raised-button color="warn" [disabled]="!obs"  (click)="procesarInformacion()" class="text-upper" style="width: 90%; margin:15px auto;margin-left: 20px; color: white;"> Subir <span style="font-size: 1.3em; color:blue">{{lotesCmprobantes.length}}</span> Comprobantes  Siigo <mat-icon>save</mat-icon></button>
+   <div>
+    <mat-chip color="accent">
+      COMPROBANTE VENTAS {{totalVentas() | number:'0.0-0'}}  
+    </mat-chip>
+    <mat-chip color="accent">
+      COMPROBANTECOSTO MERCANCIA VENDIDA {{totalCostos() | number:'0.0-0'}}
+    </mat-chip>
+   </div>
+    <mat-chip-list  style="margin: 0 auto;">
+      <ng-template let-doc let-i="index" ngFor [ngForOf]="lotesCmprobantes">
+        <mat-chip color="accent"  [class._100]=" procesado != 0 &&i <= procesado" [disabled]="!obs || log"   (click)="generarRegistros(doc)"  >
+          <mat-chip-avatar>
+            <img src="assets/metas.svg" alt="Photo of a Shiba Inu"/>
+              </mat-chip-avatar>
+              {{i + 1}} <span *ngIf="doc.Siigo" >- {{doc?.Siigo[0]?.name}}  - {{doc?.Siigo[1]?.name}}</span>  - {{doc.length}} Items Costo {{costo(doc) | number:'0.0-0'}}  Venta {{venta(doc) | number:'0.0-0'}}
+          </mat-chip>
+      </ng-template>
+      
+    </mat-chip-list>
+
+     <button  flex mat-raised-button color="warn" [disabled]="!obs || log || procesado == lotesCmprobantes.length "  (click)="procesarInformacion()" class="text-upper" style="width: 90%; margin:15px auto;margin-left: 20px; color: white;"> Subir {{registros.length}} registros <span style="font-size: 1.3em; color:blue"> {{lotesCmprobantes.length * 2}}</span> Comprobantes  Siigo <mat-icon>save</mat-icon></button>
+
+     <button *ngIf="procesado == lotesCmprobantes.length " flex mat-raised-button color="warn" [disabled]=""  (click)="reload()" class="text-upper" style="width: 90%; margin:15px auto;margin-left: 20px; color: white;"> se registraron los comprobamtes agregar nuevos<mat-icon>refresh</mat-icon></button>
+
+
   </div>
 
  <span *ngIf="progreso != 0" style="color: blue;">{{progreso | number:'0.0-2'}}% </span> <mat-progress-bar *ngIf="progreso != 0" mode="determinate" [value]="progreso" color="accent" style="width: 90%; margin: 0 auto;"></mat-progress-bar>
