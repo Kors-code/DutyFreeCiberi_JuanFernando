@@ -145,6 +145,31 @@ export class Permisos {
                 eliminar:true,
                 escribir:true,
             },
+            {   
+                titulo:"Inventarios",
+                description:"Tomas de Inventario ",
+                link:'/inventarios',
+                img:'inventario.svg',
+                editar:true,
+                eliminar:true,
+                escribir:true,
+            }, {   
+                titulo:"Cambios de Precio",
+                description:"Registro y cambio de habladores de Precio",
+                link:'/Precios',
+                img:'precios.svg',
+                editar:true,
+                eliminar:true,
+                escribir:true,
+            },{   
+                titulo:"Informes Personalizados",
+                description:"Informes a la medida",
+                link:'/Informes',
+                img:'informes.svg',
+                editar:true,
+                eliminar:true,
+                escribir:true,
+            },
            
              
         ]

@@ -331,6 +331,7 @@ export class Cumplimiento{
       public asesorSking:number= 0,
       public lider:number= 0.05,
       public subGerente:number= 0.08,
+      public gerente:number= 0.08,
         
   ){}
 }

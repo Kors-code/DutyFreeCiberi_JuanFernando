@@ -116,7 +116,7 @@ export class UsersComponent implements OnInit {
 
   modulos:any;
   changeModulo(){
-    this.user.modulos.unshift(this.modulos);
+    this.user.modulos.push(this.modulos);
     this.modulos = undefined;
     // //console.log(this.user)
   }
