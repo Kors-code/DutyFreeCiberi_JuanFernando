@@ -1,7 +1,7 @@
 <mat-toolbar>
     <button *ngIf="identity" mat-button [matMenuTriggerFor]="menuRef"><mat-icon class="mat-18">menu</mat-icon> <span>{{identity?.name}}</span> </button>
   <span class="example-spacer"></span>
-  <span>DFP App 1.4</span>
+  <span>DFP App 1.6</span>
   <mat-icon *ngIf="Online == true " style="color:green; margin-left:10px; margin-right:10px;" matTooltip="En Línea" >wifi</mat-icon>
   <mat-icon *ngIf="Online == false " style="color:red; margin-left:10px; margin-right:10px;" matTooltip="Sin Conexiòn" >signal_wifi_off</mat-icon>
 </mat-toolbar>
@@ -41,7 +41,6 @@
     <button mat-menu-item routerLink="/Data-Base">
       <mat-icon class="mat-18">note</mat-icon>REGISTROS
     </button> -->
-
   <button  mat-menu-item  (click)="Logout()">
       <mat-icon class="mat-18">close</mat-icon>  
       CERRAR SESIÓN

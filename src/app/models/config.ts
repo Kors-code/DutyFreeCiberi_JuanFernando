@@ -1,7 +1,6 @@
 import { Categoria, Categorias } from "./presupuesto";
 
 export class Config{
-       
     constructor(
             public _id: any = undefined,
             public siigoUser:string = '',  
@@ -10,6 +9,7 @@ export class Config{
             public empleados:Empleado[] = [],
             public categorias:any[] = new Categorias().categorias,
             public tiendas:any[] = [],
+            public inventarios:any[] = [],
         ){}
 }
 

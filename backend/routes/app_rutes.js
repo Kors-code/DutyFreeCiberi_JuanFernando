@@ -96,6 +96,11 @@ api.get('/configuracion', md_auth.ensureAuth,  infoController.getDataConfig);
 api.put('/configuracion', md_auth.ensureAuth,  infoController.updateDataConfiguracion);
 
 
+// INVENTARIOS 
+
+api.post('/master-conteo/:tag', md_auth.ensureAuth,  infoController.agregarConteo);
+api.post('/contar/:tag', md_auth.ensureAuth,  infoController.contarEan);
+api.get('/conteo-tag/:tag', md_auth.ensureAuth,  infoController.getConteoTag);
 
 module.exports = api;
 

@@ -294,5 +294,33 @@ export class InfoService {
 }
 
 
+// INVENTARIOS
+
+agregarConteo(user_to_register:any, tag:string){
+    let paramas = JSON.stringify(user_to_register);
+    let headers = new HttpHeaders({
+        'content-Type':'application/json',
+        'Authorization': this.getToken()
+    });
+    return this._http.post<agregar>(this.url+'master-conteo/'+tag, paramas, {headers:headers});
+}
+
+agregarScaneo(user_to_register:any, tag:string){
+    let paramas = JSON.stringify(user_to_register);
+    let headers = new HttpHeaders({
+        'content-Type':'application/json',
+        'Authorization': this.getToken()
+    });
+    return this._http.post<agregar>(this.url+'contar/'+tag, paramas, {headers:headers});
+}
+
+getConteoTag(tag:string){
+    // let paramas = JSON.stringify(register);
+    let headers = new HttpHeaders({
+        // 'Content-Type': 'application/json',
+        'Authorization': this.getToken()
+    });
+    return this._http.get<any>(this.url+'conteo-tag/'+tag, {headers:headers});
+}
 
 }

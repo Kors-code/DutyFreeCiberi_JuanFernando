@@ -446,7 +446,7 @@ async function sendInvoiceSiigo(req, res){
   //console.log('Connected successfully to server');
   const collection = db.collection(coll);
 
-  collection.aggregate([ {$match: {Estado:'Activa'}},
+  collection.aggregate([ {$match: {Estado:'Siigo'}},
               { $group: {
                   _id: "$Folio",
                   Usd:{$sum:'$Importe'},
@@ -513,7 +513,6 @@ async function sendInvoiceSiigo(req, res){
                       elemento.taxes = [],
                       elemento.code = 'Sku-1'
                   });
-                        // collection.updateMany({Folio:element._id},{$set: {Siigo:respuesta.body, Estado:respuesta.body.id}},{ upsert: false })
                         //console.log('Respuesta Siigo', respuesta.raw_body);
                         let document = {
                           template: `
@@ -626,8 +625,9 @@ async function sendInvoiceSiigo(req, res){
                         PDF.create(document)
                         .then(pdfG => {
                           index ++  
+                          collection.updateMany({Folio:element._id},{$set: {Pdf:pdfG, Estado:'PDF'}},{ upsert: false })
                           io.emit('UpSiigo', {length:array.length, i:index}); 
-                            //console.log(pdfG)
+                            console.log(pdfG)
                         })
                         .catch(error => {
                             console.error(error)      

@@ -1,6 +1,6 @@
 export var GLOBAL = {
-    // url_app: '/api/', 
-    url_app: 'http://localhost:1165/api/',
+    url_app: '/api/', 
+    // url_app: 'http://localhost:1165/api/',
     // url_socket: 'ws://localhost:38081',
     // url_app: 'https://ciberi.co/api/',  
     url: 'https://ciberi.co/api/',
@@ -12,6 +12,7 @@ export var GLOBAL = {
     version:'1.2',
     company: 'ciberi.co'
 }
+
 
 
 // Ofid.Marquez@dutyfreepartners.com

@@ -12,21 +12,31 @@ import {MatSort} from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Config } from 'src/app/models/config';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { time } from 'console';
+import { DialogDataJson } from '../data-base/data-base.component';
+import {Sort} from '@angular/material/sort';
 
-interface Articulo{
-  
+export interface _Conteo {
+
+  Codigo_1: number;
+  Codigo_3: number;
+  CLASS_DISCRIP: string;
+  Descripcion_1: string;
+  Exist: number;
 }
+
 @Component({
-  selector: 'app-importar-info',
-  templateUrl: './importar-info.component.html',
-  styleUrls: ['./importar-info.component.css']
+  selector: 'app-toma-inv',
+  templateUrl: './toma-inventario.component.html',
+  styleUrls: ['./toma-inventario.component.css']
 })
-export class ImportarInfoComponent implements OnInit {
+
+export class tomaInventarioComponent implements OnInit {
   newDataUp:any;
   config:any;
   date:any;
   obs:any;
-  displayedColumns: string[] = ['folio', 'unds', 'cop', 'detail'];
+  displayedColumns: string[] = ['SKU', 'EAN', 'CATEGORIA', 'PRODUCTO', 'EXISTENCIA','CONTEO', 'DIFERENCIA', 'DETALLE'];
   @ViewChild(MatSort, {static: true}) sort!: MatSort;
   constructor( public dialog: MatDialog, @Inject(DOCUMENT) doc: any,
               public _infoServce:InfoService,
@@ -37,10 +47,10 @@ export class ImportarInfoComponent implements OnInit {
     ) { 
       this.config = new Config();
       this.trmApi =  new TrmApi("aEOKmLbbPROhCr6iDiieAGCqt");
-      this.trmApi
-        .latest()
-        .then((data:any) =>  console.log(this.trm =  data.valor))
-        .catch((error:any) =>  console.log(error));
+      // this.trmApi
+      //   .latest()
+      //   .then((data:any) =>  console.log(this.trm =  data.valor))
+      //   .catch((error:any) =>  console.log(error));
     }
 
   ngOnInit(): void {
@@ -50,7 +60,7 @@ export class ImportarInfoComponent implements OnInit {
 
   openSnackBar(message: string, action: string = 'Ok') {
     this._snackBar.open(message, action, {
-      duration: 3000,
+      duration: 1000,
     });
   }
 
@@ -62,6 +72,7 @@ export class ImportarInfoComponent implements OnInit {
   register = 0;
   trm:any;
   trmApi:any;
+  scan = 0
 
   cuentas:any[] = [
     {
@@ -197,23 +208,9 @@ export class ImportarInfoComponent implements OnInit {
     };
    }
 
-   documentos:Articulo[] = [];
+   documentos:any[] = [];
    dataSource:any;
-   getfacturacionSiigo(){
-    this.log= true;
-    this._infoServce.getfacturacionSiigo(this.tag).subscribe(
-      res=>{
-        this.documentos = res
-        this.dataSource = new MatTableDataSource<Articulo>(this.documentos);
-        this.dataSource.sort = this.sort
-        this.log= false;
-      }
-    );
-   }
-
-   sortData(event:any){
-     // ////console.log(event)
-   }
+   
 
    onFileChange(evt: any) {
     this.log= true;
@@ -232,12 +229,8 @@ export class ImportarInfoComponent implements OnInit {
       const ws: XLSX.WorkSheet = wb.Sheets[wsname];
       this.data = (XLSX.utils.sheet_to_json(ws, { header: 1 }));
 
-      const wsnameC : string = wb.SheetNames[1];
-      const wsC: XLSX.WorkSheet = wb.Sheets[wsnameC];
-      this.dataCostumer = (XLSX.utils.sheet_to_json(wsC, { header: 1 }));
+      console.log('Data',this.data);
 
-      // ////console.log('Data',this.data);
-      // ////console.log('Costumer',this.dataCostumer);
       this.convertirJson()
       this.log= false;
     };
@@ -247,118 +240,43 @@ export class ImportarInfoComponent implements OnInit {
   }
 
   progreso = 0
-  authSiigo(tag:string){
-    this.progreso = 1;
-    this.newDataUp =  this._socketService.listen('UpSiigo').subscribe((data:any)=>{
-      // ////console.log(data);
-      this.progreso = (data.i / data.length)*100
-      // ////console.log(this.progreso)
-    })
 
 
-    let credenciales={
-      user:this.config.siigoUser,
-      key:this.config.siigoKey
-    }
-
-    this._siigoService.sendInvoicesPeriodo(credenciales, tag).subscribe(
-      res => {
-        // ////console.log(res)
-      },err=>{
-        // ////console.log(err.status)
-        if(err.status == 200){
-          let data = {titulo: 'Confirmaciòn', info:err.error.text, type: 'Confirm', icon:'done_all'}
-  
-          let dialogRef = this.dialog.open(DialogConfirm,{
-            data: data
-          });
-        
-          dialogRef.afterClosed().subscribe(result => {
-            // this.getfacturacionSiigo()
-          })
-        }
-      }
-    )
+  saveScanSocket(){
+    // ////console.log(JSON.stringify(this.registros))
+    // this._socketService.emit('dataUpNow', JSON.stringify(this.registros))
   }
 
-  saveInfoSocket(){
-    // ////console.log(JSON.stringify(this.registros))
-    this._socketService.emit('dataUpNow', JSON.stringify(this.registros))
+  subirConteo(){
+    console.log(this.tag)
+    console.log(this.registros)
+    this.saveInfoCompleto(this.registros)
   }
 
 
   tag:string = '';
   saveInfoCompleto(registros: any){
     this.log= true;
-    let dialogRef
-    this._infoServce.agregarInfo(registros, this.tag).subscribe(
+    this._infoServce.agregarConteo(registros, this.tag).subscribe(
       res =>{
         let dato = res
-        this.procesado++
-        console.log(this.procesado)
-        if(this.procesado <= this.lotesCmprobantes.length){
-          if(this.procesado << this.lotesCmprobantes.length){
-            this.generarRegistros(this.lotesCmprobantes[this.procesado])
-            this.dialog.closeAll()
-            let data = {titulo: 'Progreso '+ this.procesado + ' de ' + this.lotesCmprobantes.length, info:'Se Registraron ' + res.insertedCount + ' de ' + registros.length, type: 'Confirm', icon:'done_all'}
-            dialogRef = this.dialog.open(DialogConfirm,{
-              data: data
-            });
-          }else{
-            this.log = false
-            let data = {titulo: 'Registro Exitoso '+ this.procesado + 'de ' + this.lotesCmprobantes.length, info:'Se Registraron ' + res.insertedCount + ' de ' + registros.length, type: 'Confirm', icon:'done_all'}
-            let dialogRef = this.dialog.open(DialogConfirm,{
-              data: data
-            });
-          }
-        }
-        
+        console.log(dato)
+        let data: Object
+        this.log = false
+        data = {titulo: 'Confirmaciòn', info:'Se Subieron los Registros', type: 'Cancel', icon:'done_all'}
+      
+        let dialogRef = this.dialog.open(DialogConfirm,{
+          data: data
+         
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+          window.location.reload();
+        })
+
       })
   }
  
-  saveInfo(){
-    this.log= true;
-    let data: Object
-    data = {titulo: 'Confirmaciòn', info:'Se Subiran los Registros', type: 'Cancel', icon:'pan_tool'}
-  
-    let dialogRef = this.dialog.open(DialogConfirm,{
-      data: data
-    });
-  
-    dialogRef.afterClosed().subscribe(result => {
-      if(result){
-        this.register = 0
-        for(var i = 0;i < this.registros.length; i++){
-          this.registros[i].TRM = this.trm;
-          this.registros[i].COP = this.trm * this.registros[i].Importe;
-          this._infoServce.saveInfo(this.registros[i]).subscribe(
-            res=>{
-              this.register ++
-              // ////console.log(res)
-              if(this.register ==  this.registros.length){
-               
-                let data: Object
-                data = {titulo: 'Exito', info:'Se han procesado ' + this.register + ' Registros', type: 'Confirm', icon:'done_all'}
-              
-                let dialogRef = this.dialog.open(DialogConfirm,{
-                  data: data
-                });
-
-                dialogRef.afterClosed().subscribe(result => {
-                  this.data = [];
-                  this.registros = [];
-                  this.log= false;
-                })
-
-              }
-
-            }
-          )
-        }
-      }
-    })
-
-  } 
 
   registros:any = [];
   registrosCostumer:any = [];
@@ -380,81 +298,23 @@ export class ImportarInfoComponent implements OnInit {
       this.registros.push(Object.fromEntries(reg))
     }
 
-    let keysC = Object.values(this.dataCostumer[0])
-    for(var i = 1;i < this.dataCostumer.length; i++){
-      let arr = this.dataCostumer[i];
-      let par = Object.values(arr);
-      let reg = [];
-      for (let i = 0; i < keysC.length; i++) {
-        let obje = [keysC[i], par[i] || '' ]
-        reg.push(obje)
-      }
-      this.registrosCostumer.push(Object.fromEntries(reg))
-    }
+   console.log(this.registros) 
     
     for(var i = 0;i < this.registros.length; i++){
-
-      let pos = this.registrosCostumer.map(function(e: { DOC_N: any; }) { return e.DOC_N; }).indexOf(this.registros[i].Folio);
-
-      if(pos != -1){
-        this.registros[i].Costumer = this.registrosCostumer[pos]
+      if(this.registros[i].Exist == ''){
+        this.registros[i].Exist = 0
       }
-
-
-      let fecha =  this.registros[i].Fecha;
-      let split = fecha.split("/");
-      // // ////console.log(split)
-      this.registros[i].Importe = Number(this.registros[i].Importe)
-      this.registros[i].Estado = 'Activa';
-      
-  
-      this.registros[i].Siigo = [];
-      this.registros[i].Pdf = [];
-      this.registros[i].TRM = this.trm;
-      this.registros[i].COP = Math.round(this.trm * this.registros[i].Importe);
-      ////console.log(this.registros[i].Costo_de_v)
-      this.registros[i].Costo_de_v =  this.registros[i].Costo_de_v.replace(/,/g, '')
-      this.registros[i].Costo_de_v = Number(this.registros[i].Costo_de_v)
-      // ////console.log(this.registros[i])
-      
-      ////console.log(this.registros[i])
-
-      if(parseInt(split[0]) <= 9){
-        this.registros[i].Day = '0'+ split[0];
-        // ////console.log( this.registros[i].Day)
-      }else{
-        this.registros[i].Day = split[0];
-        // ////console.log( this.registros[i].Day)
-      }
-      this.registros[i].Month = split[1];
-      this.registros[i].Year = '20'+split[2];
-      this.registros[i].Detalle = 'FAC '+this.registros[i].Folio + ' ' + this.registros[i].Descripcion_1 + ' ' +this.registros[i].Month + ' CANT: ' +this.registros[i].Cantidad + ' TRM: '+this.registros[i].TRM + ' USD: '+this.registros[i].Importe ;
-      
+      this.registros[i].Estado = 'Activo';
+      this.registros[i].Conteo0 = [];
+      this.registros[i].Conteo1 = [];
+      this.registros[i].Conteo2 = [];
+      this.registros[i].Conteo3 = [];
+      this.registros[i].Conteo4 = [];
+      this.registros[i].Definitivo = [];
+      this.registros[i].Diferencia = 0;
+      this.log= false;
     }
-    this.log= false;
-   
-    // console.log(this.itemsContable)
-    let lotes = 200
-    // console.log(lotes)
-  
-    this.chunckArrayInGroups(this.registros, lotes)
-    // this.lote = []
-    // this.lotesCmprobantes = []
-    // for (let i = 0; i < this.registros.length; i++) {
-    //   let pedazo = this.registros[i];
-    //   if(this.lote.length << 201){
-    //     this.lote.push(pedazo)
-    //     console.log(this.lote)
-    //   }else{
-    //     this.lotesCmprobantes.push(this.lote)
-    //     this.lote = []
-    //     this.lote.push(pedazo)
-    //   }
-    //   // this.lotesCmprobantes.push(pedazo);
-    // }
-    
- 
-
+    // console.log(this.registros)
   }
 
    chunckArrayInGroups(arr:any[], size:number) {
@@ -639,41 +499,118 @@ export class ImportarInfoComponent implements OnInit {
     this.generarRegistros(this.lotesCmprobantes[0])
   }
 
-  costo(doc: any[]){
-    let valor = 0
-    doc.forEach(element => {
-      valor = valor + element.Costo_de_v
-    });
-    return valor
-  }
-
-  venta(doc: any[]){
-    let valor = 0
-    doc.forEach(element => {
-      valor = valor + element.COP
-    });
-    return valor
-  }
-
-  totalVentas(){
-    let valor = 0
-    this.registros.forEach((element: { COP: number; }) => {
-      valor = valor + element.COP
-    });
-    return valor
-  }
-
-  totalCostos(){
-    let valor = 0
-    this.registros.forEach((element: { Costo_de_v: number; }) => {
-      valor = valor + element.Costo_de_v
-    });
-    return valor
-  }
-
   reload(){
     window.location.reload();
   }
 
+  saveScan(){
+    this.log= true;
+    this.tag = 'MAYO'
+    let scan = {
+      scan:this.scan,
+      time:new Date().getTime(),
+      user:'prueba',
+      pos:'UBI 1',
+    }
+    this._infoServce.agregarScaneo(scan, this.tag).subscribe(
+      res =>{
+        let dato = res
+        console.log(dato)
+        let data: Object
+        this.log = false
+        this.openSnackBar(this.scan + '')
+        this.scan =0  
+      })
+  }
 
+
+  listenConteo(){
+    this.tag = 'MAYO',
+    console.log('scan'+this.tag)
+    this.newDataUp =  this._socketService.listen('scan'+this.tag).subscribe((data:any)=>{
+      console.log(data);
+        this._infoServce.getConteoTag(this.tag).subscribe(
+          res=>{
+            this.openSnackBar(data.scan)
+            console.log(res)
+            this.conteo = res
+          }
+        )
+    })
+  }
+
+
+  getCnteoTag(){
+    this.tag = 'MAYO',
+    this._infoServce.getConteoTag(this.tag).subscribe(
+      res=>{
+        console.log(res)
+        this.conteo = res
+        this.openSnackBar('NUEVOS REGISTROS '+ this.conteo.length)
+      }
+    )
+  }
+
+
+  conteo: _Conteo[]=[]
+
+  passRegistro(item:any){
+    let registro = {reg:item, coll:this.tag} 
+    let dialogRef = this.dialog.open(DialogDataJson,{
+      data: registro
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      //console.log(result)
+      if(result == item){
+        //console.log('igual')
+      }else{
+        //console.log('cambio')
+        // this.getDataCollections(this.key)
+      }
+      item = result
+    })
+    // ////console.log(event)
+  }
+
+  sortedData: _Conteo[] = [];
+
+  sortData(sort: Sort) {
+    const data = this.conteo;
+    // console.log(data) 
+    if (!sort.active || sort.direction === '') {
+      this.sortedData = data;
+      return;
+    }
+
+    // Codigo_1
+    // Codigo_3
+    // CLASS_DISCRIP
+    // Descripcion_1
+    // Exist
+
+    
+    this.sortedData = data.sort((a, b) => {
+      const isAsc = sort.direction === 'asc';
+      switch (sort.active) {
+        case 'Codigo_1':
+          console.log('Codigo_1')
+          return compare(a.Codigo_1, b.Codigo_1, isAsc);
+        case 'Codigo_3':
+          return compare(a.Codigo_3, b.Codigo_3, isAsc);
+        case 'CLASS_DISCRIP':
+          return compare(a.CLASS_DISCRIP, b.CLASS_DISCRIP, isAsc);
+        case 'Descripcion_1':
+          return compare(a.Descripcion_1, b.Descripcion_1, isAsc);
+        case 'Exist':
+          return compare(a.Exist, b.Exist, isAsc);
+        default:
+          return 0;
+      }
+    });
+  }
+
+}
+
+function compare(a: number | string, b: number | string, isAsc: boolean) {
+  return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
 }

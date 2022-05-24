@@ -1,0 +1,76 @@
+<mat-card>
+  <mat-progress-bar mode="indeterminate" *ngIf="log" ></mat-progress-bar> 
+  
+  <mat-tab-group  mat-align-tabs="center">
+    <mat-tab label="IMPORTAR CONTEO">
+      <mat-card-content>
+          <h2 style="text-align: center;">TOMAS DE INVENTARIOS
+            <span>{{procesado}}</span>
+          </h2>
+          <div style="display: flex; flex-wrap: wrap; justify-content: center; align-items: center;">
+            <mat-form-field appearance="fill" style="text-align: center; font-size: 1.3em; margin-right: 20px; width: 60%;">
+              <mat-label>TITULO INVENTARIO</mat-label>
+              <input matInput placeholder="Tag" type="text" name="tag" [(ngModel)]="tag">
+            </mat-form-field>
+              <input *ngIf="tag" type="file" multiple="false" (change)="onFileChange($event)" style="font-size: 1.3em; margin-left: 10px;">
+          </div>
+          <button *ngIf="registros.length != 0" flex mat-raised-button color="accent" [disabled]="log"  (click)="subirConteo()" class="text-upper" style="width: 90%; margin:15px auto;margin-left: 20px;">{{registros.length}} Subir Conteo <mat-icon>update_file</mat-icon></button>
+          <span *ngIf="progreso != 0" style="color: blue;">{{progreso | number:'0.0-2'}}% </span> <mat-progress-bar *ngIf="progreso != 0" mode="determinate" [value]="progreso" color="accent" style="width: 90%; margin: 0 auto;"></mat-progress-bar>
+      </mat-card-content>
+    </mat-tab>
+    <mat-tab label="PANEL DE CONTEO">
+      <mat-card-content>
+        <button  flex mat-raised-button color="accent" [disabled]="progreso != 0"  (click)="getCnteoTag()" class="text-upper" style="width: 90%; margin:15px auto;margin-left: 20px;">MONITOREO <mat-icon>tv</mat-icon></button>
+        <table *ngIf="conteo.length != 0" mat-table [dataSource]="conteo" class="mat-elevation-z8" style="margin: 0 auto;" matSort (matSortChange)="sortData($event)">
+          <!--- Note that these columns can be defined in any order.
+                The actual rendered columns are set as a property on the row definition" -->
+                <!-- '', 'EAN', 'CATEGORIA', 'PRODCUCTO', 'EXISTENCIA','CONTEO', 'DIFERENCIA' -->
+          <!-- Position Column -->
+          <ng-container matColumnDef="SKU">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header="Codigo_1"> SKU. </th>
+            <td mat-cell *matCellDef="let element"> {{element.Codigo_1}} </td>
+          </ng-container>
+          <ng-container matColumnDef="EAN">
+            <th mat-header-cell *matHeaderCellDef> EAN. </th>
+            <td mat-cell *matCellDef="let element"> {{element.Codigo_3}} </td>
+          </ng-container>
+          <ng-container matColumnDef="CATEGORIA">
+            <th mat-header-cell *matHeaderCellDef> CATEGORIA. </th>
+            <td mat-cell *matCellDef="let element"> {{element.CLASS_DISCRIP}} </td>
+          </ng-container>
+          <ng-container matColumnDef="PRODUCTO">
+            <th mat-header-cell *matHeaderCellDef> PRODUCTO. </th>
+            <td mat-cell *matCellDef="let element"> {{element.Descripcion_1}} </td>
+          </ng-container>
+          <ng-container matColumnDef="EXISTENCIA">
+            <th mat-header-cell *matHeaderCellDef> EXISTENCIA. </th>
+            <td mat-cell *matCellDef="let element"> {{element.Exist}} </td>
+          </ng-container>
+
+          <ng-container matColumnDef="CONTEO">
+            <th mat-header-cell *matHeaderCellDef> CONTEO. </th>
+            <td mat-cell *matCellDef="let element"> {{element.Conteo0.length}} </td>
+          </ng-container>
+          <ng-container matColumnDef="DIFERENCIA">
+            <th mat-header-cell *matHeaderCellDef> DIFERENCIA. </th>
+            <td mat-cell *matCellDef="let element"> {{element.Conteo0.length - element.Exist}} </td>
+          </ng-container>
+          <ng-container matColumnDef="DETALLE">
+            <th mat-header-cell *matHeaderCellDef> DETALLE </th>
+            <td mat-cell *matCellDef="let element"> <mat-icon class="selec" (click)="passRegistro(element)"> edit </mat-icon> </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+      </mat-card-content>
+    </mat-tab>
+    <mat-tab label="TOMA INVENTARIO">
+      <mat-card-content>
+        <mat-form-field appearance="fill" style="text-align: center; font-size: 1em; margin-right: 20px; width: 60%;">
+          <input matInput placeholder="SCAN" type="number" name="scan" [(ngModel)]="scan">
+        </mat-form-field>
+        <button *ngIf="scan" flex mat-raised-button color="accent" [disabled]="log"  (click)="saveScan()" class="text-upper" style="width: 90%; margin:15px auto;margin-left: 20px;">Contar <mat-icon>send</mat-icon></button>
+      </mat-card-content>
+    </mat-tab>
+  </mat-tab-group>
+</mat-card>

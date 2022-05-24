@@ -9,6 +9,7 @@ import { ImportarInfoComponent } from './pages/importar-info/importar-info.compo
 import { LoginComponent } from './pages/login/login.component';
 import { MetasComponent } from './pages/metas/metas.component';
 import { SiigoComponent } from './pages/siigo-conection/siigo.component';
+import { tomaInventarioComponent } from './pages/toma-inventario/toma-inventario.component';
 import { UsersComponent } from './pages/users/users.component';
 
 const routes: Routes = [
@@ -45,6 +46,9 @@ const routes: Routes = [
   },{
     component:CumplimientoComponent,
     path: 'Cumplimieto', 
+  },{
+    component:tomaInventarioComponent,
+    path: 'inventarios', 
   }
 
 ];

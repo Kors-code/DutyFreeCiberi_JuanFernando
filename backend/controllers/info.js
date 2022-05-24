@@ -653,6 +653,72 @@ function getInfoDato(req, res){
                 });  
 }
 
+// CONTEOS DE INVENTARIO
+
+async function agregarConteo(req, res){
+    var params = req.body;
+    var coll = req.params.tag;
+    // console.log(params)
+    const url = 'mongodb://localhost:27017';
+    const client = new MongoClient(url);
+    const dbName = 'DutyFreeInventarios';
+   
+        await client.connect();
+        // console.log('Connected successfully to server');
+        const db = client.db(dbName);
+        const collection = db.collection(coll);
+       
+        const insertResult = await collection.insertMany(params);
+        // console.log('Inserted documents =>', insertResult);
+        res.status(200).send(insertResult);
+}
+
+async function contarEan(req, res){
+    var params = req.body;
+    var coll = req.params.tag;
+    let io = req.app.get('io');
+    console.log('680  '+ params)
+    const url = 'mongodb://localhost:27017';
+    const client = new MongoClient(url);
+    const dbName = 'DutyFreeInventarios';
+   
+        await client.connect();
+        console.log('Connected successfully to server');
+        const db = client.db(dbName);
+        const collection = await db.collection(coll);
+        collection.updateOne({Codigo_3:params.scan},
+            {$push:{Conteo0:params}}, function(err,doc) {
+            if (err) { throw err; }
+            else { 
+                console.log(doc)
+                console.log('scan'+coll)
+                io.emit('scan'+coll, params);
+                client.close();
+                res.status(200).send(doc); 
+            }
+          });        
+}
+
+async function getConteoTag(req, res){
+    var params = req.body;
+    var coll = req.params.tag;
+    console.log(params)
+    const url = 'mongodb://localhost:27017';
+    const client = new MongoClient(url);
+    const dbName = 'DutyFreeInventarios';
+   
+        await client.connect();
+        console.log('Connected successfully to server');
+        const db = client.db(dbName);
+        const collection = db.collection(coll);
+        let arrayCollections = []
+        var reg = await collection.find().forEach(element => {
+            arrayCollections.push(element)
+         });
+       
+        res.status(200).send(arrayCollections);
+}
+
 
 module.exports = {
     registerInfo,
@@ -683,7 +749,10 @@ module.exports = {
     agregarConfiguracion,
     getDataConfig,
     updateDataConfiguracion,
-    updateDataVendedorCollection
+    updateDataVendedorCollection,
+    agregarConteo,
+    contarEan,
+    getConteoTag
 }
 
 

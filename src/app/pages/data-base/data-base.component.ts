@@ -24,7 +24,7 @@ export class DataBaseComponent implements OnInit {
   paginacion:any;
   log:boolean = false;
   config:any;
-  displayedColumns: string[] = ['folio', 'fecha', 'vendedor', 'siigo', 'facsiigo','importe', 'trm', 'cop', 'ver'];
+  displayedColumns: string[] = ['folio', 'fecha', 'vendedor','pdf' ,'siigo', 'facsiigo','importe', 'trm', 'cop', 'ver'];
   constructor(public _infoService:InfoService,  public _socketService:SocketIOService,
     public _siigoService:SiigoService,
     public dialog: MatDialog, @Inject(DOCUMENT) doc: any,) {
@@ -70,10 +70,12 @@ export class DataBaseComponent implements OnInit {
     this.key = tag;
     this._infoService.getDataCollections(tag).subscribe(
       res=>{
-        console.log(res)
+        // console.log(res)
+        
         this.documentos = res;
         this.headers= Object.keys(this.documentos[0])
-        this.subir = this.documentos.map(function(e: { Estado: any; }) { return e.Estado; }).indexOf('Activa');
+        this.subir = this.documentos.map(function(e: { Estado: any; }) { return e.Estado; }).indexOf('Siigo');
+        // console.log(this.subir)
         this.progreso = 0
         this.totalCop=0
         this.totalUsd=0
