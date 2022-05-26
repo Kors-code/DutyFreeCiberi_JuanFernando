@@ -1,14 +1,14 @@
 <mat-toolbar>
     <button *ngIf="identity" mat-button [matMenuTriggerFor]="menuRef"><mat-icon class="mat-18">menu</mat-icon> <span>{{identity?.name}}</span> </button>
   <span class="example-spacer"></span>
-  <span>DFP App 1.6</span>
+  <span>DFP App 1.7</span>
   <mat-icon *ngIf="Online == true " style="color:green; margin-left:10px; margin-right:10px;" matTooltip="En Línea" >wifi</mat-icon>
   <mat-icon *ngIf="Online == false " style="color:red; margin-left:10px; margin-right:10px;" matTooltip="Sin Conexiòn" >signal_wifi_off</mat-icon>
 </mat-toolbar>
 <mat-menu #menuRef="matMenu">
   <button *ngIf="identity" mat-menu-item  routerLink="../" style="display: flex;">
     <img style="width: 50px; margin-top: 5px;" src="assets/house.svg" >
-    <span style="margin-left: 10px;"> Inicio</span>
+    <span style="margin-left: 10px;">Inicio</span>
   </button>
   <span *ngIf="identity">
     <ng-template let-item let-last="last" ngFor [ngForOf]="identity.modulos">

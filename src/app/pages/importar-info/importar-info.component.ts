@@ -286,7 +286,6 @@ export class ImportarInfoComponent implements OnInit {
     this._socketService.emit('dataUpNow', JSON.stringify(this.registros))
   }
 
-
   tag:string = '';
   saveInfoCompleto(registros: any){
     this.log= true;
@@ -298,7 +297,7 @@ export class ImportarInfoComponent implements OnInit {
         console.log(this.procesado)
         if(this.procesado <= this.lotesCmprobantes.length){
           if(this.procesado << this.lotesCmprobantes.length){
-            this.generarRegistros(this.lotesCmprobantes[this.procesado])
+            // this.generarRegistros(this.lotesCmprobantes[this.procesado])
             this.dialog.closeAll()
             let data = {titulo: 'Progreso '+ this.procesado + ' de ' + this.lotesCmprobantes.length, info:'Se Registraron ' + res.insertedCount + ' de ' + registros.length, type: 'Confirm', icon:'done_all'}
             dialogRef = this.dialog.open(DialogConfirm,{

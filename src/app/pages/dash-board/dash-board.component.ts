@@ -120,7 +120,7 @@ export class DashBoardComponent implements OnInit {
     this.getInformeCategorias(doc);
 
   }
-
+  downloadComisiones:any = []
   dataColl:any = []
   totalCoisiones =0
   getDataCollections(tag:string){
@@ -207,11 +207,25 @@ export class DashBoardComponent implements OnInit {
           this.totalCoisiones =0
           for (let g = 0; g < this.presupuesto.vendedores.length; g++) {
             const element = this.presupuesto.vendedores[g];
+           
             for (let t = 0; t < element.categorias.length; t++) {
               const cat = element.categorias[t];
               element.Comisiones =  element.Comisiones + cat.comisionesUsd
               this.totalCoisiones =  this.totalCoisiones + cat.comisionesUsd
             }
+            let reg = {
+              identificacion:this.presupuesto.vendedores[g].identificacion,
+              nombres:this.presupuesto.vendedores[g].name,
+              codigo:this.presupuesto.vendedores[g].codigo,
+              contrato:this.presupuesto.vendedores[g].contrato,
+              presupuesto:this.presupuesto.vendedores[g].USD,
+              ventas:this.presupuesto.vendedores[g].Ventas,
+              cumplimiento:this.presupuesto.vendedores[g].Cumplimiento,
+              comisiones:this.presupuesto.vendedores[g].Comisiones
+
+            }
+            this.downloadComisiones.push(reg)
+      
           }
           this.presupuesto.vendedores.sort(function(a, b){
             return b.USD - a.USD;
@@ -597,6 +611,9 @@ compare(a: number | string, b: number | string, isAsc: boolean) {
   passRegistro(item:any){
     // // // //console.log(item)
   }
+
+
+
 
   downloadFile(data: any, title:string) {
     const replacer = (key: any, value: null) => value === null ? '' : value; // specify how you want to handle null values here

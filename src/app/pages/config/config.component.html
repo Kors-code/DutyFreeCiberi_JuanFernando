@@ -263,7 +263,10 @@
             <mat-form-field style="margin-right: 20px;" appearance="fill">
               <mat-label>Nombres Completos</mat-label>
               <input matInput type="text" [(ngModel)]="empleado.name">
-              
+            </mat-form-field>
+            <mat-form-field style="margin-right: 20px;" appearance="fill">
+              <mat-label>clave</mat-label>
+              <input matInput type="password" [(ngModel)]="empleado.clave">
             </mat-form-field>
             <mat-form-field appearance="fill" style="margin-right: 20px;">
               <mat-label>Rol</mat-label>
@@ -330,6 +333,45 @@
             </mat-list-item>
           </ng-template> 
           </mat-nav-list> -->
+        </mat-card-content>
+      </mat-expansion-panel>
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <mat-icon>list</mat-icon>
+              TOMAS DE INVENTARIO
+          </mat-panel-title>
+          <mat-panel-description>
+              Tags de importacion
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <mat-card-content> 
+          <mat-checkbox class="example-margin" [(ngModel)]="checked">Activo</mat-checkbox>
+          <mat-form-field style="margin-right: 20px;" appearance="fill">
+              <mat-label>TAG-INFO</mat-label>
+              <input matInput type="text" [(ngModel)]="tagInv">
+              <button *ngIf="tagInv" matSuffix mat-icon-button aria-label="Clear" (click)="addTagInv()">
+                <mat-icon>add</mat-icon>
+              </button>
+            </mat-form-field>
+        </mat-card-content>
+        <mat-card-content>
+
+          <mat-nav-list>
+            <ng-template let-item let-i="index" ngFor [ngForOf]="config.inventarios">
+              <mat-list-item >
+                <button mat-icon-button (click)="deleteTagInv(i)">
+                  <mat-icon>delete</mat-icon>
+               </button>
+                <mat-checkbox class="example-margin" [(ngModel)]="item.Activo">Activo</mat-checkbox>
+                 <h5 style="margin:0 10px;">{{ item.tag }}</h5>
+                
+              </mat-list-item>
+            </ng-template>
+           
+            
+          </mat-nav-list>
+
         </mat-card-content>
       </mat-expansion-panel>
 

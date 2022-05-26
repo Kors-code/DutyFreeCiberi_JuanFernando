@@ -1,5 +1,30 @@
+
 ._100{
-    background:rgba(6, 203, 6, 0.845);
+    background:rgb(7, 231, 7);
     text-align:center;
     color: black;
+}
+
+._50{
+    background:tomato;
+    text-align:center;
+    color: black;
+}
+
+._90{
+    background:orange;
+    text-align:center;
+    color: black;
+}
+
+.selec:hover{
+    cursor: pointer;
+    color: blue;
+    margin-left: 10px;
+}
+
+.selec{
+    margin-left: 10px;
+    display: flex;
+    align-items: center;
 }

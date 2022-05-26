@@ -1,5 +1,5 @@
 import { DOCUMENT } from '@angular/common';
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { InfoService } from '../../services/info.service';
 import * as XLSX from 'xlsx';
@@ -15,14 +15,22 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { time } from 'console';
 import { DialogDataJson } from '../data-base/data-base.component';
 import {Sort} from '@angular/material/sort';
+import { UserService } from 'src/app/services/user.service';
+import { User } from 'src/app/models/user';
 
 export interface _Conteo {
-
+  _id: string;
   Codigo_1: number;
   Codigo_3: number;
   CLASS_DISCRIP: string;
   Descripcion_1: string;
   Exist: number;
+  Conteo0:any[];
+  Definitivo:any[];
+  Conteo1:any[];
+  Conteo2:any[];
+  Conteo3:any[];
+  Conteo4:any[];
 }
 
 @Component({
@@ -36,17 +44,24 @@ export class tomaInventarioComponent implements OnInit {
   config:any;
   date:any;
   obs:any;
-  displayedColumns: string[] = ['SKU', 'EAN', 'CATEGORIA', 'PRODUCTO', 'EXISTENCIA','CONTEO', 'DIFERENCIA', 'DETALLE'];
+  scaner= true;
+  public identity:User;
+  displayedColumns: string[] = ['SKU', 'EAN', 'CATEGORIA', 'PRODUCTO', 'EXISTENCIA','CONTEO', 'DIFERENCIA', 'DETALLE',  'DEFINITIVO'];
   @ViewChild(MatSort, {static: true}) sort!: MatSort;
+  @ViewChild('scanEle')
+  scanElement!: ElementRef;
   constructor( public dialog: MatDialog, @Inject(DOCUMENT) doc: any,
               public _infoServce:InfoService,
               public _socketService:SocketIOService,
               // public _mongoService: MongoDbService
               public _siigoService:SiigoService,
-              private _snackBar: MatSnackBar
+              private _snackBar: MatSnackBar,
+              private _userService:UserService,
+              
     ) { 
       this.config = new Config();
       this.trmApi =  new TrmApi("aEOKmLbbPROhCr6iDiieAGCqt");
+      this.identity = this._userService.getIdentity();
       // this.trmApi
       //   .latest()
       //   .then((data:any) =>  console.log(this.trm =  data.valor))
@@ -55,6 +70,7 @@ export class tomaInventarioComponent implements OnInit {
 
   ngOnInit(): void {
     this.getConfig()
+    this.identity = this._userService.getIdentity();
     // this._mongoService.main();
   }
 
@@ -72,7 +88,7 @@ export class tomaInventarioComponent implements OnInit {
   register = 0;
   trm:any;
   trmApi:any;
-  scan = 0
+  scan:any = undefined
 
   cuentas:any[] = [
     {
@@ -503,29 +519,45 @@ export class tomaInventarioComponent implements OnInit {
     window.location.reload();
   }
 
+  ubicacion = ''
   saveScan(){
     this.log= true;
-    this.tag = 'MAYO'
     let scan = {
       scan:this.scan,
       time:new Date().getTime(),
-      user:'prueba',
-      pos:'UBI 1',
+      user:this.identity.email,
+      pos:this.ubicacion,
     }
-    this._infoServce.agregarScaneo(scan, this.tag).subscribe(
-      res =>{
-        let dato = res
-        console.log(dato)
-        let data: Object
-        this.log = false
-        this.openSnackBar(this.scan + '')
-        this.scan =0  
-      })
+
+    if(this.scaner){
+      this._infoServce.agregarScaneo(scan, this.tag).subscribe(
+        res =>{
+          let dato = res
+          console.log(dato)
+          let data: Object
+          this.log = false
+          this.openSnackBar(this.scan + '')
+          this.scan = undefined  
+          this.scanElement.nativeElement.focus();
+        })
+    }else{
+      this._infoServce.agregarScaneoSKU(scan, this.tag).subscribe(
+        res =>{
+          let dato = res
+          console.log(dato)
+          let data: Object
+          this.log = false
+          this.openSnackBar(this.scan + '')
+          this.scan = undefined  
+          this.scanElement.nativeElement.focus();
+        })
+    }
+  
   }
 
 
   listenConteo(){
-    this.tag = 'MAYO',
+
     console.log('scan'+this.tag)
     this.newDataUp =  this._socketService.listen('scan'+this.tag).subscribe((data:any)=>{
       console.log(data);
@@ -540,17 +572,40 @@ export class tomaInventarioComponent implements OnInit {
   }
 
 
+
+  unidades_conteo =0
+  unidades_fisicas =0
   getCnteoTag(){
-    this.tag = 'MAYO',
+    this.log= true
     this._infoServce.getConteoTag(this.tag).subscribe(
       res=>{
         console.log(res)
         this.conteo = res
+        
+        // this.conteo.sort(function(a,b){
+        //   return a.Descripcion_1.localeCompare(b.Descripcion_1);
+        // });
+        this.unidades_conteo =0
+        this.unidades_fisicas = 0
+        for (let i = 0; i < this.conteo.length; i++) {
+          const element = this.conteo[i];
+          // console.log( this.unidades_conteo)
+          if(element.Exist >= 1){
+            this.unidades_conteo = this.unidades_conteo + element.Exist
+            this.unidades_fisicas =  this.unidades_fisicas + element.Conteo0.length
+          }
+         
+        }
+
+        this.conteo.sort(function(a, b){
+          return b.Exist - a.Exist;
+        });
+
         this.openSnackBar('NUEVOS REGISTROS '+ this.conteo.length)
+        this.log= false
       }
     )
   }
-
 
   conteo: _Conteo[]=[]
 
@@ -581,14 +636,12 @@ export class tomaInventarioComponent implements OnInit {
       this.sortedData = data;
       return;
     }
-
     // Codigo_1
     // Codigo_3
     // CLASS_DISCRIP
     // Descripcion_1
     // Exist
 
-    
     this.sortedData = data.sort((a, b) => {
       const isAsc = sort.direction === 'asc';
       switch (sort.active) {
@@ -608,6 +661,106 @@ export class tomaInventarioComponent implements OnInit {
       }
     });
   }
+
+  conteoDefinitivoDefinitivo(element : any, id:string, conteo : _Conteo){
+    conteo.Definitivo = element
+   let register = {
+      Definitivo: element,
+      _id: id,
+    }
+    this._infoServce.updateConteoDefinitivo(register, this.tag).subscribe(
+      res=>{
+        this.openSnackBar('Actualizado')
+        console.log(res)
+      }
+    )
+
+  }
+
+  conteoDefinitivo(element : _Conteo){
+    element.Definitivo = element.Conteo0
+    element.Conteo0 = []
+
+   let register = {
+      Definitivo: element.Definitivo,
+      Conteo0: element.Conteo0,
+      _id: element._id,
+    }
+    this._infoServce.updateConteoD(register, this.tag).subscribe(
+      res=>{
+        console.log(res)
+        this.openSnackBar('Actualizado')
+      }
+    )
+
+  }
+
+  conteo1(element : _Conteo){
+    element.Conteo1 = element.Conteo0
+    element.Conteo0 = []
+
+    let register = {
+      Conteo0: [],
+      Conteo1: element.Conteo1,
+      _id: element._id,
+    }
+    this._infoServce.updateConteo1(register, this.tag).subscribe(
+      res=>{
+        console.log(res)
+        this.openSnackBar('Actualizado')
+      }
+    )
+  }
+
+  conteo2(element : _Conteo){
+    element.Conteo2 = element.Conteo0
+    element.Conteo0 = []
+    let register = {
+      Conteo0: [],
+      Conteo2: element.Conteo2,
+      _id: element._id,
+    }
+    this._infoServce.updateConteo2(register, this.tag).subscribe(
+      res=>{
+        console.log(res)
+        this.openSnackBar('Actualizado')
+      }
+    )
+  }
+
+  conteo3(element : _Conteo){
+    element.Conteo3 = element.Conteo0
+    element.Conteo0 = []
+    let register = {
+      Conteo0: [],
+      Conteo3: element.Conteo3,
+      _id: element._id,
+    }
+    this._infoServce.updateConteo3(register, this.tag).subscribe(
+      res=>{
+        console.log(res)
+        this.openSnackBar('Actualizado')
+      }
+    )
+  }
+
+  conteo4(element : _Conteo){
+    element.Conteo4 = element.Conteo0
+    element.Conteo0 = []
+
+    let register = {
+      Conteo0: [],
+      Conteo4: element.Conteo4,
+      _id: element._id,
+    }
+    this._infoServce.updateConteo4(register, this.tag).subscribe(
+      res=>{
+        console.log(res)
+        this.openSnackBar('Actualizado')
+      }
+    )
+  }
+
 
 }
 

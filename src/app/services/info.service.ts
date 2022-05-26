@@ -314,6 +314,69 @@ agregarScaneo(user_to_register:any, tag:string){
     return this._http.post<agregar>(this.url+'contar/'+tag, paramas, {headers:headers});
 }
 
+agregarScaneoSKU(user_to_register:any, tag:string){
+    let paramas = JSON.stringify(user_to_register);
+    let headers = new HttpHeaders({
+        'content-Type':'application/json',
+        'Authorization': this.getToken()
+    });
+    return this._http.post<agregar>(this.url+'contar-sku/'+tag, paramas, {headers:headers});
+}
+
+updateConteoD(user_to_register:any, tag:string){
+    let paramas = JSON.stringify(user_to_register);
+    let headers = new HttpHeaders({
+        'content-Type':'application/json',
+        'Authorization': this.getToken()
+    });
+    return this._http.post<agregar>(this.url+'update-conteo-d/'+tag, paramas, {headers:headers});
+}
+
+updateConteoDefinitivo(user_to_register:any, tag:string){
+    let paramas = JSON.stringify(user_to_register);
+    let headers = new HttpHeaders({
+        'content-Type':'application/json',
+        'Authorization': this.getToken()
+    });
+    return this._http.post<agregar>(this.url+'update-conteo-defi/'+tag, paramas, {headers:headers});
+}
+
+updateConteo1(user_to_register:any, tag:string){
+    let paramas = JSON.stringify(user_to_register);
+    let headers = new HttpHeaders({
+        'content-Type':'application/json',
+        'Authorization': this.getToken()
+    });
+    return this._http.post<agregar>(this.url+'update-conteo-1/'+tag, paramas, {headers:headers});
+}
+
+updateConteo2(user_to_register:any, tag:string){
+    let paramas = JSON.stringify(user_to_register);
+    let headers = new HttpHeaders({
+        'content-Type':'application/json',
+        'Authorization': this.getToken()
+    });
+    return this._http.post<agregar>(this.url+'update-conteo-2/'+tag, paramas, {headers:headers});
+}
+
+updateConteo3(user_to_register:any, tag:string){
+    let paramas = JSON.stringify(user_to_register);
+    let headers = new HttpHeaders({
+        'content-Type':'application/json',
+        'Authorization': this.getToken()
+    });
+    return this._http.post<agregar>(this.url+'update-conteo-3/'+tag, paramas, {headers:headers});
+}
+
+updateConteo4(user_to_register:any, tag:string){
+    let paramas = JSON.stringify(user_to_register);
+    let headers = new HttpHeaders({
+        'content-Type':'application/json',
+        'Authorization': this.getToken()
+    });
+    return this._http.post<agregar>(this.url+'update-conteo-4/'+tag, paramas, {headers:headers});
+}
+
 getConteoTag(tag:string){
     // let paramas = JSON.stringify(register);
     let headers = new HttpHeaders({

@@ -1,17 +1,21 @@
 <mat-card>
   <mat-progress-bar mode="indeterminate" *ngIf="log" ></mat-progress-bar> 
-  
   <mat-tab-group  mat-align-tabs="center">
     <mat-tab label="IMPORTAR CONTEO">
       <mat-card-content>
           <h2 style="text-align: center;">TOMAS DE INVENTARIOS
             <span>{{procesado}}</span>
           </h2>
+      
           <div style="display: flex; flex-wrap: wrap; justify-content: center; align-items: center;">
-            <mat-form-field appearance="fill" style="text-align: center; font-size: 1.3em; margin-right: 20px; width: 60%;">
-              <mat-label>TITULO INVENTARIO</mat-label>
-              <input matInput placeholder="Tag" type="text" name="tag" [(ngModel)]="tag">
-            </mat-form-field>
+            <mat-form-field appearance="fill">
+              <mat-label>Tag Base Datos</mat-label>
+            <mat-select [(ngModel)]="tag">
+              <mat-option *ngFor="let item of config.inventarios" [value]="item.tag">
+                {{item.tag}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field> 
               <input *ngIf="tag" type="file" multiple="false" (change)="onFileChange($event)" style="font-size: 1.3em; margin-left: 10px;">
           </div>
           <button *ngIf="registros.length != 0" flex mat-raised-button color="accent" [disabled]="log"  (click)="subirConteo()" class="text-upper" style="width: 90%; margin:15px auto;margin-left: 20px;">{{registros.length}} Subir Conteo <mat-icon>update_file</mat-icon></button>
@@ -20,7 +24,37 @@
     </mat-tab>
     <mat-tab label="PANEL DE CONTEO">
       <mat-card-content>
-        <button  flex mat-raised-button color="accent" [disabled]="progreso != 0"  (click)="getCnteoTag()" class="text-upper" style="width: 90%; margin:15px auto;margin-left: 20px;">MONITOREO <mat-icon>tv</mat-icon></button>
+        <div style="display: flex;">
+          <mat-form-field appearance="fill">
+            <mat-label>Tag Base Datos</mat-label>
+          <mat-select [(ngModel)]="tag">
+            <mat-option *ngFor="let item of config.inventarios" [value]="item.tag">
+              {{item.tag}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field> 
+          <button *ngIf="tag"  flex mat-raised-button color="accent" [disabled]="progreso != 0"  (click)="getCnteoTag()" class="text-upper" style="width: 90%; margin:15px auto;margin-left: 20px;">MONITOREO <mat-icon>tv</mat-icon></button>
+        </div>
+        
+        <h3>    </h3>
+
+        <table *ngIf="conteo.length != 0"  style="width: 90%; margin: 0 auto; font-size: 1.3em;" class="mat-elevation-z8">
+          <thead style="background-color:rgb(63, 62, 62) ; color:white; padding: 15px; font-size: 1em; border-radius: 10px;">
+            <tr>
+              <th>A CONTAR </th>
+              <td style="text-align:center ;"><span style="color: chartreuse; text-align: right;">{{unidades_conteo  | number}}</span> </td>
+              <th>CONTEO </th>
+              <td style="text-align:center ;"><span style="color: chartreuse;">{{unidades_fisicas  | number }}</span></td>
+              <th>DIFERENCIA </th>
+              <td style="text-align:center ;" [class._50]="unidades_fisicas - unidades_conteo <= -1" [class._100]="unidades_fisicas - unidades_conteo == 0"><span>{{unidades_fisicas - unidades_conteo  | number }}</span> </td>
+            </tr>
+            <tr>
+              <th>EJECUCION</th>
+              <td style="text-align:center ;" [class._50]="unidades_fisicas - unidades_conteo <= -1" [class._100]="unidades_fisicas - unidades_conteo == 0"><span>{{(unidades_fisicas / unidades_conteo)* 100  | number }}</span> </td>
+            </tr>
+          </thead>
+        </table>
+        
         <table *ngIf="conteo.length != 0" mat-table [dataSource]="conteo" class="mat-elevation-z8" style="margin: 0 auto;" matSort (matSortChange)="sortData($event)">
           <!--- Note that these columns can be defined in any order.
                 The actual rendered columns are set as a property on the row definition" -->
@@ -46,18 +80,55 @@
             <th mat-header-cell *matHeaderCellDef> EXISTENCIA. </th>
             <td mat-cell *matCellDef="let element"> {{element.Exist}} </td>
           </ng-container>
-
           <ng-container matColumnDef="CONTEO">
             <th mat-header-cell *matHeaderCellDef> CONTEO. </th>
-            <td mat-cell *matCellDef="let element"> {{element.Conteo0.length}} </td>
+            <td mat-cell *matCellDef="let element"> 
+              <span class="selec" [matMenuTriggerFor]="menu" *ngIf="element.Conteo0.length != 0">
+                <mat-icon  > fullscreen </mat-icon>  {{element.Conteo0.length}}
+                <mat-menu #menu="matMenu">
+                  <button mat-menu-item (click)="conteoDefinitivo(element)">Definitivo</button>
+                  <button mat-menu-item (click)="conteo1(element)" *ngIf="element.Conteo1.length == 0">Conteo 1</button>
+                  <button mat-menu-item (click)="conteo2(element)" *ngIf="element.Conteo1.length != 0 && element.Conteo2.length == 0 ">Conteo 2</button>
+                  <button mat-menu-item (click)="conteo3(element)" *ngIf="element.Conteo2.length != 0 && element.Conteo3.length == 0">Conteo 3</button>
+                  <button mat-menu-item (click)="conteo4(element)" *ngIf="element.Conteo3.length != 0 && element.Conteo4.length == 0">Conteo 4</button>
+                </mat-menu>
+              </span>
+            </td>
+ 
           </ng-container>
           <ng-container matColumnDef="DIFERENCIA">
             <th mat-header-cell *matHeaderCellDef> DIFERENCIA. </th>
-            <td mat-cell *matCellDef="let element"> {{element.Conteo0.length - element.Exist}} </td>
+            <td mat-cell *matCellDef="let element" 
+            [class._50]="element.Conteo0.length - element.Exist <= -1" [class._100]="element.Conteo0.length - element.Exist == 0"> {{element.Conteo0.length - element.Exist}} </td>
           </ng-container>
           <ng-container matColumnDef="DETALLE">
-            <th mat-header-cell *matHeaderCellDef> DETALLE </th>
-            <td mat-cell *matCellDef="let element"> <mat-icon class="selec" (click)="passRegistro(element)"> edit </mat-icon> </td>
+            <th mat-header-cell *matHeaderCellDef > DETALLE </th>
+            <td mat-cell *matCellDef="let element" style="display: flex;">
+              <span class="selec">
+               <mat-icon  (click)="passRegistro(element.Definitivo)">remove_red_eye</mat-icon> Ver
+              </span>
+               <span class="selec" *ngIf="element.Definitivo.length != 0">
+                {{element.Definitivo.length}}
+                <mat-icon> done_all </mat-icon> 
+               </span>
+               <span  (click)="conteoDefinitivoDefinitivo(element.Conteo1, element._id, element)" class="selec" *ngIf="element.Conteo1.length != 0">
+                <mat-icon > fullscreen </mat-icon> {{element.Conteo1.length}}
+               </span>
+               <span (click)="conteoDefinitivoDefinitivo(element.Conteo2, element._id, element)" class="selec" *ngIf="element.Conteo2.length != 0">
+                <mat-icon > fullscreen </mat-icon> {{element.Conteo2.length}}
+               </span>
+               <span (click)="conteoDefinitivoDefinitivo(element.Conteo3, element._id, element)" class="selec" *ngIf="element.Conteo3.length != 0">
+                <mat-icon > fullscreen </mat-icon> {{element.Conteo3.length}}
+               </span>
+               <span (click)="conteoDefinitivoDefinitivo(element.Conteo4, element._id, element)" class="selec"*ngIf="element.Conteo4.length != 0">
+                <mat-icon > fullscreen </mat-icon> {{element.Conteo4.length}}
+               </span>
+              </td>
+          </ng-container>
+          <ng-container matColumnDef="DEFINITIVO">
+            <th mat-header-cell *matHeaderCellDef> DEFINITIVO. </th>
+            <td mat-cell *matCellDef="let element" 
+            [class._50]="element.Definitivo.length - element.Exist <= -1" [class._100]="element.Definitivo.length - element.Exist == 0"> {{element.Definitivo.length - element.Exist}} </td>
           </ng-container>
           <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
           <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
@@ -65,9 +136,26 @@
       </mat-card-content>
     </mat-tab>
     <mat-tab label="TOMA INVENTARIO">
-      <mat-card-content>
-        <mat-form-field appearance="fill" style="text-align: center; font-size: 1em; margin-right: 20px; width: 60%;">
-          <input matInput placeholder="SCAN" type="number" name="scan" [(ngModel)]="scan">
+      <mat-card-content style="display:flex;flex-wrap:wrap;justify-content: center; margin: 10px auto;">
+        <mat-form-field appearance="fill">
+          <mat-label>Tag Base Datos</mat-label>
+        <mat-select [(ngModel)]="tag">
+          <mat-option *ngFor="let item of config.inventarios" [value]="item.tag">
+            {{item.tag}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field> 
+      <mat-form-field *ngIf="tag" appearance="fill" style="text-align: center; font-size: 1em; margin-right: 20px; width: 200px;">
+        <input matInput placeholder="Ubicacion" type="text" name="ubicacion" [(ngModel)]="ubicacion">
+      </mat-form-field>
+        <mat-form-field *ngIf="ubicacion" appearance="fill" style="text-align: center; font-size: 1em; margin-right: 20px; width: 60%;">
+          <input matInput placeholder="SCAN" type="number" #scanEle name="scan" [(ngModel)]="scan" (change)="saveScan()">
+          <button *ngIf="scaner"  matSuffix mat-icon-button aria-label="Clear" (click)="scaner = !scaner">
+            <mat-icon>qr_code_scanner</mat-icon>
+          </button>
+          <button *ngIf="!scaner" matSuffix mat-icon-button aria-label="Clear" (click)="scaner = !scaner">
+            <mat-icon>document_scanner</mat-icon>
+          </button>
         </mat-form-field>
         <button *ngIf="scan" flex mat-raised-button color="accent" [disabled]="log"  (click)="saveScan()" class="text-upper" style="width: 90%; margin:15px auto;margin-left: 20px;">Contar <mat-icon>send</mat-icon></button>
       </mat-card-content>

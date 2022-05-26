@@ -19,7 +19,8 @@ checked:boolean = true;
 categoria:Categoria;
 cumplimiento:Cumplimiento;
 empleado:Empleado
-tag = ''
+tag = '';
+tagInv='';
 nuevo= false;
 Roles = ['Ventas', 'Sking', 'Lider', 'Sub Gerente', 'Gerente']
   constructor(public dialog: MatDialog, @Inject(DOCUMENT) doc: any,
@@ -85,6 +86,18 @@ Roles = ['Ventas', 'Sking', 'Lider', 'Sub Gerente', 'Gerente']
 
   deleteTag(i:number){
     this.config.tags.splice(i,1);
+  }
+
+  addTagInv(){
+    if(!this.config.inventarios){
+      this.config.inventarios=[]
+    }
+    this.config.inventarios.unshift({tag:this.tagInv, Activo: this.checked});
+    this.tagInv = ''
+  }
+
+  deleteTagInv(i:number){
+    this.config.inventarios.splice(i,1);
   }
 
   pasCategoria(item:Categoria){

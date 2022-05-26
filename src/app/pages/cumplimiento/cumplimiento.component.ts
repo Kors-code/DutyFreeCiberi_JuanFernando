@@ -355,14 +355,20 @@ export class CumplimientoComponent implements OnInit {
   yAxisLabel: string = 'CATEGORIAS';
   legendTitle: string = 'Comparacion';
   ad=''
+  clave=''
   buscarCedula(id: any){
     console.log(id)
     let pos = this.presupuesto.vendedores.map(function(e:any) { return e.identificacion; }).indexOf(id.toString());
     if(pos != -1){
-      this.id = id
-      console.log(pos)
-      this.dataPresupuest( this.presupuesto.vendedores[pos].categorias)
-      this.dataPresupuestDia(this.presupuesto.vendedores[pos].categorias)
+      if(this.presupuesto.vendedores[pos].clave == this.clave){
+        this.id = id
+        console.log(pos)
+        this.dataPresupuest( this.presupuesto.vendedores[pos].categorias)
+        this.dataPresupuestDia(this.presupuesto.vendedores[pos].categorias)
+      }else{
+        console.log('error clave')
+      }
+    
     }
   }
 

@@ -99,7 +99,14 @@ api.put('/configuracion', md_auth.ensureAuth,  infoController.updateDataConfigur
 // INVENTARIOS 
 
 api.post('/master-conteo/:tag', md_auth.ensureAuth,  infoController.agregarConteo);
+api.post('/update-conteo-1/:tag', md_auth.ensureAuth,  infoController.updateDataConteo1);
+api.post('/update-conteo-2/:tag', md_auth.ensureAuth,  infoController.updateDataConteo2);
+api.post('/update-conteo-3/:tag', md_auth.ensureAuth,  infoController.updateDataConteo3);
+api.post('/update-conteo-4/:tag', md_auth.ensureAuth,  infoController.updateDataConteo4);
+api.post('/update-conteo-d/:tag', md_auth.ensureAuth,  infoController.updateDataConteoDefinitivo);
+api.post('/update-conteo-defi/:tag', md_auth.ensureAuth,  infoController.updateDataConteoDefinitivoDefinitvo);
 api.post('/contar/:tag', md_auth.ensureAuth,  infoController.contarEan);
+api.post('/contar-sku/:tag', md_auth.ensureAuth,  infoController.contarSKU);
 api.get('/conteo-tag/:tag', md_auth.ensureAuth,  infoController.getConteoTag);
 
 module.exports = api;

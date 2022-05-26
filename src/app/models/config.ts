@@ -22,6 +22,7 @@ export class Empleado {
         public codigo: string = '',
         public Dias: number = 0,
         public name: string = '',
+        public clave: string = '',
         public presupuestoUs: number = 0,
         public Cumplimiento: number = 0,
         public Comisiones: number = 0,

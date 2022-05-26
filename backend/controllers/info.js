@@ -82,7 +82,7 @@ async function updateDataConfiguracion(req, res){
         const db = client.db(dbName);
         const collection = await db.collection(coll);
 
-        collection.updateOne({_id:ObjectId(params._id)},{$set:{tiendas:params.tiendas, siigoUser:params.siigoUser, siigoKey:params.siigoKey, tags:params.tags, empleados:params.empleados, categorias:params.categorias}},{ upsert: false }, function(err,doc) {
+        collection.updateOne({_id:ObjectId(params._id)},{$set:{tiendas:params.tiendas, siigoUser:params.siigoUser, siigoKey:params.siigoKey, tags:params.tags, empleados:params.empleados, categorias:params.categorias, inventarios:params.inventarios}},{ upsert: false }, function(err,doc) {
             if (err) { throw err; }
             else { 
                 console.log(doc)
@@ -699,6 +699,32 @@ async function contarEan(req, res){
           });        
 }
 
+async function contarSKU(req, res){
+    var params = req.body;
+    var coll = req.params.tag;
+    let io = req.app.get('io');
+    console.log('680  '+ params)
+    const url = 'mongodb://localhost:27017';
+    const client = new MongoClient(url);
+    const dbName = 'DutyFreeInventarios';
+   
+        await client.connect();
+        console.log('Connected successfully to server');
+        const db = client.db(dbName);
+        const collection = await db.collection(coll);
+        collection.updateOne({Codigo_1:params.scan},
+            {$push:{Conteo0:params}}, function(err,doc) {
+            if (err) { throw err; }
+            else { 
+                console.log(doc)
+                console.log('scan'+coll)
+                io.emit('scan'+coll, params);
+                client.close();
+                res.status(200).send(doc); 
+            }
+          });        
+}
+
 async function getConteoTag(req, res){
     var params = req.body;
     var coll = req.params.tag;
@@ -718,6 +744,122 @@ async function getConteoTag(req, res){
        
         res.status(200).send(arrayCollections);
 }
+
+async function updateDataConteoDefinitivo(req, res){
+    var params = req.body;
+    var coll = req.params.tag;
+    const url = 'mongodb://localhost:27017';
+    const client = new MongoClient(url);
+    const dbName = 'DutyFreeInventarios';
+        await client.connect();
+        console.log('Connected successfully to server');
+        const db = client.db(dbName);
+        const collection = await db.collection(coll);
+        collection.updateOne({_id:ObjectId(params._id)},{$set:{Conteo0:params.Conteo0,Definitivo:params.Definitivo}},{ upsert: false }, function(err,doc) {
+            if (err) { throw err; }
+            else { 
+                console.log(doc)
+                client.close();
+                res.status(200).send(doc); }
+          });        
+}
+
+async function updateDataConteoDefinitivoDefinitvo(req, res){
+    var params = req.body;
+    var coll = req.params.tag;
+    const url = 'mongodb://localhost:27017';
+    const client = new MongoClient(url);
+    const dbName = 'DutyFreeInventarios';
+        await client.connect();
+        console.log('Connected successfully to server');
+        const db = client.db(dbName);
+        const collection = await db.collection(coll);
+        collection.updateOne({_id:ObjectId(params._id)},{$set:{Definitivo:params.Definitivo}},{ upsert: false }, function(err,doc) {
+            if (err) { throw err; }
+            else { 
+                console.log(doc)
+                client.close();
+                res.status(200).send(doc); }
+          });        
+}
+
+async function updateDataConteo1(req, res){
+    var params = req.body;
+    var coll = req.params.tag;
+    const url = 'mongodb://localhost:27017';
+    const client = new MongoClient(url);
+    const dbName = 'DutyFreeInventarios';
+        await client.connect();
+        console.log('Connected successfully to server');
+        const db = client.db(dbName);
+        const collection = await db.collection(coll);
+        collection.updateOne({_id:ObjectId(params._id)},{$set:{Conteo0:params.Conteo0, Conteo1:params.Conteo1}},{ upsert: false }, function(err,doc) {
+            if (err) { throw err; }
+            else { 
+                console.log(doc)
+                client.close();
+                res.status(200).send(doc); }
+          });        
+}
+
+async function updateDataConteo2(req, res){
+    var params = req.body;
+    var coll = req.params.tag;
+    const url = 'mongodb://localhost:27017';
+    const client = new MongoClient(url);
+    const dbName = 'DutyFreeInventarios';
+        await client.connect();
+        console.log('Connected successfully to server');
+        const db = client.db(dbName);
+        const collection = await db.collection(coll);
+        collection.updateOne({_id:ObjectId(params._id)},{$set:{Conteo0:params.Conteo0, Conteo2:params.Conteo2}},{ upsert: false }, function(err,doc) {
+            if (err) { throw err; }
+            else { 
+                console.log(doc)
+                client.close();
+                res.status(200).send(doc); }
+          });        
+}
+
+async function updateDataConteo3(req, res){
+    var params = req.body;
+    var coll = req.params.tag;
+    const url = 'mongodb://localhost:27017';
+    const client = new MongoClient(url);
+    const dbName = 'DutyFreeInventarios';
+        await client.connect();
+        console.log('Connected successfully to server');
+        const db = client.db(dbName);
+        const collection = await db.collection(coll);
+        collection.updateOne({_id:ObjectId(params._id)},{$set:{Conteo0:params.Conteo0, Conteo3:params.Conteo3}},{ upsert: false }, function(err,doc) {
+            if (err) { throw err; }
+            else { 
+                console.log(doc)
+                client.close();
+                res.status(200).send(doc); }
+          });        
+}
+
+async function updateDataConteo4(req, res){
+    var params = req.body;
+    var coll = req.params.tag;
+    const url = 'mongodb://localhost:27017';
+    const client = new MongoClient(url);
+    const dbName = 'DutyFreeInventarios';
+        await client.connect();
+        console.log('Connected successfully to server');
+        const db = client.db(dbName);
+        const collection = await db.collection(coll);
+        collection.updateOne({_id:ObjectId(params._id)},{$set:{Conteo0:params.Conteo0, Conteo4:params.Conteo4}},{ upsert: false }, function(err,doc) {
+            if (err) { throw err; }
+            else { 
+                console.log(doc)
+                client.close();
+                res.status(200).send(doc); }
+          });        
+}
+
+
 
 
 module.exports = {
@@ -752,7 +894,14 @@ module.exports = {
     updateDataVendedorCollection,
     agregarConteo,
     contarEan,
-    getConteoTag
+    contarSKU,
+    getConteoTag,
+    updateDataConteoDefinitivo,
+    updateDataConteoDefinitivoDefinitvo,
+    updateDataConteo1,
+    updateDataConteo2,
+    updateDataConteo3,
+    updateDataConteo4,
 }
 
 

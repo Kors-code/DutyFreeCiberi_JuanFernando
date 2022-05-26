@@ -125,8 +125,17 @@
         </div>
 
         <div style="width: 90%; margin: 0 auto; " class="mat-elevation-z8">
-          <h1 style="text-align: center;"> {{presupuesto.vendedores.length}} VENDEDORES $ {{totalVendedores |  number:'0.0-2'}} COMISION {{(totalCoisiones / totalVendedores)* 100 |  number:'0.0-2'}}% $  {{totalCoisiones |  number:'0.0-2'}} 
+         
+          <h1 style="text-align: center;">
+           
+            {{presupuesto.vendedores.length}} VENDEDORES $ {{totalVendedores |  number:'0.0-2'}} COMISION {{(totalCoisiones / totalVendedores)* 100 |  number:'0.0-2'}}% $  {{totalCoisiones |  number:'0.0-2'}} 
             <input type="text" placeholder="Buscar" style="font-size:x-large; text-align: center; margin: 0 10px;" [(ngModel)]="search">  
+            <mat-form-field >
+              <mat-label>Descargar</mat-label>
+              <mat-select [disabled]="">
+                <mat-option (click)="downloadFile(downloadComisiones, 'Cumplimiento Vendedores')"><mat-icon>cloud_download</mat-icon> Descargar Info Vendedores</mat-option>
+              </mat-select>
+            </mat-form-field>
           </h1>
           <mat-accordion *ngIf="presupuesto.vendedores.length != 0">
             <ng-template let-item let-last="last" ngFor [ngForOf]="presupuesto.vendedores">

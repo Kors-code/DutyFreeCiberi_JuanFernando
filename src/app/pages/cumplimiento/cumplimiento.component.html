@@ -18,8 +18,11 @@
     <mat-card-content style="margin-top: 10px; text-align: center; width: 90%; margin: 0 auto; ">
         <form #loginForm="ngForm" *ngIf="totalCoisiones != 0">
           <div layout="row">
-            <mat-form-field style="width: 90%; text-align: center">
-              <input  matInput #userEmailElement #userEmailControl="ngModel"  placeholder="Identificacion" type="number" name="useremail" [(ngModel)]="ad" (change)="buscarCedula(ad)" required>
+            <mat-form-field style="width: 60%; text-align: center">
+              <input  matInput #userEmailElement #userEmailControl="ngModel"  placeholder="Identificacion" type="number" name="useremail" [(ngModel)]="ad"  required>
+            </mat-form-field>
+            <mat-form-field style="width: 30%; text-align: center">
+              <input  matInput   placeholder="Clave" type="password" name="useremail" [(ngModel)]="clave" (change)="buscarCedula(ad)" required>
             </mat-form-field>
           </div>
           <!-- <div layout="row">
