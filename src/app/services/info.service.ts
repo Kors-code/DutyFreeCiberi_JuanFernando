@@ -253,6 +253,15 @@ export class InfoService {
                 params, {headers:headers})
     }
 
+    deletePresupuesto(register:any){
+        let paramas = JSON.stringify(register);
+        let headers = new HttpHeaders({
+            'content-Type':'application/json',
+            'Authorization': this.getToken()
+        });
+        return this._http.post<agregar>(this.url+'presupuesto-delete/', paramas, {headers:headers});
+    }
+
 
     agregarConfiguracion(register:any){
         let paramas = JSON.stringify(register);
@@ -339,6 +348,15 @@ updateConteoDefinitivo(user_to_register:any, tag:string){
         'Authorization': this.getToken()
     });
     return this._http.post<agregar>(this.url+'update-conteo-defi/'+tag, paramas, {headers:headers});
+}
+
+updateConteoDefinitivoMany(user_to_register:any, tag:string){
+    let paramas = JSON.stringify(user_to_register);
+    let headers = new HttpHeaders({
+        'content-Type':'application/json',
+        'Authorization': this.getToken()
+    });
+    return this._http.post<agregar>(this.url+'update-conteo-defi-many/'+tag, paramas, {headers:headers});
 }
 
 updateConteo1(user_to_register:any, tag:string){

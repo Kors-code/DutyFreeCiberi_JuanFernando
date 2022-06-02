@@ -114,9 +114,9 @@
           <mat-card-content style="display:flex; flex-wrap: wrap;">
             <h5>Sub Cumplimientos
               <div style="display: flex;">
-                <button matSuffix mat-icon-button aria-label="Clear" (click)="addCumpli()">
+                <!-- <button matSuffix mat-icon-button aria-label="Clear" (click)="addCumpli()">
                   <mat-icon>add</mat-icon>
-                </button>
+                </button> -->
                 <button matSuffix mat-icon-button aria-label="Clear" (click)="editCumplimiento()">
                   <mat-icon>edit</mat-icon>
                 </button>
@@ -157,14 +157,15 @@
           <mat-nav-list>
             <ng-template let-item let-i="index" ngFor [ngForOf]="categoria.cumplimientos">
               <mat-list-item >
-                <button mat-icon-button (click)="deleteCumplimiento(i)">
+                <!-- <button mat-icon-button (click)="deleteCumplimiento(i)">
                   <mat-icon>delete</mat-icon>
-               </button>
+               </button> -->
                  <h5 (click)="pasCumplimiento(item)"  style="margin:0 10px;">Inicia %: {{ item.inicia }} finaliza %: {{ item.inicia }} 
                   asesor % {{ item.asesor }} 
                   asesorSking % {{ item.asesorSking }} 
                   lider % {{ item.lider }} 
-                  subGerente % {{ item.subGerente }} </h5>
+                  subGerente % {{ item.subGerente }}
+                  Gerente % {{ item.gerente }}  </h5>
               </mat-list-item>
             </ng-template>
            

@@ -20,8 +20,12 @@ import { User } from 'src/app/models/user';
 
 export interface _Conteo {
   _id: string;
+  Estado: string;
   Codigo_1: number;
   Codigo_3: number;
+  EAN: number;
+  COST_PROM: number;
+  ACTUAL_COST: number;
   CLASS_DISCRIP: string;
   Descripcion_1: string;
   Exist: number;
@@ -31,6 +35,8 @@ export interface _Conteo {
   Conteo2:any[];
   Conteo3:any[];
   Conteo4:any[];
+  Conteo: number;
+  check: boolean;
 }
 
 @Component({
@@ -46,6 +52,8 @@ export class tomaInventarioComponent implements OnInit {
   obs:any;
   scaner= true;
   public identity:User;
+  searcEan:any = '';
+  searcSKU:any = '';
   displayedColumns: string[] = ['SKU', 'EAN', 'CATEGORIA', 'PRODUCTO', 'EXISTENCIA','CONTEO', 'DIFERENCIA', 'DETALLE',  'DEFINITIVO'];
   @ViewChild(MatSort, {static: true}) sort!: MatSort;
   @ViewChild('scanEle')
@@ -328,6 +336,8 @@ export class tomaInventarioComponent implements OnInit {
       this.registros[i].Conteo4 = [];
       this.registros[i].Definitivo = [];
       this.registros[i].Diferencia = 0;
+      this.registros[i].Conteo = 0;
+      this.registros[i].check = false;
       this.log= false;
     }
     // console.log(this.registros)
@@ -520,13 +530,15 @@ export class tomaInventarioComponent implements OnInit {
   }
 
   ubicacion = ''
+  unds = 1
   saveScan(){
     this.log= true;
     let scan = {
+      unds:this.unds,
       scan:this.scan,
       time:new Date().getTime(),
       user:this.identity.email,
-      pos:this.ubicacion,
+      ubicacion:this.ubicacion,
     }
 
     if(this.scaner){
@@ -538,6 +550,7 @@ export class tomaInventarioComponent implements OnInit {
           this.log = false
           this.openSnackBar(this.scan + '')
           this.scan = undefined  
+          this.unds = 1
           this.scanElement.nativeElement.focus();
         })
     }else{
@@ -553,6 +566,18 @@ export class tomaInventarioComponent implements OnInit {
         })
     }
   
+  }
+
+  estado = 'iguales'
+  cuantas(item: any){
+    // console.log(item)
+    let conteo = 0
+
+    item.forEach((element: { unds: number; }) => {
+      conteo = conteo + element.unds
+    });
+
+    return conteo
   }
 
 
@@ -575,31 +600,83 @@ export class tomaInventarioComponent implements OnInit {
 
   unidades_conteo =0
   unidades_fisicas =0
+  copIguales = 0
+  usdIguales = 0
+  undSobrantes = 0
+
+  copFaltantes = 0
+  usdFaltantes = 0
+  copSobrantes = 0
+  usdSobrantes = 0
+
+  Iguales:_Conteo[] = []
+  undIguales = 0
+  undFaltantes = 0
+  Sobrantes:_Conteo[] = []
+  Faltantes:_Conteo[] = []
+  Definitivas:_Conteo[] = []
+  categorias:any[] = []
   getCnteoTag(){
     this.log= true
+    this.unidades_conteo =0
+    this.unidades_fisicas =0
+    this.undIguales = 0
+    this.undFaltantes = 0
+    this.undSobrantes = 0
+    this.copIguales = 0
+    this.usdIguales = 0
+    this.copFaltantes = 0
+    this.usdFaltantes = 0
+    this.Iguales = []
+    this.Sobrantes = []
+    this.Faltantes = []
+    this.Definitivas = []
     this._infoServce.getConteoTag(this.tag).subscribe(
       res=>{
         console.log(res)
         this.conteo = res
-        
         // this.conteo.sort(function(a,b){
         //   return a.Descripcion_1.localeCompare(b.Descripcion_1);
         // });
         this.unidades_conteo =0
         this.unidades_fisicas = 0
+        this.conteo.sort(function(a, b){
+          return b.Exist - a.Exist;
+        });
+        // this.categorias = [...new Set(this.conteo)]
+        // console.log(this.categorias)
         for (let i = 0; i < this.conteo.length; i++) {
           const element = this.conteo[i];
-          // console.log( this.unidades_conteo)
+          if(element.Estado == 'Activo'){
+          if(this.cuantas(element.Conteo0) - element.Exist == 0){
+            this.Iguales.push(element)
+            this.undIguales = this.undIguales + element.Exist
+            this.copIguales = this.copIguales + Number(element.COST_PROM) 
+            this.usdIguales = this.usdIguales + Number(element.ACTUAL_COST)
+           }
+           if(this.cuantas(element.Conteo0) - element.Exist <= -1){
+            this.Faltantes.push(element)
+            this.undFaltantes = this.undFaltantes + element.Exist
+            this.copFaltantes = this.copFaltantes + (Number(element.COST_PROM) * element.Exist )
+            this.usdFaltantes = this.usdFaltantes + (Number(element.ACTUAL_COST) * element.Exist)
+           }
+           if(this.cuantas(element.Conteo0) - element.Exist >= 1){
+            this.Sobrantes.push(element)
+            this.undSobrantes = this.undSobrantes + element.Exist
+            this.copSobrantes = this.copSobrantes + (Number(element.COST_PROM) * element.Exist )
+            this.usdSobrantes = this.usdSobrantes + (Number(element.ACTUAL_COST) * element.Exist)
+           }
+  
           if(element.Exist >= 1){
             this.unidades_conteo = this.unidades_conteo + element.Exist
             this.unidades_fisicas =  this.unidades_fisicas + element.Conteo0.length
           }
-         
+        }else{
+          this.Definitivas.push(element)
         }
+      }
 
-        this.conteo.sort(function(a, b){
-          return b.Exist - a.Exist;
-        });
+       
 
         this.openSnackBar('NUEVOS REGISTROS '+ this.conteo.length)
         this.log= false
@@ -607,7 +684,7 @@ export class tomaInventarioComponent implements OnInit {
     )
   }
 
-  conteo: _Conteo[]=[]
+  conteo:_Conteo[]=[]
 
   passRegistro(item:any){
     let registro = {reg:item, coll:this.tag} 
@@ -662,16 +739,107 @@ export class tomaInventarioComponent implements OnInit {
     });
   }
 
+  procesarIguales(){ 
+    this.Iguales.forEach(element => {
+        this.conteoDefinitivoDefinitivo(element.Conteo0, element._id, element)
+    });
+  }
+
+  procesarFaltantes(){ 
+    this.Faltantes.forEach(element => {
+      if(element.check){
+        this.conteoDefinitivoDefinitivo(element.Conteo0, element._id, element)
+      }
+      });
+  }
+
+  procesarSobrantes(){ 
+    this.Sobrantes.forEach(element => {
+      // if(element.check){
+        this.conteoDefinitivoDefinitivo(element.Conteo0, element._id, element)
+      // }
+      });
+  }
+
+  procesarIgualesContar(){
+    this.Iguales.forEach(element => {
+      if(element.Conteo1.length == 0){
+        this.conteo1(element)
+      }else{
+        if(element.Conteo2.length == 0){
+          this.conteo2(element)
+        }else{
+          if(element.Conteo3.length == 0){
+            this.conteo3(element)
+          }else{ if(element.Conteo4.length == 0){
+            this.conteo4(element)
+          }
+        }
+        }
+      }
+     
+    });
+  }
+
+  procesarFaltantesContar(){
+    this.Faltantes.forEach(element => {
+      if(element.check){
+        if(element.Conteo1.length == 0){
+          this.conteo1(element)
+        }else{
+          if(element.Conteo2.length == 0){
+            this.conteo2(element)
+          }else{
+            if(element.Conteo3.length == 0){
+              this.conteo3(element)
+            }else{ if(element.Conteo4.length == 0){
+              this.conteo4(element)
+            }
+          }
+          }
+        }
+      }
+     
+    });
+  }
+
+  procesarSobrantesContar(){
+    this.Sobrantes.forEach(element => {
+  
+        if(element.Conteo1.length == 0){
+          this.conteo1(element)
+        }else{
+          if(element.Conteo2.length == 0){
+            this.conteo2(element)
+          }else{
+            if(element.Conteo3.length == 0){
+              this.conteo3(element)
+            }else{ if(element.Conteo4.length == 0){
+              this.conteo4(element)
+            }
+          }
+          }
+        }
+    
+     
+    });
+  }
+
+  
+
   conteoDefinitivoDefinitivo(element : any, id:string, conteo : _Conteo){
     conteo.Definitivo = element
    let register = {
       Definitivo: element,
       _id: id,
+      Estado:'Definitivo',
+      Conteo : this.cuantas(element),
+      Diferencia: this.cuantas(element) - element.Exist,
     }
     this._infoServce.updateConteoDefinitivo(register, this.tag).subscribe(
       res=>{
         this.openSnackBar('Actualizado')
-        console.log(res)
+        // console.log(res)
       }
     )
 
@@ -685,6 +853,7 @@ export class tomaInventarioComponent implements OnInit {
       Definitivo: element.Definitivo,
       Conteo0: element.Conteo0,
       _id: element._id,
+      
     }
     this._infoServce.updateConteoD(register, this.tag).subscribe(
       res=>{
@@ -759,6 +928,102 @@ export class tomaInventarioComponent implements OnInit {
         this.openSnackBar('Actualizado')
       }
     )
+  }
+
+
+  searchEanIguales(){
+    // this.Iguales.find(function(element:_Conteo => element.EAN == this.searcEan));
+   
+  }
+
+  filterEanIguales(){
+    if(this.Iguales[0].Exist >> this.Iguales[this.Iguales.length-1].Exist){
+      this.Iguales.sort(function(a, b){
+        return b.Exist - a.Exist;
+      });
+    }else{ 
+      this.Iguales.sort(function(a, b){
+        return  a.Exist - b.Exist ;
+      });
+    }
+  }
+
+  filterEanFaltantes(){
+    if(this.Faltantes[0].Exist >> this.Faltantes[this.Faltantes.length-1].Exist){
+      this.Faltantes.sort(function(a, b){
+        return  a.Exist - b.Exist ;
+      });
+    }else{ 
+      this.Faltantes.sort(function(a, b){
+        return b.Exist - a.Exist;
+      });
+     
+    }
+  }
+
+  filterExistIguales(){
+    if(this.Iguales[0].Exist >> this.Iguales[this.Iguales.length-1].Exist){
+      this.Iguales.sort(function(a, b){
+        return  a.Exist - b.Exist ;
+      });
+    }else{ 
+      this.Iguales.sort(function(a, b){
+        return b.Exist - a.Exist;
+      });
+     
+    }
+  }
+
+  filterExistSobrantes(){
+    if(this.Sobrantes[0].Exist >> this.Sobrantes[this.Sobrantes.length-1].Exist){
+      this.Sobrantes.sort(function(a, b){
+        return  a.Exist - b.Exist ;
+      });
+    }else{ 
+      this.Sobrantes.sort(function(a, b){
+        return b.Exist - a.Exist;
+      });
+     
+    }
+  }
+
+  filterCOPFaltantes(){
+    if(this.Faltantes[0].COST_PROM >> this.Faltantes[this.Faltantes.length-1].COST_PROM){
+      this.Faltantes.sort(function(a, b){
+        return  a.COST_PROM - b.COST_PROM ;
+      });
+    }else{ 
+      this.Faltantes.sort(function(a, b){
+        return b.COST_PROM - a.COST_PROM;
+      });
+     
+    }
+  }
+
+  filterCOPIguales(){
+    if(this.Iguales[0].COST_PROM >> this.Iguales[this.Iguales.length-1].COST_PROM){
+      this.Iguales.sort(function(a, b){
+        return  a.COST_PROM - b.COST_PROM ;
+      });
+    }else{ 
+      this.Iguales.sort(function(a, b){
+        return b.COST_PROM - a.COST_PROM;
+      });
+     
+    }
+  }
+
+  filterCOPSobrantes(){
+    if(this.Sobrantes[0].COST_PROM >> this.Sobrantes[this.Sobrantes.length-1].COST_PROM){
+      this.Sobrantes.sort(function(a, b){
+        return  a.COST_PROM - b.COST_PROM ;
+      });
+    }else{ 
+      this.Sobrantes.sort(function(a, b){
+        return b.COST_PROM - a.COST_PROM;
+      });
+     
+    }
   }
 
 

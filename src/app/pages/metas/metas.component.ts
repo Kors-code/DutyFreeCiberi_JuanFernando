@@ -54,8 +54,6 @@ export class MetasComponent implements OnInit {
           this.config = res[0];
           localStorage.setItem('categ',JSON.stringify(this.config.categorias))
           localStorage.setItem('colaboradores',JSON.stringify(this.config.empleados))
-
-          ////console.log(this.config)
         }
        
       }
@@ -68,7 +66,6 @@ export class MetasComponent implements OnInit {
   pres:any
   getData(event:any){
     this.pres = event
-    //////console.log(this.pres)
   }
 
   registerPresupuesto(){
@@ -116,6 +113,33 @@ export class MetasComponent implements OnInit {
 
   deleteRegistro(){
 
+    let data = {titulo: 'Eliminar', info:'Se eliminara el presupuesto no se recuperara mas adelante ', type: 'Cancel_Delete', icon:'stop'}
+  
+    let dialogRef = this.dialog.open(DialogConfirm,{
+      data: data
+    });
+  
+    dialogRef.afterClosed().subscribe(result => {
+      if(result){
+        this._infoService.deletePresupuesto(this.presupuesto).subscribe(
+          res=>{
+            console.log(res)
+            let data = {titulo: 'Exito', info:'Se Elimino el presupuesto ', type: 'Confirm', icon:'done_all'}
+  
+            let dialogRef = this.dialog.open(DialogConfirm,{
+              data: data
+            });
+
+            this.getPresupuestos()
+            this.presupuesto = new Presupuesto()
+
+          })
+      }
+      // this.getfacturacionSiigo()
+    })
+
+
+      
   }
 
   passPresupuesto(item:any){
@@ -197,10 +221,8 @@ export class MetasComponent implements OnInit {
    
     let colaboradores:any = localStorage.getItem('colaboradores');
     this.presupuesto.vendedores = JSON.parse(colaboradores);
-    // this.presupuestarEmpleados();
 
-    this.presupuesto.tiendas = this.config.tiendas;
-   
+    this.presupuesto.tiendas = this.config.tiendas;  
     for(var i = 0;i < this.presupuesto.tiendas.length; i++){
       this.presupuesto.tiendas[i].presupuesto_usd = (this.presupuesto.tiendas[i].part/100) * this.presupuesto.presupuesto_usd 
       this.presupuesto.tiendas[i].ptto = JSON.parse(categorias)

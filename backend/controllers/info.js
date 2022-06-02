@@ -91,7 +91,6 @@ async function updateDataConfiguracion(req, res){
           });        
 }
 
-
 async function agregarPresupuesto(req, res){
     var params = req.body;
     var coll = 'Presupuestos';
@@ -183,6 +182,30 @@ async function updateDataPresupuesto(req, res){
             vendedores:params.vendedores,
             categorias:params.categorias,
         }},{ upsert: false }, function(err,doc) {
+            if (err) { throw err; }
+            else { 
+                console.log(doc)
+                res.status(200).send(doc); }
+          });
+
+        // var reg = await collection.mod({_id:params._id}, params, { returnNewDocument: true })
+        
+}
+
+async function deleteDataPresupuesto(req, res){
+    var params = req.body;
+    var coll = 'Presupuestos';
+    console.log('console delete PRES')
+    // console.log(params)
+    const url = 'mongodb://localhost:27017';
+    const client = new MongoClient(url);
+    const dbName = 'DutyFree';
+   
+        await client.connect();
+        console.log('Connected successfully to server');
+        const db = client.db(dbName);
+        const collection = await db.collection(coll);
+        collection.deleteOne({_id : ObjectId(params._id)}, function(err,doc) {
             if (err) { throw err; }
             else { 
                 console.log(doc)
@@ -755,7 +778,7 @@ async function updateDataConteoDefinitivo(req, res){
         console.log('Connected successfully to server');
         const db = client.db(dbName);
         const collection = await db.collection(coll);
-        collection.updateOne({_id:ObjectId(params._id)},{$set:{Conteo0:params.Conteo0,Definitivo:params.Definitivo}},{ upsert: false }, function(err,doc) {
+        collection.updateOne({_id:ObjectId(params._id)},{$set:{Conteo0:params.Conteo0,Definitivo:params.Definitivo,}},{ upsert: false }, function(err,doc) {
             if (err) { throw err; }
             else { 
                 console.log(doc)
@@ -774,7 +797,7 @@ async function updateDataConteoDefinitivoDefinitvo(req, res){
         console.log('Connected successfully to server');
         const db = client.db(dbName);
         const collection = await db.collection(coll);
-        collection.updateOne({_id:ObjectId(params._id)},{$set:{Definitivo:params.Definitivo}},{ upsert: false }, function(err,doc) {
+        collection.updateOne({_id:ObjectId(params._id)},{$set:{Definitivo:params.Definitivo, Estado:params.Estado, Conteo:params.Conteo, Diferencia:params.Diferencia}},{ upsert: false }, function(err,doc) {
             if (err) { throw err; }
             else { 
                 console.log(doc)
@@ -782,6 +805,7 @@ async function updateDataConteoDefinitivoDefinitvo(req, res){
                 res.status(200).send(doc); }
           });        
 }
+
 
 async function updateDataConteo1(req, res){
     var params = req.body;
@@ -902,6 +926,7 @@ module.exports = {
     updateDataConteo2,
     updateDataConteo3,
     updateDataConteo4,
+    deleteDataPresupuesto
 }
 
 

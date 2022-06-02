@@ -312,6 +312,7 @@ export class Categoria{
     public comisionesUsd:number=0,
     public comisionesCop:number=0,
     public ventas:number= 0,
+    public ventasCop:number= 0,
     public presupuesto_cop:number= 0,
     public presupuesto_usd:number= 0,
     public presupuesto_dia_cop:number= 0,

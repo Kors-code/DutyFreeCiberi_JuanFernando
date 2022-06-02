@@ -5,6 +5,12 @@
     color: black;
 }
 
+.accent{
+    background:rgba(89, 89, 246, 0.897);
+    text-align:center;
+    color: white;
+}
+
 ._50{
     background:tomato;
     text-align:center;

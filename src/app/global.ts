@@ -11,13 +11,14 @@ export var GLOBAL = {
     app:true,
     version:'1.2',
     company: 'ciberi.co'
+    
 }
+
 
 
 
 // Ofid.Marquez@dutyfreepartners.com
 // ZDAzOTExYzYtYzNiOC00MGUxLWIyNDAtYThhMmJlZmQzZmQ3Om1rI0x6MkxCNFg=
-
 
 // siigoapi@pruebas.com
 // OWE1OGNkY2QtZGY4ZC00Nzg1LThlZGYtNmExMzUzMmE4Yzc1OjkhPkIzKnN7T1c=
@@ -25,4 +26,4 @@ export var GLOBAL = {
 // produccion max-size err;
 // node --max_old_space_size=8192 ./node_modules/@angular/cli/bin/ng build --prod --build-optimizer
 
-// electron-packager . --platform=win32 --arch=x64 --icon=./build/DFP.png
+// electron-packager . --platform=win32 --arch=x64 --icon=./build/DFP1.png

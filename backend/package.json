@@ -5,10 +5,40 @@
   "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "electron": "electron ."
+    "inicio": "electron .",
+    "pack": "build --dir",
+    "dist": "build"
   },
   "author": "ciberi.co",
   "license": "ISC",
+  "build": {
+    "appId": "duty-app",
+    "asar": true,
+    "dmg": {
+      "contents": [
+        {
+          "x": 110,
+          "y": 150
+        },
+        {
+          "x": 240,
+          "y": 150,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ]
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ]
+    },
+    "win": {
+      "target": "NSIS",
+      "icon": "build/play_icon.png"
+    }
+  },
   "dependencies": {
     "bcrypt-nodejs": "^0.0.3",
     "body-parser": "^1.19.1",

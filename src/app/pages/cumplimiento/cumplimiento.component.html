@@ -13,8 +13,7 @@
 </div>
 <div *ngIf="presupuesto._id">
     <h3 style="text-align: center;">CUMPLIMIENTO PRESUPUESTAL {{coleccion}} DIA {{dia}}</h3>
-    <h5 style="text-align: center;"> {{presupuesto.vendedores.length}} VENDEDORES $ {{presupuesto.ventas_usd |  number:'0.0-2'}} COMISION {{(totalCoisiones / presupuesto.ventas_usd)* 100 |  number:'0.0-2'}}% $  {{totalCoisiones |  number:'0.0-2'}} 
-    </h5>
+    <h2 style="text-align: center;"> {{presupuesto.vendedores.length}} VENDEDORES $ {{presupuesto.ventas_usd |  number:'0.0-2'}} COMISION {{(totalCoisiones / presupuesto.ventas_usd)* 100 |  number:'0.0-2'}}% $  {{totalCoisiones |  number:'0.0-2'}} COP {{totalCoisionesCOP  |  number:'0.0-0'}}</h2>
     <mat-card-content style="margin-top: 10px; text-align: center; width: 90%; margin: 0 auto; ">
         <form #loginForm="ngForm" *ngIf="totalCoisiones != 0">
           <div layout="row">
@@ -43,7 +42,8 @@
 <div>
   <!-- <h1 style="text-align: center;"> {{presupuesto.vendedores.length}} VENDEDORES $ {{totalVendedores |  number:'0.0-2'}} COMISION {{(totalCoisiones / totalVendedores)* 100 |  number:'0.0-2'}}% $  {{totalCoisiones |  number:'0.0-2'}}  </h1> -->
       <mat-card-content *ngFor="let item of presupuesto.vendedores">
-        <div *ngIf="item.identificacion == id " >
+        <!--  -->
+        <div *ngIf="item.identificacion == id ">
           <h3  style="text-align: center; margin: 10px 10px"> <span style="color: blue; margin-left: 10px; margin-right: 10px;">{{item.Cumplimiento * 100  | number:'0.0-2'}}%  </span>
             {{item.name}}  ROL {{item.rol}} 
             
@@ -70,14 +70,20 @@
               <!-- <td> % </td> <td style="text-align: center;"> <span style="color: chartreuse;">{{item.Cumplimiento * 100  | number:'0.0-2'}}%</span></td> -->
             </tr>
             <tr>
-              <td>Comisiones</td> 
+              <td>Comisiones USD</td> 
               <td style="text-align: center;"><span style="color: chartreuse;">{{item.Comisiones  | number:'0.0-2'}}</span></td>
-              <td style="text-align: center;"> (Comision / Ventas) %</td> 
-              <td style="text-align: center;"><span style="color: chartreuse;"> {{(item.Comisiones / item.Ventas)* 100   | number:'0.0-2'}} %</span></td>
+              <td style="text-align: center;"> CUMPLIMIENTO %</td> 
+              <td style="text-align: center;"><span style="color: chartreuse;"> {{item.Cumplimiento * 100  | number:'0.0-2'}}%</span></td>
               <!-- <td>
                 <button mat-button><mat-icon>person</mat-icon></button>
         
               </td> -->
+            </tr>
+            <tr>
+              <td>Comisiones COP <span style="flex: 1 1 auto;"></span> <span style="color: chartreuse; "> TRM {{item.ComisionesCop / item.Comisiones | number:'0.0-0' }}</span></td> 
+              <td style="text-align: center;"><span style="color: chartreuse;">{{item.ComisionesCop  | number:'0.0-0'}}</span></td>
+              <td style="text-align: center;"> (Comision / Ventas) %</td> 
+              <td style="text-align: center;"><span style="color: chartreuse;"> {{(item.Comisiones / item.Ventas)* 100   | number:'0.0-2'}} %</span></td>
             </tr>
             </thead>
           </table>
@@ -100,7 +106,7 @@
                 <td style="text-align:right;">{{cat.presupuesto_usd | number:'0.0-0'}}</td>
                 <td style="text-align:right;">{{cat.ventas | number:'0.0-0'}}</td>
                 <td style="text-align:right;">{{cat.ventas - cat.presupuesto_usd  | number:'0.0-2'}}</td>
-                <td [class._50]="(cat.ventas / cat.presupuesto_usd) <= 0.80" [class._90]="(cat.ventas / cat.presupuesto_usd) >= 0.80 && (cat.ventas / cat.presupuesto_usd) <= 0.99" [class._100]="(cat.ventas / cat.presupuesto_usd) >= 1">{{(cat.ventas / cat.presupuesto_usd)*100  | number:'0.0-2'}} %</td>
+                <td [class._50]="(cat.ventas / cat.presupuesto_usd) <= 0.80" [class._90]="(cat.ventas / cat.presupuesto_usd) >= 0.80 && (cat.ventas / cat.presupuesto_usd) <= 0.999" [class._100]="(cat.ventas / cat.presupuesto_usd) >= 1">{{(cat.ventas / cat.presupuesto_usd)*100  | number:'0.0-2'}} %</td>
                 <td style="text-align: center;">{{(cat.comisionesUsd / cat.ventas)*100 | number:'0.0-2'}}%</td>
                 <td style="text-align:right;">{{cat.comisionesUsd | number:'0.0-2'}}</td>
               </tr>

@@ -85,7 +85,7 @@ api.post('/journals',md_auth.ensureAuth, siigoController.sendComprobanteSiigo);
 api.post('/presupuesto', md_auth.ensureAuth,  infoController.agregarPresupuesto);
 api.get('/presupuestos', md_auth.ensureAuth,  infoController.getDataPresupuesto);
 api.get('/presupuestos-tag/:tag', md_auth.ensureAuth,  infoController.getDataPresupuestoTag);
-
+api.post('/presupuesto-delete', md_auth.ensureAuth,  infoController.deleteDataPresupuesto);
 api.put('/presupuesto', md_auth.ensureAuth,  infoController.updateDataPresupuesto);
 
 
@@ -105,6 +105,7 @@ api.post('/update-conteo-3/:tag', md_auth.ensureAuth,  infoController.updateData
 api.post('/update-conteo-4/:tag', md_auth.ensureAuth,  infoController.updateDataConteo4);
 api.post('/update-conteo-d/:tag', md_auth.ensureAuth,  infoController.updateDataConteoDefinitivo);
 api.post('/update-conteo-defi/:tag', md_auth.ensureAuth,  infoController.updateDataConteoDefinitivoDefinitvo);
+// api.post('/update-conteo-defi-many/:tag', md_auth.ensureAuth,  infoController.updateDataConteoDefinitivoDefinitvoMany);
 api.post('/contar/:tag', md_auth.ensureAuth,  infoController.contarEan);
 api.post('/contar-sku/:tag', md_auth.ensureAuth,  infoController.contarSKU);
 api.get('/conteo-tag/:tag', md_auth.ensureAuth,  infoController.getConteoTag);

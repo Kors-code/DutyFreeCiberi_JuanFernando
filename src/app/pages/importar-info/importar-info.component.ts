@@ -297,7 +297,7 @@ export class ImportarInfoComponent implements OnInit {
         console.log(this.procesado)
         if(this.procesado <= this.lotesCmprobantes.length){
           if(this.procesado << this.lotesCmprobantes.length){
-            // this.generarRegistros(this.lotesCmprobantes[this.procesado])
+            this.generarRegistros(this.lotesCmprobantes[this.procesado])
             this.dialog.closeAll()
             let data = {titulo: 'Progreso '+ this.procesado + ' de ' + this.lotesCmprobantes.length, info:'Se Registraron ' + res.insertedCount + ' de ' + registros.length, type: 'Confirm', icon:'done_all'}
             dialogRef = this.dialog.open(DialogConfirm,{
@@ -427,33 +427,17 @@ export class ImportarInfoComponent implements OnInit {
       }
       this.registros[i].Month = split[1];
       this.registros[i].Year = '20'+split[2];
-      this.registros[i].Detalle = 'FAC '+this.registros[i].Folio + ' ' + this.registros[i].Descripcion_1 + ' ' +this.registros[i].Month + ' CANT: ' +this.registros[i].Cantidad + ' TRM: '+this.registros[i].TRM + ' USD: '+this.registros[i].Importe ;
-      
+      this.registros[i].Detalle = 'FAC '+this.registros[i].Folio + ' SKU: '+this.registros[i].Codigo_1 + ' ' + this.registros[i].Descripcion_1 + ' ' +this.registros[i].Month + ' CANT: ' +this.registros[i].Cantidad + ' TRM: '+this.registros[i].TRM + ' USD: '+this.registros[i].Importe ;
+       
     }
     this.log= false;
    
     // console.log(this.itemsContable)
     let lotes = 200
     // console.log(lotes)
-  
-    this.chunckArrayInGroups(this.registros, lotes)
-    // this.lote = []
-    // this.lotesCmprobantes = []
-    // for (let i = 0; i < this.registros.length; i++) {
-    //   let pedazo = this.registros[i];
-    //   if(this.lote.length << 201){
-    //     this.lote.push(pedazo)
-    //     console.log(this.lote)
-    //   }else{
-    //     this.lotesCmprobantes.push(this.lote)
-    //     this.lote = []
-    //     this.lote.push(pedazo)
-    //   }
-    //   // this.lotesCmprobantes.push(pedazo);
-    // }
-    
- 
 
+    this.chunckArrayInGroups(this.registros, lotes)
+   
   }
 
    chunckArrayInGroups(arr:any[], size:number) {

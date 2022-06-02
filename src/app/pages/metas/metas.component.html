@@ -11,6 +11,7 @@
             <button *ngIf="presupuesto._id == ''" mat-button color="accent" [disabled]="" (click)="registerPresupuesto()" style="margin-right:10px;" ><mat-icon>save</mat-icon> Guardar</button>
             <button *ngIf="presupuesto._id != ''" mat-button color="accent" [disabled]="" (click)="updatePresupuesto()" style="margin-right:10px;" ><mat-icon>edit</mat-icon> Editar</button>
             <button *ngIf="presupuesto._id != ''" mat-button color="accent" [disabled]="" (click)="nuevoPresupuesto()" style="margin-right:10px;" ><mat-icon>add</mat-icon> Nuevo</button>
+            <button *ngIf="presupuesto._id != ''" mat-button color="warn" [disabled]="" (click)="deleteRegistro()" style="margin-right:10px;" ><mat-icon>delete</mat-icon> Delete</button>
            
           </div>
 
