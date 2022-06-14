@@ -821,7 +821,7 @@ export class DashBoardComponent implements OnInit {
     this._infoService.getInformeCategoriasTienda(tag).subscribe(
       res=>{
         this.informeCategTieda = res;
-        // // //console.log(res);
+        console.log(res);
         for (let index = 0; index <  this.informeCategTieda.length; index++) {
           const element =  this.informeCategTieda[index];
           // // //console.log(element.PDV)

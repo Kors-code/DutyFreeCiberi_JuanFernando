@@ -3,6 +3,7 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { colorSets } from '@swimlane/ngx-charts';
+import { Tienda } from 'src/app/models/config';
 import { Presupuesto } from 'src/app/models/presupuesto';
 import { InfoService } from 'src/app/services/info.service';
 import { UserService } from 'src/app/services/user.service';
@@ -33,7 +34,7 @@ export class CumplimientoComponent implements OnInit {
   presupuesto:Presupuesto
   // public global: GlobalOffline;
   date = new Date()
-  dia = this.date.getDate()
+  dia = this.date.getDate()-1
   ultimoDia = new Date(this.date.getFullYear(), this.date.getMonth() + 1, 0);
 
 
@@ -96,17 +97,17 @@ export class CumplimientoComponent implements OnInit {
   ngOnInit() {
     this.getCollections();
     // this.token = this._userService.getToken();
-    // // console.log(this.identity);
+    // // // console.log(this.identity);
     // this.user._id = this.identity._id;
     // this.user.email = this.identity.email;
   }
 
   getDataCollectionVendedor(){
-    // console.log(this.identidad)
-    // console.log(this.codigo)
+    // // console.log(this.identidad)
+    // // console.log(this.codigo)
     this._InfoService.getDataCollectionsVendedor({id : this.identidad, cod : this.codigo},'FEB-22').subscribe(
       res=>{
-        // console.log(res)
+        // // console.log(res)
       }
     )
   }
@@ -117,7 +118,7 @@ export class CumplimientoComponent implements OnInit {
       res=>{
         this.collections = res
         this.collections = this.collections.reverse();
-        // // //// console.log(res)
+        // // //// // console.log(res)
       }
     )
   }
@@ -126,7 +127,7 @@ export class CumplimientoComponent implements OnInit {
   coleccion = ''
    
   passDataCollections(doc:string){
-    // // // //// console.log(doc)
+    // // // //// // console.log(doc)
     this.coleccion = doc;
     
     this.getPresupuestosTag(doc);
@@ -146,56 +147,47 @@ export class CumplimientoComponent implements OnInit {
       res=>{
         this.presupuesto = res[0];
         this.getDataCollections(tag)
-       
-        // this.getInformePresupuestoVendedor(tag)
-        // this.getInformeVendedores(tag);
         // console.log(this.presupuesto)
-      }
-    )
+      })
   }
 
   dataColl:any = []
   totalCoisiones =0
   getDataCollections(tag:string){
     this.log = true;
+    this.totalCoisiones =0
+    this.totalCoisionesCOP =0
     this._InfoService.getDataCollections(tag).subscribe(
       res=>{
-        // //// console.log(res)  
         if(res){
           this.dataColl = res  
           this.dataColl.forEach((element: { Codi: any; Detalle: any; Clasi: any; Importe: any; COP: any; PDV: any,  TRM: any   }) => {
             let cod = element.Codi
             let PDV = element.PDV
             let pdv = this.presupuesto.tiendas.map(function(e:any) { return e.tienda; }).indexOf(PDV);
-            
+            // console.log(this.presupuesto.tiendas[pdv])
             if(pdv != -1){
+              // console.log(this.presupuesto.tiendas[pdv].usd)
               this.presupuesto.tiendas[pdv].usd =  this.presupuesto.tiendas[pdv].usd + element.Importe
               let listado = this.presupuesto.tiendas[pdv].ptto;
               for (let x = 0; x < listado.length; x++){
                 const elements = listado[x].subscat;
                 let importe = element.Importe
-                  // //// console.log('Importe ' +importe)
+                  // //// // console.log('Importe ' +importe)
                   let pos2 = elements.map(function(e:any) { return e; }).indexOf(element.Clasi);
-                  // //// console.log('posicion subcategoria '+ pos2)
+                  // //// // console.log('posicion subcategoria '+ pos2)
                   if(pos2 != -1){
-                    // //// console.log('Ventas ' +listado[x].ventas)
+
                     listado[x].ventas =  listado[x].ventas + importe;
                     listado[x].cumplimiento =   listado[x].ventas / listado[x].presupuesto_usd
-                    // //// console.log('Ventas' +listado[x].ventas)
-                    // //// console.log('CUMPLIMIENTO ' +listado[x].cumplimiento)
+                   
                     break
                   }
               }
-           
-           
             }
-            // //// console.log(pdv)
 
-            // //// console.log(cod) 
             let pos = this.presupuesto.vendedores.map(function(e:any) { return e.codigo; }).indexOf(cod.toString());
-            // // console.log(pos) 
             if(pos != -1){
-             
               if(this.presupuesto.vendedores[pos].rol == 'Ventas'){
                   if(this.presupuesto.vendedores[pos].name != 'MOSTRADOR'){
                       // this.presupuesto.vendedores[pos].Comisiones = 0;
@@ -206,31 +198,31 @@ export class CumplimientoComponent implements OnInit {
                       for (let x = 0; x < listado.length; x++){
                         const elements = listado[x].subscat;
                         let importe = element.Importe
-                          // //// console.log('Importe ' +importe)
+                          // //// // console.log('Importe ' +importe)
                           let importeCop = element.COP
                           let pos2 = elements.map(function(e:any) { return e; }).indexOf(element.Clasi);
-                          // //// console.log('posicion subcategoria '+ pos2)
+                          // //// // console.log('posicion subcategoria '+ pos2)
                           if(pos2 != -1){
-                            // //// console.log('Ventas ' +listado[x].ventas)
+                            // //// // console.log('Ventas ' +listado[x].ventas)
                             listado[x].ventas =  listado[x].ventas + importe;
                             
                             listado[x].cumplimiento =   listado[x].ventas / listado[x].presupuesto_usd
-                            // //// console.log('Ventas' +listado[x].ventas)
-                            // //// console.log('CUMPLIMIENTO ' +listado[x].cumplimiento)
+                            // //// // console.log('Ventas' +listado[x].ventas)
+                            // //// // console.log('CUMPLIMIENTO ' +listado[x].cumplimiento)
                             if(listado[x].cumplimiento >= 1.2){
-                              // console.log('entro 1')
+                              // // console.log('entro 1')
                               listado[x].comisionesUsd = listado[x].ventas * (listado[x].cumplimientos[2].asesor/100)
                               listado[x].comisionesCop = (listado[x].ventas * (listado[x].cumplimientos[2].asesor/100))* element.TRM
                               // this.presupuesto.vendedores[pos].Comisiones = this.presupuesto.vendedores[pos].Comisiones + listado[x].comisionesUsd
                             }else{
                               if(listado[x].cumplimiento <= 1){
-                                // //// console.log('entro 2')
+                                // //// // console.log('entro 2')
                                 listado[x].comisionesUsd = listado[x].ventas * (listado[x].cumplimientos[1].asesor/100)
                                 listado[x].comisionesCop = (listado[x].ventas * (listado[x].cumplimientos[1].asesor/100))* element.TRM
                                 // this.presupuesto.vendedores[pos].Comisiones = this.presupuesto.vendedores[pos].Comisiones +listado[x].comisionesUsd
                               }else{
                                 if(listado[x].cumplimiento >= 0.1){
-                                  // //// console.log('entro 3')
+                                  // //// // console.log('entro 3')
                                   listado[x].comisionesUsd = listado[x].ventas * (listado[x].cumplimientos[0].asesor/100)
                                   listado[x].comisionesCop = (listado[x].ventas * (listado[x].cumplimientos[0].asesor/100))* element.TRM
                                   // this.presupuesto.vendedores[pos].Comisiones = this.presupuesto.vendedores[pos].Comisiones +listado[x].comisionesUsd
@@ -242,12 +234,102 @@ export class CumplimientoComponent implements OnInit {
                       }
                   }   
               }
-            }             
+            }
+                       
           });
-          this.getInformeCategorias(tag)
+
+          for(let h = 0; h < this.presupuesto.vendedores.length; h++){
+            if(this.presupuesto.vendedores[h].rol != 'Ventas'){
+              let tiendas = JSON.stringify(this.presupuesto.tiendas)
+              this.presupuesto.vendedores[h].categorias = JSON.parse(tiendas);
+              
+              this.presupuesto.vendedores[h].categorias.forEach(element => {
+                this.presupuesto.vendedores[h].Ventas = this.presupuesto.vendedores[h].Ventas + element.usd;
+                this.presupuesto.vendedores[h].USD = this.presupuesto.vendedores[h].USD + element.presupuesto_usd;
+                this.presupuesto.vendedores[h].Cumplimiento = (this.presupuesto.vendedores[h].Ventas / this.presupuesto.vendedores[h].USD)
+              });
+            }
+          }
+
+          for (let g = 0; g < this.presupuesto.vendedores.length; g++) {
+            // // console.log(this.presupuesto.vendedores[g])
+            if(this.presupuesto.vendedores[g].rol == 'Ventas'){
+              for (let t = 0; t < this.presupuesto.vendedores[g].categorias.length; t++) {
+                const cat = this.presupuesto.vendedores[g].categorias[t];
+                this.presupuesto.vendedores[g].ComisionesCop =  this.presupuesto.vendedores[g].ComisionesCop + cat.comisionesCop
+                this.presupuesto.vendedores[g].Comisiones =  this.presupuesto.vendedores[g].Comisiones + cat.comisionesUsd
+                this.totalCoisiones =  this.totalCoisiones + cat.comisionesUsd
+                this.totalCoisionesCOP = this.totalCoisionesCOP + cat.comisionesCop
+              }
+            }else{
+              for (let t = 0; t < this.presupuesto.vendedores[g].categorias.length; t++) {
+                const cat = this.presupuesto.vendedores[g].categorias[t];
+                let cumplimiento = cat.presupuesto_usd / cat.usd
+                console.log(cumplimiento)
+
+                if(cumplimiento >= 1.2){
+                  // // console.log('entro 1')
+                  if(this.presupuesto.vendedores[g].rol == 'Lider'){
+                    
+                    this.presupuesto.vendedores[g].Comisiones = this.presupuesto.vendedores[g].Ventas * (cat.cumplimientos[0].lider/100)
+                    console.log('lider ' +  this.presupuesto.vendedores[g].Comisiones)
+                  }
+                  if(this.presupuesto.vendedores[g].rol == 'Gerente Ventas'){
+                    this.presupuesto.vendedores[g].Comisiones = this.presupuesto.vendedores[g].Ventas * (cat.cumplimientos[0].subGerente/100)
+                  
+                  }
+                 
+                  // this.presupuesto.vendedores[g].ComisionesCop
+                  // listado[x].comisionesUsd = listado[x].ventas * (listado[x].cumplimientos[2].asesor/100)
+                  // listado[x].comisionesCop = (listado[x].ventas * (listado[x].cumplimientos[2].asesor/100))* element.TRM
+                  // this.presupuesto.vendedores[pos].Comisiones = this.presupuesto.vendedores[pos].Comisiones + listado[x].comisionesUsd
+                }else{
+                  if(cumplimiento <= 1){
+                    if(this.presupuesto.vendedores[g].rol == 'Lider'){
+                      this.presupuesto.vendedores[g].Comisiones = this.presupuesto.vendedores[g].Ventas * (cat.cumplimientos[2].lider/100)
+                      console.log('lider ' +  this.presupuesto.vendedores[g].Comisiones)
+                    }
+
+                    if(this.presupuesto.vendedores[g].rol == 'Gerente Ventas'){
+                      this.presupuesto.vendedores[g].Comisiones = this.presupuesto.vendedores[g].Ventas * (cat.cumplimientos[2].subGerente/100)
+                    }
+                    // //// // console.log('entro 2')
+                    // listado[x].comisionesUsd = listado[x].ventas * (listado[x].cumplimientos[1].asesor/100)
+                    // listado[x].comisionesCop = (listado[x].ventas * (listado[x].cumplimientos[1].asesor/100))* element.TRM
+                    // this.presupuesto.vendedores[pos].Comisiones = this.presupuesto.vendedores[pos].Comisiones +listado[x].comisionesUsd
+                  }else{
+                    if(cumplimiento >= 0.1){
+                      if(this.presupuesto.vendedores[g].rol == 'Lider'){
+                        this.presupuesto.vendedores[g].Comisiones = this.presupuesto.vendedores[g].Ventas * (cat.cumplimientos[1].lider/100)
+                        console.log('lider ' +  this.presupuesto.vendedores[g].Comisiones)
+                      }
+                      if(this.presupuesto.vendedores[g].rol == 'Gerente Ventas'){
+                        this.presupuesto.vendedores[g].Comisiones = this.presupuesto.vendedores[g].Ventas * (cat.cumplimientos[1].subGerente/100)
+                      }
+                      // //// // console.log('entro 3')
+                      // listado[x].comisionesUsd = listado[x].ventas * (listado[x].cumplimientos[0].asesor/100)
+                      // listado[x].comisionesCop = (listado[x].ventas * (listado[x].cumplimientos[0].asesor/100))* element.TRM
+                      // this.presupuesto.vendedores[pos].Comisiones = this.presupuesto.vendedores[pos].Comisiones +listado[x].comisionesUsd
+                    }
+                  }
+                }
+
+                // this.presupuesto.vendedores[g].ComisionesCop =  this.presupuesto.vendedores[g].ComisionesCop + cat.comisionesCop
+                // this.presupuesto.vendedores[g].Comisiones =  this.presupuesto.vendedores[g].Comisiones + cat.comisionesUsd
+                // this.totalCoisiones =  this.totalCoisiones + cat.comisionesUsd
+                // this.totalCoisionesCOP = this.totalCoisionesCOP + cat.comisionesCop
+              
+              
+              }
+            }
+ 
+          
+          }
+
+        
         }
         this.log = false;
-        // console.log(this.presupuesto)
+        // // console.log(this.presupuesto)
       }
     )
   }
@@ -267,7 +349,7 @@ export class CumplimientoComponent implements OnInit {
   
     this._InfoService.getInformeCategorias(tag).subscribe(
       res=>{
-        console.log(res);
+        // console.log(res);
         if(res){
         this.informeCateg = res;
         for (let index = 0; index <  this.informeCateg.length; index++) {
@@ -292,157 +374,12 @@ export class CumplimientoComponent implements OnInit {
           }
           // this.dataPresupuest();
         }
+
+        this.getDataCollections(tag)
+
         // console.log(this.presupuesto)
-        this.totalCoisiones =0
-        this.totalCoisionesCOP =0
-          for (let g = 0; g < this.presupuesto.vendedores.length; g++) {
-            // const element = this.presupuesto.vendedores[g];
-            if(this.presupuesto.vendedores[g].rol == 'Lider'){
-              // console.log(this.presupuesto.vendedores[g].rol)
-              let categ = JSON.stringify(this.presupuesto.categorias)
-              this.presupuesto.vendedores[g].categorias = JSON.parse(categ)
-              this.presupuesto.vendedores[g].USD = this.presupuesto.presupuesto_usd
-              this.presupuesto.vendedores[g].Ventas = this.presupuesto.ventas_usd
-              // this.presupuesto.vendedores[g].COP = this.presupuesto.ventas_usd
-              this.presupuesto.vendedores[g].Cumplimiento = this.presupuesto.ventas_usd / this.presupuesto.presupuesto_usd
-              
-              for (let t = 0; t < this.presupuesto.vendedores[g].categorias.length; t++) {
-                const cat = this.presupuesto.vendedores[g].categorias[t];
-                // console.log(cat)
-              
-                if(cat.cumplimiento >= 1.2){
-                  // console.log('entro 1')
-                  cat.comisionesUsd = cat.ventas * (cat.cumplimientos[2].lider/100)
-                  cat.comisionesCop = (cat.ventasCop * (cat.cumplimientos[2].lider/100))
-                  // console.log(cat.comisionesCop)
-                  // this.presupuesto.vendedores[pos].Comisiones = this.presupuesto.vendedores[pos].Comisiones + listado[x].comisionesUsd
-                }else{
-                  if(cat.cumplimiento <= 1){
-                    // console.log('entro 2')
-                    cat.comisionesUsd = cat.ventas * (cat.cumplimientos[1].lider/100)
-                    cat.comisionesCop = (cat.ventasCop * (cat.cumplimientos[1].lider/100))
-                    // console.log(cat.comisionesCop)
-                    // this.presupuesto.vendedores[pos].Comisiones = this.presupuesto.vendedores[pos].Comisiones +listado[x].comisionesUsd
-                  }else{
-                    if(cat.cumplimiento >= 0.1){
-                      // console.log('entro 3')
-                      cat.comisionesUsd = cat.ventas * (cat.cumplimientos[0].lider/100)
-                      cat.comisionesCop = (cat.ventasCop * (cat.cumplimientos[0].lider/100))
-                      // console.log(cat.comisionesCop)
-                      // this.presupuesto.vendedores[pos].Comisiones = this.presupuesto.vendedores[pos].Comisiones +listado[x].comisionesUsd
-                    }
-                  }
-                }
-                // console.log(cat)
-                this.presupuesto.vendedores[g].Comisiones =  this.presupuesto.vendedores[g].Comisiones + cat.comisionesUsd
-                this.presupuesto.vendedores[g].ComisionesCop =  this.presupuesto.vendedores[g].ComisionesCop + cat.comisionesCop
-                this.totalCoisiones =  this.totalCoisiones + cat.comisionesUsd
-                this.totalCoisionesCOP = this.totalCoisionesCOP + cat.comisionesCop
-              }
-              // console.log(this.presupuesto.vendedores[g])
-            }
-
-            if(this.presupuesto.vendedores[g].rol == 'Sub Gerente'){
-              // console.log(this.presupuesto.vendedores[g].rol)
-              let categ = JSON.stringify(this.presupuesto.categorias)
-              this.presupuesto.vendedores[g].categorias = JSON.parse(categ)
-              this.presupuesto.vendedores[g].USD = this.presupuesto.presupuesto_usd
-              this.presupuesto.vendedores[g].Ventas = this.presupuesto.ventas_usd
-              // this.presupuesto.vendedores[g].COP = this.presupuesto.ventas_usd
-              this.presupuesto.vendedores[g].Cumplimiento = this.presupuesto.ventas_usd / this.presupuesto.presupuesto_usd
-              
-              for (let t = 0; t < this.presupuesto.vendedores[g].categorias.length; t++) {
-                const cat = this.presupuesto.vendedores[g].categorias[t];
-                // console.log(cat)
-              
-                if(cat.cumplimiento >= 1.2){
-                  // console.log('entro 1')
-                  cat.comisionesUsd = cat.ventas * (cat.cumplimientos[2].subGerente/100)
-                  cat.comisionesCop = (cat.ventasCop * (cat.cumplimientos[2].subGerente/100))
-                  // console.log(cat.comisionesCop)
-                  // this.presupuesto.vendedores[pos].Comisiones = this.presupuesto.vendedores[pos].Comisiones + listado[x].comisionesUsd
-                }else{
-                  if(cat.cumplimiento <= 1){
-                    // console.log('entro 2')
-                    cat.comisionesUsd = cat.ventas * (cat.cumplimientos[1].subGerente/100)
-                    cat.comisionesCop = (cat.ventasCop * (cat.cumplimientos[1].subGerente/100))
-                    // console.log(cat.comisionesCop)
-                    // this.presupuesto.vendedores[pos].Comisiones = this.presupuesto.vendedores[pos].Comisiones +listado[x].comisionesUsd
-                  }else{
-                    if(cat.cumplimiento >= 0.1){
-                      // console.log('entro 3')
-                      cat.comisionesUsd = cat.ventas * (cat.cumplimientos[0].subGerente/100)
-                      cat.comisionesCop = (cat.ventasCop * (cat.cumplimientos[0].subGerente/100))
-                      // console.log(cat.comisionesCop)
-                      // this.presupuesto.vendedores[pos].Comisiones = this.presupuesto.vendedores[pos].Comisiones +listado[x].comisionesUsd
-                    }
-                  }
-                }
-                // console.log(cat)
-                this.presupuesto.vendedores[g].Comisiones =  this.presupuesto.vendedores[g].Comisiones + cat.comisionesUsd
-                this.presupuesto.vendedores[g].ComisionesCop =  this.presupuesto.vendedores[g].ComisionesCop + cat.comisionesCop
-                this.totalCoisiones =  this.totalCoisiones + cat.comisionesUsd
-                this.totalCoisionesCOP = this.totalCoisionesCOP + cat.comisionesCop
-              }
-              // console.log(this.presupuesto.vendedores[g])
-            }
-
-            if(this.presupuesto.vendedores[g].rol == 'Gerente'){
-              console.log(this.presupuesto.vendedores[g].rol)
-              let categ = JSON.stringify(this.presupuesto.categorias)
-              this.presupuesto.vendedores[g].categorias = JSON.parse(categ)
-              this.presupuesto.vendedores[g].USD = this.presupuesto.presupuesto_usd
-              this.presupuesto.vendedores[g].Ventas = this.presupuesto.ventas_usd
-              // this.presupuesto.vendedores[g].COP = this.presupuesto.ventas_usd
-              this.presupuesto.vendedores[g].Cumplimiento = this.presupuesto.ventas_usd / this.presupuesto.presupuesto_usd
-              
-              for (let t = 0; t < this.presupuesto.vendedores[g].categorias.length; t++) {
-                const cat = this.presupuesto.vendedores[g].categorias[t];
-                console.log(cat)
-              
-                if(cat.cumplimiento >= 1.2){
-                  console.log('entro 1')
-                  cat.comisionesUsd = cat.ventas * (cat.cumplimientos[2].gerente/100)
-                  cat.comisionesCop = (cat.ventasCop * (cat.cumplimientos[2].gerente/100))
-                  console.log(cat.comisionesCop)
-                  // this.presupuesto.vendedores[pos].Comisiones = this.presupuesto.vendedores[pos].Comisiones + listado[x].comisionesUsd
-                }else{
-                  if(cat.cumplimiento <= 1){
-                    console.log('entro 2')
-                    cat.comisionesUsd = cat.ventas * (cat.cumplimientos[1].gerente/100)
-                    cat.comisionesCop = (cat.ventasCop * (cat.cumplimientos[1].gerente/100))
-                    console.log(cat.comisionesCop)
-                    // this.presupuesto.vendedores[pos].Comisiones = this.presupuesto.vendedores[pos].Comisiones +listado[x].comisionesUsd
-                  }else{
-                    if(cat.cumplimiento >= 0.1){
-                      console.log('entro 3')
-                      cat.comisionesUsd = cat.ventas * (cat.cumplimientos[0].gerente/100)
-                      cat.comisionesCop = (cat.ventasCop * (cat.cumplimientos[0].gerente/100))
-                      console.log(cat.comisionesCop)
-                      // this.presupuesto.vendedores[pos].Comisiones = this.presupuesto.vendedores[pos].Comisiones +listado[x].comisionesUsd
-                    }
-                  }
-                }
-                console.log(cat)
-                this.presupuesto.vendedores[g].Comisiones =  this.presupuesto.vendedores[g].Comisiones + cat.comisionesUsd
-                this.presupuesto.vendedores[g].ComisionesCop =  this.presupuesto.vendedores[g].ComisionesCop + cat.comisionesCop
-                this.totalCoisiones =  this.totalCoisiones + cat.comisionesUsd
-                this.totalCoisionesCOP = this.totalCoisionesCOP + cat.comisionesCop
-              }
-              // console.log(this.presupuesto.vendedores[g])
-            }
-
-            if(this.presupuesto.vendedores[g].rol == 'Ventas'){
-              // console.log(this.presupuesto.vendedores[g])
-              for (let t = 0; t < this.presupuesto.vendedores[g].categorias.length; t++) {
-                const cat = this.presupuesto.vendedores[g].categorias[t];
-                this.presupuesto.vendedores[g].ComisionesCop =  this.presupuesto.vendedores[g].ComisionesCop + cat.comisionesCop
-                this.presupuesto.vendedores[g].Comisiones =  this.presupuesto.vendedores[g].Comisiones + cat.comisionesUsd
-                this.totalCoisiones =  this.totalCoisiones + cat.comisionesUsd
-                this.totalCoisionesCOP = this.totalCoisionesCOP + cat.comisionesCop
-              }
-            }
-          }
+       
+          
       }
       })
      
@@ -471,31 +408,31 @@ export class CumplimientoComponent implements OnInit {
   ad=''
   clave=''
   buscarCedula(id: any){
-    console.log(id)
+    // console.log(id)
     let pos = this.presupuesto.vendedores.map(function(e:any) { return e.identificacion; }).indexOf(id.toString());
     if(pos != -1){
       if(this.presupuesto.vendedores[pos].clave == this.clave){
         this.id = id
-        console.log(pos)
+        // console.log(pos)
         this.dataPresupuest( this.presupuesto.vendedores[pos].categorias)
         this.dataPresupuestDia(this.presupuesto.vendedores[pos].categorias)
       }else{
-        console.log('error clave')
+        // console.log('error clave')
       }
     
     }
   }
 
   onSelect(data: any): void {
-    // // // // //console.log('Item clicked', JSON.parse(JSON.stringify(data)));
+    // // // // //// console.log('Item clicked', JSON.parse(JSON.stringify(data)));
   }
 
   onActivate(data: any): void {
-    // // // // //console.log('Activate', JSON.parse(JSON.stringify(data)));
+    // // // // //// console.log('Activate', JSON.parse(JSON.stringify(data)));
   }
 
   onDeactivate(data: any): void {
-    // // // // //console.log('Deactivate', JSON.parse(JSON.stringify(data)));
+    // // // // //// console.log('Deactivate', JSON.parse(JSON.stringify(data)));
   }
 
 
@@ -503,7 +440,7 @@ export class CumplimientoComponent implements OnInit {
     let multy = [];
     for (let t = 0; t < categorias.length; t++) {
       const element = categorias[t];
-      // console.log(element)
+      // // console.log(element)
       multy.push(
         {
           "name": element.titulo,
@@ -528,7 +465,7 @@ export class CumplimientoComponent implements OnInit {
     let multy = [];
     for (let t = 0; t < categorias.length; t++) {
       const element = categorias[t];
-      // console.log(element)
+      // // console.log(element)
       multy.push(
         {
           "name": element.titulo,
@@ -548,3 +485,140 @@ export class CumplimientoComponent implements OnInit {
   }
 
 }
+
+
+
+
+// for (let g = 0; g < this.presupuesto.vendedores.length; g++) {
+//   // const element = this.presupuesto.vendedores[g];
+//   if(this.presupuesto.vendedores[g].rol == 'Lider'){
+//     // let categ = JSON.stringify(this.presupuesto.categorias)
+//     // this.presupuesto.vendedores[g].categorias = JSON.parse(categ);
+//     this.presupuesto.vendedores[g].Ventas = this.presupuesto.vendedores[g].Ventas + element.Importe
+//     this.presupuesto.vendedores[g].COP = this.presupuesto.vendedores[g].COP + element.COP
+//     this.presupuesto.vendedores[g].Cumplimiento = this.presupuesto.ventas_usd / this.presupuesto.presupuesto_usd
+    
+//     let listado = this.presupuesto.vendedores[g].categorias;
+//     for (let x = 0; x < listado.length; x++){
+//       const elements = listado[x].subscat;
+//         let importe = element.Importe
+//         let importeCop = element.COP
+//         let pos2 = elements.map(function(e:any) { return e; }).indexOf(element.Clasi);
+//         // //// // console.log('posicion subcategoria '+ pos2)
+//         if(pos2 != -1){
+//           // //// // console.log('Ventas ' +listado[x].ventas)
+//           listado[x].ventas =  listado[x].ventas + importe;
+          
+//           listado[x].cumplimiento =   listado[x].ventas / listado[x].presupuesto_usd
+//           // //// // console.log('Ventas' +listado[x].ventas)
+//           // //// // console.log('CUMPLIMIENTO ' +listado[x].cumplimiento)
+//           if(listado[x].cumplimiento >= 1.2){
+//             // // console.log('entro 1')
+//             listado[x].comisionesUsd = listado[x].ventas * (listado[x].cumplimientos[2].lider/100)
+//             listado[x].comisionesCop = (listado[x].ventas * (listado[x].cumplimientos[2].lider/100))* element.TRM
+//             // this.presupuesto.vendedores[pos].Comisiones = this.presupuesto.vendedores[pos].Comisiones + listado[x].comisionesUsd
+//           }else{
+//             if(listado[x].cumplimiento <= 1){
+//               // //// // console.log('entro 2')
+//               listado[x].comisionesUsd = listado[x].ventas * (listado[x].cumplimientos[1].lider/100)
+//               listado[x].comisionesCop = (listado[x].ventas * (listado[x].cumplimientos[1].lider/100))* element.TRM
+//               // this.presupuesto.vendedores[pos].Comisiones = this.presupuesto.vendedores[pos].Comisiones +listado[x].comisionesUsd
+//             }else{
+//               if(listado[x].cumplimiento >= 0.1){
+//                 listado[x].comisionesUsd = listado[x].ventas * (listado[x].cumplimientos[0].lider/100)
+//                 listado[x].comisionesCop = (listado[x].ventas * (listado[x].cumplimientos[0].lider/100))* element.TRM
+//               }
+//             }
+//           }
+//           break
+//         }
+//     }
+//     // // console.log(this.presupuesto.vendedores[g])
+//   }
+
+//   if(this.presupuesto.vendedores[g].rol == 'Gerente Ventas'){
+//     this.presupuesto.vendedores[g].Ventas = this.presupuesto.vendedores[g].Ventas + element.Importe
+//     this.presupuesto.vendedores[g].COP = this.presupuesto.vendedores[g].COP + element.COP
+//     this.presupuesto.vendedores[g].Cumplimiento = this.presupuesto.ventas_usd / this.presupuesto.presupuesto_usd
+    
+//     let listado = this.presupuesto.vendedores[g].categorias;
+//     for (let x = 0; x < listado.length; x++){
+//       const elements = listado[x].subscat;
+//       let importe = element.Importe
+//         let importeCop = element.COP
+//         let pos2 = elements.map(function(e:any) { return e; }).indexOf(element.Clasi);
+//         // //// // console.log('posicion subcategoria '+ pos2)
+//         if(pos2 != -1){
+//           // //// // console.log('Ventas ' +listado[x].ventas)
+//           listado[x].ventas =  listado[x].ventas + importe;
+          
+//           listado[x].cumplimiento =   listado[x].ventas / listado[x].presupuesto_usd
+//           // //// // console.log('Ventas' +listado[x].ventas)
+//           // //// // console.log('CUMPLIMIENTO ' +listado[x].cumplimiento)
+//           if(listado[x].cumplimiento >= 1.2){
+//             // // console.log('entro 1')
+//             listado[x].comisionesUsd = listado[x].ventas * (listado[x].cumplimientos[2].subGerente/100)
+//             listado[x].comisionesCop = (listado[x].ventas * (listado[x].cumplimientos[2].subGerente/100))* element.TRM
+//             // this.presupuesto.vendedores[pos].Comisiones = this.presupuesto.vendedores[pos].Comisiones + listado[x].comisionesUsd
+//           }else{
+//             if(listado[x].cumplimiento <= 1){
+//               // //// // console.log('entro 2')
+//               listado[x].comisionesUsd = listado[x].ventas * (listado[x].cumplimientos[1].subGerente/100)
+//               listado[x].comisionesCop = (listado[x].ventas * (listado[x].cumplimientos[1].subGerente/100))* element.TRM
+//               // this.presupuesto.vendedores[pos].Comisiones = this.presupuesto.vendedores[pos].Comisiones +listado[x].comisionesUsd
+//             }else{
+//               if(listado[x].cumplimiento >= 0.1){
+//                 listado[x].comisionesUsd = listado[x].ventas * (listado[x].cumplimientos[0].subGerente/100)
+//                 listado[x].comisionesCop = (listado[x].ventas * (listado[x].cumplimientos[0].subGerente/100))* element.TRM
+//               }
+//             }
+//           }
+//           break
+//         }
+//     }
+    
+//   }
+
+//   if(this.presupuesto.vendedores[g].rol == 'Gerente'){
+//     this.presupuesto.vendedores[g].Ventas = this.presupuesto.vendedores[g].Ventas + element.Importe
+//     this.presupuesto.vendedores[g].COP = this.presupuesto.vendedores[g].COP + element.COP
+//     this.presupuesto.vendedores[g].Cumplimiento = this.presupuesto.ventas_usd / this.presupuesto.presupuesto_usd
+    
+//     let listado = this.presupuesto.vendedores[g].categorias;
+//     for (let x = 0; x < listado.length; x++){
+//       const elements = listado[x].subscat;
+//       let importe = element.Importe
+//         let importeCop = element.COP
+//         let pos2 = elements.map(function(e:any) { return e; }).indexOf(element.Clasi);
+//         // //// // console.log('posicion subcategoria '+ pos2)
+//         if(pos2 != -1){
+//           // //// // console.log('Ventas ' +listado[x].ventas)
+//           listado[x].ventas =  listado[x].ventas + importe;
+          
+//           listado[x].cumplimiento =   listado[x].ventas / listado[x].presupuesto_usd
+//           // //// // console.log('Ventas' +listado[x].ventas)
+//           // //// // console.log('CUMPLIMIENTO ' +listado[x].cumplimiento)
+//           if(listado[x].cumplimiento >= 1.2){
+//             // // console.log('entro 1')
+//             listado[x].comisionesUsd = listado[x].ventas * (listado[x].cumplimientos[2].gerente/100)
+//             listado[x].comisionesCop = (listado[x].ventas * (listado[x].cumplimientos[2].gerente/100))* element.TRM
+//             // this.presupuesto.vendedores[pos].Comisiones = this.presupuesto.vendedores[pos].Comisiones + listado[x].comisionesUsd
+//           }else{
+//             if(listado[x].cumplimiento <= 1){
+//               // //// // console.log('entro 2')
+//               listado[x].comisionesUsd = listado[x].ventas * (listado[x].cumplimientos[1].gerente/100)
+//               listado[x].comisionesCop = (listado[x].ventas * (listado[x].cumplimientos[1].gerente/100))* element.TRM
+//               // this.presupuesto.vendedores[pos].Comisiones = this.presupuesto.vendedores[pos].Comisiones +listado[x].comisionesUsd
+//             }else{
+//               if(listado[x].cumplimiento >= 0.1){
+//                 listado[x].comisionesUsd = listado[x].ventas * (listado[x].cumplimientos[0].gerente/100)
+//                 listado[x].comisionesCop = (listado[x].ventas * (listado[x].cumplimientos[0].gerente/100))* element.TRM
+//               }
+//             }
+//           }
+//           break
+//         }
+//     }
+//   }
+
+// } 

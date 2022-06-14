@@ -21,14 +21,15 @@ import { User } from 'src/app/models/user';
 export interface _Conteo {
   _id: string;
   Estado: string;
-  Codigo_1: number;
+  Codigo1: any;
   Codigo_3: number;
   EAN: number;
   COST_PROM: number;
-  ACTUAL_COST: number;
-  CLASS_DISCRIP: string;
+  TOTAL_FINAL_INV_USD: number;
+  TOTAL_FINAL_INV: number;
+  Cla: string;
   Descripcion_1: string;
-  Exist: number;
+  Exist_Final: number;
   Conteo0:any[];
   Definitivo:any[];
   Conteo1:any[];
@@ -194,14 +195,38 @@ export class tomaInventarioComponent implements OnInit {
   ]; 
 		
 
+  DefinitivoCategorias:any[] = []
   getConfig(){
     this._infoServce.getConfig().subscribe(
       res=>{
         if(res.length != 0){
+          this.DefinitivoCategorias = []
           this.config = res[0];
           localStorage.setItem('categ',JSON.stringify(this.config.categorias))
+          console.log(this.config)
+          this.config.categorias.forEach((element: any) => {
+            this.DefinitivoCategorias.push(
+              {
+                titulo:element.titulo,
+                subscat:element.subscat,
+                difUnidades:{
+                  positivo:0,
+                  negativo:0,
+                },
+                difCOP:{
+                  positivo:0,
+                  negativo:0,
+                },
+                difUSD:{
+                  positivo:0,
+                  negativo:0,
+                }
+              }
+            )
+          });
 
-          ////console.log(this.config)
+          localStorage.setItem('invCategorias',JSON.stringify(this.DefinitivoCategorias))
+
         }
        
       }
@@ -325,8 +350,8 @@ export class tomaInventarioComponent implements OnInit {
    console.log(this.registros) 
     
     for(var i = 0;i < this.registros.length; i++){
-      if(this.registros[i].Exist == ''){
-        this.registros[i].Exist = 0
+      if(this.registros[i].Exist_Final == ''){
+        this.registros[i].Exist_Final = 0
       }
       this.registros[i].Estado = 'Activo';
       this.registros[i].Conteo0 = [];
@@ -531,7 +556,9 @@ export class tomaInventarioComponent implements OnInit {
 
   ubicacion = ''
   unds = 1
+  ultimosConteos:any[] = []
   saveScan(){
+    console.log(this.ultimosConteos)
     this.log= true;
     let scan = {
       unds:this.unds,
@@ -545,8 +572,15 @@ export class tomaInventarioComponent implements OnInit {
       this._infoServce.agregarScaneo(scan, this.tag).subscribe(
         res =>{
           let dato = res
+          if(this.ultimosConteos.length <= 4){
+            console.log('entro')
+            this.ultimosConteos.unshift(scan)
+          }else{
+            this.ultimosConteos.unshift(scan)
+            this.ultimosConteos.splice(this.ultimosConteos.length -1,1)
+          }
+         
           console.log(dato)
-          let data: Object
           this.log = false
           this.openSnackBar(this.scan + '')
           this.scan = undefined  
@@ -572,12 +606,15 @@ export class tomaInventarioComponent implements OnInit {
   cuantas(item: any){
     // console.log(item)
     let conteo = 0
-
-    item.forEach((element: { unds: number; }) => {
-      conteo = conteo + element.unds
-    });
-
-    return conteo
+    if(item.length != 0){
+      item.forEach((element: { unds: number; }) => {
+        conteo = conteo + element.unds
+      });
+      return conteo
+    }else{
+      return 0
+    }
+    
   }
 
 
@@ -609,6 +646,13 @@ export class tomaInventarioComponent implements OnInit {
   copSobrantes = 0
   usdSobrantes = 0
 
+  usdDefinitivas = 0
+  copDefinitivas = 0
+  undDefinitivas = 0
+  undDefinitivasConteo = 0
+  usdDefinitivasConteo = 0
+  copDefinitivasConteo = 0
+
   Iguales:_Conteo[] = []
   undIguales = 0
   undFaltantes = 0
@@ -616,6 +660,20 @@ export class tomaInventarioComponent implements OnInit {
   Faltantes:_Conteo[] = []
   Definitivas:_Conteo[] = []
   categorias:any[] = []
+
+  totalUndspositivo = 0
+  totalUndsnegativo = 0
+
+  totalUSDpositivo = 0
+  totalUSDnegativo = 0
+
+  totalCOPpositivo = 0
+  totalCOPnegativo = 0
+
+
+
+
+
   getCnteoTag(){
     this.log= true
     this.unidades_conteo =0
@@ -627,13 +685,33 @@ export class tomaInventarioComponent implements OnInit {
     this.usdIguales = 0
     this.copFaltantes = 0
     this.usdFaltantes = 0
+    this.usdDefinitivas = 0
+    this.copDefinitivas = 0
+    this.undDefinitivas = 0
+    this.undDefinitivasConteo = 0
+    this.usdDefinitivasConteo = 0
+    this.copDefinitivasConteo = 0
+
+    this.totalUndspositivo = 0
+    this.totalUndsnegativo = 0
+  
+    this.totalUSDpositivo = 0
+    this.totalUSDnegativo = 0
+  
+    this.totalCOPpositivo = 0
+    this.totalCOPnegativo = 0
+
     this.Iguales = []
     this.Sobrantes = []
     this.Faltantes = []
     this.Definitivas = []
+
+    let categorias:any = localStorage.getItem('invCategorias');
+    this.DefinitivoCategorias = JSON.parse(categorias);
+    console.log(this.DefinitivoCategorias)
     this._infoServce.getConteoTag(this.tag).subscribe(
       res=>{
-        console.log(res)
+        // console.log(res)
         this.conteo = res
         // this.conteo.sort(function(a,b){
         //   return a.Descripcion_1.localeCompare(b.Descripcion_1);
@@ -641,43 +719,80 @@ export class tomaInventarioComponent implements OnInit {
         this.unidades_conteo =0
         this.unidades_fisicas = 0
         this.conteo.sort(function(a, b){
-          return b.Exist - a.Exist;
+          return b.Exist_Final - a.Exist_Final;
         });
         // this.categorias = [...new Set(this.conteo)]
         // console.log(this.categorias)
         for (let i = 0; i < this.conteo.length; i++) {
           const element = this.conteo[i];
           if(element.Estado == 'Activo'){
-          if(this.cuantas(element.Conteo0) - element.Exist == 0){
+          if(this.cuantas(element.Conteo0) - element.Exist_Final == 0){
             this.Iguales.push(element)
-            this.undIguales = this.undIguales + element.Exist
-            this.copIguales = this.copIguales + Number(element.COST_PROM) 
-            this.usdIguales = this.usdIguales + Number(element.ACTUAL_COST)
+            this.undIguales = this.undIguales + element.Exist_Final
+            this.copIguales = this.copIguales + Number(element.TOTAL_FINAL_INV)
+            this.usdIguales = this.usdIguales + Number(element.TOTAL_FINAL_INV_USD)
            }
-           if(this.cuantas(element.Conteo0) - element.Exist <= -1){
+           if(this.cuantas(element.Conteo0) - element.Exist_Final <= -1){
             this.Faltantes.push(element)
-            this.undFaltantes = this.undFaltantes + element.Exist
-            this.copFaltantes = this.copFaltantes + (Number(element.COST_PROM) * element.Exist )
-            this.usdFaltantes = this.usdFaltantes + (Number(element.ACTUAL_COST) * element.Exist)
+            this.undFaltantes = this.undFaltantes + element.Exist_Final
+            this.copFaltantes = this.copFaltantes + Number(element.TOTAL_FINAL_INV)
+            this.usdFaltantes = this.usdFaltantes + Number(element.TOTAL_FINAL_INV_USD)
            }
-           if(this.cuantas(element.Conteo0) - element.Exist >= 1){
+           if(this.cuantas(element.Conteo0) - element.Exist_Final >= 1){
             this.Sobrantes.push(element)
-            this.undSobrantes = this.undSobrantes + element.Exist
-            this.copSobrantes = this.copSobrantes + (Number(element.COST_PROM) * element.Exist )
-            this.usdSobrantes = this.usdSobrantes + (Number(element.ACTUAL_COST) * element.Exist)
+            this.undSobrantes = this.undSobrantes + element.Exist_Final
+            this.copSobrantes = this.copSobrantes + Number(element.TOTAL_FINAL_INV)
+            this.usdSobrantes = this.usdSobrantes + Number(element.TOTAL_FINAL_INV_USD)
            }
   
-          if(element.Exist >= 1){
-            this.unidades_conteo = this.unidades_conteo + element.Exist
+          if(element.Exist_Final >= 1){
+            this.unidades_conteo = this.unidades_conteo + element.Exist_Final
             this.unidades_fisicas =  this.unidades_fisicas + element.Conteo0.length
           }
+
         }else{
           this.Definitivas.push(element)
+          this.usdDefinitivas = this.usdDefinitivas + Number(element.TOTAL_FINAL_INV_USD) 
+          this.copDefinitivas = this.copDefinitivas + Number(element.TOTAL_FINAL_INV)
+          this.undDefinitivas = this.undDefinitivas + element.Exist_Final
+          this.undDefinitivasConteo = this.undDefinitivasConteo + element.Conteo
+          if(element.Exist_Final != 0){
+            this.usdDefinitivasConteo = this.usdDefinitivasConteo + ((element.TOTAL_FINAL_INV_USD / element.Exist_Final) *  element.Conteo) 
+            this.copDefinitivasConteo = this.copDefinitivasConteo + ((element.TOTAL_FINAL_INV / element.Exist_Final) *  element.Conteo) 
+            
+            this.DefinitivoCategorias.forEach(categ => {
+              console.log(element.Cla)
+              let pos = categ.subscat.map(function(e:any) { return e; }).indexOf(element.Cla);
+              console.log(pos)
+              if(pos != -1){
+                console.log('entro '+ categ.difUnidades.positivo)
+                if((element.Conteo - element.Exist_Final)>= 1 ){
+                  categ.difUnidades.positivo  = categ.difUnidades.positivo + (element.Conteo - element.Exist_Final)
+                  categ.difCOP.positivo  = categ.difCOP.positivo + ((element.Conteo * (element.TOTAL_FINAL_INV / element.Exist_Final )) - element.TOTAL_FINAL_INV)
+                  categ.difUSD.positivo  = categ.difUSD.positivo + ((element.Conteo * (element.TOTAL_FINAL_INV_USD / element.Exist_Final )) - element.TOTAL_FINAL_INV_USD)
+                  this.totalUndspositivo =  this.totalUndspositivo + (element.Conteo - element.Exist_Final)
+                  this.totalUSDpositivo = this.totalUSDpositivo +  ((element.Conteo * (element.TOTAL_FINAL_INV_USD / element.Exist_Final )) - element.TOTAL_FINAL_INV_USD)
+                  this.totalCOPpositivo = this.totalCOPpositivo + ((element.Conteo * (element.TOTAL_FINAL_INV / element.Exist_Final )) - element.TOTAL_FINAL_INV)
+    
+                }else{
+                  categ.difUnidades.negativo  = categ.difUnidades.negativo + (element.Conteo - element.Exist_Final)
+                  categ.difCOP.negativo  = categ.difCOP.negativo + ((element.Conteo * (element.TOTAL_FINAL_INV / element.Exist_Final )) - element.TOTAL_FINAL_INV)
+                  categ.difUSD.negativo  = categ.difUSD.negativo + ((element.Conteo * (element.TOTAL_FINAL_INV_USD / element.Exist_Final )) - element.TOTAL_FINAL_INV_USD)
+                  this.totalUndsnegativo = this.totalUndsnegativo + (element.Conteo - element.Exist_Final)
+                  this.totalUSDnegativo = this.totalUSDnegativo + ((element.Conteo * (element.TOTAL_FINAL_INV_USD / element.Exist_Final )) - element.TOTAL_FINAL_INV_USD)
+                  this.totalCOPnegativo = this.totalCOPnegativo  + ((element.Conteo * (element.TOTAL_FINAL_INV / element.Exist_Final )) - element.TOTAL_FINAL_INV)
+                }               
+                
+              }
+            });
+         
+          }
+          
         }
       }
 
        
-
+        console.log( this.Iguales)
         this.openSnackBar('NUEVOS REGISTROS '+ this.conteo.length)
         this.log= false
       }
@@ -724,65 +839,58 @@ export class tomaInventarioComponent implements OnInit {
       switch (sort.active) {
         case 'Codigo_1':
           console.log('Codigo_1')
-          return compare(a.Codigo_1, b.Codigo_1, isAsc);
+          return compare(a.Codigo1, b.Codigo1, isAsc);
         case 'Codigo_3':
           return compare(a.Codigo_3, b.Codigo_3, isAsc);
         case 'CLASS_DISCRIP':
-          return compare(a.CLASS_DISCRIP, b.CLASS_DISCRIP, isAsc);
+          return compare(a.Cla, b.Cla, isAsc);
         case 'Descripcion_1':
           return compare(a.Descripcion_1, b.Descripcion_1, isAsc);
         case 'Exist':
-          return compare(a.Exist, b.Exist, isAsc);
+          return compare(a.Exist_Final, b.Exist_Final, isAsc);
         default:
           return 0;
       }
     });
   }
 
-  procesarIguales(){ 
-    this.Iguales.forEach(element => {
-        this.conteoDefinitivoDefinitivo(element.Conteo0, element._id, element)
-    });
-  }
-
-  procesarFaltantes(){ 
+  
+  up = 0
+  procesarFaltantes(){
+    this.up = 0 
     this.Faltantes.forEach(element => {
-      if(element.check){
-        this.conteoDefinitivoDefinitivo(element.Conteo0, element._id, element)
-      }
-      });
-  }
+        if(element.check){
+          this.up =  this.up++
+          if(element.Conteo1.length == 0){
+              this.procesarFaltantesContar(element)
+          }else{
+            if(this.cuantas(element.Conteo1) == this.cuantas(element.Conteo0) ){
+              element.Conteo2 = element.Conteo0
+              this.conteoDefinitivoDefinitivo(element.Conteo0, element._id, element)
+            }else{
+              if(element.Conteo2.length == 0){
+                this.procesarFaltantesContar(element)
+              }else{
+                if(this.cuantas(element.Conteo2) == this.cuantas(element.Conteo0) ){
+                  element.Conteo3 = element.Conteo0
+                  this.conteoDefinitivoDefinitivo(element.Conteo0, element._id, element)
+                }else{
+                  element.Conteo3 = element.Conteo0
+                  this.conteoDefinitivoDefinitivo(element.Conteo0, element._id, element)
+                }
+              }
 
-  procesarSobrantes(){ 
-    this.Sobrantes.forEach(element => {
-      // if(element.check){
-        this.conteoDefinitivoDefinitivo(element.Conteo0, element._id, element)
-      // }
-      });
-  }
-
-  procesarIgualesContar(){
-    this.Iguales.forEach(element => {
-      if(element.Conteo1.length == 0){
-        this.conteo1(element)
-      }else{
-        if(element.Conteo2.length == 0){
-          this.conteo2(element)
-        }else{
-          if(element.Conteo3.length == 0){
-            this.conteo3(element)
-          }else{ if(element.Conteo4.length == 0){
-            this.conteo4(element)
+            }
           }
+         
+        }else{
+          this.up =  this.up++
         }
-        }
-      }
-     
     });
   }
 
-  procesarFaltantesContar(){
-    this.Faltantes.forEach(element => {
+  procesarFaltantesContar(element: _Conteo){
+    // this.Faltantes.forEach(element => {
       if(element.check){
         if(element.Conteo1.length == 0){
           this.conteo1(element)
@@ -800,11 +908,105 @@ export class tomaInventarioComponent implements OnInit {
         }
       }
      
-    });
+    // });
   }
 
-  procesarSobrantesContar(){
+  checkIguales(event: any){ 
+    this.Iguales.forEach(element => {
+      element.check = event.checked
+    })
+  }
+
+  checkFaltantes(event: any){
+    console.log(event)
+    this.Faltantes.forEach(element => {
+      element.check = event.checked
+    })
+  }
+
+  checkSobrantes(event: any){
+    console.log(event)
     this.Sobrantes.forEach(element => {
+      element.check = event.checked
+    })
+  }
+
+  procesarSobrantes(){ 
+    // this.Sobrantes.forEach(element => {
+    //   // if(element.check){
+    //     this.conteoDefinitivoDefinitivo(element.Conteo0, element._id, element)
+    //   // }
+    //   });
+
+    this.up = 0 
+    this.Sobrantes.forEach(element => {
+        if(element.check){
+          this.up =  this.up++
+          if(element.Conteo1.length == 0){
+              this.procesarSobrantesContar(element)
+          }else{
+            if(this.cuantas(element.Conteo1) == this.cuantas(element.Conteo0) ){
+              element.Conteo2 = element.Conteo0
+              this.conteoDefinitivoDefinitivo(element.Conteo0, element._id, element)
+            }else{
+              if(element.Conteo2.length == 0){
+                this.procesarSobrantesContar(element)
+              }else{
+                if(this.cuantas(element.Conteo2) == this.cuantas(element.Conteo0) ){
+                  element.Conteo3 = element.Conteo0
+                  this.conteoDefinitivoDefinitivo(element.Conteo0, element._id, element)
+                }else{
+                  element.Conteo3 = element.Conteo0
+                  this.conteoDefinitivoDefinitivo(element.Conteo0, element._id, element)
+                }
+              }
+
+            }
+          }
+         
+        }else{
+          this.up =  this.up++
+        }
+    });
+
+
+
+  }
+
+
+  procesarIguales(){ 
+    this.Iguales.forEach(element => {
+        if(element.check){
+          this.conteoDefinitivoDefinitivo(element.Conteo0, element._id, element)
+        }
+      });
+  }
+
+  procesarIgualesContar(){
+      this.Iguales.forEach(element => {
+      if(element.check){
+        if(element.Conteo1.length == 0){
+          this.conteo1(element)
+        }else{
+          if(element.Conteo2.length == 0){
+            this.conteo2(element)
+          }else{
+            if(element.Conteo3.length == 0){
+              this.conteo3(element)
+            }else{ if(element.Conteo4.length == 0){
+              this.conteo4(element)
+            }
+          }
+          }
+        }
+      }
+    })
+  }
+
+  
+
+  procesarSobrantesContar(element: _Conteo){
+    // this.Sobrantes.forEach(element => {
   
         if(element.Conteo1.length == 0){
           this.conteo1(element)
@@ -822,7 +1024,7 @@ export class tomaInventarioComponent implements OnInit {
         }
     
      
-    });
+    // });
   }
 
   
@@ -937,51 +1139,108 @@ export class tomaInventarioComponent implements OnInit {
   }
 
   filterEanIguales(){
-    if(this.Iguales[0].Exist >> this.Iguales[this.Iguales.length-1].Exist){
+    if(this.Iguales[0].Exist_Final >> this.Iguales[this.Iguales.length-1].Exist_Final){
       this.Iguales.sort(function(a, b){
-        return b.Exist - a.Exist;
+        return b.Exist_Final - a.Exist_Final;
       });
     }else{ 
       this.Iguales.sort(function(a, b){
-        return  a.Exist - b.Exist ;
+        return  a.Exist_Final - b.Exist_Final ;
       });
     }
   }
 
   filterEanFaltantes(){
-    if(this.Faltantes[0].Exist >> this.Faltantes[this.Faltantes.length-1].Exist){
+    if(this.Faltantes[0].Exist_Final >> this.Faltantes[this.Faltantes.length-1].Exist_Final){
       this.Faltantes.sort(function(a, b){
-        return  a.Exist - b.Exist ;
+        return  a.Exist_Final - b.Exist_Final ;
       });
     }else{ 
       this.Faltantes.sort(function(a, b){
-        return b.Exist - a.Exist;
+        return b.Exist_Final - a.Exist_Final;
+      });
+     
+    }
+  }
+
+  filterEanSobrantes(){
+    if(this.Sobrantes[0].Exist_Final >> this.Sobrantes[this.Sobrantes.length-1].Exist_Final){
+      this.Sobrantes.sort(function(a, b){
+        return  a.Exist_Final - b.Exist_Final ;
+      });
+    }else{ 
+      this.Sobrantes.sort(function(a, b){
+        return b.Exist_Final - a.Exist_Final;
+      });
+    }
+  }
+
+  filterSKUIguales(){
+
+     this.Iguales.sort(function(a,b){
+          return a.Codigo1.localeCompare(b.Codigo1);
+      });
+
+    // if(this.Iguales[0].Exist_Final >> this.Iguales[this.Iguales.length-1].Exist_Final){
+    //   this.Iguales.sort(function(a, b){
+    //     return  a.Codigo1 - b.Codigo1 ;
+    //   });
+    // }else{ 
+    //   this.Iguales.sort(function(a, b){
+    //     return b.Codigo1 - a.Codigo1;
+    //   });
+     
+    // }
+  }
+
+
+  filterSKUFaltantes(){
+    if(this.Faltantes[0].Exist_Final >> this.Faltantes[this.Faltantes.length-1].Exist_Final){
+      this.Faltantes.sort(function(a, b){
+        return  a.Codigo1 - b.Codigo1 ;
+      });
+    }else{ 
+      this.Faltantes.sort(function(a, b){
+        return b.Codigo1 - a.Codigo1;
+      });
+     
+    }
+  }
+
+  filterSKUSobrantes(){
+    if(this.Sobrantes[0].Exist_Final >> this.Sobrantes[this.Sobrantes.length-1].Exist_Final){
+      this.Sobrantes.sort(function(a, b){
+        return  a.Codigo1 - b.Codigo1 ;
+      });
+    }else{ 
+      this.Sobrantes.sort(function(a, b){
+        return b.Codigo1 - a.Codigo1;
       });
      
     }
   }
 
   filterExistIguales(){
-    if(this.Iguales[0].Exist >> this.Iguales[this.Iguales.length-1].Exist){
+    if(this.Iguales[0].Exist_Final >> this.Iguales[this.Iguales.length-1].Exist_Final){
       this.Iguales.sort(function(a, b){
-        return  a.Exist - b.Exist ;
+        return  a.Exist_Final - b.Exist_Final ;
       });
     }else{ 
       this.Iguales.sort(function(a, b){
-        return b.Exist - a.Exist;
+        return b.Exist_Final - a.Exist_Final;
       });
      
     }
   }
 
   filterExistSobrantes(){
-    if(this.Sobrantes[0].Exist >> this.Sobrantes[this.Sobrantes.length-1].Exist){
+    if(this.Sobrantes[0].Exist_Final >> this.Sobrantes[this.Sobrantes.length-1].Exist_Final){
       this.Sobrantes.sort(function(a, b){
-        return  a.Exist - b.Exist ;
+        return  a.Exist_Final - b.Exist_Final ;
       });
     }else{ 
       this.Sobrantes.sort(function(a, b){
-        return b.Exist - a.Exist;
+        return b.Exist_Final - a.Exist_Final;
       });
      
     }
@@ -1001,13 +1260,13 @@ export class tomaInventarioComponent implements OnInit {
   }
 
   filterCOPIguales(){
-    if(this.Iguales[0].COST_PROM >> this.Iguales[this.Iguales.length-1].COST_PROM){
+    if(this.Iguales[0].TOTAL_FINAL_INV >> this.Iguales[this.Iguales.length-1].TOTAL_FINAL_INV){
       this.Iguales.sort(function(a, b){
-        return  a.COST_PROM - b.COST_PROM ;
+        return  a.TOTAL_FINAL_INV - b.TOTAL_FINAL_INV ;
       });
     }else{ 
       this.Iguales.sort(function(a, b){
-        return b.COST_PROM - a.COST_PROM;
+        return b.TOTAL_FINAL_INV - a.TOTAL_FINAL_INV;
       });
      
     }

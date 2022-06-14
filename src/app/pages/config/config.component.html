@@ -9,7 +9,7 @@
     <mat-expansion-panel>
       <mat-expansion-panel-header>
         <mat-panel-title>
-          <mat-icon>upload_file</mat-icon>  Siigo API
+          <mat-icon>cell_tower</mat-icon>  Siigo API
         </mat-panel-title>
         <mat-panel-description>
             Coneccion Siigo 
@@ -26,10 +26,47 @@
           </mat-form-field>
       </mat-card-content>
     </mat-expansion-panel>
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <mat-icon>mail</mat-icon>  GMAIL
+        </mat-panel-title>
+        <mat-panel-description>
+            Servidor de correos electronicos
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      <mat-card-content> 
+        <div layout="row">
+          <mat-form-field >
+            <input matInput  placeholder="EMAIL GOOGLE" name="nota" [(ngModel)]="config.emailSalida" required >
+          </mat-form-field>
+
+          <mat-form-field  style="margin-left: 10px;" >
+            <input matInput  placeholder="Clave de Usuario" name="nota" [(ngModel)]="config.passEmailSalida" required >
+          </mat-form-field>
+
+          <ng-template class="flex" let-item let-i="index" ngFor [ngForOf]="config.notificar">
+            <p> {{item}} 
+                <button  mat-icon-button (click)="deleteEmail(i)" matTooltip="Eliminar" matTooltipPosition="above">
+                    <mat-icon >delete</mat-icon>
+                </button>
+            </p>  
+        </ng-template> 
+      
+        </div>
+
+        <div layout="row">
+          <mat-form-field class="example-full-width">
+            <input matInput  placeholder="Correo Notificar Cierre" name="nota" [(ngModel)]="email" required >
+          </mat-form-field>
+          <button *ngIf="email"  mat-mini-fab [disabled]="" (click)="addEmail()" class="bgc-blue-400 rigth" matTooltip="Guardar" matTooltipPosition="below"><mat-icon>add</mat-icon></button>  
+        </div>
+      </mat-card-content>
+    </mat-expansion-panel>
       <mat-expansion-panel>
         <mat-expansion-panel-header>
           <mat-panel-title>
-            <mat-icon>list</mat-icon>
+            <mat-icon>import_export</mat-icon>
               IMPORTAR INFORMACION
           </mat-panel-title>
           <mat-panel-description>
@@ -68,7 +105,7 @@
       <mat-expansion-panel>
         <mat-expansion-panel-header>
           <mat-panel-title>
-            <mat-icon>list</mat-icon>  CATEGORIAS PRESUPUESTO <span style="color: red; margin-left: 20px;" *ngIf="catParticipacion != 0 ">{{catParticipacion | number:'0.0-3'}}%</span>
+            <mat-icon>monetization_on</mat-icon>  CATEGORIAS PRESUPUESTO <span style="color: red; margin-left: 20px;" *ngIf="catParticipacion != 0 ">{{catParticipacion | number:'0.0-3'}}%</span>
           </mat-panel-title>
           <mat-panel-description>
               Categorias Ventas;
@@ -77,11 +114,12 @@
         <mat-card-content *ngIf="categoria._id != 0 || nuevo "> 
           <div style="display: flex; align-items: flex-end; width: 100%;">
             <button *ngIf="categoria._id == 0" matSuffix mat-icon-button aria-label="Clear" (click)="addCategoria()">
-              <mat-icon>add</mat-icon>
+              <mat-icon>add</mat-icon> Agregar
             </button>
             <button *ngIf="categoria._id != 0" matSuffix mat-icon-button aria-label="Clear" (click)="editCategoria()">
-              <mat-icon>edit</mat-icon>
+              <mat-icon>edit</mat-icon> Editar
             </button>
+     
           </div>
           <mat-form-field style="margin-right: 25px;" appearance="fill">
             <mat-label>titulo</mat-label>
@@ -139,7 +177,7 @@
               <mat-label>asesorSking</mat-label>
               <input matInput type="number" [(ngModel)]="cumplimiento.asesorSking">
             </mat-form-field>
-            <mat-form-field class="example-form-field" appearance="fill">
+            <!-- <mat-form-field class="example-form-field" appearance="fill">
               <mat-label>lider</mat-label>
               <input matInput type="number" [(ngModel)]="cumplimiento.lider">
             </mat-form-field>
@@ -147,10 +185,11 @@
               <mat-label>subGerente</mat-label>
               <input matInput type="number" [(ngModel)]="cumplimiento.subGerente">
             </mat-form-field>
+       
             <mat-form-field class="example-form-field" appearance="fill">
               <mat-label>Gerente</mat-label>
               <input matInput type="number" [(ngModel)]="cumplimiento.gerente">
-            </mat-form-field>
+            </mat-form-field> -->
     
   
           </mat-card-content>
@@ -162,10 +201,11 @@
                </button> -->
                  <h5 (click)="pasCumplimiento(item)"  style="margin:0 10px;">Inicia %: {{ item.inicia }} finaliza %: {{ item.inicia }} 
                   asesor % {{ item.asesor }} 
-                  asesorSking % {{ item.asesorSking }} 
+                  <!-- asesorSking % {{ item.asesorSking }} 
                   lider % {{ item.lider }} 
                   subGerente % {{ item.subGerente }}
-                  Gerente % {{ item.gerente }}  </h5>
+                  Gerente % {{ item.gerente }}   -->
+                </h5>
               </mat-list-item>
             </ng-template>
            
@@ -203,7 +243,7 @@
       <mat-expansion-panel>
         <mat-expansion-panel-header>
           <mat-panel-title>
-            <mat-icon>list</mat-icon> TIENDAS PARTICIPACION PRESUPUESTO
+            <mat-icon>store_mall_directory</mat-icon> TIENDAS PARTICIPACION PRESUPUESTO
           </mat-panel-title>
           <mat-panel-description>
             Puntos de venta a Analizar
@@ -213,11 +253,11 @@
         <mat-card-content> 
           <mat-form-field style="margin-right: 25px;" appearance="fill">
             <mat-label>titulo</mat-label>
-            <input matInput type="text" [(ngModel)]="tienda">
+            <input matInput type="text" [(ngModel)]="tienda.tienda">
           </mat-form-field>
           <mat-form-field style="margin-right: 25px;" appearance="fill">
             <mat-label>participacion</mat-label>
-            <input matInput type="number" [(ngModel)]="tiendaParticipacion">
+            <input matInput type="number" [(ngModel)]="tienda.part">
             <button matSuffix mat-icon-button aria-label="Clear" (click)="addTienda()">
               <mat-icon>add</mat-icon>
             </button>
@@ -225,6 +265,70 @@
               <mat-icon>cancel</mat-icon>
             </button>
           </mat-form-field>
+          <mat-card-content style="display:flex; flex-wrap: wrap;">
+            <h5>Sub Cumplimientos
+              <div style="display: flex;">
+                <button matSuffix mat-icon-button aria-label="Clear" (click)="addCumpliTienda()">
+                  <mat-icon>add</mat-icon>
+                </button>
+                <button matSuffix mat-icon-button aria-label="Clear" (click)="editCumplimiento()">
+                  <mat-icon>edit</mat-icon>
+                </button>
+              </div>
+            
+            </h5>
+            <mat-form-field class="example-form-field" appearance="fill">
+              <mat-label>inicia</mat-label>
+              <input matInput type="number" [(ngModel)]="cumplimiento.inicia">
+            </mat-form-field>
+            <mat-form-field class="example-form-field" appearance="fill">
+              <mat-label>finaliza</mat-label>
+              <input matInput type="number" [(ngModel)]="cumplimiento.finaliza">
+            </mat-form-field>
+            <!-- <mat-form-field class="example-form-field" appearance="fill">
+              <mat-label>asesor</mat-label>
+              <input matInput type="number" [(ngModel)]="cumplimiento.asesor">
+            </mat-form-field> -->
+            <!-- <mat-form-field class="example-form-field" appearance="fill">
+              <mat-label>asesorSking</mat-label>
+              <input matInput type="number" [(ngModel)]="cumplimiento.asesorSking">
+            </mat-form-field> -->
+            <mat-form-field class="example-form-field" appearance="fill">
+              <mat-label>lider</mat-label>
+              <input matInput type="number" [(ngModel)]="cumplimiento.lider">
+            </mat-form-field>
+            <mat-form-field class="example-form-field" appearance="fill">
+              <mat-label>Gerente Ventas</mat-label>
+              <input matInput type="number" [(ngModel)]="cumplimiento.subGerente">
+            </mat-form-field>
+       
+            <mat-form-field class="example-form-field" appearance="fill">
+              <mat-label>Gerente</mat-label>
+              <input matInput type="number" [(ngModel)]="cumplimiento.gerente">
+            </mat-form-field>
+
+
+    
+  
+          </mat-card-content>
+          <mat-nav-list>
+            <ng-template let-item let-i="index" ngFor [ngForOf]="tienda.cumplimientos">
+              <mat-list-item >
+                <!-- <button mat-icon-button (click)="deleteCumplimiento(i)">
+                  <mat-icon>delete</mat-icon>
+               </button> -->
+                 <h5 (click)="pasCumplimiento(item)"  style="margin:0 10px;">Inicia %: {{ item.inicia }} finaliza %: {{ item.finaliza }} 
+                  <!-- asesor % {{ item.asesor }} 
+                  asesorSking % {{ item.asesorSking }}  -->
+                  lider % {{ item.lider }} 
+                  subGerente % {{ item.subGerente }}
+                  Gerente % {{ item.gerente }}  
+                </h5>
+              </mat-list-item>
+            </ng-template>
+           
+            
+          </mat-nav-list>
         </mat-card-content>
         <mat-nav-list>
           <ng-template let-item let-i="index" ngFor [ngForOf]="config.tiendas">
@@ -241,7 +345,7 @@
       <mat-expansion-panel>
         <mat-expansion-panel-header>
           <mat-panel-title>
-            <mat-icon>list</mat-icon> EMPLEADOS PRESUPUESTO
+            <mat-icon>emoji_people</mat-icon> EMPLEADOS PRESUPUESTO
           </mat-panel-title>
           <mat-panel-description>
             Listado de Colaboradores
@@ -264,6 +368,10 @@
             <mat-form-field style="margin-right: 20px;" appearance="fill">
               <mat-label>Nombres Completos</mat-label>
               <input matInput type="text" [(ngModel)]="empleado.name">
+            </mat-form-field>
+            <mat-form-field style="margin-right: 20px;" appearance="fill">
+              <mat-label>email</mat-label>
+              <input matInput type="email" [(ngModel)]="empleado.email">
             </mat-form-field>
             <mat-form-field style="margin-right: 20px;" appearance="fill">
               <mat-label>clave</mat-label>
@@ -339,7 +447,7 @@
       <mat-expansion-panel>
         <mat-expansion-panel-header>
           <mat-panel-title>
-            <mat-icon>list</mat-icon>
+            <mat-icon>inventory</mat-icon>
               TOMAS DE INVENTARIO
           </mat-panel-title>
           <mat-panel-description>

@@ -6,7 +6,7 @@
 }
 
 .accent{
-    background:rgba(89, 89, 246, 0.897);
+    background:chartreuse;
     text-align:center;
     color: white;
 }
@@ -31,6 +31,7 @@
 
 .selec{
     margin-left: 10px;
-    display: flex;
+    /* display: flex; */
     align-items: center;
+    text-align: center;
 }

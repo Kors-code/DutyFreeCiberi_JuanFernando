@@ -11,6 +11,8 @@ export class Presupuesto {
         public TRM:number = 0,
         public dias:number = 0,
         public capacidadVentas:number = 1,
+        public capacidadVentasEsperada:number = 310,
+        public presupuesto_vendedores:number = 0,
         public presupuesto_cop:number = 0,
         public presupuesto_usd:number = 0,
         public presupuesto_dia_cop:number = 0,
@@ -304,6 +306,7 @@ export class Categorias{
 }
 
 export class Categoria{
+
   constructor(
     public _id:number=0,
     public titulo:string='',
@@ -320,7 +323,8 @@ export class Categoria{
     public tiendas:[]=[],
     public detalle_ventas:[]=[],
     public subscat:number[]=[],
-    public cumplimientos:Cumplimiento[] = []
+    public cumplimientos:Cumplimiento[] = [],
+    public usd: number= 0,
   ){}
 }
 

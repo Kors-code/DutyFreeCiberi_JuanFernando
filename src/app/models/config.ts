@@ -10,6 +10,9 @@ export class Config{
             public categorias:any[] = new Categorias().categorias,
             public tiendas:any[] = [],
             public inventarios:any[] = [],
+            public emailSalida: string = '',
+            public passEmailSalida: string = '',
+            public notificar:any[] = [],
         ){}
 }
 
@@ -22,6 +25,8 @@ export class Empleado {
         public codigo: string = '',
         public Dias: number = 0,
         public name: string = '',
+        public email: string = '',
+      
         public clave: string = '',
         public presupuestoUs: number = 0,
         public Cumplimiento: number = 0,
@@ -32,5 +37,17 @@ export class Empleado {
         public Ventas: number = 0,
         public USD:number = 0,
         public rol:string = 'Ventas',
+    ){}
+}
+
+export class Tienda {
+    constructor(
+        public _id: any = undefined,
+        public tienda: string = '',
+        public part: number = 0,
+        public ptto:any[] = [],
+        public presupuesto_usd: number = 0,
+        public usd: number = 0,
+        public cumplimientos:any[] = [],   
     ){}
 }

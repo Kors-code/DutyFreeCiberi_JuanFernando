@@ -82,7 +82,18 @@ async function updateDataConfiguracion(req, res){
         const db = client.db(dbName);
         const collection = await db.collection(coll);
 
-        collection.updateOne({_id:ObjectId(params._id)},{$set:{tiendas:params.tiendas, siigoUser:params.siigoUser, siigoKey:params.siigoKey, tags:params.tags, empleados:params.empleados, categorias:params.categorias, inventarios:params.inventarios}},{ upsert: false }, function(err,doc) {
+        collection.updateOne({_id:ObjectId(params._id)},{$set:{
+            tiendas:params.tiendas,
+            siigoUser:params.siigoUser,
+            siigoKey:params.siigoKey,
+            tags:params.tags, 
+            empleados:params.empleados, 
+            categorias:params.categorias, 
+            inventarios:params.inventarios,
+            emailSalida:params.emailSalida,
+            passEmailSalida:params.passEmailSalida,
+            notificar:params.notificar
+        }},{ upsert: false }, function(err,doc) {
             if (err) { throw err; }
             else { 
                 console.log(doc)
@@ -181,6 +192,9 @@ async function updateDataPresupuesto(req, res){
             tiendas:params.tiendas,
             vendedores:params.vendedores,
             categorias:params.categorias,
+            capacidadVentasEsperada:params.capacidadVentasEsperada,
+            presupuesto_vendedores:params.presupuesto_vendedores,
+            
         }},{ upsert: false }, function(err,doc) {
             if (err) { throw err; }
             else { 
@@ -709,7 +723,7 @@ async function contarEan(req, res){
         console.log('Connected successfully to server');
         const db = client.db(dbName);
         const collection = await db.collection(coll);
-        collection.updateOne({Codigo_3:params.scan},
+        collection.updateOne({EAN:params.scan},
             {$push:{Conteo0:params}}, function(err,doc) {
             if (err) { throw err; }
             else { 
@@ -735,7 +749,7 @@ async function contarSKU(req, res){
         console.log('Connected successfully to server');
         const db = client.db(dbName);
         const collection = await db.collection(coll);
-        collection.updateOne({Codigo_1:params.scan},
+        collection.updateOne({Codigo1:params.scan},
             {$push:{Conteo0:params}}, function(err,doc) {
             if (err) { throw err; }
             else { 

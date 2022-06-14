@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { Categoria, Cumplimiento } from '../../models/presupuesto';
-import { Config, Empleado } from '../../models/config';
+import { Config, Empleado, Tienda } from '../../models/config';
 import { InfoService } from 'src/app/services/info.service';
 import { ThisReceiver } from '@angular/compiler';
 import { DialogConfirm } from '../confirm-dialog/confirm-dialog.component';
@@ -22,7 +22,9 @@ empleado:Empleado
 tag = '';
 tagInv='';
 nuevo= false;
-Roles = ['Ventas', 'Sking', 'Lider', 'Sub Gerente', 'Gerente']
+email= '';
+
+Roles = ['Ventas', 'Skin', 'Lider', 'Gerente Ventas', 'Gerente']
   constructor(public dialog: MatDialog, @Inject(DOCUMENT) doc: any,
   public _infoService:InfoService,) {
     this.config = new Config();
@@ -118,6 +120,8 @@ Roles = ['Ventas', 'Sking', 'Lider', 'Sub Gerente', 'Gerente']
     this.cumplimiento = item
   }
 
+
+
   addCumpli(){
     this.categoria.cumplimientos.unshift(this.cumplimiento)
     this.cumplimiento=new Cumplimiento();
@@ -176,18 +180,22 @@ Roles = ['Ventas', 'Sking', 'Lider', 'Sub Gerente', 'Gerente']
     this.categoria = new Categoria(); 
   }
 
+  addCumpliTienda(){
+    this.tienda.cumplimientos.unshift(this.cumplimiento)
+    this.cumplimiento=new Cumplimiento();
+  }
 
-  tienda = ''
+  tienda:Tienda = new Tienda()
   tiendaParticipacion = 0
   addTienda(){
-    this.config.tiendas.push({tienda:this.tienda, part:this.tiendaParticipacion,ptto:[], presupuesto_usd:0, usd:0})
-    this.tienda = ''
+    this.config.tiendas.push(this.tienda)
+    this.tienda  = new Tienda()
     this.tiendaParticipacion = 0
   }
 
+  cumplimientosTienda: Cumplimiento[] =[]
   pastienda(item:any){
-    this.tienda = item.tienda;
-    this.tiendaParticipacion = item.part
+    this.tienda = item
   }
 
   deleteTienda(i:number){
@@ -195,8 +203,9 @@ Roles = ['Ventas', 'Sking', 'Lider', 'Sub Gerente', 'Gerente']
   }
 
   editTienda(){
-    this.tienda =''
+    this.tienda  = new Tienda()
     this.tiendaParticipacion =0
+    
   }
 
   addEmpleado(){
@@ -210,6 +219,7 @@ Roles = ['Ventas', 'Sking', 'Lider', 'Sub Gerente', 'Gerente']
 
   pasEmpleado(item: any){
     this.empleado = item;
+    window.scroll(300, 300)
   }
 
   deleteEmpleado(i:number){
@@ -246,6 +256,21 @@ Roles = ['Ventas', 'Sking', 'Lider', 'Sub Gerente', 'Gerente']
 
       // return this.productos = this.arrProductos;
       }
+  }
+
+
+  addEmail(){
+    if(!this.config.notificar){
+      this.config.notificar = [];
+    }
+    if(this.email != undefined){
+    this.config.notificar.push(this.email);
+    this.email= '';
+    }
+  }
+
+  deleteEmail(i: number){
+    this.config.notificar.splice(i, 1);      
   }
 
 }
