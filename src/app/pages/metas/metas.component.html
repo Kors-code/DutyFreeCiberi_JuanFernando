@@ -169,7 +169,54 @@
               </mat-accordion>
               <h1 *ngIf="presupuesto.vendedores.length != 0"> {{presupuesto.vendedores.length}} VENDEDORES 
                 <input type="text" placeholder="Buscar" style="font-size:x-large; text-align: center; margin: 0 10px;" [(ngModel)]="search">  
+                <button  mat-icon-button aria-label="Clear" (click)="newEmp = !newEmp">
+                  <mat-icon>person</mat-icon>
+                </button>
               </h1>
+              <mat-card-content *ngIf="presupuesto.vendedores.length != 0 && newEmp"> 
+                <mat-form-field style="margin-right: 20px;" appearance="fill">
+                    <mat-label>identificacion</mat-label>
+                    <input matInput type="text" [(ngModel)]="empleado.identificacion">
+                  </mat-form-field>
+                  <mat-form-field style="margin-right: 20px;" appearance="fill">
+                    <mat-label>contrato</mat-label>
+                    <input matInput type="text" [(ngModel)]="empleado.contrato">
+                  </mat-form-field>
+                  <mat-form-field style="margin-right: 20px;" appearance="fill">
+                    <mat-label>codigo</mat-label>
+                    <input matInput type="text" [(ngModel)]="empleado.codigo">
+                  </mat-form-field>
+                  <mat-form-field style="margin-right: 20px;" appearance="fill">
+                    <mat-label>Nombres Completos</mat-label>
+                    <input matInput type="text" [(ngModel)]="empleado.name">
+                  </mat-form-field>
+                  <mat-form-field style="margin-right: 20px;" appearance="fill">
+                    <mat-label>email</mat-label>
+                    <input matInput type="email" [(ngModel)]="empleado.email">
+                  </mat-form-field>
+                  <mat-form-field style="margin-right: 20px;" appearance="fill">
+                    <mat-label>clave</mat-label>
+                    <input matInput type="password" [(ngModel)]="empleado.clave">
+                  </mat-form-field>
+                  <mat-form-field appearance="fill" style="margin-right: 20px;">
+                    <mat-label>Rol</mat-label>
+                    <mat-select [(ngModel)]="empleado.rol">
+                      <ng-template let-item let-i="index" ngFor [ngForOf]="Roles">
+                      <mat-option [value]="item">
+                        {{ item }}
+                      </mat-option>
+                      </ng-template>
+                    </mat-select>
+                  </mat-form-field>
+                  <button matSuffix mat-icon-button aria-label="Clear" (click)="addEmpleadoConfig()">
+                    <mat-icon>add</mat-icon>
+                  </button>
+                  <!-- <button matSuffix mat-icon-button aria-label="Clear" (click)="editEmpleado()">
+                    <mat-icon>edit</mat-icon>
+                  </button> -->
+                  <!-- <input type="text" placeholder="Buscar" style="font-size:x-large; text-align: center; margin: 0 10px;" [(ngModel)]="search"> -->
+              
+              </mat-card-content>
               <div *ngIf="presupuesto.vendedores.length != 0" style="display: flex; justify-content: center;">
                 <mat-form-field appearance="fill" style="margin-right: 20px; width: 80%;">
                   <mat-label>LISTADO</mat-label>
@@ -183,8 +230,6 @@
                 </mat-form-field>
                 <button *ngIf="newEmpleado" mat-button (click)="addEmpleado()" ><mat-icon class="mat-18">add</mat-icon> <span>Agregar</span> </button> 
               </div>
-             
-             
               <mat-accordion *ngIf="presupuesto.vendedores.length != 0">
                 <ng-template let-item let-i="index" ngFor [ngForOf]="presupuesto.vendedores">
                 <mat-expansion-panel hideToggle *ngIf="buscarRegistro(item.name)">
@@ -206,26 +251,36 @@
                       </mat-form-field> 
                         <button   mat-button color="warn" [disabled]="" (click)="deleteEmpleado(i)" style="margin-right:10px;" ><mat-icon>delete</mat-icon> Eliminar</button>
                     </mat-card-content>
-                    <mat-accordion>
-                      <mat-expansion-panel hideToggle *ngFor="let cat of item.categorias">
-                        <mat-expansion-panel-header>
-                          <mat-panel-title>
-                           {{cat.participacion}}% Categoria: {{cat.titulo}} $ {{cat.presupuesto_usd  | number:'0.0-0'}}
-                          </mat-panel-title>
+                   
+
+                    <table style="width: 90%; margin: 0 auto;">
+                      <!-- <thead style="background-color:rgb(63, 62, 62) ; color:white; padding: 15px; font-size: 1em; border-radius: 10px;"> -->
+                        <tr>
+                          <th>CATEGORIA</th>
+                          <th>PART</th>
+                          <th>PRESUPUESTO</th>
+                        </tr>
+                        <tr *ngFor="let cat of item.categorias">
                           
-                        </mat-expansion-panel-header>
-                        <table style="width: 90%; margin: 0 auto;" class="mat-elevation-z8">
-                          <thead style="background-color:rgb(63, 62, 62) ; color:white; padding: 15px; font-size: 1em; border-radius: 10px;">
-                            <tr>
-                              <td>Presupuesto USD:  <span style="color: chartreuse;">{{cat.presupuesto_usd  | number:'0.0-0'}}</span></td>
-                            
+                          <td>
+                            {{cat.titulo}} 
+                          </td>
+                          <td style="text-align:center ;"> 
+                            {{cat.participacion}}% 
+                          </td>
+                          <td style="text-align:center ;">
+                            $ {{cat.presupuesto_usd  | number:'0.0-0'}}
+                          </td>
+                        </tr>
+                        <!-- <tr>
+                          <td>Presupuesto USD:  <span style="color: chartreuse;">{{cat.presupuesto_usd  | number:'0.0-0'}}</span></td>
+                        
                             <td>USD Dia:  <span style="color: chartreuse;">{{cat.presupuesto_dia_usd  | number:'0.0-0'}}</span></td>
-      
-                            </tr>
-                          </thead>
-                        </table> 
-                      </mat-expansion-panel>
-                    </mat-accordion>
+
+                        </tr> -->
+              
+                      <!-- </thead> -->
+                    </table> 
                   </mat-card-content>
                 </mat-expansion-panel>
                 </ng-template>

@@ -22,7 +22,7 @@ import { NgJsonEditorModule } from 'ang-jsoneditor' ;
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { SiigoComponent } from './pages/siigo-conection/siigo.component';
 import { CumplimientoComponent } from './pages/cumplimiento/cumplimiento.component';
-import { tomaInventarioComponent } from './pages/toma-inventario/toma-inventario.component';
+import { DialogConteoDetail, tomaInventarioComponent } from './pages/toma-inventario/toma-inventario.component';
 
 @NgModule({
   declarations: [
@@ -41,7 +41,8 @@ import { tomaInventarioComponent } from './pages/toma-inventario/toma-inventario
     SiigoComponent,
     DialogDataVendedor,
     CumplimientoComponent,
-    tomaInventarioComponent
+    tomaInventarioComponent,
+    DialogConteoDetail
   ],
   imports: [
     BrowserModule,
@@ -57,6 +58,7 @@ import { tomaInventarioComponent } from './pages/toma-inventario/toma-inventario
   ],
   providers: [],
   bootstrap: [AppComponent],
-  entryComponents:[DialogConfirm, DialogDataJson, DialogDataVendedor]
+  entryComponents:[DialogConfirm, DialogDataJson, DialogDataVendedor,
+    DialogConteoDetail]
 })
 export class AppModule { }

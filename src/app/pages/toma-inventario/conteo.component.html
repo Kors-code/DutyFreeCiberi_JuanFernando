@@ -1,0 +1,11 @@
+<mat-card-content style="height:80vh;overflow-y:scroll;">
+    <h4>Detalle Conteo
+        {{data.coll}}
+        </h4>
+        <mat-selection-list #shoes [multiple]="false" style="max-width: 500px; font-size: 0.8em; margin: 0 auto;">
+            <mat-list-option *ngFor="let shoe of data.reg" [value]="shoe">
+              <mat-icon mat-list-icon>qr_code_scanner</mat-icon>
+                {{shoe.scan}}  [ {{shoe.unds}} unds ]  {{shoe.ubicacion}} {{shoe.time | date:"mediumTime"}} {{shoe.user}}
+            </mat-list-option>
+          </mat-selection-list>
+</mat-card-content>

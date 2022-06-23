@@ -23,6 +23,7 @@ export class MetasComponent implements OnInit {
   trmApi:any;
   config:any;
   selected = new FormControl(0);
+  Roles = ['Ventas', 'Skin', 'Lider', 'Gerente Ventas', 'Gerente']
   constructor(public _infoService:InfoService,
     public dialog: MatDialog, @Inject(DOCUMENT) doc: any,) {
     this.config = new Config()
@@ -227,10 +228,7 @@ export class MetasComponent implements OnInit {
       // vendedor.USD =   (this.presupuesto.presupuesto_usd / this.presupuesto.capacidadVentasEsperada) * vendedor.Dias;
       ////console.log(this.presupuesto.vendedores[i].USD)
 
-      if(vendedor.USD ==  0){
         vendedor.USD =  Math.round((this.presupuesto.presupuesto_usd / this.presupuesto.capacidadVentasEsperada) * vendedor.Dias)  
-      }
-
       if(vendedor.rol != 'Ventas'){
         vendedor.USD = this.presupuesto.presupuesto_usd;
       }
@@ -387,12 +385,40 @@ export class MetasComponent implements OnInit {
     this.presupuesto.tiendas = this.config.tiendas
   }
 
-
+  newEmp=false
   newEmpleado:any
+  empleado = new Empleado()
 
   deleteEmpleado(i: any){
     this.presupuesto.vendedores.splice(i,1)
     this.TotalizarPtoEmpleados()
+  }
+
+  addEmpleadoConfig(){
+    this.config.empleados.unshift(this.empleado)
+    this.empleado = new Empleado;
+    this.updateConfiguracion()
+  }
+
+  updateConfiguracion(){
+    this._infoService.updateConfiguracion(this.config).subscribe(
+      res=>{
+        //console.log(res)
+        if(res){
+          let data = {titulo: 'Confirmaciòn', info:'Configuracion Guardada Correctamente', type: 'Confirm', icon:'done_all'}
+  
+          let dialogRef = this.dialog.open(DialogConfirm,{
+            data: data
+          });
+        
+          dialogRef.afterClosed().subscribe(result => {
+            // this.getfacturacionSiigo()
+          })
+          this.getConfig()    
+        }
+        
+      }
+    )
   }
 
   addEmpleado(){
@@ -413,6 +439,10 @@ export class MetasComponent implements OnInit {
       return false
     }
   
+  }
+
+  editEmpleado(){
+
   }
 
   search=''

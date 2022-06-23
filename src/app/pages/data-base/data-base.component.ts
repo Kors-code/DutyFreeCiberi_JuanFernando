@@ -236,8 +236,9 @@ export class DialogDataJson {
   values:any = [];
   info:any;
   public editorOptions!: JsonEditorOptions;
+  config:any;
   @ViewChild(JsonEditorComponent, { static: false }) editor: JsonEditorComponent | undefined;
-
+  newEmpleado:any
   constructor(
     public _infoService:InfoService,
     public dialogRef: MatDialogRef<DialogDataJson>,
@@ -251,6 +252,7 @@ export class DialogDataJson {
       this.keys = Object.keys(data.reg)
       this.values = Object.values(data.reg)
       this.info = data.reg
+      this.getConfig()
       // ////console.log(this.keys)
      }
 
@@ -322,6 +324,22 @@ export class DialogDataJson {
       }
     )
     
+  }
+
+  getConfig(){
+    this._infoService.getConfig().subscribe(
+      res=>{
+        if(res.length != 0){
+          this.config = res[0];
+        }
+      })
+  }
+
+  addEmpleado(){
+    // console.log(this.info)
+    // console.log(this.newEmpleado)
+    this.info.Nombre_del_vend = this.newEmpleado.name
+    this.info.Codi = Number(this.newEmpleado.codigo)
   }
 
 }

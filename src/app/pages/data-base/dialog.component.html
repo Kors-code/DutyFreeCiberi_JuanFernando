@@ -13,5 +13,18 @@
     <button  mat-button color="primary" [disabled]="" (click)="cancelar()" style="margin-right:10px;" ><mat-icon>cancel</mat-icon> Cerrar</button>
     <button *ngIf="data.coll != 'noting'" mat-button color="accent" [disabled]="" (click)="UpdateRegistro()" style="margin-right:10px;" ><mat-icon>save</mat-icon> Guardar Vendedor</button>
     <!-- <button  *ngIf="data.coll != 'noting'" mat-button color="warn" [disabled]="" (click)="deleteRegistro()" style="margin-right:10px;" ><mat-icon>delete</mat-icon> Eliminar</button> -->
+    <div *ngIf="config" style="display: flex; justify-content: center;">
+        <mat-form-field appearance="fill" style="margin-right: 20px; width: 80%;">
+          <mat-label>Vendedores</mat-label>
+          <mat-select [(ngModel)]="newEmpleado" >
+            <ng-template let-item let-i="index" ngFor [ngForOf]="config.empleados">
+            <mat-option  [value]="item">
+              {{ item.codigo }} - {{ item.name }} - {{ item.rol }}
+            </mat-option>
+            </ng-template>
+          </mat-select>
+        </mat-form-field>
+        <button *ngIf="newEmpleado" mat-button (click)="addEmpleado()" ><mat-icon class="mat-18">add</mat-icon> <span>Agregar</span> </button> 
+      </div>
     <json-editor [options]="editorOptions" [data]="info" (change)="getData($event)"></json-editor>
 </mat-card>

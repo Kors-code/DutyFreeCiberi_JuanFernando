@@ -127,10 +127,8 @@
         <div style="width: 90%; margin: 0 auto; " class="mat-elevation-z8">
          
           <h1 style="text-align: center;">
-           
             {{presupuesto.vendedores.length}} VENDEDORES $ {{totalVendedores |  number:'0.0-2'}} COMISION {{(totalCoisiones / totalVendedores)* 100 |  number:'0.0-2'}}% $  {{totalCoisiones |  number:'0.0-2'}} 
             COP {{totalCoisionesCOP  |  number:'0.0-0'}}
-          
           </h1>
           <div>
             <input type="text" placeholder="Buscar" style="font-size:x-large; text-align: center; margin: 0 10px;" [(ngModel)]="search">  
@@ -153,7 +151,7 @@
                 <mat-card-content>
                   <div>
                     <h3  style="text-align: center; margin: 10px 10px"> <span style="color: blue; margin-left: 10px; margin-right: 10px;">{{item.Cumplimiento * 100  | number:'0.0-2'}}%  </span>
-                      {{item.name}}  ROL {{item.rol}} 
+                      {{item.identificacion}} - {{item.name}}  ROL {{item.rol}} 
                     </h3>
                     <mat-chip-list aria-label="Fish selection" style="display:flex;justify-content: center;">
                       <mat-chip *ngIf="acumulado" color="accent" (click)="acumulador()">

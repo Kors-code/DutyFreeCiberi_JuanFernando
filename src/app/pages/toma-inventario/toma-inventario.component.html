@@ -5,7 +5,7 @@
     <mat-form-field appearance="fill">
       <mat-label>Tag Base Datos</mat-label>
       <mat-select [(ngModel)]="tag" >
-        <mat-option *ngFor="let item of config.inventarios" [value]="item.tag" (click)="getCnteoTag()">
+        <mat-option *ngFor="let item of config.inventarios" [value]="item.tag">
           {{item.tag}}
         </mat-option>
       </mat-select>
@@ -13,13 +13,13 @@
     
   </div>
   <mat-tab-group  mat-align-tabs="center" *ngIf="tag">
-    <mat-tab label="IMPORTAR CONTEO"  *ngIf="conteo.length == 0" >
+    <mat-tab label="IMPORTAR CONTEO">
       <mat-card-content>
           <h2 style="text-align: center;">TOMAS DE INVENTARIOS
             <span>{{procesado}}</span>
           </h2>
       
-          <div style="display: flex; flex-wrap: wrap; justify-content: center; align-items: center;">
+          <div style="display: flex; flex-wrap: wrap; justify-content: space-around; align-items: center;">
             <!-- <mat-form-field appearance="fill">
               <mat-label>Tag Base Datos</mat-label>
             <mat-select [(ngModel)]="tag">
@@ -29,14 +29,25 @@
             </mat-select>
           </mat-form-field>  -->
               <input *ngIf="tag" type="file" multiple="false" (change)="onFileChange($event)" style="font-size: 1.3em; margin-left: 10px;">
-          </div>
+          
+              <div *ngIf="marcas.length != 0" style="display: flex; justify-content: center;">
+                <mat-form-field appearance="fill" style="width: 60%;">
+                  <mat-label>Marcas</mat-label>
+                  <mat-select multiple [formControl]="marca"  >
+                    <mat-option *ngFor="let topping of marcas" [value]="topping">{{topping}}</mat-option>
+                  </mat-select>
+                </mat-form-field>
+                <button *ngIf="marca.value.length != 0" mat-button (click)="procesarMarca()" ><mat-icon class="mat-18">filter_list</mat-icon> <span>Filtrar Conteo</span> </button> 
+              </div>
+            </div>
+          
           <button *ngIf="registros.length != 0" flex mat-raised-button color="accent" [disabled]="log"  (click)="subirConteo()" class="text-upper" style="width: 90%; margin:15px auto;margin-left: 20px;">{{registros.length}} Subir Conteo <mat-icon>update_file</mat-icon></button>
           <span *ngIf="progreso != 0" style="color: blue;">{{progreso | number:'0.0-2'}}% </span> <mat-progress-bar *ngIf="progreso != 0" mode="determinate" [value]="progreso" color="accent" style="width: 90%; margin: 0 auto;"></mat-progress-bar>
       </mat-card-content>
     </mat-tab>
     <mat-tab label="PANEL DE CONTEO">
       <mat-card-content>
-        <section *ngIf="conteo.length != 0" style="display: flex;justify-content: center; margin-top: 10px;">
+        <section style="display: flex;justify-content: center; margin-top: 10px;">
           <!-- <button *ngIf="tag" mat-button  mat-raised-button color="accent" [disabled]="progreso != 0"  (click)="getCnteoTag()" class="text-upper" style="width: 90%; margin:15px auto;margin-left: 20px;">MONITOREO <mat-icon>tv</mat-icon></button> -->
           <button style="margin-right:20px ;" mat-button mat-raised-button color="accent" [disabled]="progreso != 0" (click)="getCnteoTag()">
             MONITOREO <mat-icon>tv</mat-icon>
@@ -56,7 +67,7 @@
           </button>
           <button style="margin-right:20px ;color: white;" mat-button mat-raised-button color="primary" (click)="estado = 'definitivas'" [class.accent]="estado == 'definitivas'">
             <mat-icon>adjust</mat-icon>
-            Definitivos    {{undSobrantes  |  number:'0.0-0'}} unds
+            Definitivos    {{undDefinitivas  |  number:'0.0-0'}} unds
           </button>
           <button style="margin-right:20px ;color: white;" mat-button mat-raised-button color="primary" (click)="estado = 'informe'" [class.accent]="estado == 'informe'">
             <mat-icon>auto_graph</mat-icon>
@@ -230,10 +241,10 @@
               <mat-icon>adjust</mat-icon>
                 Definitivos 
             </button>
-            <!-- <button style="margin-left:  10px;" *ngIf="Faltantes.length != 0 " mat-button mat-raised-button color="warn" (click)="procesarFaltantesContar()">
-              <mat-icon>playlist_add_check_circle</mat-icon>
-                Recontar 
-            </button> -->
+            <button style="margin-left:  10px; color: white;" *ngIf="Faltantes.length != 0 " mat-button mat-raised-button color="warn" (click)="printFaltantes()">
+              <mat-icon>print</mat-icon>
+                Imprimir 
+            </button>
           </h1>
           <table class="mat-elevation-z8" style="margin: 0 auto;">
             <thead style="padding: 15px; font-size: 1em; border-radius: 10px;">
@@ -389,10 +400,10 @@
               <mat-icon>adjust</mat-icon>
                 Definitivos 
             </button>
-            <!-- <button style="margin-left:  10px; color: white;" *ngIf="Sobrantes.length != 0 " mat-button mat-raised-button color="warn" (click)="procesarSobrantesContar()">
-              <mat-icon>playlist_add_check_circle</mat-icon>
-                Recontar 
-            </button> -->
+            <button style="margin-left:  10px; color: white;" *ngIf="Faltantes.length != 0 " mat-button mat-raised-button color="warn" (click)="printSobrantes()">
+              <mat-icon>print</mat-icon>
+                Imprimir 
+            </button>
           </h1>
           <table class="mat-elevation-z8" style="margin: 0 auto;">
             <thead style="padding: 15px; font-size: 1em; border-radius: 10px;">
@@ -537,7 +548,12 @@
 
         </div>
         <div *ngIf="conteo.length != 0 && estado == 'definitivas'" >
-          <h1 style="text-align:center;">DEFINITIVOS {{Definitivas.length}} items</h1>
+          <h1 style="text-align:center;">DEFINITIVOS {{Definitivas.length}} items
+            <button style="margin-left:  10px; color: white;" *ngIf="Faltantes.length != 0 " mat-button mat-raised-button color="warn" (click)="printDefinitivos()">
+              <mat-icon>print</mat-icon>
+                Imprimir 
+            </button>
+          </h1>
           <table class="mat-elevation-z8" style="margin: 0 auto;">
             <thead style="padding: 15px; font-size: 1em; border-radius: 10px;">
               <tr>
@@ -843,7 +859,14 @@
       </mat-form-field>
       <mat-form-field *ngIf="tag" appearance="fill" style="text-align: center; font-size: 1em; margin-right: 20px; width: 200px;">
         <input matInput placeholder="Unds" type="number" name="unds" [(ngModel)]="unds">
+        
       </mat-form-field>
+      <button *ngIf="unds"  mat-fab aria-label="Clear" (click)="undsAdd()">
+        <mat-icon>add_circle</mat-icon>
+      </button>
+      <button style="margin-left:10px ;" *ngIf="ubicacion"  mat-fab aria-label="Clear" (click)="focus()">
+        <mat-icon>center_focus_strong</mat-icon>
+      </button>
         <mat-form-field *ngIf="ubicacion" appearance="fill" style="text-align: center; font-size: 1em; margin-right: 20px; width: 60%;">
           <input matInput placeholder="SCAN" type="number" #scanEle name="scan" [(ngModel)]="scan" (change)="saveScan()">
           <button *ngIf="scaner"  matSuffix mat-icon-button aria-label="Clear" (click)="scaner = !scaner">
@@ -865,3 +888,143 @@
     </mat-tab>
   </mat-tab-group>
 </mat-card>
+
+<div id="faltantes" style="font-family: Verdana, Geneva, Tahoma, sans-serif;">
+  <h1 style="text-align:center ;"> DUTY FREE PARTNERS COLOMBIA SAS</h1>
+           <h1 style="text-align:center ;">NIT 901.195.686-7</h1>
+           <h1 style="text-align:center ;">ANALISIS DIFERENCIAS INVENTARIO FISICO {{tag}}</h1>
+<table style="font-size:1.5em ;">
+  <thead>
+    <tr>
+      <th style="border: solid 1px grey ;">SKU</th>
+      <th style="border: solid 1px grey ;">EAN</th>
+      <th style="border: solid 1px grey ;">PRODUCTO</th>
+    </tr>
+  </thead>
+  <tbody>
+    <ng-template  let-element let-last="last" ngFor [ngForOf]="Faltantes" >
+      <tr>
+        <td style="border-bottom: 1px solid grey;">
+          {{element.Codigo1}}
+        </td>
+        <td style="border-bottom: 1px solid grey;">{{element.EAN}}</td>
+        <td style="border-bottom: 1px solid grey;">{{element.Descripcion_1}}</td>
+       </tr>
+    </ng-template>
+  </tbody>
+</table>
+<p class="push-top-ms">Realiza:</p>
+<p> ________________________________</p>
+<p>ID: _____________________________</p>
+<p>Firma:</p>
+<p> ________________________________</p> 
+<h3>{{date | date:'medium'}}</h3> 
+</div>
+
+<div id="sobrantes">
+  <h1 style="text-align:center ;"> DUTY FREE PARTNERS COLOMBIA SAS</h1>
+           <h1 style="text-align:center ;">NIT 901.195.686-7</h1>
+           <h1 style="text-align:center ;">ANALISIS DIFERENCIAS INVENTARIO FISICO {{tag}}</h1>
+<table style="font-size:1.5em ;">
+  <thead>
+    <tr>
+      <th style="border: solid 1px grey ;">SKU</th>
+      <th style="border: solid 1px grey ;">EAN</th>
+      <th style="border: solid 1px grey ;">PRODUCTO</th>
+    </tr>
+  </thead>
+  <tbody>
+    <ng-template  let-element let-last="last" ngFor [ngForOf]="Sobrantes" >
+      <tr>
+        <td style="border-bottom: 1px solid grey;">
+          {{element.Codigo1}}
+        </td>
+        <td style="border-bottom: 1px solid grey;">{{element.EAN}}</td>
+        <td style="border-bottom: 1px solid grey;">{{element.Descripcion_1}}</td>
+       </tr>
+    </ng-template>
+  </tbody>
+</table>
+<p class="push-top-ms">Realiza:</p>
+<p> ________________________________</p>
+<p>ID: _____________________________</p>
+<p>Firma:</p>
+<p> ________________________________</p> 
+<h3>{{date | date:'medium'}}</h3> 
+</div>
+
+<div id="definitivos">
+  <h1 style="text-align:center ;"> DUTY FREE PARTNERS COLOMBIA SAS</h1>
+           <h1 style="text-align:center ;">NIT 901.195.686-7</h1>
+           <h1 style="text-align:center ;">ANALISIS DIFERENCIAS INVENTARIO FISICO {{tag}}</h1>
+           <table class="mat-elevation-z8" style="margin: 0 auto;">
+            <thead style="padding: 15px; font-size: 1em; border-radius: 10px;">
+              <tr>
+                <th>ITEMS</th>
+                <td style="text-align:rigth ;">{{Definitivas.length  |  number:'0.0-0'}}</td>
+                <th>Unds</th>
+                <td style="text-align:rigth ;">{{undDefinitivas  |  number:'0.0-0'}}</td>
+                <th>Costo USD</th>
+                <td style="text-align:rigth ;">{{usdDefinitivas  |  number:'0.0-0'}}</td>
+                <th>Costo COP</th>
+                <td style="text-align:rigth ;">{{copDefinitivas  |  number:'0.0-0'}}</td>
+              </tr>
+              <tr>
+                <th></th>
+                <td></td>
+                <th>Conteo</th>
+                <td style="text-align:rigth ;">{{undDefinitivasConteo  |  number:'0.0-0'}}</td>
+                <th>Conteo USD</th>
+                <td style="text-align:rigth ;">{{usdDefinitivasConteo |  number:'0.0-0'}}</td>
+                <th>Conteo COP</th>
+                <td style="text-align:rigth ;">{{ copDefinitivasConteo |  number:'0.0-0'}}</td>
+              </tr>
+              <tr>
+                <th></th>
+                <td></td>
+                <th>DIF</th>
+                <td style="text-align:rigth ;">{{undDefinitivasConteo - undDefinitivas   |  number:'0.0-0'}}</td>
+                <th>DIF USD</th>
+                <td style="text-align:rigth ;">{{usdDefinitivasConteo - usdDefinitivas |  number:'0.0-0'}}</td>
+                <th>DIF COP</th>
+                <td style="text-align:rigth ;">{{copDefinitivasConteo - copDefinitivas |  number:'0.0-0'}}</td>
+              </tr>
+
+            </thead>
+          </table>
+
+  <table>
+  <thead>
+    <tr>
+      <th style="border: solid 1px grey ;">SKU</th>
+      <th style="border: solid 1px grey ;">EAN</th>
+      <th style="border: solid 1px grey ;">PRODUCTO</th>
+      <th style="border: solid 1px grey ;">EXIST</th>
+      <th style="border: solid 1px grey ;">CONTEO</th>
+      <th style="border: solid 1px grey ;">DIF</th>
+      <th  style="border: solid 1px grey ;"> DIF COP</th>
+    </tr>
+  </thead>
+  <tbody>
+    <ng-template  let-element let-last="last" ngFor [ngForOf]="Definitivas" >
+      <tr>
+        <td style="border-bottom: 1px solid grey;">
+          {{element.Codigo1}}
+        </td>
+        <td style="border-bottom: 1px solid grey;">{{element.EAN}}</td>
+        <td style="border-bottom: 1px solid grey;">{{element.Descripcion_1}}</td>
+        <td style="border-bottom: 1px solid grey;">{{element.Exist_Final}}</td>
+        <td style="border-bottom: 1px solid grey;">{{ element.Conteo}}</td>
+        <td style="border-bottom: 1px solid grey;">{{ element.Conteo - element.Exist_Final}}</td>
+        <td style="border-bottom: 1px solid grey; text-align:rigth ;">{{ (element.Conteo - element.Exist_Final) * element.Final_Unit_Cost |  number:'0.0-0' }}</td>
+      </tr>
+    </ng-template>
+  </tbody>
+</table>
+<p class="push-top-ms">Realiza:</p>
+<p> ________________________________</p>
+<p>ID: _____________________________</p>
+<p>Firma:</p>
+<p> ________________________________</p> 
+<h3>{{date | date:'medium'}}</h3> 
+</div>

@@ -35,3 +35,18 @@
     align-items: center;
     text-align: center;
 }
+
+#faltantes{
+    display: none;
+    /* flex-direction: column; */
+}
+
+#sobrantes{
+    display: none;
+    /* flex-direction: column; */
+}
+
+#definitivos{
+    display: none;
+    /* flex-direction: column; */
+}
