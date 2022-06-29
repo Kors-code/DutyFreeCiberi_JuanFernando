@@ -11,9 +11,9 @@
     </ng-template> 
   </mat-menu>
 </div>
+
 <!-- <div *ngIf="presupuesto._id" style="width: 90%; margin: 0 auto; " class="mat-elevation-z8">
-  <h1 style="text-align: center;"> {{presupuesto.tiendas.length}} TIENDAS</h1>
-  <h2 style="text-align: center;"> {{presupuesto.vendedores.length}} VENDEDORES $ {{presupuesto.ventas_usd |  number:'0.0-2'}} COMISION {{(totalCoisiones / presupuesto.ventas_usd)* 100 |  number:'0.0-2'}}% $  {{totalCoisiones |  number:'0.0-2'}} COP {{totalCoisionesCOP  |  number:'0.0-0'}}</h2>
+  
   <mat-accordion *ngIf="presupuesto.tiendas.length != 0">
     <mat-expansion-panel hideToggle *ngFor="let item of presupuesto.tiendas">
       <mat-expansion-panel-header>
@@ -62,8 +62,6 @@
 
 <div *ngIf="presupuesto._id">
     <h3 style="text-align: center;">CUMPLIMIENTO PRESUPUESTAL {{coleccion}} DIA {{dia}}</h3>
-   
-    
     <mat-card-content style="margin-top: 10px; text-align: center; width: 90%; margin: 0 auto; ">
         <form #loginForm="ngForm" *ngIf="totalCoisiones != 0">
           <div layout="row">
@@ -90,16 +88,23 @@
 </div>    
 <!-- this.presupuesto.vendedores[pos] -->
 <div>
-  <!-- <h1 style="text-align: center;"> {{presupuesto.vendedores.length}} VENDEDORES $ {{totalVendedores |  number:'0.0-2'}} COMISION {{(totalCoisiones / totalVendedores)* 100 |  number:'0.0-2'}}% $  {{totalCoisiones |  number:'0.0-2'}}  </h1> -->
+  <h1 style="text-align: center;" > {{presupuesto.tiendas.length}} TIENDAS</h1>
+  <h2 style="text-align: center;"> {{presupuesto.vendedores.length}} VENDEDORES $ {{presupuesto.ventas_usd |  number:'0.0-2'}} COMISION {{(totalCoisiones / presupuesto.ventas_usd)* 100 |  number:'0.0-2'}}% $  {{totalCoisiones |  number:'0.0-2'}} COP {{totalCoisionesCOP  |  number:'0.0-0'}}</h2>
+  <h1 style="text-align: center;">  {{ totalCoisionesCOP / totalCoisiones |  number:'0.0-2'}}  </h1>
       <mat-card-content *ngFor="let item of presupuesto.vendedores">
-        <!--  -->
-        <div *ngIf="item.identificacion == id ">
+        <!--  *ngIf="item.identificacion == id " -->
+        <div>
           <h1  style="text-align: center; margin: 10px 10px"> <span style="color: blue; margin-left: 10px; margin-right: 10px;">{{item.Cumplimiento * 100  | number:'0.0-2'}}%  </span>
-            {{item.name}}  ROL {{item.rol}} 
-            
+            {{item.name}}  ROL {{item.rol}}  
           </h1>
           <mat-chip-list aria-label="Fish selection" style="display:flex;justify-content: center;">
-            <mat-chip *ngIf="acumulado" color="accent" (click)="acumulador()">
+            <mat-chip  color="accent" (click)="changePassVendedor()">
+              <mat-chip-avatar>
+                <mat-icon>password</mat-icon>
+            </mat-chip-avatar>
+              Clave
+            </mat-chip>
+            <mat-chip color="warn" *ngIf="acumulado" (click)="acumulador()">
               <mat-chip-avatar>
                 <img src="assets/metas.svg" alt="Photo of a Shiba Inu"/>
             </mat-chip-avatar>
@@ -242,6 +247,7 @@
                     <td> PPTO USD </td> <td style="text-align: center;"> <span style="color: chartreuse;">{{item.USD  | number:'0.0-2'}}</span></td>
                     <!-- <td> % </td> <td style="text-align: center;"> <span style="color: chartreuse;">{{item.Cumplimiento * 100  | number:'0.0-2'}}%</span></td> -->
                   </tr>
+                  
                   <tr>
                     <td>Comisiones USD</td> 
                     <td style="text-align: center;"><span style="color: chartreuse;">{{item.Comisiones  | number:'0.0-2'}}</span></td>
@@ -252,6 +258,7 @@
               
                     </td> -->
                   </tr>
+                  
                   <tr>
                     <td>Comisiones COP <span style="flex: 1 1 auto;"></span> <span style="color: chartreuse; "> TRM {{item.ComisionesCop / item.Comisiones | number:'0.0-0' }}</span></td> 
                     <td style="text-align: center;"><span style="color: chartreuse;">{{item.ComisionesCop  | number:'0.0-0'}}</span></td>
@@ -274,6 +281,9 @@
                           <td> Ventas USD </td> <td style="text-align: center;"> <span style="color: chartreuse;">{{itemT.usd  | number:'0.0-2'}}</span></td>
                           <td> Presupuesto USD </td> <td style="text-align: center;"> <span style="color: chartreuse;">{{itemT.presupuesto_usd  | number:'0.0-2'}}</span></td>
                           <td> Cumplimiento </td> <td style="text-align: center;"> <span style="color: chartreuse;">{{ (itemT.usd / itemT.presupuesto_usd)  *100 | number:'0.0-2'}}%</span></td>
+                        </tr>
+                        <tr>
+                          <td> Ventas COP </td> <td style="text-align: center;"> <span style="color: chartreuse;">{{itemT.ventas_cop  | number:'0.0-2'}}</span></td>
                         </tr>
                         </thead>
                       </table>
@@ -343,9 +353,9 @@
                     <td style="text-align: center;"><span style="color: chartreuse;"> {{item.Cumplimiento * 100  | number:'0.0-2'}}%</span></td>
                     <!-- <td>
                       <button mat-button><mat-icon>person</mat-icon></button>
-              
                     </td> -->
                   </tr>
+
                   <tr>
                     <td>Comisiones COP <span style="flex: 1 1 auto;"></span> <span style="color: chartreuse; "> TRM {{item.ComisionesCop / item.Comisiones | number:'0.0-0' }}</span></td> 
                     <td style="text-align: center;"><span style="color: chartreuse;">{{item.ComisionesCop  | number:'0.0-0'}}</span></td>
@@ -368,6 +378,12 @@
                           <td> Ventas USD </td> <td style="text-align: center;"> <span style="color: chartreuse;">{{itemT.usd  | number:'0.0-2'}}</span></td>
                           <td> Presupuesto USD </td> <td style="text-align: center;"> <span style="color: chartreuse;">{{itemT.presupuesto_usd  | number:'0.0-2'}}</span></td>
                           <td> Cumplimiento </td> <td style="text-align: center;"> <span style="color: chartreuse;">{{ (itemT.usd / itemT.presupuesto_usd)  *100 | number:'0.0-2'}}%</span></td>
+                        </tr>
+                        <tr>
+                          <td> Ventas COP </td> <td style="text-align: center;"> <span style="color: chartreuse;">{{itemT.ventasCop  | number:'0.0-2'}}</span></td>
+                          <td>  </td>
+                           <td style="text-align: center;"> <span style="color: chartreuse;"></span></td>
+                          <td></td>
                         </tr>
                         </thead>
                       </table>

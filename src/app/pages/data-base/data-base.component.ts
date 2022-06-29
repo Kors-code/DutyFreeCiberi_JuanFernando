@@ -220,6 +220,54 @@ export class DataBaseComponent implements OnInit {
     )
   }
 
+  downloadFile(datos: any, title:string) {
+
+      let  json = JSON.stringify(datos)
+      let data = JSON.parse(json)
+      const headerCostumer = Object.keys(data[0]);
+
+      let pos = headerCostumer.map(function(e) { return e; }).indexOf('Costumer');
+      console.log(pos)
+      if(pos != -1 && pos != headerCostumer.length-1){
+        data.forEach((element: any) => {
+          element.Costumer = element.Costumer.NOMBRE_DE_PAX
+          if(element.Pdf.length !=0){
+            element.Pdf = element.Pdf[0]
+           }else{
+            element.Pdf = 'No generado'
+           }
+           if(element.Siigo.length !=0){
+            element.Siigo =  element.Siigo[0].document.id
+          }else{
+            element.Siigo = 'No generado'
+           }
+          
+          // element.splice(pos, 1)
+          // [, element[element[element.length- 1]]] = [element[element[element.length- 1]], element[pos]]
+        });      
+      }
+
+      console.log(data)
+
+
+
+    const replacer = (key: any, value: null) => value === null ? '' : value; // specify how you want to handle null values here
+    const header = Object.keys(data[0]);
+    let csv = data.map((row: { [x: string]: any; }) => header.map(fieldName => JSON.stringify(row[fieldName], replacer)).join(','));
+    csv.unshift(header.join(','));
+    let csvArray = csv.join('\r\n');
+  
+    var a = document.createElement('a');
+    var blob = new Blob([csvArray], {type: 'text/csv' }),
+    url = window.URL.createObjectURL(blob);
+  
+    a.href = url;
+    a.download = title+this.key+".csv";
+    a.click();
+    window.URL.revokeObjectURL(url);
+    a.remove();
+  }
+
 
 
 }

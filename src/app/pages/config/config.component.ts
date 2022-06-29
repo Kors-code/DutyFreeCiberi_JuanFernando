@@ -175,6 +175,7 @@ Roles = ['Ventas', 'Skin', 'Lider', 'Gerente Ventas', 'Gerente']
     this.categoria = new Categoria(); 
   }
 
+
   deleteCategoria(i:number){
     this.config.categorias.splice(i,1);
     this.categoria = new Categoria(); 
@@ -188,6 +189,8 @@ Roles = ['Ventas', 'Skin', 'Lider', 'Gerente Ventas', 'Gerente']
   tienda:Tienda = new Tienda()
   tiendaParticipacion = 0
   addTienda(){
+    this.tienda.presupuesto_cop =0
+    this.tienda.ventas_cop =0
     this.config.tiendas.push(this.tienda)
     this.tienda  = new Tienda()
     this.tiendaParticipacion = 0

@@ -138,6 +138,50 @@ export class MetasComponent implements OnInit {
       
   }
 
+  recaulcular(){
+    let data = {titulo: 'Confirmacion', info:'Se recalcula el presupuesto con la cofiguracion actual', type: 'Cancel_Delete', icon:'help_center'}
+    let dialogRef = this.dialog.open(DialogConfirm,{
+      data: data
+    });
+  
+    dialogRef.afterClosed().subscribe(result => {
+      console.log(result)
+      if(result){
+       
+        this.presupuesto.presupuesto_dia_cop = this.presupuesto.presupuesto_cop / this.presupuesto.dias;
+        this.presupuesto.presupuesto_dia_usd = this.presupuesto.presupuesto_usd / this.presupuesto.dias;
+        
+        let categorias:any = localStorage.getItem('categ');
+        this.presupuesto.categorias = JSON.parse(categorias)
+    
+        this.presupuesto.categorias.forEach(element => {
+          element.presupuesto_cop = this.presupuesto.presupuesto_cop * (element.participacion/100)
+          element.presupuesto_usd = this.presupuesto.presupuesto_usd * (element.participacion/100)
+          element.presupuesto_dia_usd = this.presupuesto.presupuesto_dia_usd * (element.participacion/100)
+          element.presupuesto_dia_cop = this.presupuesto.presupuesto_dia_cop * (element.participacion/100)
+        });
+      
+        this.presupuesto.tiendas = this.config.tiendas;  
+        for(var i = 0;i < this.presupuesto.tiendas.length; i++){
+          this.presupuesto.tiendas[i].presupuesto_usd = (this.presupuesto.tiendas[i].part/100) * this.presupuesto.presupuesto_usd 
+          this.presupuesto.tiendas[i].ptto = JSON.parse(categorias)
+          this.presupuesto.tiendas[i].ptto.forEach((element: { presupuesto_cop: number; participacion: number; presupuesto_usd: number; presupuesto_dia_usd: number; presupuesto_dia_cop: number; ventas_cop: number;}) => {
+            element.presupuesto_cop = 0
+            element.ventas_cop = 0
+            element.presupuesto_usd =  this.presupuesto.tiendas[i].presupuesto_usd * (element.participacion/100)
+            element.presupuesto_dia_usd = this.presupuesto.tiendas[i].presupuesto_usd / this.presupuesto.dias
+            // element.presupuesto_dia_cop = this.presupuesto.presupuesto_dia_cop * (element.participacion/100)
+          });
+        }
+
+        this.TotalizarPtoEmpleados()
+      }
+    })
+    
+
+    console.log(this.presupuesto)
+  }
+
   passPresupuesto(item:any){
     console.log(item)
     this.presupuesto = item
@@ -153,18 +197,15 @@ export class MetasComponent implements OnInit {
   dias = 0;
   TotalizarPtoEmpleados(){
     this.presupuesto.capacidadVentas = 0;
-  
-    for (let i = 0; i < this.presupuesto.vendedores.length; i++){
-      this.presupuesto.capacidadVentas =   this.presupuesto.capacidadVentas + this.presupuesto.vendedores[i].Dias;
-    }
-
+    this.presupuesto.presupuesto_vendedores = 0
+   
     for (let i = 0; i < this.presupuesto.vendedores.length; i++){
       let vendedor = this.presupuesto.vendedores[i];
       let categ = JSON.stringify(this.presupuesto.categorias)
       vendedor.categorias = JSON.parse(categ);
       // vendedor.Dias = dias;
       ////console.log(vendedor);
-      vendedor.USD =   (this.presupuesto.presupuesto_usd / this.presupuesto.capacidadVentasEsperada) * vendedor.Dias;
+       vendedor.USD =  Math.round((this.presupuesto.presupuesto_usd / this.presupuesto.capacidadVentasEsperada) * vendedor.Dias)  
       ////console.log(this.presupuesto.vendedores[i].USD)
       for (let d = 0; d < this.presupuesto.vendedores[i].categorias.length; d++) {
         ////console.log(vendedor.USD)
@@ -180,17 +221,15 @@ export class MetasComponent implements OnInit {
       }
     }
 
-    // for (let i = 0; i < this.presupuesto.vendedores.length; i++){
-    //   var vendedor = this.presupuesto.vendedores[i];
-    //   // //////console.log(this.presupuesto.capacidadVentas)
-     
-    // }
+    for (let i = 0; i < this.presupuesto.vendedores.length; i++){
+      this.presupuesto.capacidadVentas =   this.presupuesto.capacidadVentas + this.presupuesto.vendedores[i].Dias;
+      this.presupuesto.presupuesto_vendedores =   this.presupuesto.presupuesto_vendedores + this.presupuesto.vendedores[i].USD;
+    }
+
     this.presupuesto.vendedores.sort(function(a, b){
       return b.USD - a.USD;
     });
    
-    // item.presupuestoUs = this.presupuesto.presupuesto_usd 
-  
   }
 
   TotalizarTienda(){
@@ -211,8 +250,6 @@ export class MetasComponent implements OnInit {
 
 
   TotalizarPtoEmpleado(vendedor: any){
-
-    // console.log(vendedor)
     this.presupuesto.capacidadVentas = 0;
     this.presupuesto.presupuesto_vendedores = 0
   

@@ -102,6 +102,30 @@ async function updateDataConfiguracion(req, res){
           });        
 }
 
+async function updateClaveEmpleadoConfiguracion(req, res){
+    var params = req.body;
+    var coll = 'Config';
+    console.log('75 config '+ params._id)
+    const url = 'mongodb://localhost:27017';
+    const client = new MongoClient(url);
+    const dbName = 'DutyFree';
+        await client.connect();
+        console.log('Connected successfully to server');
+        const db = client.db(dbName);
+        const collection = await db.collection(coll);
+
+        collection.updateOne({_id:ObjectId(params._id),"empleados.identificacion":params.identificacion},{$set:{
+            "empleados.$.clave": params.clave
+           
+        }},{ upsert: false }, function(err,doc) {
+            if (err) { throw err; }
+            else { 
+                console.log(doc)
+                client.close();
+                res.status(200).send(doc); }
+          });        
+}
+
 async function agregarPresupuesto(req, res){
     var params = req.body;
     var coll = 'Presupuestos';
@@ -580,6 +604,7 @@ async function getfacturacionSiigo(req, res){
 async function getInformePresupuesoVendedor(req, res){
     var params = req.body;
          console.log(params)
+         
         await client.connect();
         console.log('Connected successfully to server');
         var coll = req.params.tag;
@@ -929,6 +954,7 @@ module.exports = {
     agregarConfiguracion,
     getDataConfig,
     updateDataConfiguracion,
+    updateClaveEmpleadoConfiguracion,
     updateDataVendedorCollection,
     agregarConteo,
     contarEan,

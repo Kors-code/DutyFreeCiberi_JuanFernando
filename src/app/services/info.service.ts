@@ -289,8 +289,15 @@ export class InfoService {
         return this._http.put<response>(this.url +'configuracion/',
                 params, {headers:headers})
     }
-    
-
+    updateClaveEmpleado(update:any){
+        let params = JSON.stringify(update);
+        let headers = new HttpHeaders({
+            'Content-Type': 'application/json',
+            'Authorization': this.getToken()
+        });
+        return this._http.put<response>(this.url +'config-clave-empleado/',
+                params, {headers:headers})
+    }
 
     getToken(){
         let token = localStorage.getItem('token');

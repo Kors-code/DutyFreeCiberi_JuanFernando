@@ -33,6 +33,8 @@ export class Empleado {
         public Comisiones: number = 0,
         public ComisionesCop: number = 0,
         public categorias: Categoria[] = [],
+        public ptto: Categoria[] = [],
+        
         public COP: number = 0,
         public Ventas: number = 0,
         public USD:number = 0,
@@ -49,5 +51,7 @@ export class Tienda {
         public presupuesto_usd: number = 0,
         public usd: number = 0,
         public cumplimientos:any[] = [],   
+        public ventas_cop: number = 0,
+        public presupuesto_cop: number = 0,  
     ){}
 }

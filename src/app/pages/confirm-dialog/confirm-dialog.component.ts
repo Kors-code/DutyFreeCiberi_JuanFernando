@@ -26,7 +26,7 @@ export class DialogConfirm {
   }
 
   confirmarDelete(motivos:any){
-    this.dialogRef.close(motivos);
+    this.dialogRef.close('ok');
   }
 
 }

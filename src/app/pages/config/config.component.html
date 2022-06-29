@@ -119,6 +119,9 @@
             <button *ngIf="categoria._id != 0" matSuffix mat-icon-button aria-label="Clear" (click)="editCategoria()">
               <mat-icon>edit</mat-icon> Editar
             </button>
+            <button *ngIf="categoria._id != 0" matSuffix mat-icon-button aria-label="Clear" (click)="editCategoria()">
+              <mat-icon>delete</mat-icon> Eliminar
+            </button>
      
           </div>
           <mat-form-field style="margin-right: 25px;" appearance="fill">
@@ -199,7 +202,7 @@
                 <!-- <button mat-icon-button (click)="deleteCumplimiento(i)">
                   <mat-icon>delete</mat-icon>
                </button> -->
-                 <h5 (click)="pasCumplimiento(item)"  style="margin:0 10px;">Inicia %: {{ item.inicia }} finaliza %: {{ item.inicia }} 
+                 <h5 (click)="pasCumplimiento(item)"  style="margin:0 10px;">Inicia %: {{ item.inicia }} finaliza %: {{ item.finaliza }} 
                   asesor % {{ item.asesor }} 
                   <!-- asesorSking % {{ item.asesorSking }} 
                   lider % {{ item.lider }} 
@@ -321,7 +324,7 @@
                   <!-- asesor % {{ item.asesor }} 
                   asesorSking % {{ item.asesorSking }}  -->
                   lider % {{ item.lider }} 
-                  subGerente % {{ item.subGerente }}
+                  Gerente Ventas% {{ item.subGerente }}
                   Gerente % {{ item.gerente }}  
                 </h5>
               </mat-list-item>

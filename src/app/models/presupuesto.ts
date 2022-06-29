@@ -318,6 +318,7 @@ export class Categoria{
     public ventasCop:number= 0,
     public presupuesto_cop:number= 0,
     public presupuesto_usd:number= 0,
+    public ventas_cop:number= 0,
     public presupuesto_dia_cop:number= 0,
     public presupuesto_dia_usd:number= 0,
     public tiendas:[]=[],

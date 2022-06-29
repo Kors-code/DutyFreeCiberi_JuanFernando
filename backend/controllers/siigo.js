@@ -443,7 +443,7 @@ async function sendInvoiceSiigo(req, res){
   var params = req.body;
   var coll = req.params.tag;
   await client.connect();
-  //console.log('Connected successfully to server');
+  console.log('Connected successfully to server');
   const collection = db.collection(coll);
 
   collection.aggregate([ {$match: {Estado:'Siigo'}},
@@ -475,13 +475,16 @@ async function sendInvoiceSiigo(req, res){
               var index = 0
               //console.log('items activos: '+ items.length)
               if(array.length != 0){
-                items.forEach(element => {
+                // items.forEach(element => {
+                  for (let index = 0; index < array.length; index++) {
+                    const element = array[index];
+               
                   console.log(element)
                   const date = element.Fecha[0]
                   let folio = element._id.slice(4)
                   console.log(folio)     
                   var newF = '';     
-                  if(element){
+                  if(folio="072826"){
                      newF = newF + date.Y +'-'
                     let mes =  date.M   
                     if(mes == 'ENE'){
@@ -507,7 +510,19 @@ async function sendInvoiceSiigo(req, res){
                     } 
                     if(mes == 'AGO'){
                       newF = newF + '08-'+  date.D
+                    }
+                    if(mes == 'SEP'){
+                      newF = newF + '09-'+  date.D
                     } 
+                    if(mes == 'OCT'){
+                      newF = newF + '10-'+  date.D
+                    } 
+                    if(mes == 'NOV'){
+                      newF = newF + '11-'+  date.D
+                    } 
+                    if(mes == 'DIC'){
+                      newF = newF + '12-'+  date.D
+                    }  
                     //console.log(newF)
                       element.Detalle.forEach(elemento => {
                       elemento.taxes = [],
@@ -621,19 +636,21 @@ async function sendInvoiceSiigo(req, res){
                           },
                           path: "../PDF/"+coll+'/' + element._id+".pdf"
                         }
-
+              
                         PDF.create(document)
                         .then(pdfG => {
                           index ++  
                           collection.updateMany({Folio:element._id},{$set: {Pdf:pdfG, Estado:'PDF'}},{ upsert: false })
                           io.emit('UpSiigo', {length:array.length, i:index}); 
                             console.log(pdfG)
+                            
                         })
                         .catch(error => {
                             console.error(error)      
-                        })              
+                        })    
+                        // break          
                   }
-                });
+                };
             }else{
                 res.status(200).send('Sin Documentos para Procesar Siigo');
             }   

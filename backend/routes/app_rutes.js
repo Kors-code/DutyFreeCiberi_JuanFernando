@@ -94,6 +94,7 @@ api.post('/configuracion', md_auth.ensureAuth,  infoController.agregarConfigurac
 api.get('/configuracion', md_auth.ensureAuth,  infoController.getDataConfig);
 
 api.put('/configuracion', md_auth.ensureAuth,  infoController.updateDataConfiguracion);
+api.put('/config-clave-empleado', md_auth.ensureAuth,  infoController.updateClaveEmpleadoConfiguracion);
 
 
 // INVENTARIOS 

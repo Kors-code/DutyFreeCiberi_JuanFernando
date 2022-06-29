@@ -11,6 +11,7 @@
             <button *ngIf="presupuesto._id != ''" mat-button color="accent" [disabled]="" (click)="updatePresupuesto()" style="margin-right:10px;" ><mat-icon>edit</mat-icon> Editar</button>
             <button *ngIf="presupuesto._id != ''" mat-button color="accent" [disabled]="" (click)="nuevoPresupuesto()" style="margin-right:10px;" ><mat-icon>add</mat-icon> Nuevo</button>
             <button *ngIf="presupuesto._id != ''" mat-button color="warn" [disabled]="" (click)="deleteRegistro()" style="margin-right:10px;" ><mat-icon>delete</mat-icon> Delete</button>
+            <button *ngIf="presupuesto._id != ''" mat-button color="warn" [disabled]="" (click)="recaulcular()" style="margin-right:10px;" ><mat-icon>account_tree</mat-icon> Recalcular Pto</button>
           </div>
           <mat-card class="mat-elevation-z8" style="width: 80%; text-align: center; margin: 0 auto;" >
             <!-- <mat-form-field appearance="fill" style="text-align: center; font-size: 1.3em; margin-right: 20px;">
@@ -234,7 +235,7 @@
                 <ng-template let-item let-i="index" ngFor [ngForOf]="presupuesto.vendedores">
                 <mat-expansion-panel hideToggle *ngIf="buscarRegistro(item.name)">
                   <mat-expansion-panel-header>
-                    <mat-panel-title>
+                    <mat-panel-title style="text-align:center;">
                       {{i + 1}} - {{item.codigo}} - {{item.name}} <span style="color: rgb(8, 183, 8); margin: 0 10px;">Dias {{item.Dias}}</span> <span style="color: rgb(8, 183, 8); margin: 0 10px;"> PPTO $ {{item.USD  | number:'0.0-0'}} Pto Dia {{item.USD / item.Dias  | number:'0.0-0'}}</span>  rol  {{ item.rol }}
                     </mat-panel-title>
                     
