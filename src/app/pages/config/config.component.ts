@@ -6,6 +6,7 @@ import { ThisReceiver } from '@angular/compiler';
 import { DialogConfirm } from '../confirm-dialog/confirm-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { DOCUMENT } from '@angular/common';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-config',
@@ -26,7 +27,8 @@ email= '';
 
 Roles = ['Ventas', 'Skin', 'Lider', 'Gerente Ventas', 'Gerente']
   constructor(public dialog: MatDialog, @Inject(DOCUMENT) doc: any,
-  public _infoService:InfoService,) {
+  public _infoService:InfoService,
+  private _snackBar: MatSnackBar) {
     this.config = new Config();
     this.categoria = new Categoria();
     this.cumplimiento = new Cumplimiento();
@@ -218,6 +220,25 @@ Roles = ['Ventas', 'Skin', 'Lider', 'Gerente Ventas', 'Gerente']
 
   editEmpleado(){
     this.empleado = new Empleado();
+  }
+
+  resetPassEmpleado(){
+    this.empleado.clave = 'AAAA';
+    this.openSnackBar('Cambio de Clave AAAA')
+  }
+
+  openSnackBar(message: string, action: string = 'Ok') {
+    this._snackBar.open(message, action, {
+      duration: 3000,
+    });
+  }
+  
+
+  resetPassEmpleados(){
+    this.config.empleados.forEach(element => {
+      element.clave = 'AAAA';
+      this.openSnackBar('Cambio de Clave AAAA '+ element.name)
+    });
   }
 
   pasEmpleado(item: any){

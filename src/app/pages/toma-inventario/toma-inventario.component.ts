@@ -612,31 +612,59 @@ export class tomaInventarioComponent implements OnInit {
       this._infoServce.agregarScaneo(scan, this.tag).subscribe(
         res =>{
           let dato = res
-          if(this.ultimosConteos.length <= 4){
-            // console.log('entro')
-            this.ultimosConteos.unshift(scan)
+          console.log(dato)
+          if(dato){
+            if(this.ultimosConteos.length <= 50){ 
+              this.ultimosConteos.unshift(dato)
+            }else{
+              this.ultimosConteos.unshift(dato)
+              this.ultimosConteos.splice(this.ultimosConteos.length -1,1)
+            }
+           
+            // console.log(dato)
+            this.log = false
+            this.openSnackBar(this.scan + '')
+            this.scan = undefined  
+            this.unds = 1
+            this.scanElement.nativeElement.focus();
           }else{
-            this.ultimosConteos.unshift(scan)
-            this.ultimosConteos.splice(this.ultimosConteos.length -1,1)
+            this.openSnackBar('NO ENCONTRADO')
+            this.log = false
+            this.openSnackBar(this.scan + '')
+            this.scan = undefined  
+            this.unds = 1
+            this.scanElement.nativeElement.focus();
           }
          
-          // console.log(dato)
-          this.log = false
-          this.openSnackBar(this.scan + '')
-          this.scan = undefined  
-          this.unds = 1
-          this.scanElement.nativeElement.focus();
         })
     }else{
       this._infoServce.agregarScaneoSKU(scan, this.tag).subscribe(
         res =>{
           let dato = res
+          console.log(dato)
+          if(dato){
+            if(this.ultimosConteos.length <= 50){ 
+              this.ultimosConteos.unshift(dato)
+            }else{
+              this.ultimosConteos.unshift(dato)
+              this.ultimosConteos.splice(this.ultimosConteos.length -1,1)
+            }
+            let data: Object
+            this.log = false
+            this.openSnackBar(this.scan + '')
+            this.scan = undefined  
+            this.scanElement.nativeElement.focus();
+
+          }else{
+            this.openSnackBar('NO ENCONTRADO')
+            this.log = false
+            this.openSnackBar(this.scan + '')
+            this.scan = undefined  
+            this.unds = 1
+            this.scanElement.nativeElement.focus();
+          }
           // console.log(dato)
-          let data: Object
-          this.log = false
-          this.openSnackBar(this.scan + '')
-          this.scan = undefined  
-          this.scanElement.nativeElement.focus();
+         
         })
     }
   

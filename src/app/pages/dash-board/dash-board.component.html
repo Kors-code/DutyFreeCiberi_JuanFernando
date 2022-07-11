@@ -40,46 +40,106 @@
       <mat-card-content *ngIf="presupuesto">
         <h3 style="text-align: center;">CUMPLIMIENTO PRESUPUESTAL {{coleccion}} DIA {{dia}}</h3>
         <h1 style="text-align: center;"> {{presupuesto.categorias.length}} CATEGORIAS</h1>
-        <table style="width: 90%; margin: 0 auto; font-size: 1.3em;" class="mat-elevation-z8">
-          <thead style="background-color:rgb(63, 62, 62) ; color:white; padding: 15px; font-size: 1em; border-radius: 10px;">
-            <tr>
-              <td>PRESUPUESTO </td>
-              <td>{{presupuesto.tag}} </td>
-              <td>COP:  <span style="color: chartreuse;">{{presupuesto.presupuesto_cop  | number:'0.0-0'}}</span></td>
-              <td>USD:  <span style="color: chartreuse;">{{presupuesto.presupuesto_usd  | number:'0.0-0'}}</span></td>
-              <td>DIAS: <span style="color: chartreuse;">{{presupuesto.dias  | number:'0.0-0'}}</span> </td>
-              <td  colspan="2">ESTADO: {{presupuesto.estado}}</td>
-            </tr>
-            <tr>
-              <td colspan="2">Resultados</td>
-              <td>VT Cop <span style="color: chartreuse;">{{presupuesto.ventas  | number:'0.0-0'}}</span></td>
-              <td>VT Usd <span style="color: chartreuse;">{{presupuesto.ventas_usd  | number:'0.0-0'}}</span></td>
-              <td>FALTA <span style="color: chartreuse;">{{presupuesto.ventas_usd - presupuesto.presupuesto_usd | number:'0.0-0'}}</span></td>
-              <td colspan="2" >CUMPLIMIENTO <span style="color: chartreuse;">{{( presupuesto.ventas_usd / presupuesto.presupuesto_usd)*100 | number:'0.0-0'}}%</span></td>
-            </tr>
-            <tr>
-              <th colspan="1"> CATEGORIA</th>
-              <th colspan="1"> % PART PT</th>
-              <th colspan="1"> PPT USD</th>
-              <th colspan="1"> VENTAS</th>
-              <th colspan="1"> CUMPLIMIENTO</th>
-              <th colspan="1"> RESTA</th>
-              <th colspan="1"> % VENTAS</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let item of presupuesto.categorias" class="pointer">
-             <td>{{item.titulo}}</td>
-             <td style="text-align:center">{{item.participacion}}%</td>
-             <td style="text-align:right">{{item.presupuesto_usd  | number:'0.0-0'}}</td>
-             <td style="text-align:right">{{item.ventas  | number:'0.0-0'}}</td>
-             <td  class="normal"  [class._50]="(item.ventas / item.presupuesto_usd) <= 0.80"   [class._100]="(item.ventas / item.presupuesto_usd) >= 0.99" [class._90]="(item.ventas / item.presupuesto_usd) >= 0.80 && (item.ventas / item.presupuesto_usd) <= 0.99" >{{(item.ventas / item.presupuesto_usd)*100 | number:'0.0-0'}}%</td>
-             <td style="text-align:right">{{(item.ventas - item.presupuesto_usd) | number:'0.0-0'}}</td>
-             <td style="text-align:center">{{(item.ventas / presupuesto.ventas_usd) * 100 | number:'0.0-0'}}%</td>
-            </tr>
-          </tbody>
-        </table>
+        <mat-chip-list aria-label="Fish selection" style="display:flex;justify-content: center;">
+          <mat-chip *ngIf="acumulado" color="accent" (click)="acumulador()">
+            <mat-chip-avatar>
+              <img src="assets/metas.svg" alt="Photo of a Shiba Inu"/>
+          </mat-chip-avatar>
+            ACUMULADO</mat-chip>
+            <mat-chip color="warn" *ngIf="!acumulado" (click)="acumulador()">
+              <mat-chip-avatar>
+                <img src="assets/metas.svg" alt="Photo of a Shiba Inu"/>
+            </mat-chip-avatar>
+              TENDENCIA</mat-chip>
+        </mat-chip-list>
+        <div *ngIf="acumulado">
+          <table style="width: 90%; margin: 0 auto; font-size: 1.3em;" class="mat-elevation-z8">
+            <thead style="background-color:rgb(63, 62, 62) ; color:white; padding: 15px; font-size: 1em; border-radius: 10px;">
+              <tr>
+                <td>PRESUPUESTO </td>
+                <td>{{presupuesto.tag}} </td>
+                <td>PPTO COP:  <span style="color: chartreuse;">{{presupuesto.presupuesto_cop  | number:'0.0-0'}}</span></td>
+                <td>PPTO USD:  <span style="color: chartreuse;">{{presupuesto.presupuesto_usd  | number:'0.0-0'}}</span></td>
+                <td>PPTO DIAS: <span style="color: chartreuse;">{{presupuesto.dias  | number:'0.0-0'}}</span> </td>
+                <td  colspan="2">ESTADO: {{presupuesto.estado}}</td>
+              </tr>
+              <tr>
+                <td colspan="2">Resultados 
+                  <span style="color: chartreuse;">TRM {{presupuesto.ventas / presupuesto.ventas_usd  | number:'0.0-0'}}</span>
+                </td>
+                <td>VENTA COP <span style="color: chartreuse;">{{presupuesto.ventas  | number:'0.0-0'}}</span></td>
+                <td>VENTA USD <span style="color: chartreuse;">{{presupuesto.ventas_usd  | number:'0.0-0'}}</span></td>
+                <td>DIFF <span style="color: chartreuse;">{{presupuesto.ventas_usd - presupuesto.presupuesto_usd | number:'0.0-0'}}</span></td>
+                <td colspan="2" >CUMPLIMIENTO <span style="color: chartreuse;">{{( presupuesto.ventas_usd / presupuesto.presupuesto_usd)*100 | number:'0.0-0'}}%</span></td>
+              </tr>
+              <tr>
+                <th colspan="1"> CATEGORIA</th>
+                <th colspan="1"> % PART PT</th>
+                <th colspan="1"> PPT USD</th>
+                <th colspan="1"> VENTAS</th>
+                <th colspan="1"> CUMPLIMIENTO</th>
+                <th colspan="1"> RESTA</th>
+                <th colspan="1"> % VENTAS</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of presupuesto.categorias" class="pointer">
+               <td>{{item.titulo}}</td>
+               <td style="text-align:center">{{item.participacion}}%</td>
+               <td style="text-align:right">{{item.presupuesto_usd  | number:'0.0-0'}}</td>
+               <td style="text-align:right">{{item.ventas  | number:'0.0-0'}}</td>
+               <td  class="normal"  [class._50]="(item.ventas / item.presupuesto_usd) <= 0.80"   [class._100]="(item.ventas / item.presupuesto_usd) >= 0.99" [class._90]="(item.ventas / item.presupuesto_usd) >= 0.80 && (item.ventas / item.presupuesto_usd) <= 0.99" >{{(item.ventas / item.presupuesto_usd)*100 | number:'0.0-0'}}%</td>
+               <td style="text-align:right">{{(item.ventas - item.presupuesto_usd) | number:'0.0-0'}}</td>
+               <td style="text-align:center">{{(item.ventas / presupuesto.ventas_usd) * 100 | number:'0.0-0'}}%</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div *ngIf="!acumulado">
+          <table style="width: 90%; margin: 0 auto; font-size: 1.3em;" class="mat-elevation-z8">
+            <thead style="background-color:rgb(63, 62, 62) ; color:white; padding: 15px; font-size: 1em; border-radius: 10px;">
+              <tr>
+                <td>TENDENCIA PPTO </td>
+                <td>{{presupuesto.tag}} </td>
+                <td>PPTO COP:  <span style="color: chartreuse;">{{presupuesto.presupuesto_cop  | number:'0.0-0'}}</span></td>
+                <td>PPTO USD:  <span style="color: chartreuse;">{{presupuesto.presupuesto_usd | number:'0.0-0'}}</span></td>
+                <td>PPTO DIAS: <span style="color: chartreuse;">{{dia  | number:'0.0-0'}}</span> </td>
+                <td  colspan="2">ESTADO: {{presupuesto.estado}}</td>
+              </tr>
+              <tr>
+                <td colspan="2">Resultados 
+                  <span style="color: chartreuse;">TRM {{presupuesto.ventas / presupuesto.ventas_usd  | number:'0.0-0'}}</span>
+                </td>
+                <td>VENTA COP <span style="color: chartreuse;">{{(presupuesto.ventas / dia)* presupuesto.dias | number:'0.0-0'}}</span></td>
+                <td>VENTA USD <span style="color: chartreuse;">{{(presupuesto.ventas_usd / dia)* presupuesto.dias  | number:'0.0-0'}}</span></td>
+                <td>DIFF <span style="color: chartreuse;">{{((presupuesto.ventas_usd/ dia)* presupuesto.dias) - presupuesto.presupuesto_usd | number:'0.0-0'}}</span></td>
+                <td colspan="2" >CUMPLIMIENTO <span style="color: chartreuse;">{{( ((presupuesto.ventas_usd/ dia)* presupuesto.dias) / presupuesto.presupuesto_usd)*100 | number:'0.0-0'}}%</span></td>
+              </tr>
+              <tr>
+                <th colspan="1"> CATEGORIA</th>
+                <th colspan="1"> % PART PT</th>
+                <th colspan="1"> PPT USD</th>
+                <th colspan="1"> VENTAS</th>
+                <th colspan="1"> CUMPLIMIENTO</th>
+                <th colspan="1"> RESTA</th>
+                <th colspan="1"> % VENTAS</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of presupuesto.categorias" class="pointer">
+               <td>{{item.titulo}}</td>
+               <td style="text-align:center">{{item.participacion}}%</td>
+               <td style="text-align:right">{{item.presupuesto_usd  | number:'0.0-0'}}</td>
+               <td style="text-align:right">{{(item.ventas / dia)* presupuesto.dias | number:'0.0-0'}}</td>
+               <td  class="normal"  [class._50]="((item.ventas / dia)* presupuesto.dias) / item.presupuesto_usd <= 0.80"   [class._100]="((item.ventas / dia)* presupuesto.dias) / item.presupuesto_usd >= 0.99" [class._90]="((item.ventas / dia)* presupuesto.dias) / item.presupuesto_usd >= 0.80 && ((item.ventas / dia)* presupuesto.dias) / item.presupuesto_usd <= 0.99" >{{(((item.ventas / dia)* presupuesto.dias) / item.presupuesto_usd)*100 | number:'0.0-0'}}%</td>
 
+               <td style="text-align:right">{{((item.ventas / dia)* presupuesto.dias) - item.presupuesto_usd | number:'0.0-0'}}</td>
+               <td style="text-align:center">{{(((item.ventas / dia) * presupuesto.dias) / ((presupuesto.ventas_usd / dia) * presupuesto.dias)) * 100 | number:'0.0-0'}}%</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        
         <div style="width: 90%; margin: 0 auto; " class="mat-elevation-z8">
           <h1 style="text-align: center;"> {{presupuesto.tiendas.length}} TIENDAS</h1>
           <mat-accordion *ngIf="presupuesto.tiendas.length != 0">
@@ -89,7 +149,7 @@
                   {{item.tienda}} Participacion {{item.part}}% PPTO $ {{ item.presupuesto_usd  | number:'0.0-0'}} USD $ {{ item.usd  | number:'0.0-0'}} <span>  CUMP {{ (item.usd / item.presupuesto_usd)  *100 | number:'0.0-2'}}%</span>
                 </mat-panel-title>
               </mat-expansion-panel-header>
-              <mat-card-content>
+              <mat-card-content *ngIf="acumulado">
                 <table style="width: 90%; margin: 0 auto;" class="mat-elevation-z8">
                   <thead style="background-color:rgb(63, 62, 62) ; color:white; padding: 15px; font-size: 1em; border-radius: 10px;">
                   <tr>
@@ -144,6 +204,61 @@
            
 
               </mat-card-content>
+              <mat-card-content *ngIf="!acumulado">
+                <h3>Tendencia</h3>
+                <table style="width: 90%; margin: 0 auto;" class="mat-elevation-z8">
+                  <thead style="background-color:rgb(63, 62, 62) ; color:white; padding: 15px; font-size: 1em; border-radius: 10px;">
+                  <tr>
+                    <td> Ventas USD </td> <td style="text-align: center;"> <span style="color: chartreuse;">{{((item.usd/ dia) * presupuesto.dias)  | number:'0.0-2'}}</span></td>
+                    <td> Presupuesto USD </td> <td style="text-align: center;"> <span style="color: chartreuse;">{{item.presupuesto_usd  | number:'0.0-2'}}</span></td>
+                    <td> Cumplimiento </td> <td style="text-align: center;"> <span style="color: chartreuse;">{{ (((item.usd/ dia) * presupuesto.dias) / item.presupuesto_usd)  *100 | number:'0.0-2'}}%</span></td>
+                  </tr>
+                  </thead>
+                </table>
+                <table style="width: 90%; margin: 0 auto;font-size: 1.3em;" class="mat-elevation-z8">
+                  <thead>
+                    <th>CATEGORÍA</th>
+                    <th>% PART</th>
+                    <th>PPTO</th>
+                    <th>VENTAS</th>
+                    <th>RESTA</th>
+                    <th>%CUMPLIM</th>
+                  
+                  </thead>
+               
+                  <tbody *ngFor="let cat of item.ptto" style="background-color:rgb(63, 62, 62) ; color:white; padding: 15px; font-size: 1em; border-radius: 10px;">
+                    <tr>
+                      <td>{{cat.titulo}}</td>
+                      <td style="text-align: center;">{{cat.participacion  | number:'0.0-2'}}%</td>
+                      <td style="text-align:right;">{{cat.presupuesto_usd | number:'0.0-0'}}</td>
+                      <td style="text-align:right;">{{((cat.ventas/ dia) * presupuesto.dias) | number:'0.0-0'}}</td>
+                      <td style="text-align:right;">{{((cat.ventas/ dia) * presupuesto.dias) - cat.presupuesto_usd  | number:'0.0-2'}}</td>
+                      <td [class._50]="(((cat.ventas/ dia) * presupuesto.dias) / cat.presupuesto_usd) <= 0.80" [class._90]="(((cat.ventas/ dia) * presupuesto.dias) / cat.presupuesto_usd) >= 0.80 && (((cat.ventas/ dia) * presupuesto.dias) / cat.presupuesto_usd) <= 0.99" [class._100]="(((cat.ventas/ dia) * presupuesto.dias) / cat.presupuesto_usd) >= 1">{{(((cat.ventas/ dia) * presupuesto.dias) / cat.presupuesto_usd)*100  | number:'0.0-2'}} %</td>
+                    </tr>
+                  </tbody>
+                </table> 
+               
+                    <!-- <table *ngFor="let cat of item.ptto" style="width: 90%; margin: 0 auto;" class="mat-elevation-z8">
+                      <thead style="background-color:rgb(63, 62, 62) ; color:white; padding: 15px; font-size: 1em; border-radius: 10px;">
+                    
+                        <tr>
+                          <td colspan="2"> {{cat.participacion}}% Categoria: {{cat.titulo}} $ {{cat.presupuesto_usd  | number:'0.0-0'}}
+                  
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>Presupuesto USD:  <span style="color: chartreuse;">{{cat.presupuesto_usd  | number:'0.0-0'}}</span></td>
+                        
+                        <td>USD Dia:  <span style="color: chartreuse;">{{cat.presupuesto_dia_usd  | number:'0.0-0'}}</span></td>
+  
+                        </tr>
+              
+                      </thead>
+                    </table>  -->
+          
+           
+
+              </mat-card-content>
             </mat-expansion-panel>
           </mat-accordion>
         </div>
@@ -173,10 +288,10 @@
                   <th>
                     PPTO VENDEDORES
                   </th>
-                  <th style="display:flex; justify-content: center;">
+                  <td style="display:flex; justify-content: center;">
                     <span style="color: chartreuse;">{{presupuesto.presupuesto_vendedores | number:'0.0-0'}}</span>
                     <span style="color: orange; margin: 0 10px;display: flex; align-items: center;"> <mat-icon>bed</mat-icon>{{presupuesto.presupuesto_vendedores - presupuesto.presupuesto_usd | number:'0.0-0'}} </span>
-                  </th>
+                  </td>
                 </tr>
 
               </thead>
@@ -215,32 +330,33 @@
                         TENDENCIA</mat-chip>
                   </mat-chip-list>
                   <div *ngIf="item.rol == 'Ventas'" style="display:flex;flex-direction: column;">
-                    <table style="width: 90%; margin: 0 auto; font-size: 1.3em;" class="mat-elevation-z8">
-                      <thead style="background-color:rgb(63, 62, 62) ; color:white; padding: 15px; font-size: 1em; border-radius: 10px;">
-                      <tr>
-                        <td> Ventas USD </td> <td style="text-align: center;"> <span style="color: chartreuse;">{{item.Ventas  | number:'0.0-2'}}</span></td>
-                        <td> PPTO USD </td> <td style="text-align: center;"> <span style="color: chartreuse;">{{item.USD  | number:'0.0-2'}}</span></td>
-                        <!-- <td> % </td> <td style="text-align: center;"> <span style="color: chartreuse;">{{item.Cumplimiento * 100  | number:'0.0-2'}}%</span></td> -->
-                      </tr>
-                      <tr>
-                        <td>Comisiones USD</td> 
-                        <td style="text-align: center;"><span style="color: chartreuse;">{{item.Comisiones  | number:'0.0-2'}}</span></td>
-                        <td style="text-align: center;"> CUMPLIMIENTO %</td> 
-                        <td style="text-align: center;"><span style="color: chartreuse;"> {{item.Cumplimiento * 100  | number:'0.0-2'}}%</span></td>
-                        <!-- <td>
-                          <button mat-button><mat-icon>person</mat-icon></button>
-                  
-                        </td> -->
-                      </tr>
-                      <tr>
-                        <td>Comisiones COP <span style="flex: 1 1 auto;"></span> <span style="color: chartreuse; "> TRM {{item.ComisionesCop / item.Comisiones | number:'0.0-0' }}</span></td> 
-                        <td style="text-align: center;"><span style="color: chartreuse;">{{item.ComisionesCop  | number:'0.0-0'}}</span></td>
-                        <td style="text-align: center;"> (Comision / Ventas) %</td> 
-                        <td style="text-align: center;"><span style="color: chartreuse;"> {{(item.Comisiones / item.Ventas)* 100   | number:'0.0-2'}} %</span></td>
-                      </tr>
-                      </thead>
-                    </table>
+           
                     <div *ngIf="acumulado">
+                      <table style="width: 90%; margin: 0 auto; font-size: 1.3em;" class="mat-elevation-z8">
+                        <thead style="background-color:rgb(63, 62, 62) ; color:white; padding: 15px; font-size: 1em; border-radius: 10px;">
+                        <tr>
+                          <td> Ventas USD </td> <td style="text-align: center;"> <span style="color: chartreuse;">{{item.Ventas  | number:'0.0-2'}}</span></td>
+                          <td> PPTO USD </td> <td style="text-align: center;"> <span style="color: chartreuse;">{{item.USD  | number:'0.0-2'}}</span></td>
+                          <!-- <td> % </td> <td style="text-align: center;"> <span style="color: chartreuse;">{{item.Cumplimiento * 100  | number:'0.0-2'}}%</span></td> -->
+                        </tr>
+                        <tr>
+                          <td>Comisiones USD</td> 
+                          <td style="text-align: center;"><span style="color: chartreuse;">{{item.Comisiones  | number:'0.0-2'}}</span></td>
+                          <td style="text-align: center;"> CUMPLIMIENTO %</td> 
+                          <td style="text-align: center;"><span style="color: chartreuse;"> {{item.Cumplimiento * 100  | number:'0.0-2'}}%</span></td>
+                          <!-- <td>
+                            <button mat-button><mat-icon>person</mat-icon></button>
+                    
+                          </td> -->
+                        </tr>
+                        <tr>
+                          <td>Comisiones COP <span style="flex: 1 1 auto;"></span> <span style="color: chartreuse; "> TRM {{item.ComisionesCop / item.Comisiones | number:'0.0-0' }}</span></td> 
+                          <td style="text-align: center;"><span style="color: chartreuse;">{{item.ComisionesCop | number:'0.0-0'}}</span></td>
+                          <td style="text-align: center;"> (Comision / Ventas) %</td> 
+                          <td style="text-align: center;"><span style="color: chartreuse;"> {{(item.Comisiones / item.Ventas)* 100   | number:'0.0-2'}} %</span></td>
+                        </tr>
+                        </thead>
+                      </table>
                     <table style="width: 90%; margin: 0 auto; overflow-x: scroll;" class="mat-elevation-z8">
                       <thead>
                         <th>CATEGORÍA</th>
@@ -251,6 +367,7 @@
                         <th>%CUMPLIM</th>
                         <th>% COMISIÓN </th>
                         <th>COMISIÓN USD</th>
+                        <!-- <th>COMISIÓN COP</th> -->
                       </thead>
                       <tbody *ngFor="let cat of item.categorias" style="background-color:rgb(63, 62, 62) ; color:white; padding: 15px; font-size: 1em; border-radius: 10px;">
                         <tr>
@@ -261,14 +378,40 @@
                           <td style="text-align:right;">{{cat.ventas - cat.presupuesto_usd  | number:'0.0-2'}}</td>
                           <td [class._50]="(cat.ventas / cat.presupuesto_usd) <= 0.80" [class._90]="(cat.ventas / cat.presupuesto_usd) >= 0.80 && (cat.ventas / cat.presupuesto_usd) <= 0.999" [class._100]="(cat.ventas / cat.presupuesto_usd) >= 1">{{(cat.ventas / cat.presupuesto_usd)*100  | number:'0.0-2'}} %</td>
                           <td style="text-align: center;">{{(cat.comisionesUsd / cat.ventas)*100 | number:'0.0-2'}}%</td>
-                          <td style="text-align:right;">{{cat.comisionesUsd | number:'0.0-2'}}</td>
+                          <td style="text-align:right;">{{cat.comisionesUsd | number:'0.0-0'}}</td>
+                          <!-- <td style="text-align:right;">{{cat.comisionesCop | number:'0.0-0'}}</td> -->
                         </tr>
                       </tbody>
                     </table> 
                     
-                     
+                   
                     </div>
                     <div *ngIf="!acumulado">
+                      <table style="width: 90%; margin: 0 auto; font-size: 1.3em;" class="mat-elevation-z8">
+                        <thead style="background-color:rgb(63, 62, 62) ; color:white; padding: 15px; font-size: 1em; border-radius: 10px;">
+                        <tr>
+                          <td> Ventas USD </td> <td style="text-align: center;"> <span style="color: chartreuse;">{{(item.Ventas/ dia)* presupuesto.dias  | number:'0.0-2'}}</span></td>
+                          <td> PPTO USD </td> <td style="text-align: center;"> <span style="color: chartreuse;">{{(item.USD/ dia)* presupuesto.dias  | number:'0.0-2'}}</span></td>
+                          <!-- <td> % </td> <td style="text-align: center;"> <span style="color: chartreuse;">{{item.Cumplimiento * 100  | number:'0.0-2'}}%</span></td> -->
+                        </tr>
+                        <tr>
+                          <td>Comisiones USD</td> 
+                          <td style="text-align: center;"><span style="color: chartreuse;">{{(item.Comisiones/ dia)* presupuesto.dias  | number:'0.0-2'}}</span></td>
+                          <td style="text-align: center;"> CUMPLIMIENTO %</td> 
+                          <td style="text-align: center;"><span style="color: chartreuse;"> {{(item.Cumplimiento/ dia)* presupuesto.dias * 100  | number:'0.0-2'}}%</span></td>
+                          <!-- <td>
+                            <button mat-button><mat-icon>person</mat-icon></button>
+                    
+                          </td> -->
+                        </tr>
+                        <tr>
+                          <td>Comisiones COP <span style="flex: 1 1 auto;"></span> <span style="color: chartreuse; "> TRM {{((item.ComisionesCop / dia)* presupuesto.dias) / ((item.Comisiones/ dia)* presupuesto.dias) | number:'0.0-0' }}</span></td> 
+                          <td style="text-align: center;"><span style="color: chartreuse;">{{(item.ComisionesCop/ dia)* presupuesto.dias  | number:'0.0-0'}}</span></td>
+                          <td style="text-align: center;"> (Comision / Ventas) %</td> 
+                          <td style="text-align: center;"><span style="color: chartreuse;"> {{((item.Comisiones/ dia)* presupuesto.dias) / ((item.Ventas/ dia)* presupuesto.dias)* 100   | number:'0.0-2'}} %</span></td>
+                        </tr>
+                        </thead>
+                      </table>
                     <table   style="width: 90%; margin: 0 auto; overflow-x: scroll;" class="mat-elevation-z8">
                       <thead>
                         <th>CATEGORÍA</th>
@@ -284,9 +427,9 @@
                         <tr>
                           <td>{{cat.titulo}}</td>
                           <td style="text-align: center;">{{cat.participacion  | number:'0.0-2'}}%</td>
-                          <td style="text-align:right;">{{(cat.presupuesto_usd / presupuesto.dias)* dia | number:'0.0-0'}}</td>
-                          <td style="text-align:right;">{{cat.ventas | number:'0.0-0'}}</td>
-                          <td style="text-align:right;">{{cat.ventas - ((cat.presupuesto_usd / presupuesto.dias)* dia)  | number:'0.0-2'}}</td>
+                          <td style="text-align:right;">{{(cat.presupuesto_usd / dia)* presupuesto.dias | number:'0.0-0'}}</td>
+                          <td style="text-align:right;">{{(cat.ventas / dia)* presupuesto.dias | number:'0.0-0'}}</td>
+                          <td style="text-align:right;">{{((cat.ventas/ dia)* presupuesto.dias) - ((cat.presupuesto_usd / dia)* presupuesto.dias)  | number:'0.0-2'}}</td>
                           <td [class._50]="(cat.ventas / ((cat.presupuesto_usd / presupuesto.dias)* dia)) <= 0.80" [class._90]="(cat.ventas / ((cat.presupuesto_usd / presupuesto.dias)* dia)) >= 0.80 && (cat.ventas / ((cat.presupuesto_usd / presupuesto.dias)* dia)) <= 0.99" [class._100]="(cat.ventas / ((cat.presupuesto_usd / presupuesto.dias)* dia)) >= 1">{{(cat.ventas / ((cat.presupuesto_usd / presupuesto.dias)* dia) )*100  | number:'0.0-2'}} %</td>
                           <td style="text-align: center;">{{(cat.ventas / dia)* presupuesto.dias | number:'0.0-0'}}</td>
                           <td style="text-align:right;" [class._50]="(cat.ventas / ((cat.presupuesto_usd / presupuesto.dias)* dia)) <= 0.80" [class._90]="(cat.ventas / ((cat.presupuesto_usd / presupuesto.dias)* dia)) >= 0.80 && (cat.ventas / ((cat.presupuesto_usd / presupuesto.dias)* dia)) <= 0.99" [class._100]="(cat.ventas / ((cat.presupuesto_usd / presupuesto.dias)* dia)) >= 1">{{(((cat.ventas / dia)* presupuesto.dias)/ cat.presupuesto_usd)* 100 | number:'0.0-2'}}%</td>
@@ -308,6 +451,7 @@
                             <td> PPTO USD </td> <td style="text-align: center;"> <span style="color: chartreuse;">{{item.USD  | number:'0.0-2'}}</span></td>
                             <!-- <td> % </td> <td style="text-align: center;"> <span style="color: chartreuse;">{{item.Cumplimiento * 100  | number:'0.0-2'}}%</span></td> -->
                           </tr>
+                          
                           <tr>
                             <td>Comisiones USD</td> 
                             <td style="text-align: center;"><span style="color: chartreuse;">{{item.Comisiones  | number:'0.0-2'}}</span></td>
@@ -318,6 +462,7 @@
                       
                             </td> -->
                           </tr>
+                          
                           <tr>
                             <td>Comisiones COP <span style="flex: 1 1 auto;"></span> <span style="color: chartreuse; "> TRM {{item.ComisionesCop / item.Comisiones | number:'0.0-0' }}</span></td> 
                             <td style="text-align: center;"><span style="color: chartreuse;">{{item.ComisionesCop  | number:'0.0-0'}}</span></td>
@@ -340,6 +485,9 @@
                                   <td> Ventas USD </td> <td style="text-align: center;"> <span style="color: chartreuse;">{{itemT.usd  | number:'0.0-2'}}</span></td>
                                   <td> Presupuesto USD </td> <td style="text-align: center;"> <span style="color: chartreuse;">{{itemT.presupuesto_usd  | number:'0.0-2'}}</span></td>
                                   <td> Cumplimiento </td> <td style="text-align: center;"> <span style="color: chartreuse;">{{ (itemT.usd / itemT.presupuesto_usd)  *100 | number:'0.0-2'}}%</span></td>
+                                </tr>
+                                <tr>
+                                  <td> Ventas COP </td> <td style="text-align: center;"> <span style="color: chartreuse;">{{itemT.ventas_cop  | number:'0.0-2'}}</span></td>
                                 </tr>
                                 </thead>
                               </table>
@@ -394,28 +542,29 @@
                     </div>
                     <div *ngIf="!acumulado">
                       <div style="width: 90%; margin: 0 auto; " class="mat-elevation-z8">
-                        <h1 style="text-align: center;"> {{item.categorias.length}} TIENDAS</h1>
+                        <h1 style="text-align: center;"> {{item.categorias.length}} TIENDAS </h1>
                         <table style="width: 90%; margin: 0 auto; font-size: 1.3em;" class="mat-elevation-z8">
                           <thead style="background-color:rgb(63, 62, 62) ; color:white; padding: 15px; font-size: 1em; border-radius: 10px;">
                           <tr>
-                            <td> Ventas USD </td> <td style="text-align: center;"> <span style="color: chartreuse;">{{item.Ventas  | number:'0.0-2'}}</span></td>
-                            <td> PPTO USD </td> <td style="text-align: center;"> <span style="color: chartreuse;">{{(item.USD  / presupuesto.dias) * dia | number:'0.0-0'}}</span></td>
+                            <td> Ventas USD </td> <td style="text-align: center;"> <span style="color: chartreuse;">{{(item.Ventas /dia  ) * presupuesto.dias   | number:'0.0-2'}}</span></td>
+                            <td> PPTO USD </td> <td style="text-align: center;"> <span style="color: chartreuse;">{{ item.USD    | number:'0.0-0'}}</span></td>
                             <!-- <td> % </td> <td style="text-align: center;"> <span style="color: chartreuse;">{{item.Cumplimiento * 100  | number:'0.0-2'}}%</span></td> -->
                           </tr>
                           <tr>
                             <td>Comisiones USD</td> 
-                            <td style="text-align: center;"><span style="color: chartreuse;">{{item.Comisiones  | number:'0.0-2'}}</span></td>
+                            <td style="text-align: center;"><span style="color: chartreuse;">{{(item.Comisiones / dia  ) * presupuesto.dias  | number:'0.0-2'}}</span></td>
                             <td style="text-align: center;"> CUMPLIMIENTO %</td> 
-                            <td style="text-align: center;"><span style="color: chartreuse;"> {{item.Cumplimiento * 100  | number:'0.0-2'}}%</span></td>
+                            <td style="text-align: center;"><span style="color: chartreuse;"> {{(( (item.Ventas / dia  ) * presupuesto.dias ) / item.USD)* 100 | number:'0.0-2'}}%</span></td>
                             <!-- <td>
                               <button mat-button><mat-icon>person</mat-icon></button>
                             </td> -->
                           </tr>
+        
                           <tr>
                             <td>Comisiones COP <span style="flex: 1 1 auto;"></span> <span style="color: chartreuse; "> TRM {{item.ComisionesCop / item.Comisiones | number:'0.0-0' }}</span></td> 
-                            <td style="text-align: center;"><span style="color: chartreuse;">{{item.ComisionesCop  | number:'0.0-0'}}</span></td>
+                            <td style="text-align: center;"><span style="color: chartreuse;">{{(item.ComisionesCop / dia  ) * presupuesto.dias  | number:'0.0-0'}}</span></td>
                             <td style="text-align: center;"> (Comision / Ventas) %</td> 
-                            <td style="text-align: center;"><span style="color: chartreuse;"> {{(item.Comisiones / item.Ventas)* 100   | number:'0.0-2'}} %</span></td>
+                            <td style="text-align: center;"><span style="color: chartreuse;"> {{((item.Comisiones/ dia  ) * presupuesto.dias) / ((item.Ventas / dia  ) * presupuesto.dias) * 100   | number:'0.0-2'}} %</span></td>
                           </tr>
                           </thead>
                         </table>
@@ -433,6 +582,12 @@
                                   <td> Ventas USD </td> <td style="text-align: center;"> <span style="color: chartreuse;">{{itemT.usd  | number:'0.0-2'}}</span></td>
                                   <td> Presupuesto USD </td> <td style="text-align: center;"> <span style="color: chartreuse;">{{itemT.presupuesto_usd  | number:'0.0-2'}}</span></td>
                                   <td> Cumplimiento </td> <td style="text-align: center;"> <span style="color: chartreuse;">{{ (itemT.usd / itemT.presupuesto_usd)  *100 | number:'0.0-2'}}%</span></td>
+                                </tr>
+                                <tr>
+                                  <td> Ventas COP </td> <td style="text-align: center;"> <span style="color: chartreuse;">{{itemT.ventasCop  | number:'0.0-2'}}</span></td>
+                                  <td>  </td>
+                                   <td style="text-align: center;"> <span style="color: chartreuse;"></span></td>
+                                  <td></td>
                                 </tr>
                                 </thead>
                               </table>
@@ -497,7 +652,116 @@
     
 
     </mat-tab>
-    <mat-tab label="Categoria"> 
+
+    <mat-tab label="Vendedores">
+      <div style="display:flex; justify-content:center; flex-wrap: wrap; margin-top: 20px; width: 90%; margin: 0 auto;" class="mat-elevation-z8">
+        <section class="section">
+          <mat-checkbox class="example-margin" [(ngModel)]="showLabels">Etiquetas</mat-checkbox>
+          <mat-checkbox class="example-margin" [(ngModel)]="gradient">Gradiente</mat-checkbox>
+          <mat-checkbox class="example-margin" [(ngModel)]="showLegend">Leyenda</mat-checkbox>
+          <mat-checkbox class="example-margin" [(ngModel)]="isDoughnut">Dona</mat-checkbox>
+          <mat-form-field appearance="fill" class="example-margin">
+            <mat-label>Descargar</mat-label>
+            <mat-select [disabled]="">
+              <mat-option (click)="downloadFile(downloadVendedores, 'Vendedores')"><mat-icon>cloud_download</mat-icon> Descargar Info Vendedores</mat-option>
+            </mat-select>
+          </mat-form-field>
+    
+          
+        </section>
+        
+
+        <ngx-charts-advanced-pie-chart
+        [view]="view"
+        [results]="single"
+        [scheme]="colorScheme"
+        [gradient]="gradient"
+        (select)="onSelect($event)"
+        (activate)="onActivate($event)"
+        (deactivate)="onDeactivate($event)"
+        >
+      </ngx-charts-advanced-pie-chart> 
+      </div>     
+      <div>
+        <table style="width: 90%; margin: 0 auto; font-size: 1.3em;"  class="mat-elevation-z8">
+          <thead style="background-color:rgb(63, 62, 62) ; color:white; padding: 15px; font-size: 1.3em; border-radius: 10px;">
+            <tr>
+              <td style="text-align:center; padding:5px; ">Codigo</td>
+              <td style="text-align:center; padding:5px; ">Vendedor</td>
+              <td style="text-align:center; padding:5px; ">Unds</td>
+              <td style="text-align:center; padding:5px; ">N°FACT</td>
+              <td style="text-align:center; padding:5px; ">USD</td>
+              <td style="text-align:center; padding:5px; ">PART %</td>
+              <td style="text-align:center; padding:5px; ">ITEM PROMEDIO</td>
+              <td style="text-align:center; padding:5px; ">FACT PROMEDIO</td>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th colspan="4">
+                TOTAL VENTAS 
+              </th>
+              <th>
+                {{totalVendedores | number}}
+              </th>
+            </tr>
+            <ng-template let-item let-last="last" ngFor [ngForOf]="informe">
+              <tr class="pointer" (click)="passVendedor(item)">
+                <td style="text-align:center; padding:5px; ">{{item._id}}</td>
+                <td>{{item.Vendedor[0]}}</td>
+               
+                <td style="text-align:center;">{{item.Unidades}}</td>
+                <td style="text-align:center;">{{item.folios}}</td>
+                <td style="text-align:right;">{{item.Ventas | number:'0.0-0'}}</td>
+                <td style="text-align:right;">{{(item.Ventas / totalVendedores)*100 | number:'0.0-2'}}%</td>
+               
+                <td style="text-align:right;"> $ {{item.Ventas / item.Unidades | number:'0.0-2'}}</td>
+                <td style="text-align:right;"> $ {{item.Ventas / item.folios | number:'0.0-2' }}</td>
+              </tr>
+           
+      
+            </ng-template>
+           
+          </tbody>
+        </table>
+      </div>
+      <div style="display:flex; justify-content:center; flex-wrap: wrap; margin-top: 20px; width: 90%; margin: 0 auto;" class="mat-elevation-z8">
+        <mat-card-content>
+          <section class="section">
+            <mat-checkbox class="example-margin" [(ngModel)]="showLabels">Etiquetas</mat-checkbox>
+            <mat-checkbox class="example-margin" [(ngModel)]="gradient">Gradiente</mat-checkbox>
+            <mat-checkbox class="example-margin" [(ngModel)]="showLegend">Leyenda</mat-checkbox>
+            <mat-checkbox class="example-margin" [(ngModel)]="isDoughnut">Dona</mat-checkbox>
+            <mat-form-field appearance="fill" class="example-margin">
+              <mat-label>Tema</mat-label>
+              <mat-select [disabled]="">
+                <mat-option value="option1" *ngFor="let item of listColorSquema" (click)="cambiarColores(item)"> {{item.name}}</mat-option>
+                
+              </mat-select>
+            </mat-form-field>
+      
+            
+          </section>
+      
+        </mat-card-content>
+        <ngx-charts-pie-chart
+          [view]="view"
+          [scheme]="colorScheme"
+          [results]="single"
+          [gradient]="gradient"
+          [legend]="showLegend"
+
+          [labels]="showLabels"
+          [doughnut]="isDoughnut"
+          (select)="onSelect($event)"
+          (activate)="onActivate($event)"
+          (deactivate)="onDeactivate($event)"
+          >
+        </ngx-charts-pie-chart>
+      </div>
+    </mat-tab>
+
+    <mat-tab label="Categoria" *ngIf="identity.rol == 'Admin'"> 
       <div>
         <h1 style="text-align: center;">RESULTADOS POR SUBCATEGORIAS  {{coleccion}} </h1>
         <table style="width: 90%; margin: 0 auto; font-size: 1.3em;" class="mat-elevation-z8">
@@ -622,7 +886,6 @@
                 <td style="text-align:right;">{{item.Cost  | number:'0.0-2'}}</td>
                 <td style="text-align:right;">{{item.Cop  -item.Cost | number:'0.0-2'}}</td>
                 <td style="text-align:right;">{{((item.Cop  -item.Cost)/ item.Cop)*100 | number:'0.0-2'}}%</td>
-
               </tr>
             </ng-template>
             <tr>
@@ -715,110 +978,6 @@
       </div>
 
 
-    </mat-tab>
-
-    <mat-tab label="Vendedores">
-      <div style="display:flex; justify-content:center; flex-wrap: wrap; margin-top: 20px; width: 90%; margin: 0 auto;" class="mat-elevation-z8">
-        <section class="section">
-          <mat-checkbox class="example-margin" [(ngModel)]="showLabels">Etiquetas</mat-checkbox>
-          <mat-checkbox class="example-margin" [(ngModel)]="gradient">Gradiente</mat-checkbox>
-          <mat-checkbox class="example-margin" [(ngModel)]="showLegend">Leyenda</mat-checkbox>
-          <mat-checkbox class="example-margin" [(ngModel)]="isDoughnut">Dona</mat-checkbox>
-          <mat-form-field appearance="fill" class="example-margin">
-            <mat-label>Descargar</mat-label>
-            <mat-select [disabled]="">
-              <mat-option (click)="downloadFile(downloadVendedores, 'Vendedores')"><mat-icon>cloud_download</mat-icon> Descargar Info Vendedores</mat-option>
-            </mat-select>
-          </mat-form-field>
-    
-          
-        </section>
-        
-
-        <ngx-charts-advanced-pie-chart
-        [view]="view"
-        [results]="single"
-        [scheme]="colorScheme"
-        [gradient]="gradient"
-        (select)="onSelect($event)"
-        (activate)="onActivate($event)"
-        (deactivate)="onDeactivate($event)"
-        >
-      </ngx-charts-advanced-pie-chart> 
-      </div>     
-      <div>
-        <table style="width: 90%; margin: 0 auto; font-size: 1.3em;"  class="mat-elevation-z8">
-          <thead style="background-color:rgb(63, 62, 62) ; color:white; padding: 15px; font-size: 1.3em; border-radius: 10px;">
-            <tr>
-              <td style="text-align:center; padding:5px; ">Codigo</td>
-              <td style="text-align:center; padding:5px; ">Vendedor</td>
-              <td style="text-align:center; padding:5px; ">Unds</td>
-              <td style="text-align:center; padding:5px; ">USD</td>
-              <td style="text-align:center; padding:5px; ">PART %</td>
-              <td style="text-align:center; padding:5px; ">ITEM PROMEDIO</td>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <th colspan="3">
-                TOTAL VENTAS 
-              </th>
-              <th>
-                {{totalVendedores | number}}
-              </th>
-            </tr>
-            <ng-template let-item let-last="last" ngFor [ngForOf]="informe">
-              <tr class="pointer" (click)="passVendedor(item)">
-                <td style="text-align:center; padding:5px; ">{{item._id}}</td>
-                <td>{{item.Vendedor[0]}}</td>
-               
-                <td style="text-align:center;">{{item.Unidades}}</td>
-                <td style="text-align:right;">{{item.Ventas | number:'0.0-0'}}</td>
-                <td style="text-align:right;">{{(item.Ventas / totalVendedores)*100 | number:'0.0-2'}}%</td>
-               
-                <td style="text-align:right;"> $ {{item.Ventas / item.Unidades | number:'0.0-2'}}</td>
-              </tr>
-           
-      
-            </ng-template>
-           
-          </tbody>
-        </table>
-      </div>
-      <div style="display:flex; justify-content:center; flex-wrap: wrap; margin-top: 20px; width: 90%; margin: 0 auto;" class="mat-elevation-z8">
-        <mat-card-content>
-          <section class="section">
-            <mat-checkbox class="example-margin" [(ngModel)]="showLabels">Etiquetas</mat-checkbox>
-            <mat-checkbox class="example-margin" [(ngModel)]="gradient">Gradiente</mat-checkbox>
-            <mat-checkbox class="example-margin" [(ngModel)]="showLegend">Leyenda</mat-checkbox>
-            <mat-checkbox class="example-margin" [(ngModel)]="isDoughnut">Dona</mat-checkbox>
-            <mat-form-field appearance="fill" class="example-margin">
-              <mat-label>Tema</mat-label>
-              <mat-select [disabled]="">
-                <mat-option value="option1" *ngFor="let item of listColorSquema" (click)="cambiarColores(item)"> {{item.name}}</mat-option>
-                
-              </mat-select>
-            </mat-form-field>
-      
-            
-          </section>
-      
-        </mat-card-content>
-        <ngx-charts-pie-chart
-          [view]="view"
-          [scheme]="colorScheme"
-          [results]="single"
-          [gradient]="gradient"
-          [legend]="showLegend"
-
-          [labels]="showLabels"
-          [doughnut]="isDoughnut"
-          (select)="onSelect($event)"
-          (activate)="onActivate($event)"
-          (deactivate)="onDeactivate($event)"
-          >
-        </ngx-charts-pie-chart>
-      </div>
     </mat-tab>
 
 

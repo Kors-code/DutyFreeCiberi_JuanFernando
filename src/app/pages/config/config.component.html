@@ -309,9 +309,6 @@
               <mat-label>Gerente</mat-label>
               <input matInput type="number" [(ngModel)]="cumplimiento.gerente">
             </mat-form-field>
-
-
-    
   
           </mat-card-content>
           <mat-nav-list>
@@ -379,6 +376,9 @@
             <mat-form-field style="margin-right: 20px;" appearance="fill">
               <mat-label>clave</mat-label>
               <input matInput type="password" [(ngModel)]="empleado.clave">
+              <button matSuffix mat-icon-button aria-label="Clear" (click)="resetPassEmpleado()">
+                <mat-icon>password</mat-icon>
+              </button>
             </mat-form-field>
             <mat-form-field appearance="fill" style="margin-right: 20px;">
               <mat-label>Rol</mat-label>
@@ -397,7 +397,7 @@
               <mat-icon>edit</mat-icon>
             </button>
             <input type="text" placeholder="Buscar" style="font-size:x-large; text-align: center; margin: 0 10px;" [(ngModel)]="search">
-        
+          
         </mat-card-content>
         <mat-card-content>
           
@@ -411,6 +411,10 @@
                 <th>CODIGO VENTAS</th>
                 <th>CONTRATO</th>
                 <th>ROL</th>
+                <th>
+                  <button matSuffix mat-icon-button aria-label="Clear" (click)="resetPassEmpleados()">
+                  <mat-icon>password</mat-icon>
+                </button></th>
                 <th></th>
               </tr>
             </thead>
@@ -422,6 +426,7 @@
                 <td (click)="pasEmpleado(item)" style="text-align: center;cursor: pointer;">{{ item.codigo }}</td>
                 <td (click)="pasEmpleado(item)" style="text-align: center;cursor: pointer;">{{ item.contrato }} </td>
                 <td (click)="pasEmpleado(item)" style="text-align: center;cursor: pointer;">{{ item.rol }}</td>
+                <td (click)="pasEmpleado(item)" style="text-align: center;cursor: pointer;">{{ item.clave }}</td>
                 <td style="text-align: center;cursor: pointer;"> <button mat-icon-button  (click)="deleteEmpleado(i)" >
                   <mat-icon>delete</mat-icon>
                 </button></td>

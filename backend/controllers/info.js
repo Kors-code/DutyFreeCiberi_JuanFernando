@@ -436,7 +436,7 @@ async function updateDataVendedorCollection(req, res){
         const db = client.db(dbName);
         const collection = await db.collection(coll);
 
-        collection.findOneAndUpdate({_id : ObjectId(params._id)},{$set:{Nombre_del_vend: params.Nombre_del_vend,Codi :params.Codi }},{ upsert: false }, function(err,doc) {
+        collection.findOneAndUpdate({_id : ObjectId(params._id)},{$set:{Nombre_del_vend: params.Nombre_del_vend,Codi :params.Codi, Costo_de_v:params.Costo_de_v, UNITCOST:params.UNITCOSTw }},{ upsert: false }, function(err,doc) {
             if (err) { throw err; }
             else { 
                 console.log(doc)
@@ -649,6 +649,7 @@ async function getInformeVendedor(req, res){
                             categ: "$Descr",
                             cod_categ: "$Clasi",
                             valor: {$sum: '$Importe'},
+                            folio:'$Folio',
                             valorCop: {$sum: '$COP'},
                             und: {$sum: '$Cantidad'},
                         }},
@@ -752,11 +753,16 @@ async function contarEan(req, res){
             {$push:{Conteo0:params}}, function(err,doc) {
             if (err) { throw err; }
             else { 
-                console.log(doc)
-                console.log('scan'+coll)
-                io.emit('scan'+coll, params);
-                client.close();
-                res.status(200).send(doc); 
+
+                collection.findOne({EAN:params.scan},
+                     function(err,docEAN) {
+                        console.log(doc)
+                            console.log(docEAN)
+                            io.emit('scan'+coll, params);
+                            client.close();
+                            res.status(200).send(docEAN); 
+                    })
+               
             }
           });        
 }
@@ -777,12 +783,16 @@ async function contarSKU(req, res){
         collection.updateOne({Codigo1:params.scan},
             {$push:{Conteo0:params}}, function(err,doc) {
             if (err) { throw err; }
-            else { 
-                console.log(doc)
-                console.log('scan'+coll)
-                io.emit('scan'+coll, params);
-                client.close();
-                res.status(200).send(doc); 
+            else {
+
+                  collection.findOne({Codigo1:params.scan},
+                     function(err,docEAN) {
+                        console.log(doc)
+                            console.log(docEAN)
+                            io.emit('scan'+coll, params);
+                            client.close();
+                            res.status(200).send(docEAN); 
+                    })
             }
           });        
 }

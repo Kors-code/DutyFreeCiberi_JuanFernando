@@ -11,8 +11,19 @@
 </div> -->
 <mat-card style="max-height: 85vh;overflow-y:scroll ;">
     <button  mat-button color="primary" [disabled]="" (click)="cancelar()" style="margin-right:10px;" ><mat-icon>cancel</mat-icon> Cerrar</button>
-    <button *ngIf="data.coll != 'noting'" mat-button color="accent" [disabled]="" (click)="UpdateRegistro()" style="margin-right:10px;" ><mat-icon>save</mat-icon> Guardar Vendedor</button>
+    <button *ngIf="data.coll != 'noting'" mat-button color="accent" [disabled]="" (click)="UpdateRegistro()" style="margin-right:10px;" ><mat-icon>save</mat-icon> Guardar</button>
     <!-- <button  *ngIf="data.coll != 'noting'" mat-button color="warn" [disabled]="" (click)="deleteRegistro()" style="margin-right:10px;" ><mat-icon>delete</mat-icon> Eliminar</button> -->
+    
+    <mat-form-field style="margin-right: 20px;" appearance="fill">
+      <mat-label>Costo_de_v</mat-label>
+      <input matInput type="number" [(ngModel)]="info.Costo_de_v">
+    </mat-form-field>
+
+    <mat-form-field style="margin-right: 20px;" appearance="fill">
+      <mat-label>UNITCOST</mat-label>
+      <input matInput type="number" [(ngModel)]="info.UNITCOST">
+    </mat-form-field>
+    
     <div *ngIf="config" style="display: flex; justify-content: center;">
         <mat-form-field appearance="fill" style="margin-right: 20px; width: 80%;">
           <mat-label>Vendedores</mat-label>

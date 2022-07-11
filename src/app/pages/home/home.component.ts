@@ -159,7 +159,7 @@ public login(){
         this._userService.singup(this.user, 'true').subscribe(
             response =>{
               // this.registerAdminUser(this.identity);
-               console.log(response);
+               //console.log(response);
               let token = response.token;
               this.token = token;
               // //this.token);
@@ -174,7 +174,7 @@ public login(){
               }
             },
             error =>{
-              console.log(error)
+              //console.log(error)
               // var errorMessage = <any>error;
               // if(errorMessage != null){
               //     var body = JSON.parse(error._body);
@@ -194,7 +194,7 @@ public login(){
     },
     error =>{
        var errorMessage = <any>error;
-       console.log(error)
+       //console.log(error)
     if(errorMessage != null){
         var body = JSON.parse(error);
         this.errorMessage = body.message;

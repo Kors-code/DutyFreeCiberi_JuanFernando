@@ -484,7 +484,7 @@ async function sendInvoiceSiigo(req, res){
                   let folio = element._id.slice(4)
                   console.log(folio)     
                   var newF = '';     
-                  if(folio="072826"){
+                  if(element){
                      newF = newF + date.Y +'-'
                     let mes =  date.M   
                     if(mes == 'ENE'){

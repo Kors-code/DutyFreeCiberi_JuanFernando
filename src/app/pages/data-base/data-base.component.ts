@@ -36,6 +36,7 @@ export class DataBaseComponent implements OnInit {
     this.getCollections();
   }
 
+  
   getConfig(){
     this._infoService.getConfig().subscribe(
       res=>{
@@ -137,6 +138,11 @@ export class DataBaseComponent implements OnInit {
     )
   }
 
+  checkIguales(event: any){
+    this.documentos.forEach((element: { check: any; }) => {
+      element.check = event.checked
+    })
+  }
 
 
   passRegistro(item:any){
@@ -218,6 +224,10 @@ export class DataBaseComponent implements OnInit {
         }
       }
     )
+  }
+
+  pdfs(){
+
   }
 
   downloadFile(datos: any, title:string) {
