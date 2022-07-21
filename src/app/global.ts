@@ -1,6 +1,6 @@
 export var GLOBAL = {
-    url_app: '/api/', 
-    // url_app: 'http://localhost:1165/api/',
+    // url_app: '/api/', 
+    url_app: 'http://localhost:1165/api/',
     // url_socket: 'ws://localhost:38081',
     // url_app: 'https://ciberi.co/api/',  
     url: 'https://ciberi.co/api/',
@@ -23,4 +23,4 @@ export var GLOBAL = {
 // produccion max-size err;
 // node --max_old_space_size=8192 ./node_modules/@angular/cli/bin/ng build --prod --build-optimizer
 
-// electron-packager . --platform=win32 --arch=x64 --icon=./build/DFP1.png
+// electron-packager . --platform=win32 --arch=x64 --icon=./favicon.ico

@@ -68,6 +68,17 @@ export class InfoService {
     
     }
 
+    
+    getInformeCajeros(tag:string){
+        // let paramas = JSON.stringify(register);
+        let headers = new HttpHeaders({
+            // 'Content-Type': 'application/json',
+            'Authorization': this.getToken()
+        });
+        return this._http.get<responseN>(this.url+'info-cajeros/'+tag, {headers:headers});
+    
+    }
+
     getInformePresupuestoVendedor(tag:string){
         // let paramas = JSON.stringify(register);
         let headers = new HttpHeaders({
@@ -88,10 +99,34 @@ export class InfoService {
     
     }
 
-   
+    getCollectionsInventarios(){
+        // let paramas = JSON.stringify(register);
+        let headers = new HttpHeaders({
+            // 'Content-Type': 'application/json',
+            'Authorization': this.getToken()
+        });
+        return this._http.get<any>(this.url+'collections-inv', {headers:headers});
+    }
 
-
+    offCollectionsInv(tag:string){
+        let paramas = JSON.stringify({tag:'tag'});
+        let headers = new HttpHeaders({
+            'Content-Type': 'application/json',
+            'Authorization': this.getToken()
+        });
+        return this._http.post<any>(this.url+'off-inventario/'+ tag, paramas, {headers:headers});
     
+    }
+
+    deleteCollectionsInv(tag:string){
+        let paramas = JSON.stringify({tag:'tag'});
+        let headers = new HttpHeaders({
+            'Content-Type': 'application/json',
+            'Authorization': this.getToken()
+        });
+        return this._http.post<any>(this.url+'delete-inventario/'+ tag, paramas, {headers:headers});
+    }
+
 
     getDataCollections(tag:string){
         // let paramas = JSON.stringify(register);
@@ -409,6 +444,16 @@ getConteoTag(tag:string){
         'Authorization': this.getToken()
     });
     return this._http.get<any>(this.url+'conteo-tag/'+tag, {headers:headers});
+}
+
+
+generarPDF(register:any, tag:string){
+    let paramas = JSON.stringify(register);
+    let headers = new HttpHeaders({
+        'content-Type':'application/json',
+        'Authorization': this.getToken()
+    });
+    return this._http.post<agregar>(this.url+'pdf-folio/'+ tag, paramas, {headers:headers});
 }
 
 }

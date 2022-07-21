@@ -54,8 +54,11 @@ api.post('/info-paginate',md_auth.ensureAuth, infoController.getRegistros);
 api.put('/update-info',  md_auth.ensureAuth, infoController.updateInfo);
 api.post('/info-search',md_auth.ensureAuth, infoController.getInfoDato);
 api.get('/info-vendedor/:tag',md_auth.ensureAuth, infoController.getInformeVendedor);
+api.get('/info-cajeros/:tag',md_auth.ensureAuth, infoController.getInformeCajeros);
+
 api.get('/info-vendedor-ppto/:tag',md_auth.ensureAuth, infoController.getInformePresupuesoVendedor);
 api.get('/info-collections',md_auth.ensureAuth, infoController.getCollections);
+api.get('/collections-inv',md_auth.ensureAuth, infoController.getCollectionsInventarios);
 api.get('/data-collections/:tag',md_auth.ensureAuth, infoController.getDataCollection);
 api.get('/headers-collections/:tag',md_auth.ensureAuth, infoController.getHeadersCollection);
 api.post('/key-collections/:tag',md_auth.ensureAuth, infoController.getDataCollectionKey);
@@ -69,12 +72,10 @@ api.get('/info-collection-estado/:tag/:estado',md_auth.ensureAuth, infoControlle
 api.get('/facturacion-siigo/:tag',md_auth.ensureAuth, infoController.getfacturacionSiigo);
 
 api.post('/cumplimiento-vendedor/:tag', infoController.getDataCollectionVendedor);
-
 api.delete('/info/:tag/:doc',md_auth.ensureAuth, infoController.deleteDataCollection);
 
-
 // SIIGO RUTAS
-
+api.post('/pdf-folio/:tag', md_auth.ensureAuth,  siigoController.PdfFactura);
 api.post('/auth-siigo', md_auth.ensureAuth,  siigoController.authSiigo);
 api.post('/up-invoice/:tag',md_auth.ensureAuth, siigoController.sendInvoiceSiigo);
 api.post('/invoice-siigo/:tag',md_auth.ensureAuth, siigoController.getFacturacionSiigo);
@@ -110,6 +111,7 @@ api.post('/update-conteo-defi/:tag', md_auth.ensureAuth,  infoController.updateD
 api.post('/contar/:tag', md_auth.ensureAuth,  infoController.contarEan);
 api.post('/contar-sku/:tag', md_auth.ensureAuth,  infoController.contarSKU);
 api.get('/conteo-tag/:tag', md_auth.ensureAuth,  infoController.getConteoTag);
-
+api.post('/off-inventario/:tag', md_auth.ensureAuth,  infoController.renametCollectionsInventarios);
+api.post('/delete-inventario/:tag', md_auth.ensureAuth,  infoController.deleteCollectionsInventarios);
 module.exports = api;
 

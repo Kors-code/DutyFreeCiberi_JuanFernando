@@ -1,22 +1,42 @@
 <mat-card>
-  
   <mat-progress-bar mode="indeterminate" *ngIf="log" ></mat-progress-bar> 
   <div style="display: flex; justify-content: center;">
-    <mat-form-field appearance="fill">
-      <mat-label>Tag Base Datos</mat-label>
-      <mat-select [(ngModel)]="tag" >
-        <mat-option  [value]="'CONTEO-'">
-          Nuevo
-        </mat-option>
-        <mat-option *ngFor="let item of config.inventarios" [value]="item.tag">
-          {{item.tag}}
-        </mat-option>
-      </mat-select>
-    </mat-form-field> 
+
+    <div style="display: flex; justify-content: center;">
+      <button mat-button [matMenuTriggerFor]="menuRef"><mat-icon class="mat-18">menu</mat-icon> <span>Conteos Activos</span> </button>
+      <mat-menu #menuRef="matMenu">
+        <button mat-menu-item (click)="tag = 'C-'" *ngIf="importar">
+            <mat-icon class="mat-18" >add</mat-icon>  
+            Nuevo conteo 
+        </button>
+        <button mat-menu-item (click)="tag = 'R-'" *ngIf="importar">
+          <mat-icon class="mat-18" >add</mat-icon>  
+            Nueva Recepcion 
+      </button>
+        <ng-template let-doc let-i="index" ngFor [ngForOf]="collections">
+            <button mat-menu-item (click)="tag = doc" *ngIf="!verTagInventario(doc)">
+                <mat-icon class="mat-18">check</mat-icon>  
+                {{doc}}   
+            </button>
+        </ng-template> 
+      </mat-menu>
+    </div>
+    <div style="display: flex; justify-content: center;" *ngIf="historico">
+      <button mat-button [matMenuTriggerFor]="menu"><mat-icon class="mat-18">menu</mat-icon> <span>Historico</span> </button>
+      <mat-menu #menu="matMenu">
+
+        <ng-template let-doc let-i="index" ngFor [ngForOf]="collections">
+            <button mat-menu-item (click)="tag = doc" *ngIf="verTagInventario(doc)">
+                <mat-icon class="mat-18">check</mat-icon>  
+                {{doc}}   
+            </button>
+        </ng-template> 
+      </mat-menu>
+    </div>
     
   </div>
   <mat-tab-group  mat-align-tabs="center" *ngIf="tag">
-    <mat-tab label="IMPORTAR CONTEO">
+    <mat-tab label="IMPORTAR CONTEO" *ngIf="importar">
       <mat-card-content>
           <h2 style="text-align: center;">TOMAS DE INVENTARIOS
             <span>{{procesado}}</span>
@@ -28,7 +48,15 @@
             </mat-form-field>
 
               <input *ngIf="tag" type="file" multiple="false" (change)="onFileChange($event)" style="font-size: 1.3em; margin-left: 10px;">
-          
+              <div *ngIf="clasificacion.length != 0" style="display: flex; justify-content: center;">
+                <mat-form-field appearance="fill" style="width: 60%;">
+                  <mat-label>Categoria</mat-label>
+                  <mat-select multiple [formControl]="clasifi"  >
+                    <mat-option *ngFor="let topping of clasificacion" [value]="topping">{{topping}}</mat-option>
+                  </mat-select>
+                </mat-form-field>
+             
+              </div>
               <div *ngIf="marcas.length != 0" style="display: flex; justify-content: center;">
                 <mat-form-field appearance="fill" style="width: 60%;">
                   <mat-label>Marcas</mat-label>
@@ -36,7 +64,7 @@
                     <mat-option *ngFor="let topping of marcas" [value]="topping">{{topping}}</mat-option>
                   </mat-select>
                 </mat-form-field>
-                <button *ngIf="marca.value.length != 0" mat-button (click)="procesarMarca()" ><mat-icon class="mat-18">filter_list</mat-icon> <span>Filtrar Conteo</span> </button> 
+                <button *ngIf="marca.value.length != 0 || clasifi.value.length != 0" mat-button (click)="procesarMarca()" ><mat-icon class="mat-18">filter_list</mat-icon> <span>Filtrar Conteo</span> </button> 
               </div>
             </div>
           
@@ -44,7 +72,7 @@
           <span *ngIf="progreso != 0" style="color: blue;">{{progreso | number:'0.0-2'}}% </span> <mat-progress-bar *ngIf="progreso != 0" mode="determinate" [value]="progreso" color="accent" style="width: 90%; margin: 0 auto;"></mat-progress-bar>
       </mat-card-content>
     </mat-tab>
-    <mat-tab label="PANEL DE CONTEO">
+    <mat-tab label="PANEL DE CONTEO" *ngIf="panel">
       <mat-card-content>
         <section style="display: flex;justify-content: center; margin-top: 10px;">
           <!-- <button *ngIf="tag" mat-button  mat-raised-button color="accent" [disabled]="progreso != 0"  (click)="getCnteoTag()" class="text-upper" style="width: 90%; margin:15px auto;margin-left: 20px;">MONITOREO <mat-icon>tv</mat-icon></button> -->
@@ -52,23 +80,24 @@
             MONITOREO <mat-icon>tv</mat-icon>
           </button>
 
-          <button style="margin-right:20px;color: white;" mat-button mat-raised-button color="primary" (click)="estado = 'iguales'" [class.accent]="estado == 'iguales'">
+          <button *ngIf="conteo.length != 0" style="margin-right:20px;color: white;" mat-button mat-raised-button color="primary" (click)="estado = 'iguales'" [class.accent]="estado == 'iguales'">
             <mat-icon>done_all</mat-icon>
               Iguales {{undIguales  |  number:'0.0-0'}} unds
           </button>
-          <button style="margin-right:20px ;color: white;" mat-button mat-raised-button color="primary" (click)="estado = 'faltantes'" [class.accent]="estado == 'faltantes'">
+          <button  *ngIf="conteo.length != 0" style="margin-right:20px ;color: white;" mat-button mat-raised-button color="primary" (click)="estado = 'faltantes'" [class.accent]="estado == 'faltantes'">
             <mat-icon>do_not_disturb_on</mat-icon>
             Faltantes {{undFaltantes  |  number:'0.0-0'}} unds
           </button>
-          <button style="margin-right:20px ;color: white;" mat-button mat-raised-button color="primary" (click)="estado = 'sobrantes'" [class.accent]="estado == 'sobrantes'">
+          <button *ngIf="conteo.length != 0" style="margin-right:20px ;color: white;" mat-button mat-raised-button color="primary" (click)="estado = 'sobrantes'" [class.accent]="estado == 'sobrantes'">
             <mat-icon>loupe</mat-icon>
             Sobrantes {{undSobrantes  |  number:'0.0-0'}} unds
           </button>
-          <button style="margin-right:20px ;color: white;" mat-button mat-raised-button color="primary" (click)="estado = 'definitivas'" [class.accent]="estado == 'definitivas'">
+          <button *ngIf="conteo.length != 0" style="margin-right:20px ;color: white;" mat-button mat-raised-button color="primary" (click)="estado = 'definitivas'" [class.accent]="estado == 'definitivas'">
             <mat-icon>adjust</mat-icon>
             Definitivos    {{undDefinitivas  |  number:'0.0-0'}} unds
           </button>
-          <button style="margin-right:20px ;color: white;" mat-button mat-raised-button color="primary" (click)="estado = 'informe'" [class.accent]="estado == 'informe'">
+          
+          <button *ngIf="conteo.length != 0" style="margin-right:20px ;color: white;" mat-button mat-raised-button color="primary" (click)="estado = 'informe'" [class.accent]="estado == 'informe'">
             <mat-icon>auto_graph</mat-icon>
             Informe
           </button>
@@ -83,6 +112,11 @@
               <mat-icon>playlist_add_check_circle</mat-icon>
                 Recontar 
             </button>
+            <button style="margin-left:  10px;" *ngIf="Iguales.length != 0 " mat-button mat-raised-button color="warn" (click)="downloadFile(Iguales, 'Iguales')">
+              <mat-icon>cloud_download</mat-icon>
+                Descargar 
+            </button>
+
           </h1>
           <table class="mat-elevation-z8" style="margin: 0 auto;">
             <thead style="padding: 15px; font-size: 1em; border-radius: 10px;">
@@ -242,6 +276,10 @@
               <mat-icon>print</mat-icon>
                 Imprimir 
             </button>
+            <button style="margin-left:  10px;" *ngIf="Faltantes.length != 0 " mat-button mat-raised-button color="warn" (click)="downloadFile(Faltantes, 'Faltantes')">
+              <mat-icon>cloud_download</mat-icon>
+                Descargar 
+            </button>
           </h1>
           <table class="mat-elevation-z8" style="margin: 0 auto;">
             <thead style="padding: 15px; font-size: 1em; border-radius: 10px;">
@@ -397,9 +435,13 @@
               <mat-icon>adjust</mat-icon>
                 Definitivos 
             </button>
-            <button style="margin-left:  10px; color: white;" *ngIf="Faltantes.length != 0 " mat-button mat-raised-button color="warn" (click)="printSobrantes()">
+            <button style="margin-left:  10px; color: white;" *ngIf="Sobrantes.length != 0 " mat-button mat-raised-button color="warn" (click)="printSobrantes()">
               <mat-icon>print</mat-icon>
                 Imprimir 
+            </button>
+            <button style="margin-left:  10px;" *ngIf="Sobrantes.length != 0 " mat-button mat-raised-button color="warn" (click)="downloadFile(Sobrantes, 'Sobrantes')">
+              <mat-icon>cloud_download</mat-icon>
+                Descargar 
             </button>
           </h1>
           <table class="mat-elevation-z8" style="margin: 0 auto;">
@@ -473,10 +515,10 @@
                 <th>
                   <span style="display:flex; justify-content: center; align-items: center;">
                   COSTO COP
-                  <button *ngIf="Faltantes[0].COST_PROM > Faltantes[Faltantes.length-1].COST_PROM" mat-icon-button aria-label="Clear" (click)="filterCOPFaltantes()">
+                  <button *ngIf="Sobrantes[0].COST_PROM > Sobrantes[Sobrantes.length-1].COST_PROM" mat-icon-button aria-label="Clear" (click)="filterCOPSobrantes()">
                     <mat-icon>arrow_upward</mat-icon>
                   </button>
-                  <button *ngIf="Faltantes[0].COST_PROM < Faltantes[Faltantes.length-1].COST_PROM" mat-icon-button aria-label="Clear" (click)="filterCOPFaltantes()">
+                  <button *ngIf="Sobrantes[0].COST_PROM < Sobrantes[Sobrantes.length-1].COST_PROM" mat-icon-button aria-label="Clear" (click)="filterCOPSobrantes()">
                     <mat-icon>arrow_downward</mat-icon>
                   </button>
                 </span>
@@ -547,9 +589,13 @@
         <div *ngIf="conteo.length != 0 && estado == 'definitivas'" >
           
           <h1 style="text-align:center;">DEFINITIVOS {{Definitivas.length}} items
-            <button style="margin-left:  10px; color: white;" *ngIf="Faltantes.length != 0 " mat-button mat-raised-button color="warn" (click)="printDefinitivos()">
+            <button style="margin-left:  10px; color: white;" *ngIf="Definitivas.length != 0 " mat-button mat-raised-button color="warn" (click)="printDefinitivos()">
               <mat-icon>print</mat-icon>
                 Imprimir 
+            </button>
+            <button style="margin-left:  10px;" *ngIf="Definitivas.length != 0 " mat-button mat-raised-button color="warn" (click)="downloadFile(Definitivas, 'Definitivas')">
+              <mat-icon>cloud_download</mat-icon>
+                Descargar 
             </button>
           </h1>
           <div *ngIf="Definitivas.length !=0">
@@ -627,11 +673,11 @@
                   </th>
                   <th>CONTEO</th>
                   <th>DIFERENCIA</th>
-                  <th>CONTEOS</th>
-                  <th>COSTO USD</th>
-                  <th>
+                  <th >CONTEOS</th>
+                  <th style="border: 1px solid grey;">UND USD</th>
+                  <th style="border: 1px solid grey;">
                     <span style="display:flex; justify-content: center; align-items: center;">
-                    COSTO COP
+                    UND COP
                     <button *ngIf="Definitivas[0].COST_PROM > Definitivas[Definitivas.length-1].COST_PROM" mat-icon-button aria-label="Clear" (click)="filterCOPFaltantes()">
                       <mat-icon>arrow_upward</mat-icon>
                     </button>
@@ -640,6 +686,8 @@
                     </button>
                   </span>
                   </th>
+                  <th style="border: 1px solid grey;"> TOTAL USD</th>
+                  <th style="border: 1px solid grey;"> TOTAL COP</th>
                   <!-- <th>DEFINITIVO</th> -->
                 </tr>
               </thead>
@@ -649,19 +697,18 @@
                   searcEan  == '' && element.Codigo1 == searcSKU ||
                   searcEan  == '' &&   searcSKU == ''  ||
                   element.Codigo1 == searcSKU && element.EAN == searcEan">
-                    <td> {{element.Codigo1}}</td>
-                    <td> {{element.EAN}}</td>
-                    <td> {{element.Cla}}</td>
-                    <td> {{element.Descripcion_1}}</td>
-                    <td style="text-align: center;"> {{element.Exist_Final}}</td>
-                    <td>   
-                      <span class="selec" *ngIf="element.Conteo != 0" (click)="passRegistro(element.Definitivo)">
+                    <td style="border-bottom: 1px solid grey;"> {{element.Codigo1}}</td>
+                    <td style="border-bottom: 1px solid grey;"> {{element.EAN}}</td>
+                    <td style="border-bottom: 1px solid grey;"> {{element.Cla}}</td>
+                    <td style="border-bottom: 1px solid grey;"> {{element.Descripcion_1}}</td>
+                    <td style="text-align: center; border-bottom: 1px solid grey;"> {{element.Exist_Final}}</td>
+                    <td style="border-bottom: 1px solid grey;">   
+                      <span class="selec">
                       {{element.Conteo}}
-                    </span>
-                    
+                      </span>
                     </td>
-                    <td [class._50]="element.Conteo - element.Exist_Final <= -1" [class._100]="element.Conteo - element.Exist_Final == 0"  [class._90]="element.Conteo - element.Exist_Final >= 1"> {{element.Conteo - element.Exist_Final}} </td>
-                 <td style="display: flex; flex-wrap: nowrap; width: 120px;">
+                    <td style="border-bottom: 1px solid grey;" [class._50]="element.Conteo - element.Exist_Final <= -1" [class._100]="element.Conteo - element.Exist_Final == 0"  [class._90]="element.Conteo - element.Exist_Final >= 1" style="border-bottom: 1px solid grey;"> {{element.Conteo - element.Exist_Final}} </td>
+                    <td style="border-bottom: 1px solid grey ;width:120px;">
                        <!-- <span (click)="passRegistro(element.Definitivo)" class="selec" *ngIf="element.Definitivo.length != 0">
                         {{cuantas(element.Definitivo)}}
                         <mat-icon> done_all </mat-icon> 
@@ -679,11 +726,17 @@
                         [4] - [{{ cuantas(element.Conteo4)}} unds ] 
                        </span>
                     </td>
-                    <td style="text-align:right;">
-                      {{element.TOTAL_FINAL_INV_USD  |  number:'0.0-0'}}
+                    <td style="text-align:right; border-bottom: 1px solid grey;">
+                      {{element.TOTAL_FINAL_INV_USD  |  number:'0.0-2'}}
                     </td>
-                    <td style="text-align:right ;">
+                    <td style="text-align:right; border-bottom: 1px solid grey;">
                       {{element.TOTAL_FINAL_INV |  number:'0.0-0'}}
+                    </td>
+                    <td style="text-align:right; border-bottom: 1px solid grey;">
+                      {{element.TOTAL_FINAL_INV_USD * element.Diferencia |  number:'0.0-2'}}
+                    </td>
+                    <td style="text-align:right; border-bottom: 1px solid grey;">
+                      {{element.TOTAL_FINAL_INV * element.Diferencia |  number:'0.0-0'}}
                     </td>
                     <!-- <td [class._50]="element.Definitivo.length - element.Exist <= -1" [class._100]="element.Definitivo.length - element.Exist == 0"> {{element.Definitivo.length - element.Exist}} </td> -->
                   </tr>
@@ -698,10 +751,20 @@
 
         </div>
         <div *ngIf="conteo.length != 0 && estado == 'informe'">
-           <h1 style="text-align:center ;"> DUTY FREE PARTNERS COLOMBIA SAS</h1>
+        
+          <h1 style="text-align:center ;"> DUTY FREE PARTNERS COLOMBIA SAS</h1>
            <h1 style="text-align:center ;">NIT 901.195.686-7</h1>
            <h1 style="text-align:center ;">ANALISIS DIFERENCIAS INVENTARIO FISICO {{tag}}</h1>
-            <table style="width: 90%; margin: 0 auto; font-size: 1.3em;" class="mat-elevation-z8">
+           <h1 style="display:flex;justify-content: flex-end;">  
+            <button style="margin-right:20px ;color: white;" mat-button mat-raised-button color="primary" (click)="cerrarInventario()" *ngIf="!verTagInventario(tag)">
+            <mat-icon>close</mat-icon>
+              Cerrar Conteo
+          </button> 
+          <button style="margin-right:20px ;color: white; background-color: tomato;" mat-button mat-raised-button  (click)="deleteInventario()">
+            <mat-icon>delete</mat-icon>
+             Eliminar Conteo
+          </button></h1> 
+           <table style="width: 90%; margin: 0 auto; font-size: 1.3em;" class="mat-elevation-z8">
               <thead style="background-color:rgb(63, 62, 62) ; color:white; padding: 15px; font-size: 1em; border-radius: 10px;">
                 <tr>
                   <th rowspan="2">SKU</th>
@@ -845,7 +908,7 @@
 
       </mat-card-content>
     </mat-tab>
-    <mat-tab label="TOMA INVENTARIO">
+    <mat-tab label="TOMA INVENTARIO" *ngIf="toma">
       <mat-card-content style="display:flex;flex-wrap:wrap;justify-content: center; margin: 10px auto;">
         <mat-form-field appearance="fill">
           <mat-label>Tag Base Datos</mat-label>

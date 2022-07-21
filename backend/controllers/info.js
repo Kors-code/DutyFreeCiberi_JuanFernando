@@ -293,14 +293,70 @@ async function getCollections(req, res){
         res.status(200).send(arrayCollections);
 }
 
+async function getCollectionsInventarios(req, res){
+    var params = req.body;
+    var coll = req.params.tag;
+    console.log(params)
+    const url = 'mongodb://localhost:27017';
+    const client = new MongoClient(url);
+    const dbName = 'DutyFreeInventarios';
+   
+        await client.connect();
+        console.log('Connected successfully to server');
+        const db = client.db(dbName);
+        // const collection = db.collection(coll);
+        let arrayCollections = []
+        const collections = await db.listCollections().forEach(element => {
+            // console.log(element)    
+            arrayCollections.push(element.name)
+         });;
+       
+        res.status(200).send(arrayCollections);
+}
+
+async function renametCollectionsInventarios(req, res){
+    var params = req.body;
+    var coll = req.params.tag;
+    console.log(params)
+    const url = 'mongodb://localhost:27017';
+    const client = new MongoClient(url);
+    const dbName = 'DutyFreeInventarios';
+        await client.connect();
+        console.log('Connected successfully to server');
+        const db = client.db(dbName);
+
+        var coll_off = 'off_'+ coll
+        db.collection(coll).rename(coll_off, function(err, newColl) {
+            return res.status(200).send(coll_off);
+        });  
+}
+
+async function deleteCollectionsInventarios(req, res){
+    var params = req.body;
+    var coll = req.params.tag;
+    console.log(params)
+    const url = 'mongodb://localhost:27017';
+    const client = new MongoClient(url);
+    const dbName = 'DutyFreeInventarios';
+        await client.connect();
+        console.log('Connected successfully to server');
+        const db = client.db(dbName);
+        db.collection(coll).drop(function(err, newColl) {
+            if (err) { 
+                return res.status(400).send(err);
+            }
+            else { 
+                return res.status(200).send(newColl);
+            }
+        });  
+}
+
 async function getDataCollection(req, res){
     var params = req.body;
     var coll = req.params.tag;
-    // console.log(params)
     const url = 'mongodb://localhost:27017';
     const client = new MongoClient(url);
     const dbName = 'DutyFree';
-   
         await client.connect();
         console.log('Connected successfully to server');
         const db = client.db(dbName);
@@ -661,6 +717,36 @@ async function getInformeVendedor(req, res){
         });
 }
 
+async function getInformeCajeros(req, res){
+    var params = req.body;
+         console.log(params)
+        await client.connect();
+        console.log('Connected successfully to server');
+        var coll = req.params.tag;
+        const collection = db.collection(coll);
+        collection.aggregate([
+                    { $group: {
+                        _id: "$CAJERO",
+                        Ventas:{$sum: '$Importe'},
+                        VentasCop:{$sum: '$COP'},
+                        Unidades:{$sum: '$Cantidad'},
+                        Cost: {$sum: {$toInt: '$Costo_de_v'}},
+                        Detalle: {$addToSet : { 
+                            categ: "$Descr",
+                            cod_categ: "$Clasi",
+                            valor: {$sum: '$Importe'},
+                            folio:'$Folio',
+                            valorCop: {$sum: '$COP'},
+                            und: {$sum: '$Cantidad'},
+                        }},
+                    }},{
+                        $sort : { Ventas: -1 }
+                      }
+                ]).toArray(function(err, items) {
+            res.status(200).send(items);
+        });
+}
+
 function getRegistros(req, res){    
     var update = req.body;
     var Id = req.body._id;
@@ -941,6 +1027,7 @@ module.exports = {
     getRegistros,
     getInfoDato,
     getInformeVendedor,
+    getInformeCajeros,
     getInformePresupuesoVendedor,
     getfacturacionSiigo,
     getDataCollectionEstado,
@@ -949,6 +1036,7 @@ module.exports = {
     consultarInfoCategoria,
     consultarInfoCategoriaTienda,
     getCollections,
+    getCollectionsInventarios,
     getDataCollection,
     getHeadersCollection,
     getDataCollectionKey,
@@ -976,7 +1064,11 @@ module.exports = {
     updateDataConteo2,
     updateDataConteo3,
     updateDataConteo4,
-    deleteDataPresupuesto
+    deleteDataPresupuesto,
+
+
+    renametCollectionsInventarios,
+    deleteCollectionsInventarios
 }
 
 

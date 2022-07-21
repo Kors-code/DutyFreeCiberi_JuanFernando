@@ -24,7 +24,8 @@ export class DataBaseComponent implements OnInit {
   paginacion:any;
   log:boolean = false;
   config:any;
-  displayedColumns: string[] = ['folio', 'fecha', 'vendedor','pdf' ,'siigo', 'facsiigo','importe', 'trm', 'cop', 'ver'];
+  check= false;
+  displayedColumns: string[] = ['check','folio', 'fecha', 'vendedor','pdf' ,'siigo', 'facsiigo','importe', 'trm', 'cop', 'ver'];
   constructor(public _infoService:InfoService,  public _socketService:SocketIOService,
     public _siigoService:SiigoService,
     public dialog: MatDialog, @Inject(DOCUMENT) doc: any,) {
@@ -44,7 +45,7 @@ export class DataBaseComponent implements OnInit {
           this.config = res[0];
           // localStorage.setItem('categ',JSON.stringify(this.config.categorias))
 
-          ////console.log(this.config)
+          ////// console.log(this.config)
         }
        
       }
@@ -57,7 +58,7 @@ export class DataBaseComponent implements OnInit {
     this._infoService.getCollections().subscribe(
       res=>{
         this.collections = res
-        ////console.log(res)
+        this.collections.reverse();
       }
     )
   }
@@ -71,18 +72,19 @@ export class DataBaseComponent implements OnInit {
     this.key = tag;
     this._infoService.getDataCollections(tag).subscribe(
       res=>{
-        // console.log(res)
+        // // console.log(res)
         
         this.documentos = res;
         this.headers= Object.keys(this.documentos[0])
         this.subir = this.documentos.map(function(e: { Estado: any; }) { return e.Estado; }).indexOf('Siigo');
-        // console.log(this.subir)
+        // // console.log(this.subir)
         this.progreso = 0
         this.totalCop=0
         this.totalUsd=0
-        this.documentos.forEach((element: { COP: number; Importe: number; }) => {
+        this.documentos.forEach((element: { COP: number; Importe: number; check: boolean; }) => {
           this.totalCop= this.totalCop + element.COP
           this.totalUsd= this.totalUsd + element.Importe
+          element.check = false
         });
 
         if(this.subir != -1){
@@ -102,7 +104,7 @@ export class DataBaseComponent implements OnInit {
     this._infoService.getHeadersCollections(tag).subscribe(
       res =>{
         this.headers = res
-        ////console.log(res)
+        ////// console.log(res)
       }
     )
   }
@@ -110,13 +112,13 @@ export class DataBaseComponent implements OnInit {
   campo = "";
   getRegistroCollections(doc:string){
     this.campo = doc;
-    ////console.log(doc)
+    ////// console.log(doc)
 
 
   }
 
   public getRegistros(pg:number){
-    ////console.log(pg)
+    ////// console.log(pg)
     let data = {
       options: {
         page: pg,
@@ -128,12 +130,12 @@ export class DataBaseComponent implements OnInit {
     }
     this._infoService.getRegistros(data).subscribe(
       res =>{
-        ////console.log(res)
+        ////// console.log(res)
         this.documentos = res.docs;
         this.headers= Object.keys(this.documentos[0].info)
-        ////console.log(this.documentos);
+        ////// console.log(this.documentos);
         this.paginacion= res;
-        ////console.log(this.paginacion)
+        ////// console.log(this.paginacion)
       }
     )
   }
@@ -154,30 +156,30 @@ export class DataBaseComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
 
-      //console.log(result)
+      //// console.log(result)
       if(result == item){
-        //console.log('igual')
+        //// console.log('igual')
       }else{
-        //console.log('cambio')
+        //// console.log('cambio')
         this.getDataCollections(this.key)
       }
       item = result
 
     })
-    // ////console.log(event)
+    // ////// console.log(event)
   }
 
 
   buscarRegistro(){
     let registro = [[this.campo, this.search]];
-    ////console.log(registro)
+    ////// console.log(registro)
     let obj = Object.fromEntries(registro)
-    ////console.log(obj)
+    ////// console.log(obj)
 
     this._infoService.getDataCollectionsKey(obj, this.key).subscribe(
       res=>{
         this.documentos = res;
-        ////console.log(res)
+        ////// console.log(res)
       }
     )
  
@@ -196,20 +198,19 @@ export class DataBaseComponent implements OnInit {
   authSiigo(tag:string){
     this.progreso = 1;
     this.newDataUp =  this._socketService.listen('UpSiigo').subscribe((data:any)=>{
-      ////console.log(data);
+      ////// console.log(data);
       this.progreso = (data.i / data.length)*100
-      ////console.log(this.progreso)
+      ////// console.log(this.progreso)
     })
     let credenciales={
       user:this.config.siigoUser,
       key:this.config.siigoKey
     }
-    ////console.log(credenciales)
     this._siigoService.sendInvoicesPeriodo(credenciales, tag).subscribe(
       res => {
-        ////console.log(res)
+        ////// console.log(res)
       },err=>{
-        ////console.log(err.status)
+        ////// console.log(err.status)
         if(err.status == 200){
           this.getDataCollections(this.key)
           // let data = {titulo: 'Confirmaciòn', info:err.error.text, type: 'Confirm', icon:'done_all'}
@@ -226,8 +227,24 @@ export class DataBaseComponent implements OnInit {
     )
   }
 
-  pdfs(){
+  pdfs(element:any){
+    // console.log(element)
+    this.log = true;
+    this._infoService.generarPDF(element, this.key).subscribe(
+      res => {
+        // console.log(res)
+        this.log = true;
+        let data: Object
+        data = {titulo: 'PDF Creado Correctamente', info:'Se realizara la consulta para validar cambios ', icon:'done_all' }
 
+        let dialogRef = this.dialog.open(DialogConfirm,{
+          data: data
+        });
+        this.getDataCollections(this.key)
+      },err=>{
+        this.getDataCollections(this.key)
+      }
+    )
   }
 
   downloadFile(datos: any, title:string) {
@@ -237,7 +254,7 @@ export class DataBaseComponent implements OnInit {
       const headerCostumer = Object.keys(data[0]);
 
       let pos = headerCostumer.map(function(e) { return e; }).indexOf('Costumer');
-      console.log(pos)
+      // console.log(pos)
       if(pos != -1 && pos != headerCostumer.length-1){
         data.forEach((element: any) => {
           element.Costumer = element.Costumer.NOMBRE_DE_PAX
@@ -257,7 +274,7 @@ export class DataBaseComponent implements OnInit {
         });      
       }
 
-      console.log(data)
+      // console.log(data)
 
 
 
@@ -302,7 +319,7 @@ export class DialogDataJson {
     public dialogRef: MatDialogRef<DialogDataJson>,
     public dialog: MatDialog, @Inject(DOCUMENT) doc: any,
     @Inject(MAT_DIALOG_DATA) public data: any) {
-      ////console.log(data)
+      ////// console.log(data)
       this.editorOptions = new JsonEditorOptions()
       this.editorOptions.modes = ['code', 'text', 'tree', 'view']; // set all allowed modes
     //this.options.mode = 'code'; //set only one mode
@@ -311,7 +328,7 @@ export class DialogDataJson {
       this.values = Object.values(data.reg)
       this.info = data.reg
       this.getConfig()
-      // ////console.log(this.keys)
+      // ////// console.log(this.keys)
      }
 
   onNoClick(): void {
@@ -333,18 +350,18 @@ export class DialogDataJson {
   doc:any
   getData(event:Event){
     this.doc = event;
-    //console.log(this.doc)
+    //// console.log(this.doc)
   }
 
   UpdateRegistro(){
-    //console.log(this.doc);
+    //// console.log(this.doc);
     if(this.doc){
       this.info = this.doc
     }
     this._infoService.updateRegistroVendedor(this.info, this.data.coll).subscribe(
       res=>{
         // this.doc = res
-        //console.log(res)
+        //// console.log(res)
         let data: Object
         data = {titulo: 'Exito', info:'Se Actualizo la Informacion Correctamente', icon:'done_all' }
 
@@ -356,14 +373,14 @@ export class DialogDataJson {
 
 
         })
-        ////console.log(res)
+        ////// console.log(res)
       }
     )
     
   }
 
   deleteRegistro(){
-    ////console.log(this.doc);
+    ////// console.log(this.doc);
     this._infoService.deleteRegistro(this.info._id, this.data.coll).subscribe(
       res=>{
         let data: Object
@@ -378,7 +395,7 @@ export class DialogDataJson {
 
           // this.loading  = false;
         })
-        ////console.log(res)
+        ////// console.log(res)
       }
     )
     
@@ -394,8 +411,8 @@ export class DialogDataJson {
   }
 
   addEmpleado(){
-    // console.log(this.info)
-    // console.log(this.newEmpleado)
+    // // console.log(this.info)
+    // // console.log(this.newEmpleado)
     this.info.Nombre_del_vend = this.newEmpleado.name
     this.info.Codi = Number(this.newEmpleado.codigo)
   }

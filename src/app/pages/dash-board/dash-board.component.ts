@@ -341,6 +341,7 @@ export class DashBoardComponent implements OnInit {
         this.getDataCollections(tag)
         // this.getInformePresupuestoVendedor(tag)
         this.getInformeVendedores(tag);
+        this.getInformeCajeros(tag);
         ////////console.log(this.presupuesto)
       }
     )
@@ -388,6 +389,44 @@ export class DashBoardComponent implements OnInit {
             {
               "Codigo": element._id,
               "Vendedor": element.Vendedor[0],              
+              "USD": element.Ventas,
+              "COP": element.VentasCop,
+              "Unidades": element.Unidades,
+              "Facturas": element.folios,
+              "CostoVenta": element.Unidades,
+              "item_promedio":  element.Ventas / element.Unidades,
+              "fac_promedio":  element.Ventas / element.folios,
+
+            }
+          )
+        }
+
+        this.log = false;
+      }
+      
+    )
+  }
+
+  informeCajeros:any
+  totalCajeros = 0;
+  downloadCajeros:any[] = [];
+
+  getInformeCajeros(tag:string){
+    this.log = true;
+    this._infoService.getInformeCajeros(tag).subscribe(
+      res=>{
+        this.totalCajeros = 0;
+        this.downloadCajeros = [];
+        this.informeCajeros = res
+
+        console.log(this.informeCajeros)
+        for (let index = 0; index <  this.informeCajeros.length; index++) {
+          const element =  this.informeCajeros[index];
+          element.folios = this.facturasVendedor(element.Detalle)
+          this.totalCajeros = this.totalCajeros + element.Ventas;    
+          this.downloadCajeros.push(
+            {
+              "Codigo": element._id,          
               "USD": element.Ventas,
               "COP": element.VentasCop,
               "Unidades": element.Unidades,
@@ -715,11 +754,7 @@ export class DashBoardComponent implements OnInit {
           this.totalCategoria = this.totalCategoria + element.Ventas
           this.totalCategoriaCop = this.totalCategoriaCop + element.Cop
           this.totalCategoriaUnd = this.totalCategoriaUnd + element.Unidades
-          this.totalCategoriaCosto = this.totalCategoriaCosto +element.Cost
-
-          // this.presupuesto.ventas_usd = this.presupuesto.ventas_usd + element.Ventas;
-          // this.presupuesto.ventas = this.presupuesto.ventas + element.Cop;
-
+          this.totalCategoriaCosto = this.totalCategoriaCosto + element.Cost
           for (let r = 0; r < this.presupuesto.categorias.length; r++) {
             const elemento = this.presupuesto.categorias[r];
             let pos = elemento.subscat.map(function(e:any) { return e; }).indexOf(element.Codigo[0]);

@@ -26,7 +26,7 @@
               <button  *ngIf="documentos.length != 0" mat-button (click)="downloadFile(documentos, 'Documentos '+ key)"><mat-icon>cloud_download</mat-icon> Descargar Info </button>      
         </h3>
         <button *ngIf="subir != -1" flex mat-raised-button color="accent" [disabled]="progreso != 0"  (click)="authSiigo(key)" class="text-upper" style="width: 90%; margin:15px auto;margin-left: 20px;"> Generar Todis los PDF <mat-icon>update_file</mat-icon></button>
-        <button *ngIf="subir != -1" flex mat-raised-button color="warna" [disabled]="progreso != 0"  (click)="pdfs()" class="text-upper" style="width: 90%; margin:15px auto;margin-left: 20px;"> Generar folio PDF <mat-icon>done_all</mat-icon></button>
+        <!-- <button *ngIf="subir != -1" flex mat-raised-button color="warna" [disabled]="progreso != 0"  (click)="pdfs()" class="text-upper" style="width: 90%; margin:15px auto;margin-left: 20px;"> Generar folio PDF <mat-icon>done_all</mat-icon></button> -->
         <span *ngIf="progreso != 0" style="color: blue;">{{progreso | number:'0.0-2'}}% </span> <mat-progress-bar *ngIf="progreso != 0" mode="determinate" [value]="progreso" color="accent" style="width: 90%; margin: 0 auto;"></mat-progress-bar>
         <mat-menu #menuRef="matMenu">
             <ng-template let-doc let-i="index" ngFor [ngForOf]="collections">
@@ -59,14 +59,14 @@
             The actual rendered columns are set as a property on the row definition" -->
     
       <!-- Position Column -->
-      <!-- <ng-container matColumnDef="check">
-        <th mat-header-cell *matHeaderCellDef> Chek.
-          <mat-checkbox class="example-margin" (change)="checkIguales($event)"></mat-checkbox>
+      <ng-container matColumnDef="check">
+        <th mat-header-cell *matHeaderCellDef> PDF.
          </th>
         <td mat-cell *matCellDef="let element">
-          <mat-checkbox class="example-margin" [(ngModel)]="element.check"></mat-checkbox>
+          <mat-icon class="selec" (click)="pdfs(element)"> picture_as_pdf </mat-icon> 
+      
         </td>
-      </ng-container> -->
+      </ng-container>
 
       <ng-container matColumnDef="folio">
         <th mat-header-cell *matHeaderCellDef> No. </th>

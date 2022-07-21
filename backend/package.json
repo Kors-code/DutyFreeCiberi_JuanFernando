@@ -36,8 +36,17 @@
     },
     "win": {
       "target": "NSIS",
-      "icon": "build/play_icon.png"
-    }
+      "icon": "favicon.ico"
+    },
+    "extraFiles": [
+      {
+        "from": "./public",
+        "to": "public"
+      }
+    ],
+    "files": [
+      "**/*"
+    ]
   },
   "dependencies": {
     "bcrypt-nodejs": "^0.0.3",

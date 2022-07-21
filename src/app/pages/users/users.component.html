@@ -106,9 +106,18 @@
                                 <mat-list-item >
                                     <mat-icon class="clicked" mat-list-icon (click)="deleteModulo(i)" style="background: tomato;color: white;">delete</mat-icon>
                                     <h4 mat-line >{{item.titulo}} - </h4>
-                                    <mat-checkbox name="edit" [(ngModel)]="item.escribir" style="margin-left: 15px;"> Escribir </mat-checkbox>
-                                    <mat-checkbox name="edit" [(ngModel)]="item.editar" style="margin-left: 15px;"> Editar </mat-checkbox>
-                                    <mat-checkbox name="delete" [(ngModel)]="item.eliminar" style="margin-left: 15px;"> Eliminar </mat-checkbox>
+                                    <span *ngIf="item.titulo != 'Inventarios'">
+                                      <mat-checkbox name="edit" [(ngModel)]="item.escribir" style="margin-left: 15px;"> Escribir </mat-checkbox>
+                                      <mat-checkbox name="edit" [(ngModel)]="item.editar" style="margin-left: 15px;"> Editar </mat-checkbox>
+                                      <mat-checkbox name="delete" [(ngModel)]="item.eliminar" style="margin-left: 15px;"> Eliminar </mat-checkbox>
+                                    </span>
+                                    <span *ngIf="item.titulo == 'Inventarios'">
+                                      <mat-checkbox name="edit" [(ngModel)]="item.historico" style="margin-left: 15px;"> Historico </mat-checkbox>
+                                      <mat-checkbox name="edit" [(ngModel)]="item.importar" style="margin-left: 15px;"> Importar </mat-checkbox>
+                                      <mat-checkbox name="delete" [(ngModel)]="item.panel" style="margin-left: 15px;"> Panel Conteo</mat-checkbox>
+                                      <mat-checkbox name="delete" [(ngModel)]="item.toma" style="margin-left: 15px;"> Toma Inv </mat-checkbox>
+                                    </span>
+                                   
                                 </mat-list-item>
                              
                               </ng-template>

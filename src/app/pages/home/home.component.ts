@@ -169,55 +169,39 @@ public login(){
 
                 //crear elemento localStorage
                 localStorage.setItem('token', token);
+                window.location.reload();
               
                 
               }
             },
             error =>{
-              //console.log(error)
-              // var errorMessage = <any>error;
-              // if(errorMessage != null){
-              //     var body = JSON.parse(error._body);
-              //     this.errorMessage = body.message;
-              //    //  //error);
-              //   //  this._dialogService.openAlert({
-              //   //    message: '' + this.errorMessage,
-              //   //    title: 'Error',
-              //   //    closeButton: 'Cerrar',
-              //   //  });
-              //     // this.log = false;
-              //   }
+              console.log(error)
+              let data: Object
+              data = {titulo: 'Error de Acceso', info:this.user.email +' Usuario Sin Credenciales de ingreso', icon:'lock' }
+        
+              let dialogRef = this.dialog.open(DialogConfirm,{
+                data: data
+              
+              });
+        
+              dialogRef.afterClosed().subscribe(result => {
+        
+              })
+       
             }
           );
       }
       
     },
     error =>{
-       var errorMessage = <any>error;
-       //console.log(error)
-    if(errorMessage != null){
-        var body = JSON.parse(error);
-        this.errorMessage = body.message;
-        // //error);
-
       let data: Object
       data = {titulo: 'Error de Acceso', info:this.user.email +' Usuario Sin Credenciales de ingreso', icon:'lock' }
 
       let dialogRef = this.dialog.open(DialogConfirm,{
         data: data
-      
       });
 
-      dialogRef.afterClosed().subscribe(result => {
 
-      })
-      //  this._dialogService.openAlert({
-      //    message: '' + this.errorMessage,
-      //    title: 'Error',
-      //    closeButton: 'Cerrar',
-      //  });
-      //   this.log = false;
-      }
     }
 
   );

@@ -29,6 +29,7 @@ export interface _Conteo {
   COST_PROM: number;
   TOTAL_FINAL_INV_USD: number;
   TOTAL_FINAL_INV: number;
+  Diferencia: number;
   Cla: string;
   Descripcion_1: string;
   Exist_Final: number;
@@ -77,12 +78,43 @@ export class tomaInventarioComponent implements OnInit {
       //   .latest()
       //   .then((data:any) =>  // console.log(this.trm =  data.valor))
       //   .catch((error:any) =>  // console.log(error));
+      console.log(this.identity)
     }
 
   ngOnInit(): void {
     this.getConfig()
     this.identity = this._userService.getIdentity();
+    this.getCollectionsInventarios();
+    this. permisosUser();
     // this._mongoService.main();
+  }
+
+  historico=false;
+  importar=false;
+  panel=false;
+  toma=false;
+  permisosUser(){
+    for(var i = 0;i < this.identity.modulos.length; i++){
+      if(this.identity.modulos[i].titulo == 'Inventarios'){
+        // //(this.funcionalidades[i])
+        this.historico = this.identity.modulos[i].historico;
+        this.importar = this.identity.modulos[i].importar;
+        this.panel = this.identity.modulos[i].panel;
+        this.toma = this.identity.modulos[i].toma;
+        break
+      }
+    }
+  }
+
+  collections:any = [];
+  getCollectionsInventarios(){
+    this._infoServce.getCollectionsInventarios().subscribe(
+      res=>{
+        this.collections = res
+        // this.collections = this.collections.reverse();
+        console.log(this.collections)
+      }
+    )
   }
 
   openSnackBar(message: string, action: string = 'Ok') {
@@ -292,10 +324,70 @@ export class tomaInventarioComponent implements OnInit {
 
   progreso = 0
 
+  nuevo(){
+    this.tag = 'CT-'
+  }
+
 
   saveScanSocket(){
     // ////// console.log(JSON.stringify(this.registros))
     // this._socketService.emit('dataUpNow', JSON.stringify(this.registros))
+  }
+
+  verTagInventario(doc:string){
+    if(doc.indexOf('off_')){
+      return false;
+    }else{
+      return true;
+    }
+  }
+
+
+  cerrarInventario(){
+    let data = {titulo: 'Confirmaciòn', info:'Se Cerrara el Conteo esta seguro de procesar el cierre', type: 'Cancel', icon:'pan_tool'}
+  
+    let dialogRef = this.dialog.open(DialogConfirm,{
+      data: data
+    });
+  
+    dialogRef.afterClosed().subscribe(result => {
+      if(result){  
+    this._infoServce.offCollectionsInv(this.tag).subscribe(
+      res=>{
+        console.log(res)
+        this.getCollectionsInventarios()
+        window.location.reload();
+      },err => {
+        this.getCollectionsInventarios()
+        window.location.reload();
+
+      });
+    }
+    })
+  }
+
+  deleteInventario(){
+    let data = {titulo: 'Confirmaciòn', info:'Se Eliminara el Conteo No se puede recupera mas adelante', type: 'Cancel', icon:'pan_tool'}
+  
+    let dialogRef = this.dialog.open(DialogConfirm,{
+      data: data
+    });
+  
+    dialogRef.afterClosed().subscribe(result => {
+      if(result){ 
+
+    this._infoServce.deleteCollectionsInv(this.tag).subscribe(
+        res=>{
+          console.log(res)
+          this.getCollectionsInventarios();
+          window.location.reload();
+        },err => {
+          console.log(err)
+          this.getCollectionsInventarios()
+          window.location.reload();
+        })
+      }})
+
   }
 
   subirConteo(){
@@ -335,10 +427,13 @@ export class tomaInventarioComponent implements OnInit {
   lote:any = [];
   itemsContable:any = [];
   marcas:any = [];
+  clasificacion:any = [];
   marca = new FormControl('');
+  clasifi = new FormControl('');
   itemsFacturaVentas:any = [];
   convertirJson(){
-    this.marcas = []
+    this.marcas = [];
+    this.clasificacion = [];
     this.log= true;
     let keys = Object.values(this.data[0])
     for(var i = 1;i < this.data.length; i++){
@@ -388,18 +483,52 @@ export class tomaInventarioComponent implements OnInit {
 
   this.marcas = duplicados
     console.log( this.marcas)
+
+
+    var duplicados2: any[] = [];
+
+    var task_names2 = this.registros.map(function (task: { Cla: any; }) {
+      return task.Cla; 
+    });
+ 
+  const tempArray2 = [...task_names2].sort();
+
+  for(var i = 0; i < tempArray2.length; i++) {
+    const elemento = tempArray2[i];
+    if (!duplicados2.includes(tempArray2[i])) {
+      duplicados2.push(elemento);
+    }
+  }
+
+   this.clasificacion = duplicados2;
+
   }
 
   procesarMarca(){
     console.log(this.marca)
     let Valores = this.marca.value
+    let Clasi = this.clasifi.value
     var duplicados = []
     for(var i = 0; i < this.registros.length; i++) {
       const elemento = this.registros[i];
-      if (Valores.includes(elemento.Adicional)) {
-        duplicados.push(elemento);
-      }
+
+      if(Clasi.length !=0){
+        if(Clasi.includes(elemento.Cla)) {
+          if(Valores.length !=0){
+            if(Valores.includes(elemento.Adicional)) {
+              duplicados.push(elemento);
+            }
+          }else{
+            duplicados.push(elemento);
+          }
+        }
+      }else{
+        if(Valores.includes(elemento.Adicional)) {
+          duplicados.push(elemento);
+        }
+      } 
     }
+
     this.registros = duplicados
     console.log(duplicados)
   }
@@ -675,7 +804,7 @@ export class tomaInventarioComponent implements OnInit {
   }
   estado = 'iguales'
   cuantas(item: any){
-    // // console.log(item)
+    console.log(item)
     let conteo = 0
     if(item.length != 0){
       item.forEach((element: { unds: number; }) => {
@@ -741,7 +870,37 @@ export class tomaInventarioComponent implements OnInit {
   totalCOPpositivo = 0
   totalCOPnegativo = 0
 
+  downloadFile(datain: any, title:string) {
+    let datas = JSON.stringify(datain)
+    var data = JSON.parse(datas)
+    console.log(data)
+    data.forEach((element: { Conteo0: number; Conteo1: number; Conteo2: number; Conteo3: number; Conteo4: number; Definitivo: number;Diferencia: number;Exist_Final: number; }) => {
+      element.Conteo0 = this.cuantas(element.Conteo0)
+      element.Conteo1 = this.cuantas(element.Conteo1)
+      element.Conteo2 = this.cuantas(element.Conteo2)
+      element.Conteo3 = this.cuantas(element.Conteo3)
+      element.Conteo4 = this.cuantas(element.Conteo4)
+      element.Diferencia  = element.Exist_Final -  this.cuantas(element.Definitivo)
+      element.Definitivo = this.cuantas(element.Definitivo)
+    });
+   
 
+    const replacer = (key: any, value: null) => value === null ? '' : value; // specify how you want to handle null values here
+    const header = Object.keys(data[0]);
+    let csv = data.map((row: { [x: string]: any; }) => header.map(fieldName => JSON.stringify(row[fieldName], replacer)).join(','));
+    csv.unshift(header.join(','));
+    let csvArray = csv.join('\r\n');
+  
+    var a = document.createElement('a');
+    var blob = new Blob([csvArray], {type: 'text/csv' }),
+    url = window.URL.createObjectURL(blob);
+  
+    a.href = url;
+    a.download = this.tag+title+".csv";
+    a.click();
+    window.URL.revokeObjectURL(url);
+    a.remove();
+  }
 
 
 
@@ -863,7 +1022,7 @@ export class tomaInventarioComponent implements OnInit {
       }
 
        
-        // console.log( this.Iguales)
+        console.log( this.Sobrantes)
         this.openSnackBar('NUEVOS REGISTROS '+ this.conteo.length)
         this.log= false
       }
@@ -1124,11 +1283,13 @@ export class tomaInventarioComponent implements OnInit {
 
    let register = {
       Definitivo: element.Definitivo,
-      Conteo0: element.Conteo0,
+      Conteo0: [],
       _id: element._id,
-      
+      Estado:'Definitivo',
+      Conteo : this.cuantas(element.Definitivo),
+      Diferencia: element.Exist_Final - this.cuantas(element.Conteo0),
     }
-    this._infoServce.updateConteoD(register, this.tag).subscribe(
+    this._infoServce.updateConteoDefinitivo(register, this.tag).subscribe(
       res=>{
         // console.log(res)
         this.openSnackBar('Actualizado')

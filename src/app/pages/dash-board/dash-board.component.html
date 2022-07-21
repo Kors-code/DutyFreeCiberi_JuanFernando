@@ -761,6 +761,63 @@
       </div>
     </mat-tab>
 
+    <mat-tab label="Cajeros">    
+      <div>
+        <h3 style="text-align:center;">
+          VENTAS CAJEROS
+          <mat-form-field appearance="fill" style="margin:0 auto;">
+            <mat-label>Descargar</mat-label>
+            <mat-select [disabled]="">
+              <mat-option (click)="downloadFile(informeCajeros, 'Cajeros')"><mat-icon>cloud_download</mat-icon> Descargar Info Cajeros</mat-option>
+            </mat-select>
+          </mat-form-field>
+          
+        </h3>
+       
+        <table style="width: 90%; margin: 0 auto; font-size: 1.3em;"  class="mat-elevation-z8">
+          <thead style="background-color:rgb(63, 62, 62) ; color:white; padding: 15px; font-size: 1.3em; border-radius: 10px;">
+            <tr>
+              <td style="text-align:center; padding:5px; ">CAJERO</td>
+              <!-- <td style="text-align:center; padding:5px; ">Vendedor</td> -->
+              <td style="text-align:center; padding:5px; ">Unds</td>
+              <td style="text-align:center; padding:5px; ">N°FACT</td>
+              <td style="text-align:center; padding:5px; ">USD</td>
+              <td style="text-align:center; padding:5px; ">PART %</td>
+              <td style="text-align:center; padding:5px; ">ITEM PROMEDIO</td>
+              <td style="text-align:center; padding:5px; ">FACT PROMEDIO</td>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th colspan="4">
+                TOTAL VENTAS 
+              </th>
+              <th>
+                {{totalCajeros | number}}
+              </th>
+            </tr>
+            <ng-template let-item let-last="last" ngFor [ngForOf]="informeCajeros">
+              <tr class="pointer" (click)="passVendedor(item)">
+                <td style="text-align:center; padding:5px; ">{{item._id}}</td>
+                <!-- <td>{{item.Vendedor[0]}}</td> -->
+               
+                <td style="text-align:center;">{{item.Unidades}}</td>
+                <td style="text-align:center;">{{item.folios}}</td>
+                <td style="text-align:right;">{{item.Ventas | number:'0.0-0'}}</td>
+                <td style="text-align:right;">{{(item.Ventas / totalVendedores)*100 | number:'0.0-2'}}%</td>
+               
+                <td style="text-align:right;"> $ {{item.Ventas / item.Unidades | number:'0.0-2'}}</td>
+                <td style="text-align:right;"> $ {{item.Ventas / item.folios | number:'0.0-2' }}</td>
+              </tr>
+           
+      
+            </ng-template>
+           
+          </tbody>
+        </table>
+      </div>
+    </mat-tab>
+
     <mat-tab label="Categoria" *ngIf="identity.rol == 'Admin'"> 
       <div>
         <h1 style="text-align: center;">RESULTADOS POR SUBCATEGORIAS  {{coleccion}} </h1>
@@ -817,7 +874,7 @@
                 {{totalCategoriaCosto  | number:'0.0-0'}}
               </th>
               <th>
-                {{totalCategoriaCop -totalCategoriaCosto  | number:'0.0-0'}}
+                {{totalCategoriaCop - totalCategoriaCosto  | number:'0.0-0'}}
               </th>
               <th>
                 {{((totalCategoriaCop -totalCategoriaCosto)/totalCategoriaCop)*100  | number:'0.0-2'}}%

@@ -150,9 +150,10 @@ export class Permisos {
                 description:"Tomas de Inventario ",
                 link:'/inventarios',
                 img:'inventario.svg',
-                editar:true,
-                eliminar:true,
-                escribir:true,
+                historico:true,
+                importar:true,
+                panel:true,
+                toma:true,
             }, {   
                 titulo:"Cambios de Precio",
                 description:"Registro y cambio de habladores de Precio",
