@@ -639,23 +639,23 @@
                 <tr>
                   <th>
                      <span style="display:flex; align-items: center;">SKU
-                    <mat-form-field style="text-align: center; color: black;width: 90px;">
+                    <!-- <mat-form-field style="text-align: center; color: black;width: 90px;">
                       <input matInput  type="text" name="unds" [(ngModel)]="searcSKU">
                       <button  matSuffix mat-icon-button aria-label="Clear">
                         <mat-icon>search</mat-icon>
                       </button>
-                    </mat-form-field>
+                    </mat-form-field> -->
                   </span> 
                   </th>
                   <th > 
                     <span style="display:flex; align-items: center;">EAN 
-                    
+<!--                     
                     <mat-form-field style="text-align: center; color: black;width: 130px;">
                       <input matInput  type="text" name="unds" [(ngModel)]="searcEan">
                       <button  matSuffix mat-icon-button aria-label="Clear">
                         <mat-icon>search</mat-icon>
                       </button>
-                    </mat-form-field>
+                    </mat-form-field> -->
                   </span> 
                   </th>
                   <th>CATEGORIA</th>
@@ -663,10 +663,10 @@
                   <th>
                     <span style="display:flex; justify-content: center; align-items: center;">
                       EXISTENCIA
-                      <button *ngIf="Definitivas[0].Exist_Final > Definitivas[Definitivas.length-1].Exist_Final" mat-icon-button aria-label="Clear" (click)="filterEanFaltantes()">
+                      <button *ngIf="Definitivas[0].Exist_Final > Definitivas[Definitivas.length-1].Exist_Final" mat-icon-button aria-label="Clear" (click)="filterExistDefinitivos()">
                         <mat-icon>arrow_upward</mat-icon>
                       </button>
-                      <button *ngIf="Definitivas[0].Exist_Final < Definitivas[Definitivas.length-1].Exist_Final" mat-icon-button aria-label="Clear" (click)="filterEanFaltantes()">
+                      <button *ngIf="Definitivas[0].Exist_Final < Definitivas[Definitivas.length-1].Exist_Final" mat-icon-button aria-label="Clear" (click)="filterExistDefinitivos()">
                         <mat-icon>arrow_downward</mat-icon>
                       </button>
                     </span>
@@ -764,6 +764,41 @@
             <mat-icon>delete</mat-icon>
              Eliminar Conteo
           </button></h1> 
+          <table class="mat-elevation-z8" style="margin: 0 auto;">
+            <thead style="padding: 15px; font-size: 1em; border-radius: 10px;">
+              <tr>
+                <th>ITEMS</th>
+                <td style="text-align:rigth ;">{{Definitivas.length  |  number:'0.0-0'}}</td>
+                <th>Unds</th>
+                <td style="text-align:rigth ;">{{undDefinitivas  |  number:'0.0-0'}}</td>
+                <th>Costo USD</th>
+                <td style="text-align:rigth ;">{{usdDefinitivas  |  number:'0.0-0'}}</td>
+                <th>Costo COP</th>
+                <td style="text-align:rigth ;">{{copDefinitivas  |  number:'0.0-0'}}</td>
+              </tr>
+              <tr>
+                <th></th>
+                <td></td>
+                <th>Conteo</th>
+                <td style="text-align:rigth ;">{{undDefinitivasConteo  |  number:'0.0-0'}}</td>
+                <th>Conteo USD</th>
+                <td style="text-align:rigth ;">{{usdDefinitivasConteo |  number:'0.0-0'}}</td>
+                <th>Conteo COP</th>
+                <td style="text-align:rigth ;">{{ copDefinitivasConteo |  number:'0.0-0'}}</td>
+              </tr>
+              <tr>
+                <th></th>
+                <td></td>
+                <th>DIF</th>
+                <td style="text-align:rigth ;">{{undDefinitivasConteo - undDefinitivas   |  number:'0.0-0'}}</td>
+                <th>DIF USD</th>
+                <td style="text-align:rigth ;">{{usdDefinitivasConteo - usdDefinitivas |  number:'0.0-0'}}</td>
+                <th>DIF COP</th>
+                <td style="text-align:rigth ;">{{copDefinitivasConteo - copDefinitivas |  number:'0.0-0'}}</td>
+              </tr>
+
+            </thead>
+          </table>
            <table style="width: 90%; margin: 0 auto; font-size: 1.3em;" class="mat-elevation-z8">
               <thead style="background-color:rgb(63, 62, 62) ; color:white; padding: 15px; font-size: 1em; border-radius: 10px;">
                 <tr>
@@ -904,6 +939,100 @@
                 </tr>
               </tbody>
             </table>
+              <h1>Detalle Diferencias</h1>
+            <table class="mat-elevation-z8" style="width: 90%; margin: 0 auto; font-size: 0.8em;" class="mat-elevation-z8">
+              <thead style="padding: 15px; font-size: 1em; border-radius: 10px;">
+                <tr>
+                  <th>
+                     <span style="display:flex; align-items: center;">SKU
+                    <!-- <mat-form-field style="text-align: center; color: black;width: 90px;">
+                      <input matInput  type="text" name="unds" [(ngModel)]="searcSKU">
+                      <button  matSuffix mat-icon-button aria-label="Clear">
+                        <mat-icon>search</mat-icon>
+                      </button>
+                    </mat-form-field> -->
+                  </span> 
+                  </th>
+                  <th > 
+                    <span style="display:flex; align-items: center;">EAN 
+                    
+                    <!-- <mat-form-field style="text-align: center; color: black;width: 130px;">
+                      <input matInput  type="text" name="unds" [(ngModel)]="searcEan">
+                      <button  matSuffix mat-icon-button aria-label="Clear">
+                        <mat-icon>search</mat-icon>
+                      </button>
+                    </mat-form-field> -->
+                  </span> 
+                  </th>
+                  <th>CATEGORIA</th>
+                  <th>PRODUCTO</th>
+                  <th>
+                    <span style="display:flex; justify-content: center; align-items: center;">
+                      EXISTENCIA
+                      <button *ngIf="Definitivas[0].Exist_Final > Definitivas[Definitivas.length-1].Exist_Final" mat-icon-button aria-label="Clear" (click)="filterExistDefinitivos()">
+                        <mat-icon>arrow_upward</mat-icon>
+                      </button>
+                      <button *ngIf="Definitivas[0].Exist_Final < Definitivas[Definitivas.length-1].Exist_Final" mat-icon-button aria-label="Clear" (click)="filterExistDefinitivos()">
+                        <mat-icon>arrow_downward</mat-icon>
+                      </button>
+                    </span>
+                  </th>
+                  <th>CONTEO</th>
+                  <th>DIFERENCIA</th>
+        
+                  <th style="border: 1px solid grey;">UND USD</th>
+                  <th style="border: 1px solid grey;">
+                    <span style="display:flex; justify-content: center; align-items: center;">
+                    UND COP
+                    <button *ngIf="Definitivas[0].COST_PROM > Definitivas[Definitivas.length-1].COST_PROM" mat-icon-button aria-label="Clear" (click)="filterExistDefinitivos()">
+                      <mat-icon>arrow_upward</mat-icon>
+                    </button>
+                    <button *ngIf="Definitivas[0].COST_PROM < Definitivas[Definitivas.length-1].COST_PROM" mat-icon-button aria-label="Clear" (click)="filterExistDefinitivos()">
+                      <mat-icon>arrow_downward</mat-icon>
+                    </button>
+                  </span>
+                  </th>
+                  <th style="border: 1px solid grey;"> TOTAL USD</th>
+                  <th style="border: 1px solid grey;"> TOTAL COP</th>
+                  <!-- <th>DEFINITIVO</th> -->
+                </tr>
+              </thead>
+              <tbody>
+
+                <ng-template  let-element let-last="last" ngFor [ngForOf]="Definitivas" >
+                  <tr *ngIf="element.Diferencia != 0">
+                    <td style="border-bottom: 1px solid grey;"> {{element.Codigo1}}</td>
+                    <td style="border-bottom: 1px solid grey;"> {{element.EAN}}</td>
+                    <td style="border-bottom: 1px solid grey;"> {{element.Cla}}</td>
+                    <td style="border-bottom: 1px solid grey;"> {{element.Descripcion_1}}</td>
+                    <td style="text-align: center; border-bottom: 1px solid grey;"> {{element.Exist_Final}}</td>
+                    <td style="border-bottom: 1px solid grey;">   
+                      <span class="selec">
+                      {{element.Conteo}}
+                      </span>
+                    </td>
+                    <td style="border-bottom: 1px solid grey;" [class._50]="element.Conteo - element.Exist_Final <= -1" [class._100]="element.Conteo - element.Exist_Final == 0"  [class._90]="element.Conteo - element.Exist_Final >= 1" style="border-bottom: 1px solid grey;"> {{element.Conteo - element.Exist_Final}} </td>
+                    
+                    <td style="text-align:right; border-bottom: 1px solid grey;">
+                      {{element.TOTAL_FINAL_INV_USD  |  number:'0.0-2'}}
+                    </td>
+                    <td style="text-align:right; border-bottom: 1px solid grey;">
+                      {{element.TOTAL_FINAL_INV |  number:'0.0-0'}}
+                    </td>
+                    <td style="text-align:right; border-bottom: 1px solid grey;">
+                      {{element.TOTAL_FINAL_INV_USD * element.Diferencia |  number:'0.0-2'}}
+                    </td>
+                    <td style="text-align:right; border-bottom: 1px solid grey;">
+                      {{element.TOTAL_FINAL_INV * element.Diferencia |  number:'0.0-0'}}
+                    </td>
+                    <!-- <td [class._50]="element.Definitivo.length - element.Exist <= -1" [class._100]="element.Definitivo.length - element.Exist == 0"> {{element.Definitivo.length - element.Exist}} </td> -->
+                  </tr>
+                </ng-template>
+             
+  
+              </tbody>
+  
+            </table>
         </div>
 
       </mat-card-content>
@@ -949,7 +1078,7 @@
             <th>SKU</th>
             <th>EAN</th>
             <th>PRODUCTO</th>
-            <th>PRECIO</th>
+            <th *ngIf="!verPrecio(tag)">PRECIO</th>
             <th>UND SCAN</th>
             <th>FECHA</th>
             <th>CONTEO</th>
@@ -961,7 +1090,7 @@
             <td style="border-bottom:1px solid grey ;">{{shoe.Codigo1}} </td>
             <td style="border-bottom:1px solid grey ;">{{shoe.EAN}}</td>
             <td style="border-bottom:1px solid grey ;">{{shoe.Descripcion_1}}</td>
-            <td style="border-bottom:1px solid grey ; text-align: center;">{{shoe.Final_Unit_Cost |  number:'0.0-2'}}</td>
+            <td style="border-bottom:1px solid grey ; text-align: center;" *ngIf="!verPrecio(tag)" >{{shoe.Sugerido |  number:'0.0-2'}}</td>
             <td style="border-bottom:1px solid grey ;">[ {{shoe.Conteo0[shoe.Conteo0.length -1].unds}} unds ]  </td>
             <td style="border-bottom:1px solid grey ;">  {{shoe.Conteo0[shoe.Conteo0.length -1].time | date:"mediumTime"}}</td>
             <td style="border-bottom:1px solid grey ; text-align: center;"> {{cuantas(shoe.Conteo0)}} Unds</td>

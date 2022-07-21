@@ -53,6 +53,7 @@ export class MetasComponent implements OnInit {
       res=>{
         if(res.length != 0){
           this.config = res[0];
+          console.log(this.config)
           localStorage.setItem('categ',JSON.stringify(this.config.categorias))
           localStorage.setItem('colaboradores',JSON.stringify(this.config.empleados))
         }
@@ -161,7 +162,8 @@ export class MetasComponent implements OnInit {
           element.presupuesto_dia_cop = this.presupuesto.presupuesto_dia_cop * (element.participacion/100)
         });
       
-        this.presupuesto.tiendas = this.config.tiendas;  
+        this.presupuesto.tiendas = this.config.tiendas; 
+        console.log(this.presupuesto) 
         for(var i = 0;i < this.presupuesto.tiendas.length; i++){
           this.presupuesto.tiendas[i].presupuesto_usd = (this.presupuesto.tiendas[i].part/100) * this.presupuesto.presupuesto_usd 
           this.presupuesto.tiendas[i].ptto = JSON.parse(categorias)
@@ -202,23 +204,28 @@ export class MetasComponent implements OnInit {
     for (let i = 0; i < this.presupuesto.vendedores.length; i++){
       let vendedor = this.presupuesto.vendedores[i];
       let categ = JSON.stringify(this.presupuesto.categorias)
-      vendedor.categorias = JSON.parse(categ);
-      // vendedor.Dias = dias;
-      ////console.log(vendedor);
-       vendedor.USD =  Math.round((this.presupuesto.presupuesto_usd / this.presupuesto.capacidadVentasEsperada) * vendedor.Dias)  
-      ////console.log(this.presupuesto.vendedores[i].USD)
-      for (let d = 0; d < this.presupuesto.vendedores[i].categorias.length; d++) {
-        ////console.log(vendedor.USD)
-        ////console.log(vendedor.USD * (this.presupuesto.vendedores[i].categorias[d].participacion/100))
-        // var element = this.presupuesto.vendedores[i].categorias[d];
-        // this.presupuesto.vendedores[i].categorias[d].presupuesto_cop= 0;
-        // this.presupuesto.vendedores[i].categorias[d].presupuesto_dia_cop= 0;
-        // this.presupuesto.vendedores[i].categorias[d].presupuesto_dia_usd= 0;
-        // this.presupuesto.vendedores[i].categorias[d].presupuesto_usd = 0;
-        this.presupuesto.vendedores[i].categorias[d].presupuesto_usd = vendedor.USD * (this.presupuesto.vendedores[i].categorias[d].participacion/100);
-        this.presupuesto.vendedores[i].categorias[d].presupuesto_dia_usd = this.presupuesto.vendedores[i].categorias[d].presupuesto_usd / vendedor.Dias;
-        ////console.log(this.presupuesto.vendedores[i].categorias[d])
+      if(vendedor.rol == 'Ventas'){
+
+        vendedor.categorias = JSON.parse(categ);
+        // vendedor.Dias = dias;
+        ////console.log(vendedor);
+         vendedor.USD =  Math.round((this.presupuesto.presupuesto_usd / this.presupuesto.capacidadVentasEsperada) * vendedor.Dias)  
+        ////console.log(this.presupuesto.vendedores[i].USD)
+        for (let d = 0; d < this.presupuesto.vendedores[i].categorias.length; d++) {
+          ////console.log(vendedor.USD)
+          ////console.log(vendedor.USD * (this.presupuesto.vendedores[i].categorias[d].participacion/100))
+          // var element = this.presupuesto.vendedores[i].categorias[d];
+          // this.presupuesto.vendedores[i].categorias[d].presupuesto_cop= 0;
+          // this.presupuesto.vendedores[i].categorias[d].presupuesto_dia_cop= 0;
+          // this.presupuesto.vendedores[i].categorias[d].presupuesto_dia_usd= 0;
+          // this.presupuesto.vendedores[i].categorias[d].presupuesto_usd = 0;
+          this.presupuesto.vendedores[i].categorias[d].presupuesto_usd = vendedor.USD * (this.presupuesto.vendedores[i].categorias[d].participacion/100);
+          this.presupuesto.vendedores[i].categorias[d].presupuesto_dia_usd = this.presupuesto.vendedores[i].categorias[d].presupuesto_usd / vendedor.Dias;
+          ////console.log(this.presupuesto.vendedores[i].categorias[d])
+        }
       }
+      
+ 
     }
 
     for (let i = 0; i < this.presupuesto.vendedores.length; i++){

@@ -33,6 +33,7 @@ export interface _Conteo {
   Cla: string;
   Descripcion_1: string;
   Exist_Final: number;
+  Sugerido: number;
   Conteo0:any[];
   Definitivo:any[];
   Conteo1:any[];
@@ -325,7 +326,7 @@ export class tomaInventarioComponent implements OnInit {
   progreso = 0
 
   nuevo(){
-    this.tag = 'CT-'
+    this.tag = 'C-'
   }
 
 
@@ -339,6 +340,14 @@ export class tomaInventarioComponent implements OnInit {
       return false;
     }else{
       return true;
+    }
+  }
+
+  verPrecio(doc:string){
+    if(doc.indexOf('R-')){
+      return true;
+    }else{
+      return false;
     }
   }
 
@@ -955,6 +964,7 @@ export class tomaInventarioComponent implements OnInit {
         // // console.log(this.categorias)
         for (let i = 0; i < this.conteo.length; i++) {
           const element = this.conteo[i];
+          element.Diferencia = element.Conteo - element.Exist_Final;
           if(element.Estado == 'Activo'){
           if(this.cuantas(element.Conteo0) - element.Exist_Final == 0){
             this.Iguales.push(element)
@@ -1022,7 +1032,7 @@ export class tomaInventarioComponent implements OnInit {
       }
 
        
-        console.log( this.Sobrantes)
+        console.log( this.Definitivas)
         this.openSnackBar('NUEVOS REGISTROS '+ this.conteo.length)
         this.log= false
       }
@@ -1406,6 +1416,8 @@ export class tomaInventarioComponent implements OnInit {
     }
   }
 
+  
+
   filterSKUIguales(){
 
      this.Iguales.sort(function(a,b){
@@ -1471,6 +1483,19 @@ export class tomaInventarioComponent implements OnInit {
       });
     }else{ 
       this.Sobrantes.sort(function(a, b){
+        return b.Exist_Final - a.Exist_Final;
+      });
+     
+    }
+  }
+
+  filterExistDefinitivos(){
+    if(this.Definitivas[0].Exist_Final >> this.Definitivas[this.Definitivas.length-1].Exist_Final){
+      this.Definitivas.sort(function(a, b){
+        return  a.Exist_Final - b.Exist_Final ;
+      });
+    }else{ 
+      this.Definitivas.sort(function(a, b){
         return b.Exist_Final - a.Exist_Final;
       });
      
