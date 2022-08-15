@@ -14,7 +14,7 @@ npm-debug.log
 yarn-error.log
 
 #Electronjs
-/backend/duty_free-win32-x64
+/backend/dist
 
 # IDEs and editors
 .idea/

@@ -122,12 +122,9 @@ Roles = ['Ventas', 'Skin', 'Lider', 'Gerente Ventas', 'Gerente']
     this.cumplimiento = item
   }
 
-
-
   addCumpli(){
-    this.categoria.cumplimientos.unshift(this.cumplimiento)
+    this.categoria.cumplimientos.push(this.cumplimiento)
     this.cumplimiento=new Cumplimiento();
-    //console.log(this.categoria)
   }
 
   deleteCumplimiento(i:number){

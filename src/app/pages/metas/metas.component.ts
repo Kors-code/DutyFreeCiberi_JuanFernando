@@ -146,7 +146,7 @@ export class MetasComponent implements OnInit {
     });
   
     dialogRef.afterClosed().subscribe(result => {
-      console.log(result)
+      // console.log(result)
       if(result){
        
         this.presupuesto.presupuesto_dia_cop = this.presupuesto.presupuesto_cop / this.presupuesto.dias;
@@ -181,7 +181,7 @@ export class MetasComponent implements OnInit {
     })
     
 
-    console.log(this.presupuesto)
+    // console.log(this.presupuesto)
   }
 
   passPresupuesto(item:any){
@@ -230,8 +230,17 @@ export class MetasComponent implements OnInit {
 
     for (let i = 0; i < this.presupuesto.vendedores.length; i++){
       this.presupuesto.capacidadVentas =   this.presupuesto.capacidadVentas + this.presupuesto.vendedores[i].Dias;
-      this.presupuesto.presupuesto_vendedores =   this.presupuesto.presupuesto_vendedores + this.presupuesto.vendedores[i].USD;
+      if(this.presupuesto.vendedores[i].USD){
+        // console.log(this.presupuesto.vendedores[i].USD)
+        this.presupuesto.presupuesto_vendedores =  this.presupuesto.presupuesto_vendedores + this.presupuesto.vendedores[i].USD;
+      }else{
+        // console.log(this.presupuesto.vendedores[i])
+      }
+       
     }
+
+    // console.log(this.presupuesto.capacidadVentas)
+    // console.log(this.presupuesto.presupuesto_vendedores)
 
     this.presupuesto.vendedores.sort(function(a, b){
       return b.USD - a.USD;
@@ -289,6 +298,9 @@ export class MetasComponent implements OnInit {
         vendedor.categorias[d].presupuesto_dia_usd = vendedor.categorias[d].presupuesto_usd / vendedor.Dias;
         ////console.log(this.presupuesto.vendedores[i].categorias[d])
       }
+
+      console.log(this.presupuesto.capacidadVentas)
+      console.log(this.presupuesto.presupuesto_vendedores)
     
     this.presupuesto.vendedores.sort(function(a, b){
       return b.USD - a.USD;

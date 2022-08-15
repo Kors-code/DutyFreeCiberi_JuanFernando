@@ -99,7 +99,7 @@ export class CumplimientoComponent implements OnInit {
 
   ngOnInit() {
     this.getConfig()
-    this.getCollections();
+    // this.getCollections();
     // this.token = this._userService.getToken();
     // // // //////console.log(this.identity);
     // this.user._id = this.identity._id;
@@ -117,11 +117,12 @@ export class CumplimientoComponent implements OnInit {
       res=>{
         if(res.length != 0){
           this.config = res[0];
-          // localStorage.setItem('categ',JSON.stringify(this.config.categorias))
-          // localStorage.setItem('colaboradores',JSON.stringify(this.config.empleados))
+          this.collections = this.config.tags
+          // console.log(this.collections)
         }
       })
   }
+
 
   getDataCollectionVendedor(){
     // // //////console.log(this.identidad)

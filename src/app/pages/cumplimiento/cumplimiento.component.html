@@ -4,9 +4,9 @@
 
   <mat-menu #menuRef="matMenu">
     <ng-template let-doc let-i="index" ngFor [ngForOf]="collections">
-        <button *ngIf="doc != 'users' && doc != 'documentos' && doc != 'operaciones' && doc != 'Presupuestos'  && doc != 'Config'" mat-menu-item (click)="passDataCollections(doc)">
+        <button *ngIf="doc.Activo" mat-menu-item (click)="passDataCollections(doc.tag)">
             <mat-icon class="mat-18">check</mat-icon>  
-            {{doc}}   
+            {{doc.tag}}   
         </button>
     </ng-template> 
   </mat-menu>

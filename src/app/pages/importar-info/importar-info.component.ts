@@ -392,8 +392,6 @@ export class ImportarInfoComponent implements OnInit {
     }
     
     for(var i = 0;i < this.registros.length; i++){
-
-
       let fecha =  this.registros[i].Fecha;
       let split = fecha.split("/");
       // // ////// console.log(split)
@@ -403,6 +401,16 @@ export class ImportarInfoComponent implements OnInit {
       this.registros[i].Pdf = [];
       this.registros[i].TRM = this.trm;
       this.registros[i].COP = Math.round(this.trm * this.registros[i].Importe);
+      
+      let posTienda = this.config.tiendas.map(function( e:any ) { return e.tienda; }).indexOf(this.registros[i].PDV);
+      if(this.registros[i].PDV = 'MDE D'){
+        console.log(this.registros[i].Resolucion = this.config.tiendas[posTienda]['resolucion'])
+        this.registros[i].Resolucion = this.config.tiendas[posTienda]['resolucion']
+      }else{
+        console.log(this.registros[i].Resolucion = this.config.tiendas[posTienda]['resolucion'])
+        this.registros[i].Resolucion = this.config.tiendas[posTienda]['resolucion']
+      }
+    
       ////// console.log(this.registros[i].Costo_de_v)
       this.registros[i].Costo_de_v =  this.registros[i].Costo_de_v.replace(/,/g, '')
       this.registros[i].Costo_de_v = Number(this.registros[i].Costo_de_v)
@@ -417,9 +425,18 @@ export class ImportarInfoComponent implements OnInit {
         this.registros[i].Day = split[0];
         // ////// console.log( this.registros[i].Day)
       }
+
       this.registros[i].Month = split[1];
       this.registros[i].Year = '20'+split[2];
-      this.registros[i].Detalle = 'FAC '+this.registros[i].Folio + ' SKU: '+this.registros[i].Codigo_1 + ' ' + this.registros[i].Descripcion_1 + ' ' +this.registros[i].Month + ' CANT: ' +this.registros[i].Cantidad + ' TRM: '+this.registros[i].TRM + ' USD: '+this.registros[i].Importe ;
+
+      let detalle = 'FAC '+this.registros[i].Folio + ' SKU: '+this.registros[i].Codigo_1 + ' CANT: ' +this.registros[i].Cantidad + ' TRM: '+this.registros[i].TRM + ' USD: '+this.registros[i].Importe + ' ' + this.registros[i].Descripcion_1;
+      if(detalle.length >= 101){
+        detalle = detalle.slice(0, 100);
+        
+      }
+      // console.log(detalle)
+     
+      this.registros[i].Detalle = detalle;
       let pos = this.registrosCostumer.map(function(e: { DOC_N: any; }) { return e.DOC_N; }).indexOf(this.registros[i].Folio);
 
       if(pos != -1){
@@ -429,9 +446,9 @@ export class ImportarInfoComponent implements OnInit {
     }
     this.log= false;
    
-    // // console.log(this.itemsContable)
+    console.log(this.registros)
     let lotes = 200
-    // // console.log(lotes)
+    // console.log(lotes)
 
     this.chunckArrayInGroups(this.registros, lotes)
    
@@ -473,6 +490,11 @@ export class ImportarInfoComponent implements OnInit {
           value:registros[i].Costo_de_v,
           description:'CMV FAC '+ registros[i].Folio +' SKU '+ registros[i].Codigo_1 +' ' + registros[i].Descripcion_1 +' CANT: '+ registros[i].Cantidad,
         }
+
+        if(dtaComprobante.description.length >= 100){
+            console.log(dtaComprobante.description)
+        }
+
         this.itemsContable.push(dtaComprobante)
   
         let dtaComprobante2 = {

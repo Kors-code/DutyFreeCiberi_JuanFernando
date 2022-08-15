@@ -92,7 +92,8 @@ async function updateDataConfiguracion(req, res){
             inventarios:params.inventarios,
             emailSalida:params.emailSalida,
             passEmailSalida:params.passEmailSalida,
-            notificar:params.notificar
+            notificar:params.notificar,
+            protocoloFacturacion:params.protocoloFacturacion
         }},{ upsert: false }, function(err,doc) {
             if (err) { throw err; }
             else { 
@@ -731,6 +732,7 @@ async function getInformeCajeros(req, res){
                         VentasCop:{$sum: '$COP'},
                         Unidades:{$sum: '$Cantidad'},
                         Cost: {$sum: {$toInt: '$Costo_de_v'}},
+                        Cost_usd: {$sum: {$toInt: '$UNITCOST'}},
                         Detalle: {$addToSet : { 
                             categ: "$Descr",
                             cod_categ: "$Clasi",
@@ -941,6 +943,25 @@ async function updateDataConteoDefinitivoDefinitvo(req, res){
           });        
 }
 
+async function updateDataConteoJustificacion(req, res){
+    var params = req.body;
+    var coll = req.params.tag;
+    const url = 'mongodb://localhost:27017';
+    const client = new MongoClient(url);
+    const dbName = 'DutyFreeInventarios';
+        await client.connect();
+        console.log('Connected successfully to server');
+        const db = client.db(dbName);
+        const collection = await db.collection(coll);
+        collection.updateOne({_id:ObjectId(params._id)},{$set:{justificacion:params.justificacion,}},{ upsert: false }, function(err,doc) {
+            if (err) { throw err; }
+            else { 
+                console.log(doc)
+                client.close();
+                res.status(200).send(doc); }
+          });        
+}
+
 
 async function updateDataConteo1(req, res){
     var params = req.body;
@@ -1060,6 +1081,7 @@ module.exports = {
     getConteoTag,
     updateDataConteoDefinitivo,
     updateDataConteoDefinitivoDefinitvo,
+    updateDataConteoJustificacion,
     updateDataConteo1,
     updateDataConteo2,
     updateDataConteo3,

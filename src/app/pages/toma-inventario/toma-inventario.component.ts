@@ -42,6 +42,7 @@ export interface _Conteo {
   Conteo4:any[];
   Conteo: number;
   check: boolean;
+  justificacion: string;
 }
 
 @Component({
@@ -59,6 +60,7 @@ export class tomaInventarioComponent implements OnInit {
   public identity:User;
   searcEan:any = '';
   searcSKU:any = '';
+  searProd:string = '';
   displayedColumns: string[] = ['SKU', 'EAN', 'CATEGORIA', 'PRODUCTO', 'EXISTENCIA','CONTEO', 'DIFERENCIA', 'DETALLE',  'DEFINITIVO'];
   @ViewChild(MatSort, {static: true}) sort!: MatSort;
   @ViewChild('scanEle')
@@ -351,7 +353,6 @@ export class tomaInventarioComponent implements OnInit {
     }
   }
 
-
   cerrarInventario(){
     let data = {titulo: 'Confirmaciòn', info:'Se Cerrara el Conteo esta seguro de procesar el cierre', type: 'Cancel', icon:'pan_tool'}
   
@@ -473,6 +474,7 @@ export class tomaInventarioComponent implements OnInit {
       this.registros[i].Conteo = 0;
       this.registros[i].check = false;
       this.log= false;
+      this.registros[i].justificacion = '';
     }
 
     var duplicados: any[] = [];
@@ -728,6 +730,17 @@ export class tomaInventarioComponent implements OnInit {
     window.location.reload();
   }
 
+  justificar(element: any){
+    console.log(element)
+    this._infoServce.updateConteoJustificacion(element, this.tag).subscribe(
+      res=>{
+        this.openSnackBar('Justificacion Actualizada')
+        console.log(res)
+      }
+    )
+
+  }
+
   focus(){
     this.scanElement.nativeElement.focus();
   }
@@ -813,7 +826,7 @@ export class tomaInventarioComponent implements OnInit {
   }
   estado = 'iguales'
   cuantas(item: any){
-    console.log(item)
+    // console.log(item)
     let conteo = 0
     if(item.length != 0){
       item.forEach((element: { unds: number; }) => {
@@ -1032,7 +1045,7 @@ export class tomaInventarioComponent implements OnInit {
       }
 
        
-        console.log( this.Definitivas)
+        // console.log( this.Definitivas)
         this.openSnackBar('NUEVOS REGISTROS '+ this.conteo.length)
         this.log= false
       }
@@ -1092,6 +1105,65 @@ export class tomaInventarioComponent implements OnInit {
           return 0;
       }
     });
+  }
+
+  verProdFilter(filter:string ){
+   console.log(this.searProd) 
+   var arrayFilter: _Conteo[] =[]
+   if(this.searProd == ''){
+    this.getCnteoTag()
+   }else{
+    if(filter=='Iguales'){
+     this.Iguales.map(
+      (element) =>{
+        let index = element.Descripcion_1.indexOf(this.searProd.toUpperCase())
+        console.log(index)
+        if(index != -1){
+          arrayFilter.push(element)
+        }
+      }
+     )
+     this.Iguales = arrayFilter;
+    }
+    if(filter=='Faltantes'){
+      this.Faltantes.map(
+       (element) =>{
+         let index = element.Descripcion_1.indexOf(this.searProd.toUpperCase())
+         console.log(index)
+         if(index != -1){
+           arrayFilter.push(element)
+         }
+       }
+      )
+      this.Faltantes = arrayFilter;
+     }
+
+     if(filter=='Sobrantes'){
+      this.Sobrantes.map(
+       (element) =>{
+         let index = element.Descripcion_1.indexOf(this.searProd.toUpperCase())
+         console.log(index)
+         if(index != -1){
+           arrayFilter.push(element)
+         }
+       }
+      )
+      this.Sobrantes = arrayFilter;
+     }
+
+     if(filter=='Definitivas'){
+      this.Definitivas.map(
+       (element) =>{
+         let index = element.Descripcion_1.indexOf(this.searProd.toUpperCase())
+         console.log(index)
+         if(index != -1){
+           arrayFilter.push(element)
+         }
+       }
+      )
+      this.Definitivas = arrayFilter;
+     }
+   }
   }
 
   

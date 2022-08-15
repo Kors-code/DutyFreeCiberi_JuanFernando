@@ -392,6 +392,15 @@ updateConteoDefinitivo(user_to_register:any, tag:string){
     return this._http.post<agregar>(this.url+'update-conteo-defi/'+tag, paramas, {headers:headers});
 }
 
+updateConteoJustificacion(user_to_register:any, tag:string){
+    let paramas = JSON.stringify(user_to_register);
+    let headers = new HttpHeaders({
+        'content-Type':'application/json',
+        'Authorization': this.getToken()
+    });
+    return this._http.post<agregar>(this.url+'update-conteo-justificacion/'+tag, paramas, {headers:headers});
+}
+
 updateConteoDefinitivoMany(user_to_register:any, tag:string){
     let paramas = JSON.stringify(user_to_register);
     let headers = new HttpHeaders({

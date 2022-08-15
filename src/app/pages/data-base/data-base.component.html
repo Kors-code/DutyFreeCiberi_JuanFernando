@@ -25,7 +25,7 @@
               {{documentos.length}} Registros
               <button  *ngIf="documentos.length != 0" mat-button (click)="downloadFile(documentos, 'Documentos '+ key)"><mat-icon>cloud_download</mat-icon> Descargar Info </button>      
         </h3>
-        <button *ngIf="subir != -1" flex mat-raised-button color="accent" [disabled]="progreso != 0"  (click)="authSiigo(key)" class="text-upper" style="width: 90%; margin:15px auto;margin-left: 20px;"> Generar Todis los PDF <mat-icon>update_file</mat-icon></button>
+        <button *ngIf="subir != -1" flex mat-raised-button color="accent" [disabled]="progreso != 0"  (click)="authSiigo(key)" class="text-upper" style="width: 90%; margin:15px auto;margin-left: 20px;"> Generar Todos los PDF <mat-icon>update_file</mat-icon></button>
         <!-- <button *ngIf="subir != -1" flex mat-raised-button color="warna" [disabled]="progreso != 0"  (click)="pdfs()" class="text-upper" style="width: 90%; margin:15px auto;margin-left: 20px;"> Generar folio PDF <mat-icon>done_all</mat-icon></button> -->
         <span *ngIf="progreso != 0" style="color: blue;">{{progreso | number:'0.0-2'}}% </span> <mat-progress-bar *ngIf="progreso != 0" mode="determinate" [value]="progreso" color="accent" style="width: 90%; margin: 0 auto;"></mat-progress-bar>
         <mat-menu #menuRef="matMenu">

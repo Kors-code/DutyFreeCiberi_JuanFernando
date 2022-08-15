@@ -6,6 +6,7 @@ import { ConnectableObservable } from 'rxjs';
 import { Presupuesto } from 'src/app/models/presupuesto';
 import { InfoService } from 'src/app/services/info.service';
 import { UserService } from 'src/app/services/user.service';
+import { DialogConfirm } from '../confirm-dialog/confirm-dialog.component';
 import { colorSets } from './paleta';
 
 @Component({
@@ -22,6 +23,7 @@ export class DashBoardComponent implements OnInit {
   dia = this.date.getDate()-1
   ultimoDia = new Date(this.date.getFullYear(), this.date.getMonth() + 1, 0);
   public identity:any;
+  config:any;
   constructor(public _infoService:InfoService,
     private _userService:UserService,
     public dialog: MatDialog, @Inject(DOCUMENT) doc: any,) {
@@ -97,9 +99,22 @@ export class DashBoardComponent implements OnInit {
   ]
 
   ngOnInit(): void {
+    this.getConfig()
     // this.getRegistros(1);
-    this.getCollections();
+    // this.getCollections();
     // this.facturasVendedor()
+  }
+
+  
+  getConfig(){
+    this._infoService.getConfig().subscribe(
+      res=>{
+        if(res.length != 0){
+          this.config = res[0];
+          this.collections = this.config.tags
+          // console.log(this.collections)
+        }
+      })
   }
 
   cambiarColores(item:any){
@@ -109,13 +124,13 @@ export class DashBoardComponent implements OnInit {
 
 
   getCollections(){
-    this._infoService.getCollections().subscribe(
-      res=>{
-        this.collections = res
-        this.collections = this.collections.reverse();
-        // // //////////console.log(res)
-      }
-    )
+    // console.log(this.confi)
+    // this._infoService.getCollections().subscribe(
+    //   res=>{
+    //     this.collections = res
+    //     this.collections = this.collections.reverse();
+    //   }
+    // )
   }
 
   acumulador(){
@@ -421,7 +436,7 @@ export class DashBoardComponent implements OnInit {
         this.downloadCajeros = [];
         this.informeCajeros = res
 
-        //console.log(this.informeCajeros)
+        console.log(this.informeCajeros)
         for (let index = 0; index <  this.informeCajeros.length; index++) {
           const element =  this.informeCajeros[index];
           element.folios = this.facturasVendedor(element.Detalle)
@@ -433,14 +448,13 @@ export class DashBoardComponent implements OnInit {
               "COP": element.VentasCop,
               "Unidades": element.Unidades,
               "Facturas": element.folios,
-              "CostoVenta": element.Unidades,
-              "item_promedio":  element.Ventas / element.Unidades,
-              "fac_promedio":  element.Ventas / element.folios,
-
+              "CostoVenta": element.Cost,
+              "Cost_usd":element.Cost_usd,
+              "item_promedio":  (element.Ventas / element.Unidades).toFixed(2),
+              "fac_promedio":  (element.Ventas / element.folios).toFixed(2),
             }
           )
         }
-
         this.log = false;
       }
       
@@ -461,6 +475,30 @@ export class DashBoardComponent implements OnInit {
           // //console.log(Indices.length)
           return Indices.length
   }
+
+
+  // cerrarPresupuesto(){
+  //   let data = {titulo: 'Confirmaciòn', info:'Se Cerrara el Conteo esta seguro de procesar el cierre', type: 'Cancel', icon:'pan_tool'}
+  
+  //   let dialogRef = this.dialog.open(DialogConfirm,{
+  //     data: data
+  //   });
+  
+  //   dialogRef.afterClosed().subscribe(result => {
+  //     if(result){  
+  //   this._infoService.offCollectionsInv(this.tag).subscribe(
+  //     res=>{
+  //       console.log(res)
+  //       // this.getCollectionsInventarios()
+  //       window.location.reload();
+  //     },err => {
+  //       // this.getCollectionsInventarios()
+  //       window.location.reload();
+
+  //     });
+  //   }
+  //   })
+  // }
 
 
   getInformePresupuestoVendedor(tag:string){

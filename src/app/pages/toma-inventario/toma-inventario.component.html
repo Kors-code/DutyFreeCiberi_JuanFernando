@@ -135,11 +135,11 @@
           <table class="mat-elevation-z8" style="margin: 0 auto;">
             <thead style="padding: 15px; font-size: 1em; border-radius: 10px;">
               <tr>
-                <th >
+                <th style="border: 1px solid grey;">
                   Check
                   <mat-checkbox class="example-margin" (change)="checkIguales($event)"></mat-checkbox>
                 </th>
-                <th>
+                <th style="border: 1px solid grey;">
             
                    <span style="display:flex; align-items: center;">
                     SKU
@@ -155,7 +155,7 @@
                   </mat-form-field>
                 </span> 
                 </th>
-                <th > 
+                <th style="border: 1px solid grey;"> 
                   <span style="display:flex; align-items: center;">EAN 
                   
                   <mat-form-field style="text-align: center; color: black;width: 130px;">
@@ -166,9 +166,18 @@
                   </mat-form-field>
                 </span> 
                 </th>
-                <th>CATEGORIA</th>
-                <th>PRODUCTO</th>
-                <th>
+                <th style="border: 1px solid grey;">CATEGORIA</th>
+                <th style="border: 1px solid grey;">
+                  <span style="display:flex; align-items: center;">PRODUCTO
+                    <mat-form-field style="text-align: center; color: black;width: 130px;">
+                      <input matInput  type="text" name="producto" [(ngModel)]="searProd" (change)="verProdFilter('Iguales')">
+                      <button  matSuffix mat-icon-button aria-label="Clear">
+                        <mat-icon>search</mat-icon>
+                      </button>
+                    </mat-form-field>
+                  </span>
+                </th>
+                <th style="border: 1px solid grey;">
                   <span style="display:flex; justify-content: center; align-items: center;">
                     EXISTENCIA
                     <button *ngIf="Iguales[0].Exist_Final > Iguales[Iguales.length-1].Exist_Final" mat-icon-button aria-label="Clear" (click)="filterEanIguales()">
@@ -180,11 +189,11 @@
                   </span>
                  
                 </th>
-                <th>CONTEO</th>
+                <th style="border: 1px solid grey;">CONTEO</th>
                 <!-- <th>DIFERENCIA</th> -->
-                <th>CONTEOS</th>
-                <th>COSTO USD</th>
-                <th>
+                <th style="border: 1px solid grey;">CONTEOS</th>
+                <th style="border: 1px solid grey;">COSTO USD</th>
+                <th style="border: 1px solid grey;">
                   <span style="display:flex; justify-content: center; align-items: center;">
                   COSTO COP
                   <button *ngIf="Iguales[0].TOTAL_FINAL_INV > Iguales[Iguales.length-1].TOTAL_FINAL_INV" mat-icon-button aria-label="Clear" (click)="filterCOPIguales()">
@@ -203,12 +212,12 @@
                 <tr *ngIf="searcSKU == '' && element.EAN == searcEan ||
                            searcEan  == '' && element.Codigo1 == searcSKU ||
                            searcEan  == '' &&   searcSKU == '' ||
-                           element.Codigo1 == searcSKU && element.EAN == searcEan ">
+                           element.Codigo1 == searcSKU && element.EAN == searcEan">
                   <td style="border-bottom: 1px solid grey ; text-align: center;">  <mat-checkbox class="example-margin" [(ngModel)]="element.check"></mat-checkbox></td> 
                   <td style="border-bottom: 1px solid grey ;"> {{element.Codigo1}}</td>
                   <td style="border-bottom: 1px solid grey ;"> {{element.EAN}}</td>
                   <td style="border-bottom: 1px solid grey ; text-align: center;"> {{element.Cla}}</td>
-                  <td style="border-bottom: 1px solid grey ;"> {{element.Descripcion_1}}</td>
+                  <td style="border-bottom: 1px solid grey;"> {{element.Descripcion_1}}</td>
                   <td style="text-align: center; border-bottom: 1px solid grey ;"> {{element.Exist_Final}}</td>
                   <td style="border-bottom: 1px solid grey ;text-align: center;" class="selec" [matMenuTriggerFor]="menu" *ngIf="element.Conteo0.length != 0">   
                     <!-- <span > -->
@@ -332,7 +341,16 @@
                 </span> 
                 </th>
                 <th>CATEGORIA</th>
-                <th>PRODUCTO</th>
+                <th style="border: 1px solid grey;">
+                  <span style="display:flex; align-items: center;">PRODUCTO
+                    <mat-form-field style="text-align: center; color: black;width: 130px;">
+                      <input matInput  type="text" name="producto" [(ngModel)]="searProd" (change)="verProdFilter('Faltantes')">
+                      <button  matSuffix mat-icon-button aria-label="Clear">
+                        <mat-icon>search</mat-icon>
+                      </button>
+                    </mat-form-field>
+                  </span>
+                </th>
                 <th>
                   <span style="display:flex; justify-content: center; align-items: center;">
                     EXISTENCIA
@@ -495,7 +513,16 @@
                 </span> 
                 </th>
                 <th>CATEGORIA</th>
-                <th>PRODUCTO</th>
+                <th style="border: 1px solid grey;">
+                  <span style="display:flex; align-items: center;">PRODUCTO
+                    <mat-form-field style="text-align: center; color: black;width: 130px;">
+                      <input matInput  type="text" name="producto" [(ngModel)]="searProd" (change)="verProdFilter('Sobrantes')">
+                      <button  matSuffix mat-icon-button aria-label="Clear">
+                        <mat-icon>search</mat-icon>
+                      </button>
+                    </mat-form-field>
+                  </span>
+                </th>
                 <th>
                   <span style="display:flex; justify-content: center; align-items: center;">
                     EXISTENCIA
@@ -637,7 +664,7 @@
             <table class="mat-elevation-z8" style="margin: 0 auto;">
               <thead style="padding: 15px; font-size: 1em; border-radius: 10px;">
                 <tr>
-                  <th>
+                  <th style="border: 1px solid grey;">
                      <span style="display:flex; align-items: center;">SKU
                     <!-- <mat-form-field style="text-align: center; color: black;width: 90px;">
                       <input matInput  type="text" name="unds" [(ngModel)]="searcSKU">
@@ -647,7 +674,7 @@
                     </mat-form-field> -->
                   </span> 
                   </th>
-                  <th > 
+                  <th style="border: 1px solid grey;" > 
                     <span style="display:flex; align-items: center;">EAN 
 <!--                     
                     <mat-form-field style="text-align: center; color: black;width: 130px;">
@@ -658,9 +685,18 @@
                     </mat-form-field> -->
                   </span> 
                   </th>
-                  <th>CATEGORIA</th>
-                  <th>PRODUCTO</th>
-                  <th>
+                  <th style="border: 1px solid grey;">CATEGORIA</th>
+                  <th style="border: 1px solid grey;">
+                    <span style="display:flex; align-items: center;">PRODUCTO
+                      <mat-form-field style="text-align: center; color: black;width: 130px;">
+                        <input matInput  type="text" name="producto" [(ngModel)]="searProd" (change)="verProdFilter('Definitivas')">
+                        <button  matSuffix mat-icon-button aria-label="Clear">
+                          <mat-icon>search</mat-icon>
+                        </button>
+                      </mat-form-field>
+                    </span>
+                  </th>
+                  <th style="border: 1px solid grey;">
                     <span style="display:flex; justify-content: center; align-items: center;">
                       EXISTENCIA
                       <button *ngIf="Definitivas[0].Exist_Final > Definitivas[Definitivas.length-1].Exist_Final" mat-icon-button aria-label="Clear" (click)="filterExistDefinitivos()">
@@ -671,9 +707,9 @@
                       </button>
                     </span>
                   </th>
-                  <th>CONTEO</th>
-                  <th>DIFERENCIA</th>
-                  <th >CONTEOS</th>
+                  <th style="border: 1px solid grey;">CONTEO</th>
+                  <th style="border: 1px solid grey;">DIFERENCIA</th>
+                  <th style="border: 1px solid grey;">CONTEOS</th>
                   <th style="border: 1px solid grey;">UND USD</th>
                   <th style="border: 1px solid grey;">
                     <span style="display:flex; justify-content: center; align-items: center;">
@@ -689,6 +725,7 @@
                   <th style="border: 1px solid grey;"> TOTAL USD</th>
                   <th style="border: 1px solid grey;"> TOTAL COP</th>
                   <!-- <th>DEFINITIVO</th> -->
+                  <th  style="border: solid 1px grey ;">JUSTIFICACION</th>
                 </tr>
               </thead>
               <tbody>
@@ -738,6 +775,15 @@
                     <td style="text-align:right; border-bottom: 1px solid grey;">
                       {{element.TOTAL_FINAL_INV * element.Diferencia |  number:'0.0-0'}}
                     </td>
+                    <td style="text-align:right; border-bottom: 1px solid grey;">
+                      <mat-form-field  appearance="fill" style="text-align: center; font-size: 1em; margin-right: 20px; width: 200px;">
+                        <textarea matInput placeholder="Justificacion" type="text" name="tagS" [(ngModel)]="element.justificacion"></textarea>
+                        <button (click)="justificar(element)" matSuffix mat-icon-button aria-label="Guardar">
+                          <mat-icon>save</mat-icon>
+                        </button>
+                      </mat-form-field>
+                    </td>
+ 
                     <!-- <td [class._50]="element.Definitivo.length - element.Exist <= -1" [class._100]="element.Definitivo.length - element.Exist == 0"> {{element.Definitivo.length - element.Exist}} </td> -->
                   </tr>
                 </ng-template>
@@ -939,7 +985,7 @@
                 </tr>
               </tbody>
             </table>
-              <h1>Detalle Diferencias</h1>
+              <h1 style="text-align:center;">Detalle Diferencias</h1>
             <table class="mat-elevation-z8" style="width: 90%; margin: 0 auto; font-size: 0.8em;" class="mat-elevation-z8">
               <thead style="padding: 15px; font-size: 1em; border-radius: 10px;">
                 <tr>
@@ -953,7 +999,7 @@
                     </mat-form-field> -->
                   </span> 
                   </th>
-                  <th > 
+                  <th> 
                     <span style="display:flex; align-items: center;">EAN 
                     
                     <!-- <mat-form-field style="text-align: center; color: black;width: 130px;">
@@ -994,7 +1040,7 @@
                   </th>
                   <th style="border: 1px solid grey;"> TOTAL USD</th>
                   <th style="border: 1px solid grey;"> TOTAL COP</th>
-                  <!-- <th>DEFINITIVO</th> -->
+                  <th style="border: 1px solid grey;">JUSTIFICACION</th>
                 </tr>
               </thead>
               <tbody>
@@ -1024,6 +1070,9 @@
                     </td>
                     <td style="text-align:right; border-bottom: 1px solid grey;">
                       {{element.TOTAL_FINAL_INV * element.Diferencia |  number:'0.0-0'}}
+                    </td>
+                    <td style="border-bottom: 1px solid grey;"> 
+                      {{element.justificacion}}
                     </td>
                     <!-- <td [class._50]="element.Definitivo.length - element.Exist <= -1" [class._100]="element.Definitivo.length - element.Exist == 0"> {{element.Definitivo.length - element.Exist}} </td> -->
                   </tr>
@@ -1217,6 +1266,7 @@
       <th style="border: solid 1px grey ;">CONTEO</th>
       <th style="border: solid 1px grey ;">DIF</th>
       <th  style="border: solid 1px grey ;"> DIF COP</th>
+      <th  style="border: solid 1px grey ;">JUSTIFICACION</th>
     </tr>
   </thead>
   <tbody>
@@ -1231,6 +1281,9 @@
         <td style="border-bottom: 1px solid grey;">{{ element.Conteo}}</td>
         <td style="border-bottom: 1px solid grey;">{{ element.Conteo - element.Exist_Final}}</td>
         <td style="border-bottom: 1px solid grey; text-align:rigth ;">{{ (element.Conteo - element.Exist_Final) * element.Final_Unit_Cost |  number:'0.0-0' }}</td>
+        <td style="border-bottom: 1px solid grey;"> 
+         {{element.justificacion}}
+        </td>
       </tr>
     </ng-template>
   </tbody>

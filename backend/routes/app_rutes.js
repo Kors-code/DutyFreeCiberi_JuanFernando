@@ -107,6 +107,7 @@ api.post('/update-conteo-3/:tag', md_auth.ensureAuth,  infoController.updateData
 api.post('/update-conteo-4/:tag', md_auth.ensureAuth,  infoController.updateDataConteo4);
 api.post('/update-conteo-d/:tag', md_auth.ensureAuth,  infoController.updateDataConteoDefinitivo);
 api.post('/update-conteo-defi/:tag', md_auth.ensureAuth,  infoController.updateDataConteoDefinitivoDefinitvo);
+api.post('/update-conteo-justificacion/:tag', md_auth.ensureAuth,  infoController.updateDataConteoJustificacion);
 // api.post('/update-conteo-defi-many/:tag', md_auth.ensureAuth,  infoController.updateDataConteoDefinitivoDefinitvoMany);
 api.post('/contar/:tag', md_auth.ensureAuth,  infoController.contarEan);
 api.post('/contar-sku/:tag', md_auth.ensureAuth,  infoController.contarSKU);

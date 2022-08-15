@@ -11,9 +11,7 @@
         <mat-panel-title>
           <mat-icon>cell_tower</mat-icon>  Siigo API
         </mat-panel-title>
-        <mat-panel-description>
-            Coneccion Siigo 
-        </mat-panel-description>
+      
       </mat-expansion-panel-header>
       <mat-card-content> 
         <mat-form-field style="margin-right: 25px;" appearance="fill">
@@ -26,14 +24,13 @@
           </mat-form-field>
       </mat-card-content>
     </mat-expansion-panel>
+    
     <mat-expansion-panel>
       <mat-expansion-panel-header>
         <mat-panel-title>
           <mat-icon>mail</mat-icon>  GMAIL
         </mat-panel-title>
-        <mat-panel-description>
-            Servidor de correos electronicos
-        </mat-panel-description>
+        
       </mat-expansion-panel-header>
       <mat-card-content> 
         <div layout="row">
@@ -69,9 +66,7 @@
             <mat-icon>import_export</mat-icon>
               IMPORTAR INFORMACION
           </mat-panel-title>
-          <mat-panel-description>
-              Tags de importacion
-          </mat-panel-description>
+          
         </mat-expansion-panel-header>
         <mat-card-content> 
           <mat-checkbox class="example-margin" [(ngModel)]="checked">Activo</mat-checkbox>
@@ -107,22 +102,19 @@
           <mat-panel-title>
             <mat-icon>monetization_on</mat-icon>  CATEGORIAS PRESUPUESTO <span style="color: red; margin-left: 20px;" *ngIf="catParticipacion != 0 ">{{catParticipacion | number:'0.0-3'}}%</span>
           </mat-panel-title>
-          <mat-panel-description>
-              Categorias Ventas;
-          </mat-panel-description>
+          
         </mat-expansion-panel-header>
         <mat-card-content *ngIf="categoria._id != 0 || nuevo "> 
           <div style="display: flex; align-items: flex-end; width: 100%;">
-            <button *ngIf="categoria._id == 0" matSuffix mat-icon-button aria-label="Clear" (click)="addCategoria()">
+            <button *ngIf="categoria._id == 0" mat-stroked-button  aria-label="Clear" (click)="addCategoria()">
               <mat-icon>add</mat-icon> Agregar
             </button>
-            <button *ngIf="categoria._id != 0" matSuffix mat-icon-button aria-label="Clear" (click)="editCategoria()">
+            <button *ngIf="categoria._id != 0" mat-stroked-button  aria-label="Clear" (click)="editCategoria()">
               <mat-icon>edit</mat-icon> Editar
             </button>
-            <button *ngIf="categoria._id != 0" matSuffix mat-icon-button aria-label="Clear" (click)="editCategoria()">
+            <button *ngIf="categoria._id != 0" mat-stroked-button aria-label="Clear" (click)="editCategoria()">
               <mat-icon>delete</mat-icon> Eliminar
             </button>
-     
           </div>
           <mat-form-field style="margin-right: 25px;" appearance="fill">
             <mat-label>titulo</mat-label>
@@ -155,9 +147,9 @@
           <mat-card-content style="display:flex; flex-wrap: wrap;">
             <h5>Sub Cumplimientos
               <div style="display: flex;">
-                <!-- <button matSuffix mat-icon-button aria-label="Clear" (click)="addCumpli()">
+                <button matSuffix mat-icon-button aria-label="Clear" (click)="addCumpli()">
                   <mat-icon>add</mat-icon>
-                </button> -->
+                </button>
                 <button matSuffix mat-icon-button aria-label="Clear" (click)="editCumplimiento()">
                   <mat-icon>edit</mat-icon>
                 </button>
@@ -248,15 +240,16 @@
           <mat-panel-title>
             <mat-icon>store_mall_directory</mat-icon> TIENDAS PARTICIPACION PRESUPUESTO
           </mat-panel-title>
-          <mat-panel-description>
-            Puntos de venta a Analizar
           
-          </mat-panel-description>
         </mat-expansion-panel-header>
         <mat-card-content> 
           <mat-form-field style="margin-right: 25px;" appearance="fill">
             <mat-label>titulo</mat-label>
             <input matInput type="text" [(ngModel)]="tienda.tienda">
+          </mat-form-field>
+          <mat-form-field style="width:80% ;">
+            <mat-label>Resolucion Facturacion</mat-label>
+            <textarea matInput name="protocolo" [(ngModel)]="tienda.resolucion"></textarea>
           </mat-form-field>
           <mat-form-field style="margin-right: 25px;" appearance="fill">
             <mat-label>participacion</mat-label>
@@ -347,10 +340,7 @@
           <mat-panel-title>
             <mat-icon>emoji_people</mat-icon> EMPLEADOS PRESUPUESTO
           </mat-panel-title>
-          <mat-panel-description>
-            Listado de Colaboradores
-        
-          </mat-panel-description>
+          
         </mat-expansion-panel-header>
         <mat-card-content> 
           <mat-form-field style="margin-right: 20px;" appearance="fill">
@@ -458,9 +448,7 @@
             <mat-icon>inventory</mat-icon>
               TOMAS DE INVENTARIO
           </mat-panel-title>
-          <mat-panel-description>
-              Tags de importacion
-          </mat-panel-description>
+          
         </mat-expansion-panel-header>
         <mat-card-content> 
           <mat-checkbox class="example-margin" [(ngModel)]="checked">Activo</mat-checkbox>
@@ -491,6 +479,7 @@
 
         </mat-card-content>
       </mat-expansion-panel>
+     
 
   </mat-accordion>
 </mat-card>
