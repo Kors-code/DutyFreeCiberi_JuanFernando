@@ -13,7 +13,7 @@ export class SocketIOService {
 constructor(){
     this.url='localhost:1165'
     this.socket = io.connect(this.url);   
-      console.log(this.url)
+    //   console.log(this.url)
 };
 
 listeners:any = [];

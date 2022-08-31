@@ -371,6 +371,37 @@ async function getDataCollection(req, res){
         res.status(200).send(arrayCollections);
 }
 
+async function getDataCollectionPaginate(req, res){
+    var params = req.body;
+    const page = req.query.page || 0;
+    const dataPage = req.query.data || 500;
+
+    console.log(page)
+    console.log(dataPage)
+
+    var coll = req.params.tag;
+    const url = 'mongodb://localhost:27017';
+    const client = new MongoClient(url);
+    const dbName = 'DutyFree';
+        await client.connect();
+        console.log('Connected successfully to server paginate');
+        const db = client.db(dbName);
+        const collection = await db.collection(coll);
+        let arrayCollections = []
+        var reg = await collection.find()
+        .sort({Folio:1})
+        .skip(page * dataPage)
+        .limit(dataPage)
+        .forEach(element => arrayCollections.push(element))
+        .then(()=>{
+            res.status(200).send(arrayCollections);
+        })
+        .catch(()=>{
+            res.status(500).send({error:'No se tiena la Data'});
+        })
+        
+}
+
 async function getDataCollectionVendedor(req, res){
     var params = req.body;
     var coll = req.params.tag;
@@ -1040,7 +1071,21 @@ async function updateDataConteo4(req, res){
 }
 
 
-
+async function renameCollectionsDB(req, res){
+    var params = req.body;
+    console.log(params)
+    const url = 'mongodb://localhost:27017';
+    const client = new MongoClient(url);
+    const dbName = params.dataBase;
+        await client.connect();
+        console.log('Connected successfully to server');
+        const db = client.db(dbName);
+        var coll_off = params.collNew 
+        var coll = params.collOrigin 
+        db.collection(coll).rename(coll_off, function(err, newColl) {
+            return res.status(200).send(newColl);
+        });  
+}
 
 module.exports = {
     registerInfo,
@@ -1053,6 +1098,7 @@ module.exports = {
     getfacturacionSiigo,
     getDataCollectionEstado,
     getDataCollectionVendedor,
+    getDataCollectionPaginate,
     agregarInfo,
     consultarInfoCategoria,
     consultarInfoCategoriaTienda,
@@ -1087,6 +1133,7 @@ module.exports = {
     updateDataConteo3,
     updateDataConteo4,
     deleteDataPresupuesto,
+    renameCollectionsDB,
 
 
     renametCollectionsInventarios,

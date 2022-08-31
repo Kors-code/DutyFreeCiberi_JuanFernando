@@ -403,7 +403,7 @@ export class ImportarInfoComponent implements OnInit {
       this.registros[i].COP = Math.round(this.trm * this.registros[i].Importe);
       
       let posTienda = this.config.tiendas.map(function( e:any ) { return e.tienda; }).indexOf(this.registros[i].PDV);
-      if(this.registros[i].PDV = 'MDE D'){
+      if(this.registros[i].PDV == 'MDE D'){
         console.log(this.registros[i].Resolucion = this.config.tiendas[posTienda]['resolucion'])
         this.registros[i].Resolucion = this.config.tiendas[posTienda]['resolucion']
       }else{
@@ -434,8 +434,7 @@ export class ImportarInfoComponent implements OnInit {
         detalle = detalle.slice(0, 100);
         
       }
-      // console.log(detalle)
-     
+
       this.registros[i].Detalle = detalle;
       let pos = this.registrosCostumer.map(function(e: { DOC_N: any; }) { return e.DOC_N; }).indexOf(this.registros[i].Folio);
 

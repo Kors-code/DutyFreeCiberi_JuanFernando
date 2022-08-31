@@ -168,7 +168,7 @@ export class DashBoardComponent implements OnInit {
             let pdv = this.presupuesto.tiendas.map(function(e:any) { return e.tienda; }).indexOf(PDV);
             this.presupuesto.ventas_usd = this.presupuesto.ventas_usd + element.Importe;
             this.presupuesto.ventas = this.presupuesto.ventas + element.COP;
-            // //////////console.log(this.presupuesto.tiendas[pdv])
+            // console.log(PDV, pdv)
             if(pdv != -1){
               // //////////console.log(this.presupuesto.tiendas[pdv].usd)
               this.presupuesto.tiendas[pdv].usd =  this.presupuesto.tiendas[pdv].usd + element.Importe
@@ -436,7 +436,7 @@ export class DashBoardComponent implements OnInit {
         this.downloadCajeros = [];
         this.informeCajeros = res
 
-        console.log(this.informeCajeros)
+        // console.log(this.informeCajeros)
         for (let index = 0; index <  this.informeCajeros.length; index++) {
           const element =  this.informeCajeros[index];
           element.folios = this.facturasVendedor(element.Detalle)

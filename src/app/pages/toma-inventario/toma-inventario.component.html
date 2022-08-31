@@ -1026,10 +1026,10 @@
                   <th>CONTEO</th>
                   <th>DIFERENCIA</th>
         
-                  <th style="border: 1px solid grey;">UND USD</th>
+                  <th style="border: 1px solid grey;">COST UND USD</th>
                   <th style="border: 1px solid grey;">
                     <span style="display:flex; justify-content: center; align-items: center;">
-                    UND COP
+                    COST UND COP
                     <button *ngIf="Definitivas[0].COST_PROM > Definitivas[Definitivas.length-1].COST_PROM" mat-icon-button aria-label="Clear" (click)="filterExistDefinitivos()">
                       <mat-icon>arrow_upward</mat-icon>
                     </button>
@@ -1060,16 +1060,20 @@
                     <td style="border-bottom: 1px solid grey;" [class._50]="element.Conteo - element.Exist_Final <= -1" [class._100]="element.Conteo - element.Exist_Final == 0"  [class._90]="element.Conteo - element.Exist_Final >= 1" style="border-bottom: 1px solid grey;"> {{element.Conteo - element.Exist_Final}} </td>
                     
                     <td style="text-align:right; border-bottom: 1px solid grey;">
-                      {{element.TOTAL_FINAL_INV_USD  |  number:'0.0-2'}}
+                      {{element.TOTAL_FINAL_INV_USD / element.Diferencia  |  number:'0.0-2'}}
                     </td>
                     <td style="text-align:right; border-bottom: 1px solid grey;">
-                      {{element.TOTAL_FINAL_INV |  number:'0.0-0'}}
+                      {{element.TOTAL_FINAL_INV / element.Diferencia |  number:'0.0-0'}}
                     </td>
                     <td style="text-align:right; border-bottom: 1px solid grey;">
-                      {{element.TOTAL_FINAL_INV_USD * element.Diferencia |  number:'0.0-2'}}
+                      <span *ngIf="element.Diferencia >= 1">{{element.TOTAL_FINAL_INV_USD |  number:'0.0-2'}}</span>
+                      <span *ngIf="element.Diferencia <= -1">{{element.TOTAL_FINAL_INV_USD * -1 |  number:'0.0-2'}}</span>
+                      
                     </td>
                     <td style="text-align:right; border-bottom: 1px solid grey;">
-                      {{element.TOTAL_FINAL_INV * element.Diferencia |  number:'0.0-0'}}
+                      <span *ngIf="element.Diferencia >= 1">{{element.TOTAL_FINAL_INV  |  number:'0.0-0'}}</span>
+                      <span *ngIf="element.Diferencia <= -1">{{element.TOTAL_FINAL_INV * -1 |  number:'0.0-0'}}</span>
+                      
                     </td>
                     <td style="border-bottom: 1px solid grey;"> 
                       {{element.justificacion}}

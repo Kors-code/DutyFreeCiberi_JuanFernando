@@ -79,9 +79,9 @@ export class tomaInventarioComponent implements OnInit {
       this.identity = this._userService.getIdentity();
       // this.trmApi
       //   .latest()
-      //   .then((data:any) =>  // console.log(this.trm =  data.valor))
-      //   .catch((error:any) =>  // console.log(error));
-      console.log(this.identity)
+      //   .then((data:any) =>  // //console.log(this.trm =  data.valor))
+      //   .catch((error:any) =>  // //console.log(error));
+      //console.log(this.identity)
     }
 
   ngOnInit(): void {
@@ -115,7 +115,7 @@ export class tomaInventarioComponent implements OnInit {
       res=>{
         this.collections = res
         // this.collections = this.collections.reverse();
-        console.log(this.collections)
+        //console.log(this.collections)
       }
     )
   }
@@ -240,7 +240,7 @@ export class tomaInventarioComponent implements OnInit {
           this.DefinitivoCategorias = []
           this.config = res[0];
           localStorage.setItem('categ',JSON.stringify(this.config.categorias))
-          // console.log(this.config)
+          // //console.log(this.config)
           this.config.categorias.forEach((element: any) => {
             this.DefinitivoCategorias.push(
               {
@@ -285,7 +285,7 @@ export class tomaInventarioComponent implements OnInit {
       this.data = (XLSX.utils.sheet_to_json(ws, { header: 1 }));
 
       // this.data.flat()  
-      // ////// console.log(this.data);
+      // ////// //console.log(this.data);
       this.log= false;
 
     };
@@ -315,7 +315,7 @@ export class tomaInventarioComponent implements OnInit {
       const ws: XLSX.WorkSheet = wb.Sheets[wsname];
       this.data = (XLSX.utils.sheet_to_json(ws, { header: 1 }));
 
-      // console.log('Data',this.data);
+      // //console.log('Data',this.data);
 
       this.convertirJson()
       this.log= false;
@@ -333,7 +333,7 @@ export class tomaInventarioComponent implements OnInit {
 
 
   saveScanSocket(){
-    // ////// console.log(JSON.stringify(this.registros))
+    // ////// //console.log(JSON.stringify(this.registros))
     // this._socketService.emit('dataUpNow', JSON.stringify(this.registros))
   }
 
@@ -364,7 +364,7 @@ export class tomaInventarioComponent implements OnInit {
       if(result){  
     this._infoServce.offCollectionsInv(this.tag).subscribe(
       res=>{
-        console.log(res)
+        //console.log(res)
         this.getCollectionsInventarios()
         window.location.reload();
       },err => {
@@ -388,11 +388,11 @@ export class tomaInventarioComponent implements OnInit {
 
     this._infoServce.deleteCollectionsInv(this.tag).subscribe(
         res=>{
-          console.log(res)
+          //console.log(res)
           this.getCollectionsInventarios();
           window.location.reload();
         },err => {
-          console.log(err)
+          //console.log(err)
           this.getCollectionsInventarios()
           window.location.reload();
         })
@@ -401,8 +401,8 @@ export class tomaInventarioComponent implements OnInit {
   }
 
   subirConteo(){
-    // console.log(this.tag)
-    // console.log(this.registros)
+    // //console.log(this.tag)
+    // //console.log(this.registros)
     this.saveInfoCompleto(this.registros)
   }
 
@@ -413,7 +413,7 @@ export class tomaInventarioComponent implements OnInit {
     this._infoServce.agregarConteo(registros, this.tag).subscribe(
       res =>{
         let dato = res
-        // console.log(dato)
+        // //console.log(dato)
         let data: Object
         this.log = false
         data = {titulo: 'Confirmaciòn', info:'Se Subieron los Registros', type: 'Cancel', icon:'done_all'}
@@ -457,7 +457,7 @@ export class tomaInventarioComponent implements OnInit {
       this.registros.push(Object.fromEntries(reg))
     }
 
-   // console.log(this.registros) 
+   // //console.log(this.registros) 
     
     for(var i = 0;i < this.registros.length; i++){
       if(this.registros[i].Exist_Final == ''){
@@ -493,7 +493,7 @@ export class tomaInventarioComponent implements OnInit {
   }
 
   this.marcas = duplicados
-    console.log( this.marcas)
+    //console.log( this.marcas)
 
 
     var duplicados2: any[] = [];
@@ -516,7 +516,7 @@ export class tomaInventarioComponent implements OnInit {
   }
 
   procesarMarca(){
-    console.log(this.marca)
+    //console.log(this.marca)
     let Valores = this.marca.value
     let Clasi = this.clasifi.value
     var duplicados = []
@@ -541,26 +541,26 @@ export class tomaInventarioComponent implements OnInit {
     }
 
     this.registros = duplicados
-    console.log(duplicados)
+    //console.log(duplicados)
   }
 
    chunckArrayInGroups(arr:any[], size:number) {
     var chunk = [], i; // declara array vacio e indice de for
     for (i = 0; i <= arr.length; i+= size) // loop que recorre el array 
       chunk.push(arr.slice(i, i + size)); // push al array el tramo desde el indice del loop hasta el valor size + el indicador 
-      // console.log(chunk)
+      // //console.log(chunk)
       return this.lotesCmprobantes = chunk;
   }
 
   generarRegistros(registros: any[]){
-    // console.log( registros)
+    // //console.log( registros)
     if(registros){
     this.log = true
     this.itemsContable =[]
     this.itemsFacturaVentas=[]
     for(var i = 0;i < registros.length; i++){
       let pos2 = this.cuentas.map(function(e: { cod: any; }) { return e.cod; }).indexOf(registros[i].Clasi);
-      // // console.log(pos2)
+      // // //console.log(pos2)
       if(pos2 != -1){
         let dtaComprobante = {
           account:{
@@ -651,13 +651,13 @@ export class tomaInventarioComponent implements OnInit {
         }
         this.itemsFacturaVentas.push(dtaComprobanteVentaDeb)
       }else{
-        // console.log('Registo no encontrado '+ registros[i].Clasi)
+        // //console.log('Registo no encontrado '+ registros[i].Clasi)
       }
     }
 
-    // // console.log(this.date)
-    // // console.log( this.itemsContable)
-    // // console.log( this.itemsFacturaVentas)
+    // // //console.log(this.date)
+    // // //console.log( this.itemsContable)
+    // // //console.log( this.itemsFacturaVentas)
     let credenciales={
       user:this.config.siigoUser,
       key:this.config.siigoKey,
@@ -667,7 +667,7 @@ export class tomaInventarioComponent implements OnInit {
       iddoc:5086,
     }
 
-    // // console.log(credenciales)
+    // // //console.log(credenciales)
     let credencialesVentas={
       user:this.config.siigoUser,
       key:this.config.siigoKey,
@@ -679,7 +679,7 @@ export class tomaInventarioComponent implements OnInit {
 
     this._siigoService.saveComprobantesSiigo(credenciales).subscribe(
       res=>{
-        // console.log(res)
+        // //console.log(res)
         this.openSnackBar('CMV GENERADO CORRECTAMENTE','EXITO')
         this._siigoService.saveComprobantesSiigo(credencialesVentas).subscribe(
           resp=>{
@@ -705,7 +705,7 @@ export class tomaInventarioComponent implements OnInit {
         dialogRef.afterClosed().subscribe(result => {
 
         })
-        // console.log(err)
+        // //console.log(err)
       }
     )
 
@@ -731,11 +731,11 @@ export class tomaInventarioComponent implements OnInit {
   }
 
   justificar(element: any){
-    console.log(element)
+    //console.log(element)
     this._infoServce.updateConteoJustificacion(element, this.tag).subscribe(
       res=>{
         this.openSnackBar('Justificacion Actualizada')
-        console.log(res)
+        //console.log(res)
       }
     )
 
@@ -749,7 +749,7 @@ export class tomaInventarioComponent implements OnInit {
   unds = 1
   ultimosConteos:any[] = []
   saveScan(){
-    // console.log(this.ultimosConteos)
+    // //console.log(this.ultimosConteos)
     this.log= true;
     let scan = {
       unds:this.unds,
@@ -763,7 +763,7 @@ export class tomaInventarioComponent implements OnInit {
       this._infoServce.agregarScaneo(scan, this.tag).subscribe(
         res =>{
           let dato = res
-          console.log(dato)
+          //console.log(dato)
           if(dato){
             if(this.ultimosConteos.length <= 50){ 
               this.ultimosConteos.unshift(dato)
@@ -772,7 +772,7 @@ export class tomaInventarioComponent implements OnInit {
               this.ultimosConteos.splice(this.ultimosConteos.length -1,1)
             }
            
-            // console.log(dato)
+            // //console.log(dato)
             this.log = false
             this.openSnackBar(this.scan + '')
             this.scan = undefined  
@@ -792,7 +792,7 @@ export class tomaInventarioComponent implements OnInit {
       this._infoServce.agregarScaneoSKU(scan, this.tag).subscribe(
         res =>{
           let dato = res
-          console.log(dato)
+          //console.log(dato)
           if(dato){
             if(this.ultimosConteos.length <= 50){ 
               this.ultimosConteos.unshift(dato)
@@ -814,7 +814,7 @@ export class tomaInventarioComponent implements OnInit {
             this.unds = 1
             this.scanElement.nativeElement.focus();
           }
-          // console.log(dato)
+          // //console.log(dato)
          
         })
     }
@@ -826,7 +826,7 @@ export class tomaInventarioComponent implements OnInit {
   }
   estado = 'iguales'
   cuantas(item: any){
-    // console.log(item)
+    // //console.log(item)
     let conteo = 0
     if(item.length != 0){
       item.forEach((element: { unds: number; }) => {
@@ -842,13 +842,13 @@ export class tomaInventarioComponent implements OnInit {
 
   listenConteo(){
 
-    // console.log('scan'+this.tag)
+    // //console.log('scan'+this.tag)
     this.newDataUp =  this._socketService.listen('scan'+this.tag).subscribe((data:any)=>{
-      // console.log(data);
+      // //console.log(data);
         this._infoServce.getConteoTag(this.tag).subscribe(
           res=>{
             this.openSnackBar(data.scan)
-            // console.log(res)
+            // //console.log(res)
             this.conteo = res
           }
         )
@@ -895,7 +895,7 @@ export class tomaInventarioComponent implements OnInit {
   downloadFile(datain: any, title:string) {
     let datas = JSON.stringify(datain)
     var data = JSON.parse(datas)
-    console.log(data)
+    //console.log(data)
     data.forEach((element: { Conteo0: number; Conteo1: number; Conteo2: number; Conteo3: number; Conteo4: number; Definitivo: number;Diferencia: number;Exist_Final: number; }) => {
       element.Conteo0 = this.cuantas(element.Conteo0)
       element.Conteo1 = this.cuantas(element.Conteo1)
@@ -960,10 +960,10 @@ export class tomaInventarioComponent implements OnInit {
 
     let categorias:any = localStorage.getItem('invCategorias');
     this.DefinitivoCategorias = JSON.parse(categorias);
-    // console.log(this.DefinitivoCategorias)
+    // //console.log(this.DefinitivoCategorias)
     this._infoServce.getConteoTag(this.tag).subscribe(
       res=>{
-        // // console.log(res)
+        // // //console.log(res)
         this.conteo = res
         // this.conteo.sort(function(a,b){
         //   return a.Descripcion_1.localeCompare(b.Descripcion_1);
@@ -974,7 +974,7 @@ export class tomaInventarioComponent implements OnInit {
           return b.Exist_Final - a.Exist_Final;
         });
         // this.categorias = [...new Set(this.conteo)]
-        // // console.log(this.categorias)
+        // // //console.log(this.categorias)
         for (let i = 0; i < this.conteo.length; i++) {
           const element = this.conteo[i];
           element.Diferencia = element.Conteo - element.Exist_Final;
@@ -1014,11 +1014,11 @@ export class tomaInventarioComponent implements OnInit {
             this.copDefinitivasConteo = this.copDefinitivasConteo + ((element.TOTAL_FINAL_INV / element.Exist_Final) *  element.Conteo) 
             
             this.DefinitivoCategorias.forEach(categ => {
-              // console.log(element.Cla)
+              // //console.log(element.Cla)
               let pos = categ.subscat.map(function(e:any) { return e; }).indexOf(element.Cla);
-              // console.log(pos)
+              // //console.log(pos)
               if(pos != -1){
-                // console.log('entro '+ categ.difUnidades.positivo)
+                // //console.log('entro '+ categ.difUnidades.positivo)
                 if((element.Conteo - element.Exist_Final)>= 1 ){
                   categ.difUnidades.positivo  = categ.difUnidades.positivo + (element.Conteo - element.Exist_Final)
                   categ.difCOP.positivo  = categ.difCOP.positivo + ((element.Conteo * (element.TOTAL_FINAL_INV / element.Exist_Final )) - element.TOTAL_FINAL_INV)
@@ -1045,7 +1045,7 @@ export class tomaInventarioComponent implements OnInit {
       }
 
        
-        // console.log( this.Definitivas)
+        // //console.log( this.Definitivas)
         this.openSnackBar('NUEVOS REGISTROS '+ this.conteo.length)
         this.log= false
       }
@@ -1060,23 +1060,23 @@ export class tomaInventarioComponent implements OnInit {
       data: registro
     });
     dialogRef.afterClosed().subscribe(result => {
-      //// console.log(result)
+      //// //console.log(result)
       if(result == item){
-        //// console.log('igual')
+        //// //console.log('igual')
       }else{
-        //// console.log('cambio')
+        //// //console.log('cambio')
         // this.getDataCollections(this.key)
       }
       item = result
     })
-    // ////// console.log(event)
+    // ////// //console.log(event)
   }
 
   sortedData: _Conteo[] = [];
 
   sortData(sort: Sort) {
     const data = this.conteo;
-    // // console.log(data) 
+    // // //console.log(data) 
     if (!sort.active || sort.direction === '') {
       this.sortedData = data;
       return;
@@ -1091,7 +1091,7 @@ export class tomaInventarioComponent implements OnInit {
       const isAsc = sort.direction === 'asc';
       switch (sort.active) {
         case 'Codigo_1':
-          // console.log('Codigo_1')
+          // //console.log('Codigo_1')
           return compare(a.Codigo1, b.Codigo1, isAsc);
         case 'Codigo_3':
           return compare(a.Codigo_3, b.Codigo_3, isAsc);
@@ -1108,7 +1108,7 @@ export class tomaInventarioComponent implements OnInit {
   }
 
   verProdFilter(filter:string ){
-   console.log(this.searProd) 
+   //console.log(this.searProd) 
    var arrayFilter: _Conteo[] =[]
    if(this.searProd == ''){
     this.getCnteoTag()
@@ -1117,7 +1117,7 @@ export class tomaInventarioComponent implements OnInit {
      this.Iguales.map(
       (element) =>{
         let index = element.Descripcion_1.indexOf(this.searProd.toUpperCase())
-        console.log(index)
+        //console.log(index)
         if(index != -1){
           arrayFilter.push(element)
         }
@@ -1129,7 +1129,7 @@ export class tomaInventarioComponent implements OnInit {
       this.Faltantes.map(
        (element) =>{
          let index = element.Descripcion_1.indexOf(this.searProd.toUpperCase())
-         console.log(index)
+         //console.log(index)
          if(index != -1){
            arrayFilter.push(element)
          }
@@ -1142,7 +1142,7 @@ export class tomaInventarioComponent implements OnInit {
       this.Sobrantes.map(
        (element) =>{
          let index = element.Descripcion_1.indexOf(this.searProd.toUpperCase())
-         console.log(index)
+         //console.log(index)
          if(index != -1){
            arrayFilter.push(element)
          }
@@ -1155,7 +1155,7 @@ export class tomaInventarioComponent implements OnInit {
       this.Definitivas.map(
        (element) =>{
          let index = element.Descripcion_1.indexOf(this.searProd.toUpperCase())
-         console.log(index)
+        //  //console.log(index)
          if(index != -1){
            arrayFilter.push(element)
          }
@@ -1230,14 +1230,14 @@ export class tomaInventarioComponent implements OnInit {
   }
 
   checkFaltantes(event: any){
-    // console.log(event)
+    // //console.log(event)
     this.Faltantes.forEach(element => {
       element.check = event.checked
     })
   }
 
   checkSobrantes(event: any){
-    // console.log(event)
+    // //console.log(event)
     this.Sobrantes.forEach(element => {
       element.check = event.checked
     })
@@ -1353,7 +1353,7 @@ export class tomaInventarioComponent implements OnInit {
     this._infoServce.updateConteoDefinitivo(register, this.tag).subscribe(
       res=>{
         this.openSnackBar('Actualizado')
-        // // console.log(res)
+        // // //console.log(res)
       }
     )
 
@@ -1373,7 +1373,7 @@ export class tomaInventarioComponent implements OnInit {
     }
     this._infoServce.updateConteoDefinitivo(register, this.tag).subscribe(
       res=>{
-        // console.log(res)
+        // //console.log(res)
         this.openSnackBar('Actualizado')
       }
     )
@@ -1390,7 +1390,7 @@ export class tomaInventarioComponent implements OnInit {
     }
     this._infoServce.updateConteo1(register, this.tag).subscribe(
       res=>{
-        // console.log(res)
+        // //console.log(res)
         this.openSnackBar('Actualizado')
       }
     )
@@ -1406,7 +1406,7 @@ export class tomaInventarioComponent implements OnInit {
     }
     this._infoServce.updateConteo2(register, this.tag).subscribe(
       res=>{
-        // console.log(res)
+        // //console.log(res)
         this.openSnackBar('Actualizado')
       }
     )
@@ -1422,7 +1422,7 @@ export class tomaInventarioComponent implements OnInit {
     }
     this._infoServce.updateConteo3(register, this.tag).subscribe(
       res=>{
-        // console.log(res)
+        // //console.log(res)
         this.openSnackBar('Actualizado')
       }
     )
@@ -1439,7 +1439,7 @@ export class tomaInventarioComponent implements OnInit {
     }
     this._infoServce.updateConteo4(register, this.tag).subscribe(
       res=>{
-        // console.log(res)
+        // //console.log(res)
         this.openSnackBar('Actualizado')
       }
     )
@@ -1698,7 +1698,7 @@ export class DialogConteoDetail {
   constructor(
     public dialogRef: MatDialogRef<DialogConteoDetail>,
     @Inject(MAT_DIALOG_DATA) public data: any) {
-      console.log(this.data)
+      //console.log(this.data)
      }
 
   onNoClick(): void {

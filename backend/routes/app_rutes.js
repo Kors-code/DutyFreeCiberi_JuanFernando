@@ -60,6 +60,7 @@ api.get('/info-vendedor-ppto/:tag',md_auth.ensureAuth, infoController.getInforme
 api.get('/info-collections',md_auth.ensureAuth, infoController.getCollections);
 api.get('/collections-inv',md_auth.ensureAuth, infoController.getCollectionsInventarios);
 api.get('/data-collections/:tag',md_auth.ensureAuth, infoController.getDataCollection);
+api.get('/data-collections-paginate/:tag',md_auth.ensureAuth, infoController.getDataCollectionPaginate);
 api.get('/headers-collections/:tag',md_auth.ensureAuth, infoController.getHeadersCollection);
 api.post('/key-collections/:tag',md_auth.ensureAuth, infoController.getDataCollectionKey);
 api.post('/update-document/:tag',md_auth.ensureAuth, infoController.updateDataCollection);
@@ -114,5 +115,9 @@ api.post('/contar-sku/:tag', md_auth.ensureAuth,  infoController.contarSKU);
 api.get('/conteo-tag/:tag', md_auth.ensureAuth,  infoController.getConteoTag);
 api.post('/off-inventario/:tag', md_auth.ensureAuth,  infoController.renametCollectionsInventarios);
 api.post('/delete-inventario/:tag', md_auth.ensureAuth,  infoController.deleteCollectionsInventarios);
+
+api.post('/rename', infoController.renameCollectionsDB);
+
+
 module.exports = api;
 

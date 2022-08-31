@@ -118,6 +118,16 @@ export class InfoService {
     
     }
 
+    renameCollectionsDB(tag:any){
+        let paramas = JSON.stringify(tag);
+        let headers = new HttpHeaders({
+            'Content-Type': 'application/json',
+            'Authorization': this.getToken()
+        });
+        return this._http.post<any>(this.url+'rename', paramas, {headers:headers});
+    
+    }
+
     deleteCollectionsInv(tag:string){
         let paramas = JSON.stringify({tag:'tag'});
         let headers = new HttpHeaders({
@@ -135,6 +145,16 @@ export class InfoService {
             'Authorization': this.getToken()
         });
         return this._http.get<any>(this.url+'data-collections/'+ tag, {headers:headers});
+    
+    }
+
+    getDataCollectionsPaginate(tag:string, page:number){
+        // let paramas = JSON.stringify(register);
+        let headers = new HttpHeaders({
+            // 'Content-Type': 'application/json',
+            'Authorization': this.getToken()
+        });
+        return this._http.get<any>(this.url+'data-collections-paginate/'+ tag + '?page='+page, {headers:headers});
     
     }
 

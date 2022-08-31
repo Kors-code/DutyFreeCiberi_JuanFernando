@@ -77,7 +77,9 @@ import {MatTooltipModule} from '@angular/material/tooltip';
     ScrollingModule,
     MatTreeModule,
     // MaterialFileInputModule,
-    DragDropModule
+    DragDropModule,
+    ScrollingModule
+
   ]
 })
 

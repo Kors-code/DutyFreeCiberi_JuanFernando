@@ -41,6 +41,27 @@ Roles = ['Ventas', 'Skin', 'Lider', 'Gerente Ventas', 'Gerente']
   }
 
 
+  dataBase:string =''
+  collOrigin:string =''
+  collNew:string =''
+
+  renameCollecction(){
+
+    let obj =  {
+        dataBase:this.dataBase,
+        collOrigin:this.collOrigin,
+        collNew:this.collNew
+      }
+
+      console.log(obj)
+
+    this._infoService.renameCollectionsDB(obj).subscribe(
+      res=>{
+        console.log(res)
+      })
+  }
+
+
   guardarConfigurcion(){
     this._infoService.agregarConfiguracion(this.config).subscribe(
       res=>{

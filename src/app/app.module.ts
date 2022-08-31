@@ -24,6 +24,7 @@ import { SiigoComponent } from './pages/siigo-conection/siigo.component';
 import { CumplimientoComponent, DialogChangePass } from './pages/cumplimiento/cumplimiento.component';
 import { DialogConteoDetail, tomaInventarioComponent } from './pages/toma-inventario/toma-inventario.component';
 
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -56,6 +57,7 @@ import { DialogConteoDetail, tomaInventarioComponent } from './pages/toma-invent
     NgxJsonViewerModule,
     NgJsonEditorModule,
     NgxChartsModule,
+  
   ],
   providers: [],
   bootstrap: [AppComponent],

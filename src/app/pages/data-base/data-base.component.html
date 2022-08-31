@@ -53,7 +53,12 @@
           </button>
       </ng-template> 
   </mat-menu>
-
+    <mat-paginator [length]="500"
+      [pageSizeOptions]="[]"
+      (page)="pagination($event)"
+      aria-label="Select page"
+      *ngIf="documentos.length != 0">
+    </mat-paginator>
     <table *ngIf="documentos.length != 0" mat-table [dataSource]="documentos" class="mat-elevation-z8">
       <!--- Note that these columns can be defined in any order.
             The actual rendered columns are set as a property on the row definition" -->
@@ -117,5 +122,11 @@
       </ng-container>
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-    </table>   
+    </table>
+    <mat-paginator [length]="500"
+      [pageSizeOptions]="[]"
+      (page)="pagination($event)"
+      aria-label="Select page"
+      *ngIf="documentos.length != 0">
+    </mat-paginator>   
 </mat-card>

@@ -70,10 +70,9 @@ export class DataBaseComponent implements OnInit {
   getDataCollections(tag:string){
     this.log = true;
     this.key = tag;
-    this._infoService.getDataCollections(tag).subscribe(
+    this._infoService.getDataCollectionsPaginate(tag, 0).subscribe(
       res=>{
-        // // console.log(res)
-        
+        console.log(res)
         this.documentos = res;
         this.headers= Object.keys(this.documentos[0])
         this.subir = this.documentos.map(function(e: { Estado: any; }) { return e.Estado; }).indexOf('Siigo');
@@ -93,6 +92,16 @@ export class DataBaseComponent implements OnInit {
         this.log = false;
       }
     )
+  }
+  
+
+  pagination(event: any){
+    console.log(event)
+    this._infoService.getDataCollectionsPaginate(this.key, event.pageIndex).subscribe(
+      res=>{
+        console.log(res)
+        this.documentos = res;
+      })
   }
 
   passDataCollections(tag:string){
