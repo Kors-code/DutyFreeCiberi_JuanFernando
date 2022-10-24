@@ -1070,7 +1070,6 @@ async function updateDataConteo4(req, res){
           });        
 }
 
-
 async function renameCollectionsDB(req, res){
     var params = req.body;
     console.log(params)
