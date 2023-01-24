@@ -3,6 +3,7 @@ import { Empleado } from "./config";
 export class Presupuesto {
     constructor(
         public _id: any = '',
+        public operacion: any = '',
         public tag: string = '',
         public estado: string = 'Activa',
         public ventas:number = 0,

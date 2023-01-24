@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { Operacion } from 'src/app/models/operacion';
 import { UserService } from 'src/app/services/user.service';
 
 @Component({
@@ -10,8 +11,10 @@ import { UserService } from 'src/app/services/user.service';
 export class NavComponent implements OnInit {
 
   public identity:any;
+  public pOperacion:Operacion;
   constructor(private _router: Router,
     private _userService:UserService,) {
+      this.pOperacion= this._userService.getPredetermidaOperacion();
    
    }
 
@@ -41,6 +44,14 @@ export class NavComponent implements OnInit {
         // this.identity = this._userService.getIdentity();
       }
 
+      this.pOperacion =this._userService.getPredetermidaOperacion();
+
+  }
+
+  cancelarOperacion(){
+    localStorage.removeItem('predeterminateOperacion');
+    this._router.navigate(['/']);
+    // window.location.reload();
   }
 
 }

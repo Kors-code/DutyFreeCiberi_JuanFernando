@@ -9,6 +9,8 @@ import { FormControl } from '@angular/forms';
 import { DOCUMENT } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogConfirm } from '../confirm-dialog/confirm-dialog.component';
+import { UserService } from 'src/app/services/user.service';
+import { Operacion } from 'src/app/models/operacion';
 
 @Component({
   selector: 'app-metas',
@@ -24,8 +26,11 @@ export class MetasComponent implements OnInit {
   config:any;
   selected = new FormControl(0);
   Roles = ['Ventas', 'Skin', 'Lider', 'Gerente Ventas', 'Gerente']
+  pOperacion:Operacion
   constructor(public _infoService:InfoService,
-    public dialog: MatDialog, @Inject(DOCUMENT) doc: any,) {
+    public dialog: MatDialog, @Inject(DOCUMENT) doc: any,
+    _userService:UserService) {
+      this.pOperacion=_userService.getPredetermidaOperacion();
     this.config = new Config()
     this.presupuesto = new Presupuesto()
     this.editorOptions = new JsonEditorOptions()
@@ -49,7 +54,7 @@ export class MetasComponent implements OnInit {
 
 
   getConfig(){
-    this._infoService.getConfig().subscribe(
+    this._infoService.getConfig(this.pOperacion._id).subscribe(
       res=>{
         if(res.length != 0){
           this.config = res[0];
@@ -68,9 +73,9 @@ export class MetasComponent implements OnInit {
   registerPresupuesto(){
     this.presupuesto._id = undefined;
     this.presupuesto.TRM = this.trm;
+    this.presupuesto.operacion = this.pOperacion._id;
     this._infoService.agregarPresupuesto(this.presupuesto).subscribe(
       res=>{
-        //////console.log(res)
         this.getPresupuestos()
       }
     )
@@ -78,9 +83,10 @@ export class MetasComponent implements OnInit {
 
   presupuestos:Presupuesto[]=[];
   getPresupuestos(){
-    this._infoService.getPresupuestos().subscribe(
+    this._infoService.getPresupuestos(this.pOperacion._id).subscribe(
       res=>{
         this.presupuestos = res;
+        this.presupuestos = this.presupuestos.reverse();
         console.log(res)
       }
     )
@@ -88,6 +94,7 @@ export class MetasComponent implements OnInit {
 
   updatePresupuesto(){
     //////console.log(this.pres)
+    this.presupuesto.operacion = this.pOperacion._id;
     this._infoService.updatePresupuesto(this.presupuesto).subscribe(
       res=>{
         console.log(res)
@@ -261,6 +268,24 @@ export class MetasComponent implements OnInit {
         // element.presupuesto_dia_cop = this.presupuesto.presupuesto_dia_cop * (element.participacion/100)
       });
     }
+  }
+
+  TotalizarCategoriasTienda(tienda: {
+    presupuesto_usd: number; ptto: any[]; 
+}){
+    console.log(tienda)
+    for (let i = 0; i < tienda.ptto.length; i++) {
+      const element = tienda.ptto[i];
+        console.log(tienda.ptto[i])
+    }
+
+    tienda.ptto.forEach((element: { presupuesto_cop: number; participacion: number; presupuesto_usd: number; presupuesto_dia_usd: number; presupuesto_dia_cop: number; }) => {
+          // element.presupuesto_cop = this.presupuesto.presupuesto_cop * (element.participacion/100)
+          element.presupuesto_usd =  tienda.presupuesto_usd * (element.participacion/100)
+          element.presupuesto_dia_usd = tienda.presupuesto_usd / this.presupuesto.dias
+          // element.presupuesto_dia_cop = this.presupuesto.presupuesto_dia_cop * (element.participacion/100)
+        });
+
   }
 
 

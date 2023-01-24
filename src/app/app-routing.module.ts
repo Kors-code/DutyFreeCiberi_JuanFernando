@@ -8,6 +8,7 @@ import { HomeComponent } from './pages/home/home.component';
 import { ImportarInfoComponent } from './pages/importar-info/importar-info.component';
 import { LoginComponent } from './pages/login/login.component';
 import { MetasComponent } from './pages/metas/metas.component';
+import { OperacionComponent } from './pages/operaciones/operacion.component';
 import { SiigoComponent } from './pages/siigo-conection/siigo.component';
 import { tomaInventarioComponent } from './pages/toma-inventario/toma-inventario.component';
 import { UsersComponent } from './pages/users/users.component';
@@ -49,6 +50,9 @@ const routes: Routes = [
   },{
     component:tomaInventarioComponent,
     path: 'inventarios', 
+  },{
+    component:OperacionComponent,
+    path: 'Operaciones', 
   }
 
 ];

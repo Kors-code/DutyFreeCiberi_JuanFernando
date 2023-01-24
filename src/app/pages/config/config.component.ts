@@ -7,6 +7,8 @@ import { DialogConfirm } from '../confirm-dialog/confirm-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { DOCUMENT } from '@angular/common';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Operacion } from 'src/app/models/operacion';
+import { UserService } from 'src/app/services/user.service';
 
 @Component({
   selector: 'app-config',
@@ -24,15 +26,17 @@ tag = '';
 tagInv='';
 nuevo= false;
 email= '';
+public pOperacion:Operacion;
 
 Roles = ['Ventas', 'Skin', 'Lider', 'Gerente Ventas', 'Gerente']
   constructor(public dialog: MatDialog, @Inject(DOCUMENT) doc: any,
   public _infoService:InfoService,
-  private _snackBar: MatSnackBar) {
+  private _snackBar: MatSnackBar, public _userService:UserService) {
     this.config = new Config();
     this.categoria = new Categoria();
     this.cumplimiento = new Cumplimiento();
     this.empleado = new Empleado();
+    this.pOperacion = this._userService.getPredetermidaOperacion();
     //console.log(this.config)
    }
 
@@ -63,26 +67,47 @@ Roles = ['Ventas', 'Skin', 'Lider', 'Gerente Ventas', 'Gerente']
 
 
   guardarConfigurcion(){
+  this.config.operacion = this.pOperacion._id;
+  console.log(this.config)
     this._infoService.agregarConfiguracion(this.config).subscribe(
       res=>{
-        //console.log(res)
+        if(res){
+                  console.log(res)
+          let data = {titulo: 'Confirmaciòn', info:'Configuracion generada Correctamente', type: 'Confirm', icon:'done_all'}
+  
+          let dialogRef = this.dialog.open(DialogConfirm,{
+            data: data
+          });
+        
+          dialogRef.afterClosed().subscribe(result => {
+            // this.getfacturacionSiigo()
+          })
+          this.getConfig()    
+        }
+        
       }
     )
     //console.log(this.config)
   }
 
   getConfig(){
-    this._infoService.getConfig().subscribe(
+    console.log('cobfig')
+    this._infoService.getConfig(this.pOperacion._id).subscribe(
       res=>{
+        console.log(res)
         if(res.length != 0){
           this.config = res[0];
         }
-        // //console.log(res)
+       
+      },err=>{
+        console.log(err)
       }
     )
   }
 
   updateConfiguracion(){
+    this.config.operacion = this.pOperacion._id
+    console.log(this.config)
     this._infoService.updateConfiguracion(this.config).subscribe(
       res=>{
         //console.log(res)

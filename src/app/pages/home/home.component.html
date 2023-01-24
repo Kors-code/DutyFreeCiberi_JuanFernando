@@ -21,7 +21,26 @@
 
   </mat-card>
 
-<mat-card-content *ngIf="identity" style="display: flex; flex-wrap: nowrap; justify-content: space-around; "> 
+  <mat-card-content *ngIf="identity && !pOperacion._id" style="display: flex; justify-content: center; flex-direction: column;  "> 
+    <h1 style="text-align: center;"> selecciona Operacion </h1>
+    <div style="display: flex; justify-content: space-around; flex-wrap: wrap;"> 
+      <ng-template let-item let-last="last" ngFor [ngForOf]="identity.operaciones">
+        <mat-card-content class="card" (click)="goApp(item)">
+            <mat-card-content style="display: flex; flex-direction: column; justify-content: center;" >
+              <img mat-card-image   style="width: 100px; margin: 15px 10px;" src="assets/ofice.svg">
+             <div>
+              <h3  style="text-align: center;">{{item.codigo}}</h3>
+              <p style="max-width: 95%; text-align: center;">
+                {{item.titulo}}
+              </p>
+             </div>
+            </mat-card-content>
+          </mat-card-content>
+      </ng-template>
+    </div>
+  </mat-card-content>
+
+<mat-card-content *ngIf="identity && pOperacion._id" style="display: flex; flex-wrap: nowrap; justify-content: space-around; "> 
   <img src="assets/DFP.jpg" width="200px" height="200px" >
   <div style="display: flex; justify-content: space-around; flex-wrap: wrap;"> 
     <ng-template let-item let-last="last" ngFor [ngForOf]="identity.modulos">
@@ -34,7 +53,6 @@
               {{item.description}}
             </p>
            </div>
-        
           </mat-card-content>
         </mat-card-content>
     </ng-template>

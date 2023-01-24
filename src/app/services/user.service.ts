@@ -201,37 +201,24 @@ getToken(){
     
     
     
-    getPredetermidaOperacion(){
+    // getPredetermidaOperacion(){
         
-        let Poperacion = JSON.parse(localStorage.getItem('predeterminateOperacion') || '');
-        if(Poperacion != null){
-            this.Poperacion = Poperacion;
-        }else{
-               
-                let identity:User = JSON.parse(localStorage.getItem('identity') || '');
-               
-                if(identity != null){
-                //     if(this.getPredetermidaCompany() != undefined){
-                //     this.Poperacion = new Operacion(); 
-                //    var idComp = this.getPredetermidaCompany()._id;
-                // // console.log({'idComp':idComp});
-                //     for(var i = 0;i < identity.operaciones.length; i++){
-                //         let comp = identity.operaciones[i].company;
-                //         // console.log({'comp':comp});
-                //         if(idComp == comp ){
-                //             this.Poperacion = identity.operaciones[i]; 
-                //           break;  
-                //         } 
-                //     }
-                // }   
-                 }else{
-                     this.Poperacion = new Operacion();  
-                 }
-                //  console.log({'operaciones':operaciones})
-                //  console.log({'Poperacion':this.Poperacion});
-            }
-            return this.Poperacion;
-    }
+    //     let Poperacion = JSON.parse(localStorage.getItem('predeterminateOperacion') || '');
+    //     if(Poperacion != null){
+    //         this.Poperacion = Poperacion;
+    //         return this.Poperacion;
+    //     }else{
+    //         return undefined
+    //         }
+           
+    // }
 
+
+    getPredetermidaOperacion(){
+
+        let Poperacion = JSON.parse(localStorage.getItem('predeterminateOperacion') || JSON.stringify(new Operacion())  );
+            // console.log(Poperacion)
+            return Poperacion;
+    }
 
 }

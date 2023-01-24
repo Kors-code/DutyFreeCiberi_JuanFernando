@@ -7,6 +7,8 @@ import { DialogConfirm } from '../confirm-dialog/confirm-dialog.component';
 import { SocketIOService } from '../../services/socketIo.service';
 import { SiigoService } from 'src/app/services/siigo.service';
 import { Config } from 'src/app/models/config';
+import { Operacion } from 'src/app/models/operacion';
+import { UserService } from 'src/app/services/user.service';
 
 @Component({
   selector: 'app-data-base',
@@ -26,10 +28,13 @@ export class DataBaseComponent implements OnInit {
   config:any;
   check= false;
   displayedColumns: string[] = ['check','folio', 'fecha', 'vendedor','pdf' ,'siigo', 'facsiigo','importe', 'trm', 'cop', 'ver'];
+  pOperacion:Operacion
   constructor(public _infoService:InfoService,  public _socketService:SocketIOService,
     public _siigoService:SiigoService,
-    public dialog: MatDialog, @Inject(DOCUMENT) doc: any,) {
+    public dialog: MatDialog, @Inject(DOCUMENT) doc: any,
+    _userService:UserService) {
       this.config = new Config();
+      this.pOperacion=_userService.getPredetermidaOperacion();
      }
 
   ngOnInit(): void {
@@ -39,7 +44,7 @@ export class DataBaseComponent implements OnInit {
 
   
   getConfig(){
-    this._infoService.getConfig().subscribe(
+    this._infoService.getConfig(this.pOperacion._id).subscribe(
       res=>{
         if(res.length != 0){
           this.config = res[0];
@@ -321,13 +326,17 @@ export class DialogDataJson {
   info:any;
   public editorOptions!: JsonEditorOptions;
   config:any;
+  pOperacion:Operacion
   @ViewChild(JsonEditorComponent, { static: false }) editor: JsonEditorComponent | undefined;
   newEmpleado:any
+ 
   constructor(
     public _infoService:InfoService,
     public dialogRef: MatDialogRef<DialogDataJson>,
     public dialog: MatDialog, @Inject(DOCUMENT) doc: any,
-    @Inject(MAT_DIALOG_DATA) public data: any) {
+    @Inject(MAT_DIALOG_DATA) public data: any,
+    _userService:UserService) {
+      this.pOperacion=_userService.getPredetermidaOperacion();
       ////// console.log(data)
       this.editorOptions = new JsonEditorOptions()
       this.editorOptions.modes = ['code', 'text', 'tree', 'view']; // set all allowed modes
@@ -411,7 +420,7 @@ export class DialogDataJson {
   }
 
   getConfig(){
-    this._infoService.getConfig().subscribe(
+    this._infoService.getConfig(this.pOperacion._id).subscribe(
       res=>{
         if(res.length != 0){
           this.config = res[0];

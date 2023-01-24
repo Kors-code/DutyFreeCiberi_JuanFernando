@@ -4,6 +4,7 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
+import { Operacion } from 'src/app/models/operacion';
 import { Permisos, User } from 'src/app/models/user';
 import { UserService } from 'src/app/services/user.service';
 import { DialogConfirm } from '../confirm-dialog/confirm-dialog.component';
@@ -43,10 +44,12 @@ export class HomeComponent implements OnInit {
     private _router:Router,
     public dialog: MatDialog, @Inject(DOCUMENT) doc: any,
 ) {
-  // this.pCompany = this._userService.getPredetermidaCompany();
+
+  this.pOperacion = this._userService.getPredetermidaOperacion();
   this.identity = this._userService.getIdentity();
   this.user = new User();
   this.Modulos = new Permisos().permisos;  
+  console.log(this.pOperacion );
 }
 
 
@@ -146,7 +149,7 @@ public login(){
      
       let identity = response.user;
       this.identity = identity;
-      // //this.identity);
+       console.log(this.identity);
 
       // this.companyString = this.identity.company[0]
       // this.companyString = JSON.stringify(this.identity.company[0]);
@@ -168,9 +171,12 @@ public login(){
               }else{
 
                 //crear elemento localStorage
-                localStorage.setItem('token', token);
-                window.location.reload();
-              
+                localStorage.setItem('token', token);   
+                if(this.identity.operaciones.length == 1){
+                  localStorage.removeItem('predeterminateOperacion');
+                  localStorage.setItem('predeterminateOperacion', JSON.stringify(this.identity.operaciones[0]));
+                  window.location.reload();
+                }
                 
               }
             },
@@ -217,6 +223,7 @@ ngDoCheck() {
   // this.pCompany = this._userService.getPredetermidaCompany();
   // this.pOperacion = this._userService.getPredetermidaOperacion();
   this.token = this._userService.getToken();
+  this.pOperacion =this._userService.getPredetermidaOperacion();
 }
 
 
@@ -230,6 +237,15 @@ Logout(){
 
   this.identity = new User();
   this._router.navigate(['/']);
+}
+
+
+goApp(item:Operacion){
+  this.pOperacion = item
+  console.log(this.pOperacion)
+  localStorage.removeItem('predeterminateOperacion');
+  localStorage.setItem('predeterminateOperacion', JSON.stringify(item));
+  window.location.reload();
 }
 
 

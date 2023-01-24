@@ -5,6 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Operacion } from 'src/app/models/operacion';
 import { Permisos, User } from 'src/app/models/user';
+import { OperacionesService } from 'src/app/services/operacion.service';
 import { UserService } from 'src/app/services/user.service';
 import { DialogConfirm } from '../confirm-dialog/confirm-dialog.component';
 
@@ -26,11 +27,12 @@ export class UsersComponent implements OnInit {
   // public company: Company;
   public log: boolean = false;
   public loading:any;
-  public operaciones: Operacion = new Operacion();
+  public operaciones: Operacion[] = [];
   // public operacion: Operacion= undefined;
   // public identityOperacines:Operacion[];
   // public saveUserForm:FormGroup;
   public pCompany:any;
+  public operacionuser:Operacion= new Operacion();
 
   public rol:any;
   invalidError:any
@@ -42,7 +44,7 @@ export class UsersComponent implements OnInit {
   constructor(private _userService:UserService,
               private _router: Router,
               public dialog: MatDialog, @Inject(DOCUMENT) doc: any,
-              // private _operacionesService: OperacionesService,
+              private _operacionesService: OperacionesService,
               ) {
                 // this.company = GLOBAL.company;
                 this.user = new User();
@@ -60,7 +62,7 @@ export class UsersComponent implements OnInit {
     
      this.token = this._userService.getToken();
      this.getUsers();
-    //  this.getOperaciones();
+     this.getOperaciones();
     //  this.getCategorias();
   }
 
@@ -344,16 +346,14 @@ getUsers(){
   )
 }
 
-// operacionuser:Operacion;
-// addOperacion(){
-//   this.user.operaciones.push(this.operacionuser);
-//   this.operacionuser = new Operacion;
-// }
+
+addOperacion(){
+  this.user.operaciones.push(this.operacionuser);
+  this.operacionuser = new Operacion;
+}
 
 deleteOperacion(i: number){
   this.user.operaciones.splice(i,1);
-
-  //console.log(this.user)
 }
 
 listado(item: string){
@@ -475,14 +475,15 @@ deleteUser(){
   // selected = new FormControl(0);
 
 
-//   getOperaciones(){
-//       this._operacionesService.getOperaciones().subscribe(
-//         (        res: { operaciones: Operacion; })=>{
-//           this.operaciones = res.operaciones;
-//           // //console.log(res)
-//         }
-//       )
+  getOperaciones(){
+      this._operacionesService.getOperaciones().subscribe(
+        res =>{
+          console.log(res)
+          this.operaciones = res;
+        }
+    
+      )
 
-//  }
+ }
 
 }

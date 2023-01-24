@@ -5,6 +5,7 @@ var express = require('express');
 var UserController = require('../controllers/users');
 var infoController = require('../controllers/info');
 var siigoController = require('../controllers/siigo');
+var OperacionController = require('../controllers/operacion');
 
 var api = express.Router();
 var md_auth = require('../middelwares/authenticated');
@@ -85,7 +86,7 @@ api.post('/journals',md_auth.ensureAuth, siigoController.sendComprobanteSiigo);
 
 // PRESUPUESTOS
 api.post('/presupuesto', md_auth.ensureAuth,  infoController.agregarPresupuesto);
-api.get('/presupuestos', md_auth.ensureAuth,  infoController.getDataPresupuesto);
+api.get('/presupuestos/:id', md_auth.ensureAuth,  infoController.getDataPresupuesto);
 api.get('/presupuestos-tag/:tag', md_auth.ensureAuth,  infoController.getDataPresupuestoTag);
 api.post('/presupuesto-delete', md_auth.ensureAuth,  infoController.deleteDataPresupuesto);
 api.put('/presupuesto', md_auth.ensureAuth,  infoController.updateDataPresupuesto);
@@ -93,7 +94,7 @@ api.put('/presupuesto', md_auth.ensureAuth,  infoController.updateDataPresupuest
 
 // CONFIGURACION
 api.post('/configuracion', md_auth.ensureAuth,  infoController.agregarConfiguracion);
-api.get('/configuracion', md_auth.ensureAuth,  infoController.getDataConfig);
+api.get('/configuracion/:id', md_auth.ensureAuth,  infoController.getDataConfig);
 
 api.put('/configuracion', md_auth.ensureAuth,  infoController.updateDataConfiguracion);
 api.put('/config-clave-empleado', md_auth.ensureAuth,  infoController.updateClaveEmpleadoConfiguracion);
@@ -117,6 +118,13 @@ api.post('/off-inventario/:tag', md_auth.ensureAuth,  infoController.renametColl
 api.post('/delete-inventario/:tag', md_auth.ensureAuth,  infoController.deleteCollectionsInventarios);
 
 api.post('/rename', infoController.renameCollectionsDB);
+
+// RUTAS OPERACION
+
+api.get('/operaciones',md_auth.ensureAuth, OperacionController.getOperaciones);
+api.post('/reg-operacion/', md_auth.ensureAuth, OperacionController.saveOperacion);
+api.delete('/operacion/:id',md_auth.ensureAuth, OperacionController.deleteOperacion);
+api.put('/operacion', md_auth.ensureAuth,  OperacionController.updateOperacion);
 
 
 module.exports = api;

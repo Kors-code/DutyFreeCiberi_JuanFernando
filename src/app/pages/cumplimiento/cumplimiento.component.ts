@@ -5,6 +5,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { colorSets } from '@swimlane/ngx-charts';
 import { Config, Empleado, Tienda } from 'src/app/models/config';
+import { Operacion } from 'src/app/models/operacion';
 import { Presupuesto } from 'src/app/models/presupuesto';
 import { InfoService } from 'src/app/services/info.service';
 import { UserService } from 'src/app/services/user.service';
@@ -39,16 +40,23 @@ export class CumplimientoComponent implements OnInit {
   ultimoDia = new Date(this.date.getFullYear(), this.date.getMonth() + 1, 0);
 
   config
+
+
+  public pOperacion:Operacion;
+
+
   
   constructor(private _InfoService:InfoService,
               private _router: Router,
               public dialog: MatDialog, @Inject(DOCUMENT) doc: any,
-              private _snackBar: MatSnackBar
+              private _snackBar: MatSnackBar,
+              _userService:UserService
               ) {
               this.config = new Config()
               this.presupuesto = new Presupuesto();
               this.listColorSquema = colorSets
               this.colorScheme = this.listColorSquema[11]
+              this.pOperacion=_userService.getPredetermidaOperacion();
       //  this.identity = this._userService.getIdentity();
        this.user = new ChangePass();
    }
@@ -113,7 +121,7 @@ export class CumplimientoComponent implements OnInit {
   }
 
   getConfig(){
-    this._InfoService.getConfig().subscribe(
+    this._InfoService.getConfig(this.pOperacion._id).subscribe(
       res=>{
         if(res.length != 0){
           this.config = res[0];
@@ -183,8 +191,16 @@ export class CumplimientoComponent implements OnInit {
       res=>{
         if(res){
           this.dataColl = res  
-          this.dataColl.forEach((element: { Codi: any; Detalle: any; Clasi: any; Importe: any; COP: any; PDV: any,  TRM: any   }) => {
-            let cod = element.Codi
+          console.log(this.dataColl)
+        
+          this.dataColl.forEach((element: {
+            CLASIFICACION: string;
+            CODIGO_VENDEDOR: any;
+            Costumer: any; Codi: any; Detalle: any; Clasi: any; Importe: any; COP: any; PDV: any,  TRM: any   
+}) =>       {
+            let cod = element.CODIGO_VENDEDOR
+            // console.log(cod)
+       
             let PDV = element.PDV
             let pdv = this.presupuesto.tiendas.map(function(e:any) { return e.tienda; }).indexOf(PDV);
             this.presupuesto.ventas_usd = this.presupuesto.ventas_usd + element.Importe;
@@ -192,7 +208,7 @@ export class CumplimientoComponent implements OnInit {
             if(pdv != -1){
               // //////console.log(this.presupuesto.tiendas[pdv].usd)
               this.presupuesto.tiendas[pdv].usd =  this.presupuesto.tiendas[pdv].usd + element.Importe
-              this.presupuesto.tiendas[pdv].ventas_cop =  this.presupuesto.tiendas[pdv].ventas_cop + (element.Importe* element.TRM)
+              this.presupuesto.tiendas[pdv].ventas_cop =  this.presupuesto.tiendas[pdv].ventas_cop + element.COP
               // this.presupuesto.tiendas[pdv].ventas_cop =
               // listado[x].comisionesCop = (listado[x].ventas * (listado[x].cumplimientos[0].asesor/100))* element.TRM
               let listado = this.presupuesto.tiendas[pdv].ptto;
@@ -200,7 +216,7 @@ export class CumplimientoComponent implements OnInit {
                 const elements = listado[x].subscat;
                 let importe = element.Importe
                   // //// // //////console.log('Importe ' +importe)
-                  let pos2 = elements.map(function(e:any) { return e; }).indexOf(element.Clasi);
+                  let pos2 = elements.map(function(e:any) { return e; }).indexOf(parseInt(element.CLASIFICACION));
                   // //// // //////console.log('posicion subcategoria '+ pos2)
                   if(pos2 != -1){
                     listado[x].ventas =  listado[x].ventas + importe;
@@ -210,6 +226,7 @@ export class CumplimientoComponent implements OnInit {
                   }
               }
             }
+
 
             let pos = this.presupuesto.vendedores.map(function(e:any) { return e.codigo; }).indexOf(cod.toString());
             if(pos != -1){
@@ -230,7 +247,7 @@ export class CumplimientoComponent implements OnInit {
                           }
 
                           // ////console.log('COP '+ importeCop)
-                          let pos2 = elements.map(function(e:any) { return e; }).indexOf(element.Clasi);
+                          let pos2 = elements.map(function(e:any) { return e; }).indexOf( parseInt(element.CLASIFICACION));
                           // //// // //////console.log('posicion subcategoria '+ pos2)
                           if(pos2 != -1){
                            

@@ -280,13 +280,13 @@ export class InfoService {
         return this._http.post<agregar>(this.url+'presupuesto/', paramas, {headers:headers});
     }
 
-    getPresupuestos(){
+    getPresupuestos(id:string){
         // let paramas = JSON.stringify(register);
         let headers = new HttpHeaders({
             // 'Content-Type': 'application/json',
             'Authorization': this.getToken()
         });
-        return this._http.get<any>(this.url+'presupuestos', {headers:headers});
+        return this._http.get<any>(this.url+'presupuestos/'+id, {headers:headers});
     }
 
     getPresupuestoTag(tag:string){
@@ -327,12 +327,12 @@ export class InfoService {
         return this._http.post<agregar>(this.url+'configuracion/', paramas, {headers:headers});
     }
 
-    getConfig(){
+    getConfig(id:string){
         let headers = new HttpHeaders({
             // 'Content-Type': 'application/json',
             'Authorization': this.getToken()
         });
-        return this._http.get<any>(this.url+'configuracion/', {headers:headers});
+        return this._http.get<any>(this.url+'configuracion/'+id, {headers:headers});
     }
 
     updateConfiguracion(update:any){

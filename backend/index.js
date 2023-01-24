@@ -37,7 +37,7 @@ app.get('*', function(request, response, next) {
 
 var uri ="mongodb://127.0.0.1:27017/DutyFree";
 
-var port = 1165;
+var port = 6511;
 
 app.set('port', (process.env.PORT || port));
 
@@ -64,7 +64,8 @@ const io =require('socket.io')(server,{
         origin: "http://localhost:4200",
         methods: ["GET", "POST"]
       }
-  })
+})
+
 io.on('connection', function(socket){
 
     connections.add(socket);
@@ -89,8 +90,3 @@ app.set('io', io);
 module.exports = {
     io
 }
-
-
-
-
-

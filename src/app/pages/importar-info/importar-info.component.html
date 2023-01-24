@@ -4,10 +4,10 @@
     <span>{{procesado}}</span>
   </h2>
   <div style="display: flex; flex-wrap: wrap; justify-content: center; align-items: center;">
-    <mat-form-field appearance="fill" style="text-align: center; font-size: 1.3em; margin-right: 20px;">
+    <!-- <mat-form-field appearance="fill" style="text-align: center; font-size: 1.3em; margin-right: 20px;">
       <mat-label>TRM</mat-label>
       <input matInput placeholder="TRM" type="number" name="trm" [(ngModel)]="trm">
-    </mat-form-field>
+    </mat-form-field> -->
     <mat-form-field appearance="fill">
       <mat-label>Tag Base Datos</mat-label>
       <mat-select [(ngModel)]="tag">
@@ -53,7 +53,6 @@
      <button  flex mat-raised-button color="warn" [disabled]="!obs || log || procesado == lotesCmprobantes.length "  (click)="procesarInformacion()" class="text-upper" style="width: 90%; margin:15px auto;margin-left: 20px; color: white;"> Subir {{registros.length}} registros <span style="font-size: 1.3em; color:blue"> {{lotesCmprobantes.length * 2}}</span> Comprobantes  Siigo <mat-icon>save</mat-icon></button>
 
      <button *ngIf="procesado == lotesCmprobantes.length " flex mat-raised-button color="warn" [disabled]=""  (click)="reload()" class="text-upper" style="width: 90%; margin:15px auto;margin-left: 20px; color: white;"> se registraron los comprobamtes agregar nuevos<mat-icon>refresh</mat-icon></button>
-
 
   </div>
 

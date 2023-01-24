@@ -3,6 +3,7 @@ import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { JsonEditorComponent, JsonEditorOptions } from 'ang-jsoneditor';
 import { ConnectableObservable } from 'rxjs';
+import { Operacion } from 'src/app/models/operacion';
 import { Presupuesto } from 'src/app/models/presupuesto';
 import { InfoService } from 'src/app/services/info.service';
 import { UserService } from 'src/app/services/user.service';
@@ -24,6 +25,8 @@ export class DashBoardComponent implements OnInit {
   ultimoDia = new Date(this.date.getFullYear(), this.date.getMonth() + 1, 0);
   public identity:any;
   config:any;
+  pOperacion:Operacion
+  
   constructor(public _infoService:InfoService,
     private _userService:UserService,
     public dialog: MatDialog, @Inject(DOCUMENT) doc: any,) {
@@ -31,6 +34,7 @@ export class DashBoardComponent implements OnInit {
     this.presupuesto = new Presupuesto();
     this.colorScheme = this.listColorSquema[11]
     this.identity = this._userService.getIdentity();
+    this.pOperacion=_userService.getPredetermidaOperacion();
     ////////console.log(this.identity)
     // Object.assign(this, { single });
   }
@@ -107,7 +111,7 @@ export class DashBoardComponent implements OnInit {
 
   
   getConfig(){
-    this._infoService.getConfig().subscribe(
+    this._infoService.getConfig(this.pOperacion._id).subscribe(
       res=>{
         if(res.length != 0){
           this.config = res[0];
@@ -139,9 +143,7 @@ export class DashBoardComponent implements OnInit {
 
   coleccion = ''
   passDataCollections(doc:string){
-    // // // //////////console.log(doc)
     this.coleccion = doc;
-    
     this.getPresupuestosTag(doc);
     this.getInformeFolio(doc)
     this.getInformeCategoriasTienda(doc);
@@ -162,26 +164,31 @@ export class DashBoardComponent implements OnInit {
       res=>{
         if(res){
           this.dataColl = res  
-          this.dataColl.forEach((element: { Codi: any; Detalle: any; Clasi: any; Importe: any; COP: any; PDV: any,  TRM: any   }) => {
-            let cod = element.Codi
-            let PDV = element.PDV
+
+          console.log(this.dataColl)
+
+          this.dataColl.forEach((element: {
+            CODIGO_VENDEDOR: any; VENDEDOR: any; PDV: any; Importe: number; COP: number; CLASIFICACION: any; Clasi: any; 
+          }) => {
+            let cod = element.CODIGO_VENDEDOR;
+            let PDV = element.PDV;
             let pdv = this.presupuesto.tiendas.map(function(e:any) { return e.tienda; }).indexOf(PDV);
+
+            // console.log(pdv)
             this.presupuesto.ventas_usd = this.presupuesto.ventas_usd + element.Importe;
             this.presupuesto.ventas = this.presupuesto.ventas + element.COP;
             // console.log(PDV, pdv)
             if(pdv != -1){
-              // //////////console.log(this.presupuesto.tiendas[pdv].usd)
-              this.presupuesto.tiendas[pdv].usd =  this.presupuesto.tiendas[pdv].usd + element.Importe
-              this.presupuesto.tiendas[pdv].ventas_cop =  this.presupuesto.tiendas[pdv].ventas_cop + (element.Importe* element.TRM)
-              // this.presupuesto.tiendas[pdv].ventas_cop =
-              // listado[x].comisionesCop = (listado[x].ventas * (listado[x].cumplimientos[0].asesor/100))* element.TRM
+              // console.log(this.presupuesto.tiendas[pdv].usd);
+              this.presupuesto.tiendas[pdv].usd =  this.presupuesto.tiendas[pdv].usd + element.Importe;
+              this.presupuesto.tiendas[pdv].ventas_cop =  this.presupuesto.tiendas[pdv].ventas_cop + element.COP;
+
               let listado = this.presupuesto.tiendas[pdv].ptto;
               for (let x = 0; x < listado.length; x++){
                 const elements = listado[x].subscat;
-                let importe = element.Importe
-                  // //// // //////////console.log('Importe ' +importe)
-                  let pos2 = elements.map(function(e:any) { return e; }).indexOf(element.Clasi);
-                  // //// // //////////console.log('posicion subcategoria '+ pos2)
+                let importe = element.Importe;
+                // console.log(element.CLASIFICACION)
+                  let pos2 = elements.map(function(e:any) { return e; }).indexOf( parseInt(element.CLASIFICACION));
                   if(pos2 != -1){
                     listado[x].ventas =  listado[x].ventas + importe;
                     listado[x].cumplimiento =   listado[x].ventas / listado[x].presupuesto_usd
@@ -189,11 +196,14 @@ export class DashBoardComponent implements OnInit {
                     break
                   }
               }
+
+              // console.log(this.presupuesto.tiendas[pdv]);
             }
 
             let sinVendedor = 0
             let pos = this.presupuesto.vendedores.map(function(e:any) { return e.codigo; }).indexOf(cod.toString());
             if(pos != -1){
+              // console.log(pos);
               if(this.presupuesto.vendedores[pos].rol == 'Ventas'){
                   if(this.presupuesto.vendedores[pos].name != 'MOSTRADOR'){
                     this.presupuesto.vendedores[pos].Ventas =this.presupuesto.vendedores[pos].Ventas + element.Importe;
@@ -207,8 +217,8 @@ export class DashBoardComponent implements OnInit {
                         if(!listado[x].ventas_cop){
                           listado[x].ventas_cop = 0
                         }
-                          let pos2 = elements.map(function(e:any) { return e; }).indexOf(element.Clasi);
-                          // //// // //////////console.log('posicion subcategoria '+ pos2)
+                          let pos2 = elements.map(function(e:any) { return e; }).indexOf(parseInt(element.CLASIFICACION));
+                          console.log('posicion subcategoria '+ pos2)
                           if(pos2 != -1){
                            
                             listado[x].ventas =  listado[x].ventas + importe;
@@ -434,27 +444,29 @@ export class DashBoardComponent implements OnInit {
       res=>{
         this.totalCajeros = 0;
         this.downloadCajeros = [];
-        this.informeCajeros = res
-
+        this.informeCajeros = res;
         // console.log(this.informeCajeros)
-        for (let index = 0; index <  this.informeCajeros.length; index++) {
-          const element =  this.informeCajeros[index];
-          element.folios = this.facturasVendedor(element.Detalle)
-          this.totalCajeros = this.totalCajeros + element.Ventas;    
-          this.downloadCajeros.push(
-            {
-              "Codigo": element._id,          
-              "USD": element.Ventas,
-              "COP": element.VentasCop,
-              "Unidades": element.Unidades,
-              "Facturas": element.folios,
-              "CostoVenta": element.Cost,
-              "Cost_usd":element.Cost_usd,
-              "item_promedio":  (element.Ventas / element.Unidades).toFixed(2),
-              "fac_promedio":  (element.Ventas / element.folios).toFixed(2),
-            }
-          )
+        if(this.informeCajeros){
+          for (let index = 0; index <  this.informeCajeros.length; index++) {
+            const element =  this.informeCajeros[index];
+            element.folios = this.facturasVendedor(element.Detalle)
+            this.totalCajeros = this.totalCajeros + element.Ventas;    
+            this.downloadCajeros.push(
+              {
+                "Codigo": element._id,          
+                "USD": element.Ventas,
+                "COP": element.VentasCop,
+                "Unidades": element.Unidades,
+                "Facturas": element.folios,
+                "CostoVenta": element.Cost,
+                "Cost_usd":element.Cost_usd,
+                "item_promedio":  (element.Ventas / element.Unidades).toFixed(2),
+                "fac_promedio":  (element.Ventas / element.folios).toFixed(2),
+              }
+            )
+          }
         }
+      
         this.log = false;
       }
       
@@ -546,7 +558,7 @@ export class DashBoardComponent implements OnInit {
   
     this._infoService.getInformeCategorias(tag).subscribe(
       res=>{
-        // //////////console.log(res);
+        console.log(res);
         if(res){
         this.informeCateg = res;
         
@@ -563,7 +575,7 @@ export class DashBoardComponent implements OnInit {
 
           for (let r = 0; r < this.presupuesto.categorias.length; r++) {
             const elemento = this.presupuesto.categorias[r];
-            let pos = elemento.subscat.map(function(e:any) { return e; }).indexOf(element.Codigo[0]);
+            let pos = elemento.subscat.map(function(e:any) { return e; }).indexOf(parseInt(element.Codigo[0]));
             if(pos != -1){
               elemento.ventas =   elemento.ventas + element.Ventas
               break
@@ -786,7 +798,7 @@ export class DashBoardComponent implements OnInit {
   
     this._infoService.getInformeCategorias(tag).subscribe(
       res=>{
-        // ////////console.log(res);
+        console.log(res);
         if(res){
         this.informeCateg = res;
         for (let index = 0; index <  this.informeCateg.length; index++) {
@@ -797,7 +809,7 @@ export class DashBoardComponent implements OnInit {
           this.totalCategoriaCosto = this.totalCategoriaCosto + element.Cost
           for (let r = 0; r < this.presupuesto.categorias.length; r++) {
             const elemento = this.presupuesto.categorias[r];
-            let pos = elemento.subscat.map(function(e:any) { return e; }).indexOf(element.Codigo[0]);
+            let pos = elemento.subscat.map(function(e:any) { return e; }).indexOf(parseInt(element._id));
             if(pos != -1){
               elemento.ventas =   elemento.ventas + element.Ventas
               elemento.ventasCop = element.Cop
@@ -877,7 +889,7 @@ export class DashBoardComponent implements OnInit {
     this._infoService.getInformeCategoriasTienda(tag).subscribe(
       res=>{
         this.informeCategTieda = res;
-        ////////console.log(res);
+        console.log(res);
         for (let index = 0; index <  this.informeCategTieda.length; index++) {
           const element =  this.informeCategTieda[index];
           // // //////////console.log(element.PDV)

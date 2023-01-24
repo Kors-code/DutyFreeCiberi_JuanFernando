@@ -12,6 +12,8 @@ import {MatSort} from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Config } from 'src/app/models/config';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { UserService } from 'src/app/services/user.service';
+import { Operacion } from 'src/app/models/operacion';
 
 interface Articulo{
   
@@ -28,12 +30,14 @@ export class ImportarInfoComponent implements OnInit {
   obs:any;
   displayedColumns: string[] = ['folio', 'unds', 'cop', 'detail'];
   @ViewChild(MatSort, {static: true}) sort!: MatSort;
+  pOperacion:Operacion
   constructor( public dialog: MatDialog, @Inject(DOCUMENT) doc: any,
               public _infoServce:InfoService,
               public _socketService:SocketIOService,
               // public _mongoService: MongoDbService
               public _siigoService:SiigoService,
-              private _snackBar: MatSnackBar
+              private _snackBar: MatSnackBar,
+              _userService:UserService
     ) { 
       this.config = new Config();
       this.trmApi =  new TrmApi("aEOKmLbbPROhCr6iDiieAGCqt");
@@ -41,6 +45,8 @@ export class ImportarInfoComponent implements OnInit {
         .latest()
         .then((data:any) =>  console.log(this.trm =  data.valor))
         .catch((error:any) =>  console.log(error));
+
+        this.pOperacion=_userService.getPredetermidaOperacion();
     }
 
   ngOnInit(): void {
@@ -160,13 +166,13 @@ export class ImportarInfoComponent implements OnInit {
 		
 
   getConfig(){
-    this._infoServce.getConfig().subscribe(
+    this._infoServce.getConfig(this.pOperacion._id).subscribe(
       res=>{
         if(res.length != 0){
           this.config = res[0];
           localStorage.setItem('categ',JSON.stringify(this.config.categorias))
 
-          ////// console.log(this.config)
+          console.log(this.config)
         }
        
       }
@@ -232,11 +238,9 @@ export class ImportarInfoComponent implements OnInit {
       const ws: XLSX.WorkSheet = wb.Sheets[wsname];
       this.data = (XLSX.utils.sheet_to_json(ws, { header: 1 }));
 
-      const wsnameC : string = wb.SheetNames[1];
-      const wsC: XLSX.WorkSheet = wb.Sheets[wsnameC];
-      this.dataCostumer = (XLSX.utils.sheet_to_json(wsC, { header: 1 }));
+      
 
-      // ////// console.log('Data',this.data);
+      console.log('Data',this.data);
       // ////// console.log('Costumer',this.dataCostumer);
       this.convertirJson()
       this.log= false;
@@ -379,44 +383,34 @@ export class ImportarInfoComponent implements OnInit {
       this.registros.push(Object.fromEntries(reg))
     }
 
-    let keysC = Object.values(this.dataCostumer[0])
-    for(var i = 1;i < this.dataCostumer.length; i++){
-      let arr = this.dataCostumer[i];
-      let par = Object.values(arr);
-      let reg = [];
-      for (let i = 0; i < keysC.length; i++) {
-        let obje = [keysC[i], par[i] || '' ]
-        reg.push(obje)
-      }
-      this.registrosCostumer.push(Object.fromEntries(reg))
-    }
     
     for(var i = 0;i < this.registros.length; i++){
-      let fecha =  this.registros[i].Fecha;
+      let fecha =  this.registros[i].FECHA;
       let split = fecha.split("/");
       // // ////// console.log(split)
-      this.registros[i].Importe = Number(this.registros[i].Importe)
+      this.registros[i].Importe = Number(this.registros[i].TOTAL)
       this.registros[i].Estado = 'Activa';
       this.registros[i].Siigo = [];
       this.registros[i].Pdf = [];
-      this.registros[i].TRM = this.trm;
-      this.registros[i].COP = Math.round(this.trm * this.registros[i].Importe);
+      this.registros[i].TRM = this.registros[i]['TIPO DE CAMBIO'];
+      this.registros[i].COP = this.registros[i]['VALOR EN PESOS'];
       
-      let posTienda = this.config.tiendas.map(function( e:any ) { return e.tienda; }).indexOf(this.registros[i].PDV);
-      if(this.registros[i].PDV == 'MDE D'){
-        console.log(this.registros[i].Resolucion = this.config.tiendas[posTienda]['resolucion'])
-        this.registros[i].Resolucion = this.config.tiendas[posTienda]['resolucion']
-      }else{
-        console.log(this.registros[i].Resolucion = this.config.tiendas[posTienda]['resolucion'])
-        this.registros[i].Resolucion = this.config.tiendas[posTienda]['resolucion']
+
+      for (let q = 0; q < this.config.categorias.length; q++) {
+        const element = this.config.categorias[q];
+        // console.log(element)
+        let subc = element.subscat.map(function(e: { cod: number; }) { return e; }).indexOf( parseInt(this.registros[i]['CLASIFICACION']));
+         if(subc != -1){
+          this.registros[i].CATEGORIA = element.titulo;
+          break
+         } 
       }
-    
-      ////// console.log(this.registros[i].Costo_de_v)
-      this.registros[i].Costo_de_v =  this.registros[i].Costo_de_v.replace(/,/g, '')
-      this.registros[i].Costo_de_v = Number(this.registros[i].Costo_de_v)
-      // ////// console.log(this.registros[i])
+
+      // console.log(this.registros[i]['COSTO DE VENTA'])
+      this.registros[i].Costo_de_v =  this.registros[i]['COSTO DE VENTA']
       
-      ////// console.log(this.registros[i])
+      
+      
 
       if(parseInt(split[0]) <= 9){
         this.registros[i].Day = '0'+ split[0];
@@ -429,26 +423,18 @@ export class ImportarInfoComponent implements OnInit {
       this.registros[i].Month = split[1];
       this.registros[i].Year = '20'+split[2];
 
-      let detalle = 'FAC '+this.registros[i].Folio + ' SKU: '+this.registros[i].Codigo_1 + ' CANT: ' +this.registros[i].Cantidad + ' TRM: '+this.registros[i].TRM + ' USD: '+this.registros[i].Importe + ' ' + this.registros[i].Descripcion_1;
+      let detalle = 'FAC '+this.registros[i].FOLIO + ' SKU: '+this.registros[i].CODIGO + ' CANT: ' +this.registros[i].CANTIDAD + ' TRM: '+this.registros[i].TRM + ' USD: '+this.registros[i].TOTAL + ' ' + this.registros[i].DESCRIPCION;
       if(detalle.length >= 101){
         detalle = detalle.slice(0, 100);
-        
       }
 
       this.registros[i].Detalle = detalle;
-      let pos = this.registrosCostumer.map(function(e: { DOC_N: any; }) { return e.DOC_N; }).indexOf(this.registros[i].Folio);
-
-      if(pos != -1){
-        this.registros[i].Costumer = this.registrosCostumer[pos]
-      }
 
     }
     this.log= false;
    
     console.log(this.registros)
-    let lotes = 200
-    // console.log(lotes)
-
+    let lotes = 200;
     this.chunckArrayInGroups(this.registros, lotes)
    
   }
@@ -468,9 +454,24 @@ export class ImportarInfoComponent implements OnInit {
     this.itemsContable =[]
     this.itemsFacturaVentas=[]
     for(var i = 0;i < registros.length; i++){
-      let pos2 = this.cuentas.map(function(e: { cod: any; }) { return e.cod; }).indexOf(registros[i].Clasi);
-      // // console.log(pos2)
+      console.log(registros[i]['CLASIFICACION'])
+      let pos2 = this.cuentas.map(function(e: { cod: any; }) { return e.cod; }).indexOf( parseInt(registros[i]['CLASIFICACION']));
+      console.log(pos2)
       if(pos2 != -1){
+
+        // console.log(this.config.tiendas)
+
+        let posTienda = this.config.tiendas.map(function(e: { tienda: any; }) { return e.tienda; }).indexOf(registros[i]['PDV']);
+        let tienda :any
+
+        // console.log('tienda en configuracion',posTienda)
+
+        if(posTienda != -1){
+          tienda = this.config.tiendas[posTienda].centro_costos;
+        }
+
+        console.log('tienda', tienda)
+
         let dtaComprobante = {
           account:{
             code:this.cuentas[pos2].Debit,
@@ -480,19 +481,21 @@ export class ImportarInfoComponent implements OnInit {
             identification:'222222222',
           },
           product:{
-            code:registros[i].Clasi +'',
-            name: 'CMV FAC '+ registros[i].Folio +' SKU '+ registros[i].Codigo_1 +' ' + registros[i].Descripcion_1 +' CANT: '+ registros[i].Cantidad,
-            quantity:0,
-            description:'CMV FAC '+ registros[i].Folio +' SKU '+ registros[i].Codigo_1 +' ' + registros[i].Descripcion_1 +' CANT: '+ registros[i].Cantidad,
+            code:registros[i]['CLASIFICACION'] +'',
+            name: 'CMV FAC '+ registros[i].FOLIO +' SKU '+ registros[i].CODIGO +' CANT: '+ registros[i].CANTIDAD   + ' ' +  registros[i].DESCRIPCION,
+            quantity: registros[i].CANTIDAD,
+            // description: registros[i].Detalle,
+            description:'CMV FAC '+ registros[i].FOLIO +' SKU '+ registros[i].CODIGO +' CANT: '+ registros[i].CANTIDAD + ' ' + registros[i].DESCRIPCION,
             value:registros[i].Costo_de_v,
           },
-          value:registros[i].Costo_de_v,
-          description:'CMV FAC '+ registros[i].Folio +' SKU '+ registros[i].Codigo_1 +' ' + registros[i].Descripcion_1 +' CANT: '+ registros[i].Cantidad,
+          value:registros[i]['COSTO DE VENTA'],
+          quantity: registros[i].CANTIDAD,
+          // description: registros[i].Detalle,
+          cost_center: tienda, 
+          description:'CMV FAC '+ registros[i].FOLIO +' SKU '+ registros[i].CODIGO +' CANT: '+ registros[i].CANTIDAD +' ' + registros[i].DESCRIPCION,
         }
 
-        if(dtaComprobante.description.length >= 100){
-            console.log(dtaComprobante.description)
-        }
+        dtaComprobante.description = dtaComprobante.description.slice(0,99)
 
         this.itemsContable.push(dtaComprobante)
   
@@ -505,23 +508,24 @@ export class ImportarInfoComponent implements OnInit {
             identification:'222222222',
           },
           product:{
-            code:registros[i].Clasi +'',
-            name:'CMV FAC '+ registros[i].Folio +' SKU '+ registros[i].Codigo_1 +' ' + registros[i].Descripcion_1 +' CANT: '+ registros[i].Cantidad,
-            quantity:0,
-            description:'CMV FAC '+ registros[i].Folio +' SKU '+ registros[i].Codigo_1 +' ' + registros[i].Descripcion_1 +' CANT: '+ registros[i].Cantidad,
+            code:registros[i]['CLASIFICACION'] +'',
+            name:'CMV FAC '+ registros[i].FOLIO +' SKU '+ registros[i].CODIGO +' CANT: '+ registros[i].CANTIDAD +' ' + registros[i].DESCRIPCION ,
+            quantity: registros[i].CANTIDAD,
+            // description: registros[i].Detalle,
+            description:'CMV FAC '+ registros[i].FOLIO +' SKU '+ registros[i].CODIGO +' CANT: '+ registros[i].CANTIDAD +' ' + registros[i].DESCRIPCION ,
             value:registros[i].Costo_de_v,
           },  
           value:registros[i].Costo_de_v,
-          description:'CMV FAC '+ registros[i].Folio +' SKU '+ registros[i].Codigo_1 +' ' + registros[i].Descripcion_1 +' CANT: '+ registros[i].Cantidad,
+          quantity: registros[i].CANTIDAD,
+          // description: registros[i].Detalle,
+          cost_center: tienda, 
+          description:'CMV FAC '+ registros[i].FOLIO +' SKU '+ registros[i].CODIGO +' CANT: '+ registros[i].CANTIDAD +' ' + registros[i].DESCRIPCION ,
         }
 
+        dtaComprobante2.description = dtaComprobante.description.slice(0,99)
+    
         this.itemsContable.push(dtaComprobante2)  
-        let tienda :any
-        if(registros[i].PDV == 'MDE A'){
-          tienda = 673
-        }else{
-          tienda = 675
-        }
+     
 
         let dtaComprobanteVenta = {
           account:{
@@ -533,7 +537,7 @@ export class ImportarInfoComponent implements OnInit {
           },
           cost_center: tienda, 
           product:{
-            code:registros[i].Clasi +'',
+            code:registros[i].CLASIFICACION +'',
             name:registros[i].Detalle,
             quantity:0,
             description:registros[i].Detalle,
@@ -544,7 +548,7 @@ export class ImportarInfoComponent implements OnInit {
         }
 
         this.itemsFacturaVentas.push(dtaComprobanteVenta)
-
+        
         let dtaComprobanteVentaDeb = {
           account:{
             code:'13050501',
@@ -560,18 +564,19 @@ export class ImportarInfoComponent implements OnInit {
             date: this.date,
           },
           description:registros[i].Detalle,
-          cost_center: 21013, 
+          cost_center: tienda, 
+          // cost_center: 21013, 
           value:registros[i].COP,
         }
+
         this.itemsFacturaVentas.push(dtaComprobanteVentaDeb)
+        
       }else{
         // console.log('Registo no encontrado '+ registros[i].Clasi)
       }
     }
 
-    // // console.log(this.date)
-    // // console.log( this.itemsContable)
-    // // console.log( this.itemsFacturaVentas)
+
     let credenciales={
       user:this.config.siigoUser,
       key:this.config.siigoKey,
@@ -581,7 +586,6 @@ export class ImportarInfoComponent implements OnInit {
       iddoc:5086,
     }
 
-    // // console.log(credenciales)
     let credencialesVentas={
       user:this.config.siigoUser,
       key:this.config.siigoKey,
@@ -590,6 +594,8 @@ export class ImportarInfoComponent implements OnInit {
       obs:this.obs,
       iddoc:31800,
     }
+
+    console.log(credenciales)
 
     this._siigoService.saveComprobantesSiigo(credenciales).subscribe(
       res=>{
@@ -623,14 +629,13 @@ export class ImportarInfoComponent implements OnInit {
       }
     )
 
+
     }else{
       this.log = false
       let data = {titulo: 'Registro Exitoso '+ this.procesado + 'de ' + this.lotesCmprobantes.length, info:'Se Registraron los comprobantes correctamente ', type: 'Confirm', icon:'done_all'}
       let dialogRef = this.dialog.open(DialogConfirm,{
         data: data
       });
-
-
     }
   }
 

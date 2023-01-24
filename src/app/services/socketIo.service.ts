@@ -11,7 +11,7 @@ export class SocketIOService {
     public url: string = '';
     
 constructor(){
-    this.url='localhost:1165'
+    this.url='localhost:6511'
     this.socket = io.connect(this.url);   
     //   console.log(this.url)
 };

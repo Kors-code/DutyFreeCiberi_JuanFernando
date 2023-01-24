@@ -2,7 +2,10 @@ import { DOCUMENT } from '@angular/common';
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
+import { UserInfo } from 'os';
 import { Config } from 'src/app/models/config';
+import { Operacion } from 'src/app/models/operacion';
+import { UserService } from 'src/app/services/user.service';
 import { InfoService } from '../../services/info.service';
 import { SiigoService } from '../../services/siigo.service';
 import { DialogDataJson } from '../data-base/data-base.component';
@@ -36,11 +39,13 @@ export class SiigoComponent implements OnInit {
   paginacion2:any;
   log=false;
   config:any;
+  pOperacion:Operacion
   constructor(public _infoService:InfoService,
+    _userService:UserService,
     public _siigoService:SiigoService,
     public dialog: MatDialog, @Inject(DOCUMENT) doc: any,) {
       this.config = new Config();
-
+      this.pOperacion=_userService.getPredetermidaOperacion();
   }
   
   ngOnInit(): void {
@@ -48,7 +53,7 @@ export class SiigoComponent implements OnInit {
   }
 
   getConfig(){
-    this._infoService.getConfig().subscribe(
+    this._infoService.getConfig(this.pOperacion._id).subscribe(
       res=>{
         if(res.length != 0){
           this.config = res[0];

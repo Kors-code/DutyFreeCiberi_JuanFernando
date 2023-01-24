@@ -52,7 +52,8 @@ async function agregarConfiguracion(req, res){
 async function getDataConfig(req, res){
     var params = req.body;
     var coll = 'Config';
-    // console.log(params)
+    let ID = req.params.id;
+    console.log('id', ID)
     const url = 'mongodb://localhost:27017';
     const client = new MongoClient(url);
     const dbName = 'DutyFree';
@@ -62,7 +63,7 @@ async function getDataConfig(req, res){
         const db = client.db(dbName);
         const collection = await db.collection(coll);
         let arrayCollections = []
-        var reg = await collection.find().forEach(element => {
+        var reg = await collection.find({operacion:ID}).forEach(element => {
             arrayCollections.push(element)
          });
         res.status(200).send(arrayCollections);
@@ -93,7 +94,8 @@ async function updateDataConfiguracion(req, res){
             emailSalida:params.emailSalida,
             passEmailSalida:params.passEmailSalida,
             notificar:params.notificar,
-            protocoloFacturacion:params.protocoloFacturacion
+            protocoloFacturacion:params.protocoloFacturacion,
+            operacion:params.operacion
         }},{ upsert: false }, function(err,doc) {
             if (err) { throw err; }
             else { 
@@ -148,6 +150,7 @@ async function agregarPresupuesto(req, res){
 async function getDataPresupuesto(req, res){
     var params = req.body;
     var coll = 'Presupuestos';
+     var ID = req.params.id
     // console.log(params)
     const url = 'mongodb://localhost:27017';
     const client = new MongoClient(url);
@@ -158,7 +161,7 @@ async function getDataPresupuesto(req, res){
         const db = client.db(dbName);
         const collection = await db.collection(coll);
         let arrayCollections = []
-        var reg = await collection.find().forEach(element => {
+        var reg = await collection.find({operacion:ID}).forEach(element => {
             arrayCollections.push(element)
          });
         // console.log(reg)
@@ -219,6 +222,7 @@ async function updateDataPresupuesto(req, res){
             categorias:params.categorias,
             capacidadVentasEsperada:params.capacidadVentasEsperada,
             presupuesto_vendedores:params.presupuesto_vendedores,
+            operacion:params.operacion
             
         }},{ upsert: false }, function(err,doc) {
             if (err) { throw err; }
@@ -322,6 +326,23 @@ async function renametCollectionsInventarios(req, res){
     const url = 'mongodb://localhost:27017';
     const client = new MongoClient(url);
     const dbName = 'DutyFreeInventarios';
+        await client.connect();
+        console.log('Connected successfully to server');
+        const db = client.db(dbName);
+
+        var coll_off = 'off_'+ coll
+        db.collection(coll).rename(coll_off, function(err, newColl) {
+            return res.status(200).send(coll_off);
+        });  
+}
+
+async function renametCollectionsDutyFree(req, res){
+    var params = req.body;
+    var coll = req.params.tag;
+    console.log(params)
+    const url = 'mongodb://localhost:27017';
+    const client = new MongoClient(url);
+    const dbName = 'DutyFree';
         await client.connect();
         console.log('Connected successfully to server');
         const db = client.db(dbName);
@@ -571,18 +592,18 @@ async function consultarInfoCategoria(req, res){
         const collection = db.collection(coll);
         collection.aggregate([
                     { $group: {
-                        _id: "$Descr",
+                        _id: "$CLASIFICACION",
                         Ventas:{$sum:'$Importe'},
-                        Unidades:{$sum: '$Cantidad'},
-                        Codigo: {$addToSet : "$Clasi"},
+                        Unidades:{$sum: '$CANTIDAD'},
+                        Codigo: {$addToSet : "$CATEGORIA"},
                         Cop: {$sum: '$COP'},
-                        Cost: {$sum: {$toInt: "$Costo_de_v"}},
+                        Cost: {$sum: {$toInt: "$COSTO DE VENTA"}},
                         Detalle: {$addToSet : { 
-                            vendedor: "$Nombre_del_vend",
-                            cod_vend: "$Codi",
+                            vendedor: "$VENDEDOR",
+                            cod_vend: "$CODIGO_VENDEDOR",
                             valor: {$sum: '$COP'},
                             usd:{$sum: '$Importe'},
-                            und: {$sum: '$Cantidad'},
+                            und: {$sum: '$CANTIDAD'},
                         }},
                         
                     }},{
@@ -602,18 +623,18 @@ async function consultarInfoCategoriaTienda(req, res){
         const collection = db.collection(coll);
         collection.aggregate([
                     { $group: {
-                        _id: {sub:"$Descr",pv:"$PDV"},
+                        _id: {sub:"$CATEGORIA",pv:"$PDV"},
                         Ventas:{$sum:'$Importe'},
-                        Unidades:{$sum: '$Cantidad'},
-                        Codigo: {$addToSet : "$Clasi"},
+                        Unidades:{$sum: '$CANTIDAD'},
+                        Codigo: {$addToSet : "$CLASIFICACION"},
                         Cop: {$sum: '$COP'},
                         Cost: {$sum: {$toInt: "$Costo_de_v"}},
                         Detalle: {$addToSet : { 
-                            vendedor: "$Nombre_del_vendedor",
-                            cod_vend: "$Codi",
+                            vendedor: "$VENDEDOR",
+                            cod_vend: "$CODIGO_VENDEDOR",
                             valor: {$sum: '$COP'},
                             usd:{$sum: '$Importe'},
-                            und: {$sum: '$Cantidad'},
+                            und: {$sum: '$CANTIDAD'},
                         }},
                         
                     }},{
@@ -699,11 +720,11 @@ async function getInformePresupuesoVendedor(req, res){
         const collection = db.collection(coll);
         collection.aggregate([
                     { $group: {
-                        _id: {clasi:"$Clasi"},
+                        _id: {clasi:"$CLASIFICACION"},
                         Ventas:{$sum: '$Importe'},
                         VentasCop:{$sum: '$COP'},
-                        Vendedor:"$Nombre_del_vend",
-                        Unidades:{$sum: '$Cantidad'},
+                        Vendedor:"$VENDEDOR",
+                        Unidades:{$sum: '$CANTIDAD'},
                         Cost: {$sum: {$toInt: '$Costo_de_v'}},
                         // Detalle: {$addToSet : { 
                         //     categ: "$Descr",
@@ -727,19 +748,19 @@ async function getInformeVendedor(req, res){
         const collection = db.collection(coll);
         collection.aggregate([
                     { $group: {
-                        _id: "$Codi",
+                        _id: "$CODIGO_VENDEDOR",
                         Ventas:{$sum: '$Importe'},
                         VentasCop:{$sum: '$COP'},
-                        Vendedor: {$addToSet : "$Nombre_del_vend"},
-                        Unidades:{$sum: '$Cantidad'},
+                        Vendedor: {$addToSet : "$VENDEDOR"},
+                        Unidades:{$sum: '$CANTIDAD'},
                         Cost: {$sum: {$toInt: '$Costo_de_v'}},
                         Detalle: {$addToSet : { 
-                            categ: "$Descr",
-                            cod_categ: "$Clasi",
+                            categ: "$CATEGORIA",
+                            cod_categ: "$CLASIFICACION",
                             valor: {$sum: '$Importe'},
-                            folio:'$Folio',
+                            folio:'$FOLIO',
                             valorCop: {$sum: '$COP'},
-                            und: {$sum: '$Cantidad'},
+                            und: {$sum: '$CANTIDAD'},
                         }},
                     }},{
                         $sort : { Ventas: -1 }
@@ -761,16 +782,16 @@ async function getInformeCajeros(req, res){
                         _id: "$CAJERO",
                         Ventas:{$sum: '$Importe'},
                         VentasCop:{$sum: '$COP'},
-                        Unidades:{$sum: '$Cantidad'},
+                        Unidades:{$sum: '$CANTIDAD'},
                         Cost: {$sum: {$toInt: '$Costo_de_v'}},
-                        Cost_usd: {$sum: {$toInt: '$UNITCOST'}},
+                        // Cost_usd: {$sum: {$toInt: '$UNITCOST'}},
                         Detalle: {$addToSet : { 
-                            categ: "$Descr",
-                            cod_categ: "$Clasi",
+                            categ: "$CATEGORIA",
+                            cod_categ: "$CLASIFICACION",
                             valor: {$sum: '$Importe'},
-                            folio:'$Folio',
+                            folio:'$FOLIO',
                             valorCop: {$sum: '$COP'},
-                            und: {$sum: '$Cantidad'},
+                            und: {$sum: '$CANTIDAD'},
                         }},
                     }},{
                         $sort : { Ventas: -1 }

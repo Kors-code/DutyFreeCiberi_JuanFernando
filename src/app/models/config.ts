@@ -14,6 +14,7 @@ export class Config{
             public passEmailSalida: string = '',
             public notificar:any[] = [],
             public protocoloFacturacion:string = '',
+            public operacion:string = '',
         ){}
 }
 
@@ -47,6 +48,7 @@ export class Tienda {
     constructor(
         public _id: any = undefined,
         public tienda: string = '',
+        public centro_costos: string = '',
         public resolucion: string = '',
         public part: number = 0,
         public ptto:any[] = [],

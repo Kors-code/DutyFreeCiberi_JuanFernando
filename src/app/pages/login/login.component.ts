@@ -45,7 +45,7 @@ export class LoginComponent implements OnInit {
 
   onSubmit(){
 
- 
+
      this._userService.changePass(this.user).subscribe(
      response => {
         // this.user = response.user;

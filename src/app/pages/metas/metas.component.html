@@ -147,7 +147,11 @@
                                 {{cat.titulo}} 
                               </td>
                               <td style="text-align:center ;"> 
-                                {{cat.participacion}}% 
+                                <!-- {{cat.participacion}}%  -->
+                                <mat-form-field appearance="fill" style="text-align: center; font-size: 1.3em; margin-right: 20px;">
+                                  <mat-label>Participacion</mat-label>
+                                  <input  (change)="TotalizarCategoriasTienda(item)" matInput  placeholder="%" type="number" name="participacionTienda" [(ngModel)]="cat.participacion">
+                                </mat-form-field> 
                               </td>
                               <td style="text-align:center ;">
                                 $ {{cat.presupuesto_usd  | number:'0.0-0'}}

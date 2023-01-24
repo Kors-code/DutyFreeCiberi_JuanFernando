@@ -18,6 +18,7 @@ import {Sort} from '@angular/material/sort';
 import { UserService } from 'src/app/services/user.service';
 import { User } from 'src/app/models/user';
 import { FormControl } from '@angular/forms';
+import { Operacion } from 'src/app/models/operacion';
 
 export interface _Conteo {
   _id: string;
@@ -65,6 +66,7 @@ export class tomaInventarioComponent implements OnInit {
   @ViewChild(MatSort, {static: true}) sort!: MatSort;
   @ViewChild('scanEle')
   scanElement!: ElementRef;
+  pOperacion:Operacion
   constructor( public dialog: MatDialog, @Inject(DOCUMENT) doc: any,
               public _infoServce:InfoService,
               public _socketService:SocketIOService,
@@ -77,6 +79,7 @@ export class tomaInventarioComponent implements OnInit {
       this.config = new Config();
       this.trmApi =  new TrmApi("aEOKmLbbPROhCr6iDiieAGCqt");
       this.identity = this._userService.getIdentity();
+      this.pOperacion=_userService.getPredetermidaOperacion();
       // this.trmApi
       //   .latest()
       //   .then((data:any) =>  // //console.log(this.trm =  data.valor))
@@ -234,7 +237,7 @@ export class tomaInventarioComponent implements OnInit {
 
   DefinitivoCategorias:any[] = []
   getConfig(){
-    this._infoServce.getConfig().subscribe(
+    this._infoServce.getConfig(this.pOperacion._id).subscribe(
       res=>{
         if(res.length != 0){
           this.DefinitivoCategorias = []

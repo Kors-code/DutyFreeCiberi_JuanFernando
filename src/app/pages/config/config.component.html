@@ -1,7 +1,7 @@
 <mat-card>
-<h1 style="text-align: center;">Configuracion
+<h1 style="text-align: center;">Configuracion {{pOperacion.titulo}}
   <button *ngIf="!config._id"   mat-raised-button aria-label="Clear" color="accent" (click)="guardarConfigurcion()">
-    <mat-icon>save</mat-icon> Guardar Configuracion</button>
+    <mat-icon>save</mat-icon> Guardar Configuracion  </button>
   <button *ngIf="config._id"  mat-raised-button aria-label="Clear" color="accent" (click)="updateConfiguracion()">
       <mat-icon>save</mat-icon> Editar Configuracion</button>
 </h1>
@@ -242,11 +242,24 @@
           </mat-panel-title>
           
         </mat-expansion-panel-header>
-        <mat-card-content> 
+        <mat-card-content>   
+          <button *ngIf="tienda.part" mat-raised-button aria-label="Clear" (click)="editTienda()" color="primary" style="margin-right: 20px;">
+          <mat-icon>save</mat-icon> Guardar Tienda
+        </button>
+        <button *ngIf="tienda.part" mat-raised-button aria-label="Clear" (click)="addTienda()" color="primary" style="margin-right: 20px;">
+          <mat-icon>add</mat-icon> Agregar Tienda
+        </button>
+      
           <mat-form-field style="margin-right: 25px;" appearance="fill">
             <mat-label>titulo</mat-label>
             <input matInput type="text" [(ngModel)]="tienda.tienda">
           </mat-form-field>
+            <mat-form-field style="margin-right: 25px;" appearance="fill">
+            <mat-label>Centro Costos</mat-label>
+            <input matInput type="text" [(ngModel)]="tienda.centro_costos">
+          </mat-form-field>
+
+          
           <mat-form-field style="width:80% ;">
             <mat-label>Resolucion Facturacion</mat-label>
             <textarea matInput name="protocolo" [(ngModel)]="tienda.resolucion"></textarea>
@@ -254,12 +267,7 @@
           <mat-form-field style="margin-right: 25px;" appearance="fill">
             <mat-label>participacion</mat-label>
             <input matInput type="number" [(ngModel)]="tienda.part">
-            <button matSuffix mat-icon-button aria-label="Clear" (click)="addTienda()">
-              <mat-icon>add</mat-icon>
-            </button>
-            <button matSuffix mat-icon-button aria-label="Clear" (click)="editTienda()">
-              <mat-icon>cancel</mat-icon>
-            </button>
+           
           </mat-form-field>
           <mat-card-content style="display:flex; flex-wrap: wrap;">
             <h5>Sub Cumplimientos

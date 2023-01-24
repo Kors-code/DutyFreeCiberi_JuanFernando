@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -23,6 +22,7 @@ import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { SiigoComponent } from './pages/siigo-conection/siigo.component';
 import { CumplimientoComponent, DialogChangePass } from './pages/cumplimiento/cumplimiento.component';
 import { DialogConteoDetail, tomaInventarioComponent } from './pages/toma-inventario/toma-inventario.component';
+import { OperacionComponent } from './pages/operaciones/operacion.component';
 
 
 @NgModule({
@@ -44,7 +44,8 @@ import { DialogConteoDetail, tomaInventarioComponent } from './pages/toma-invent
     CumplimientoComponent,
     tomaInventarioComponent,
     DialogConteoDetail,
-    DialogChangePass
+    DialogChangePass,
+    OperacionComponent
   ],
   imports: [
     BrowserModule,
