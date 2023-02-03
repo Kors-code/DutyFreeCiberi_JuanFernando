@@ -880,7 +880,9 @@ async function contarEan(req, res){
     var params = req.body;
     var coll = req.params.tag;
     let io = req.app.get('io');
-    console.log('680  '+ params)
+    let scan = params.scan +'';
+    console.log(params.scan)
+    console.log('684  '+ coll)
     const url = 'mongodb://localhost:27017';
     const client = new MongoClient(url);
     const dbName = 'DutyFreeInventarios';
@@ -889,12 +891,14 @@ async function contarEan(req, res){
         console.log('Connected successfully to server');
         const db = client.db(dbName);
         const collection = await db.collection(coll);
-        collection.updateOne({EAN:params.scan},
+        collection.updateOne({EAN:scan},
             {$push:{Conteo0:params}}, function(err,doc) {
-            if (err) { throw err; }
+            if (err) {
+                console.log(err) 
+                throw err; }
             else { 
-
-                collection.findOne({EAN:params.scan},
+                console.log(doc)
+                collection.findOne({EAN:scan},
                      function(err,docEAN) {
                         console.log(doc)
                             console.log(docEAN)
@@ -911,6 +915,7 @@ async function contarSKU(req, res){
     var params = req.body;
     var coll = req.params.tag;
     let io = req.app.get('io');
+    let scan = params.scan +'';
     console.log('680  '+ params)
     const url = 'mongodb://localhost:27017';
     const client = new MongoClient(url);
@@ -920,12 +925,11 @@ async function contarSKU(req, res){
         console.log('Connected successfully to server');
         const db = client.db(dbName);
         const collection = await db.collection(coll);
-        collection.updateOne({Codigo1:params.scan},
+        collection.updateOne({Codigo1:scan},
             {$push:{Conteo0:params}}, function(err,doc) {
             if (err) { throw err; }
             else {
-
-                  collection.findOne({Codigo1:params.scan},
+                  collection.findOne({Codigo1:scan},
                      function(err,docEAN) {
                         console.log(doc)
                             console.log(docEAN)

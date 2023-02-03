@@ -15,7 +15,7 @@ createWindow = () => {
     });
     
     // appWin.loadURL(`file://${__dirname}/duty-free/index.html`);
-    appWin.loadURL(`http://localhost:1165`)
+    appWin.loadURL(`http://localhost:6511`)
 
     appWin.setMenu(null);
 

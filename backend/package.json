@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "inicio": "electron .",
     "pack": "build --dir",
-    "pkg-win":"electron-packager . DutyFree_124 --platform=win32 --arch=x64 --icon=./favicon.ico"
+    "pkg-win":"electron-packager . DutyFree_130 --platform=win32 --arch=x64 --icon=./favicon.ico"
   },
   "author": "ciberi.co",
   "license": "ISC",

@@ -1,7 +1,7 @@
 <mat-toolbar class="toolbar">
-    <button *ngIf="identity && pOperacion._id" mat-button [matMenuTriggerFor]="menuRef"><mat-icon class="mat-18">menu</mat-icon> <span>{{identity?.name}}</span> <span *ngIf="pOperacion._id" style="color: white; margin-left: 20px;">{{pOperacion.titulo}} <mat-icon style="color: red;" (click)="cancelarOperacion()" *ngIf="identity.operaciones.length !=1">cancel</mat-icon>  </span></button>
+    <button *ngIf="identity && pOperacion._id" mat-button [matMenuTriggerFor]="menuRef"><mat-icon class="mat-18">menu</mat-icon> <span>{{identity?.name}}</span> <span *ngIf="pOperacion._id" style="color: white; margin-left: 20px;">{{pOperacion.titulo}} <mat-icon style="color: grey;" (click)="cancelarOperacion()" *ngIf="identity.operaciones.length !=1">cancel</mat-icon>  </span></button>
   <span class="example-spacer"></span>
-  <span>DFP App 1.2.4</span>
+  <span>DFP App 1.3.1</span>
   <mat-icon *ngIf="Online == true " style="color:green; margin-left:10px; margin-right:10px;" matTooltip="En Línea" >wifi</mat-icon>
   <mat-icon *ngIf="Online == false " style="color:red; margin-left:10px; margin-right:10px;" matTooltip="Sin Conexiòn" >signal_wifi_off</mat-icon>
 </mat-toolbar>

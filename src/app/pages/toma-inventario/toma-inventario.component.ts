@@ -118,7 +118,7 @@ export class tomaInventarioComponent implements OnInit {
       res=>{
         this.collections = res
         // this.collections = this.collections.reverse();
-        //console.log(this.collections)
+        console.log(this.collections)
       }
     )
   }
@@ -288,7 +288,7 @@ export class tomaInventarioComponent implements OnInit {
       this.data = (XLSX.utils.sheet_to_json(ws, { header: 1 }));
 
       // this.data.flat()  
-      // ////// //console.log(this.data);
+      console.log(this.data);
       this.log= false;
 
     };
@@ -318,7 +318,53 @@ export class tomaInventarioComponent implements OnInit {
       const ws: XLSX.WorkSheet = wb.Sheets[wsname];
       this.data = (XLSX.utils.sheet_to_json(ws, { header: 1 }));
 
-      // //console.log('Data',this.data);
+     
+
+      let pos2 = this.data[0].map(function(e:any) { return e; }).indexOf('EXISTENCIA FINAL');
+      if(pos2 != -1){
+        this.data[0][pos2] = 'Exist_Final'
+      }
+
+      let pos3 = this.data[0].map(function(e:any) { return e; }).indexOf('CODIGO');
+      if(pos3 != -1){
+        this.data[0][pos3] = 'Codigo1'
+      }
+
+      let pos4 = this.data[0].map(function(e:any) { return e; }).indexOf('UPC1');
+      if(pos4 != -1){
+        this.data[0][pos4] = 'EAN'
+      }
+
+      let pos5 = this.data[0].map(function(e:any) { return e; }).indexOf('CLASIFICACION COMPLETA');
+      if(pos5 != -1){
+        this.data[0][pos5] = 'Cla'
+      }
+
+      let pos6 = this.data[0].map(function(e:any) { return e; }).indexOf('DESCRIPCION');
+      if(pos6 != -1){
+        this.data[0][pos6] = 'Descripcion_1'
+      }
+
+      let pos7 = this.data[0].map(function(e:any) { return e; }).indexOf('FINAL UNIT COST');
+      if(pos7 != -1){
+        this.data[0][pos7] = 'Final_Unit_Cost'
+      }
+
+      let pos8 = this.data[0].map(function(e:any) { return e; }).indexOf('TOTAL INV. FINAL');
+      if(pos8 != -1){
+        this.data[0][pos8] = 'TOTAL_FINAL_INV'
+      }
+
+      let pos9 = this.data[0].map(function(e:any) { return e; }).indexOf('VALOR FINAL (USD)');
+      if(pos9 != -1){
+        this.data[0][pos9] = 'TOTAL_FINAL_INV_USD'
+      }
+
+
+//       TOTAL_FINAL_INV
+// TOTAL_FINAL_INV_USD
+
+      console.log('Data', this.data);
 
       this.convertirJson()
       this.log= false;
@@ -331,7 +377,7 @@ export class tomaInventarioComponent implements OnInit {
   progreso = 0
 
   nuevo(){
-    this.tag = 'C-'
+    this.tag = 'C_'
   }
 
 
@@ -482,8 +528,8 @@ export class tomaInventarioComponent implements OnInit {
 
     var duplicados: any[] = [];
 
-    var task_names = this.registros.map(function (task: { Adicional: any; }) {
-      return task.Adicional; 
+    var task_names = this.registros.map(function (task: { BRAND: any; }) {
+      return task.BRAND; 
     });
  
   const tempArray = [...task_names].sort();
@@ -519,10 +565,10 @@ export class tomaInventarioComponent implements OnInit {
   }
 
   procesarMarca(){
-    //console.log(this.marca)
-    let Valores = this.marca.value
-    let Clasi = this.clasifi.value
-    var duplicados = []
+    console.log(this.marca)
+    let Valores = this.marca.value;
+    let Clasi = this.clasifi.value;
+    var duplicados = []; 
     for(var i = 0; i < this.registros.length; i++) {
       const elemento = this.registros[i];
 
@@ -537,7 +583,7 @@ export class tomaInventarioComponent implements OnInit {
           }
         }
       }else{
-        if(Valores.includes(elemento.Adicional)) {
+        if(Valores.includes(elemento.BRAND)) {
           duplicados.push(elemento);
         }
       } 
@@ -762,11 +808,12 @@ export class tomaInventarioComponent implements OnInit {
       ubicacion:this.ubicacion,
     }
 
+    console.log(this.tag)
     if(this.scaner){
       this._infoServce.agregarScaneo(scan, this.tag).subscribe(
         res =>{
           let dato = res
-          //console.log(dato)
+          console.log(dato)
           if(dato){
             if(this.ultimosConteos.length <= 50){ 
               this.ultimosConteos.unshift(dato)
@@ -795,7 +842,7 @@ export class tomaInventarioComponent implements OnInit {
       this._infoServce.agregarScaneoSKU(scan, this.tag).subscribe(
         res =>{
           let dato = res
-          //console.log(dato)
+          console.log(dato)
           if(dato){
             if(this.ultimosConteos.length <= 50){ 
               this.ultimosConteos.unshift(dato)
@@ -966,7 +1013,7 @@ export class tomaInventarioComponent implements OnInit {
     // //console.log(this.DefinitivoCategorias)
     this._infoServce.getConteoTag(this.tag).subscribe(
       res=>{
-        // // //console.log(res)
+        console.log(res)
         this.conteo = res
         // this.conteo.sort(function(a,b){
         //   return a.Descripcion_1.localeCompare(b.Descripcion_1);

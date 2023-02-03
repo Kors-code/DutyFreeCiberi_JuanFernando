@@ -271,7 +271,7 @@ export class CumplimientoComponent implements OnInit {
                               ////console.log('Ventas cop' + listado[x].ventas_cop)
                             }
 
-                            if(listado[x].cumplimiento <= 0.999){
+                            if(listado[x].cumplimiento <= 0.999 && listado[x].cumplimiento >= 0.8){
                               //////console.log('entro 0.999')
                               listado[x].comisionesUsd = listado[x].ventas * (listado[x].cumplimientos[0].asesor/100)
                               listado[x].comisionesCop = (listado[x].ventas_cop * (listado[x].cumplimientos[0].asesor/100))
@@ -342,7 +342,7 @@ export class CumplimientoComponent implements OnInit {
                   }
                 }
 
-                if(cumplimiento <= 0.999){
+                if(cumplimiento <= 0.999 && cumplimiento >= 0.8){
                   //console.log('LIDER <= 0.99' )
                   if(this.presupuesto.vendedores[g].rol == 'Lider'){
                     this.presupuesto.vendedores[g].Comisiones = this.presupuesto.vendedores[g].Comisiones + cat.usd * (cat.cumplimientos[2].lider/100)

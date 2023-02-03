@@ -5,11 +5,11 @@
     <div style="display: flex; justify-content: center;">
       <button mat-button [matMenuTriggerFor]="menuRef"><mat-icon class="mat-18">menu</mat-icon> <span>Conteos Activos</span> </button>
       <mat-menu #menuRef="matMenu">
-        <button mat-menu-item (click)="tag = 'C-'" *ngIf="importar">
+        <button mat-menu-item (click)="tag = 'C_'" *ngIf="importar">
             <mat-icon class="mat-18" >add</mat-icon>  
             Nuevo conteo 
         </button>
-        <button mat-menu-item (click)="tag = 'R-'" *ngIf="importar">
+        <button mat-menu-item (click)="tag = 'R_'" *ngIf="importar">
           <mat-icon class="mat-18" >add</mat-icon>  
             Nueva Recepcion 
       </button>
@@ -66,7 +66,7 @@
                 </mat-form-field>
                 <button *ngIf="marca.value.length != 0 || clasifi.value.length != 0" mat-button (click)="procesarMarca()" ><mat-icon class="mat-18">filter_list</mat-icon> <span>Filtrar Conteo</span> </button> 
               </div>
-            </div>
+          </div>
           
           <button *ngIf="registros.length != 0" flex mat-raised-button color="accent" [disabled]="log"  (click)="subirConteo()" class="text-upper" style="width: 90%; margin:15px auto;margin-left: 20px;">{{registros.length}} Subir Conteo <mat-icon>update_file</mat-icon></button>
           <span *ngIf="progreso != 0" style="color: blue;">{{progreso | number:'0.0-2'}}% </span> <mat-progress-bar *ngIf="progreso != 0" mode="determinate" [value]="progreso" color="accent" style="width: 90%; margin: 0 auto;"></mat-progress-bar>
@@ -1095,9 +1095,11 @@
         <mat-form-field appearance="fill">
           <mat-label>Tag Base Datos</mat-label>
         <mat-select [(ngModel)]="tag">
-          <mat-option *ngFor="let item of config.inventarios" [value]="item.tag">
-            {{item.tag}}
+          <ng-template let-doc let-i="index" ngFor [ngForOf]="collections">
+          <mat-option  [value]="doc" *ngIf="!verTagInventario(doc)">
+            {{doc}}
           </mat-option>
+          </ng-template>
         </mat-select>
       </mat-form-field> 
       <mat-form-field *ngIf="tag" appearance="fill" style="text-align: center; font-size: 1em; margin-right: 20px; width: 200px;">

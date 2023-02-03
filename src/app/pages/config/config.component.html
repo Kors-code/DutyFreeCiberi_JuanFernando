@@ -243,10 +243,10 @@
           
         </mat-expansion-panel-header>
         <mat-card-content>   
-          <button *ngIf="tienda.part" mat-raised-button aria-label="Clear" (click)="editTienda()" color="primary" style="margin-right: 20px;">
+          <button *ngIf="tienda._id" mat-stroked-button  aria-label="Clear" (click)="editTienda()" color="primary" style="margin-right: 20px;">
           <mat-icon>save</mat-icon> Guardar Tienda
         </button>
-        <button *ngIf="tienda.part" mat-raised-button aria-label="Clear" (click)="addTienda()" color="primary" style="margin-right: 20px;">
+        <button *ngIf="!tienda._id && tienda.part" mat-stroked-button  aria-label="Clear" (click)="addTienda()" color="primary" style="margin-right: 20px;">
           <mat-icon>add</mat-icon> Agregar Tienda
         </button>
       

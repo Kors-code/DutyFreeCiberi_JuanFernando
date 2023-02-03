@@ -236,6 +236,7 @@ Roles = ['Ventas', 'Skin', 'Lider', 'Gerente Ventas', 'Gerente']
   addTienda(){
     this.tienda.presupuesto_cop =0
     this.tienda.ventas_cop =0
+    this.tienda._id = new Date().getTime();
     this.config.tiendas.push(this.tienda)
     this.tienda  = new Tienda()
     this.tiendaParticipacion = 0
@@ -251,6 +252,7 @@ Roles = ['Ventas', 'Skin', 'Lider', 'Gerente Ventas', 'Gerente']
   }
 
   editTienda(){
+    this.tienda._id = new Date().getTime();
     this.tienda  = new Tienda()
     this.tiendaParticipacion =0
     
