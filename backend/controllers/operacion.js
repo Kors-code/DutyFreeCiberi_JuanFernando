@@ -62,8 +62,6 @@ function deleteOperacion(req, res){
     });
 }
 
-
-
 function updateOperacion(req, res){
 var OperacionId = req.body._id;
 var update = req.body;

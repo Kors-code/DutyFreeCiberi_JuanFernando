@@ -1,0 +1,337 @@
+<mat-card style="width: 80%; margin: 15px auto;">
+<div>
+  <mat-card-content>
+        <div layout-gt-xs="row" layout-align-gt-xs="center start" class="margin">
+          <div flex-gt-xs="100">
+              <mat-card-content>
+                <mat-card-header>
+                  <mat-icon mat-card-avatar color="accent">store</mat-icon>
+                  <mat-card-title class="mat-title">FACTURACION ELECTRONICA
+                    <button *ngIf="!facturacionElectronica._id" flex mat-stroked-button   (click)="RegisterElectronica()" color="accent"> Registrar  <mat-icon layout-padding>save</mat-icon></button>
+                    <button *ngIf="facturacionElectronica._id" flex mat-stroked-button   (click)="updateElectronica()" color="primary"> Guardar  <mat-icon layout-padding>save</mat-icon></button>
+                  </mat-card-title>
+                </mat-card-header>
+
+                  <mat-card-content flex="100" layout-align="center center">
+                        <mat-card>
+                          <h3>     
+                              FACTURADOR 
+                          </h3>
+                          <p>Diligencie con la informacion como aparece en el RUT</p>
+                          <mat-checkbox class="push-left-mat" [(ngModel)]="facturacionElectronica.factOperacion.activa">Facturación Activa</mat-checkbox>
+                          <mat-form-field style="width: 400px; text-align: center;">
+                            <input matInput placeholder="Set de pruebas" type="text"  name="facturacionElectronicaset_pruebas" [(ngModel)]="facturacionElectronica.set_pruebas" required>
+                          </mat-form-field>
+                          <mat-checkbox class="push-left-mat" [(ngModel)]="facturacionElectronica.pruebas">Pruebas</mat-checkbox>
+
+                          <div style="display: flex; flex-wrap: wrap;font-size: 1.2em;justify-content: center; text-align: center;">
+                            <!-- <div>
+
+                              <img *ngIf="pOperacion.img" width="90px" src="{{pOperacion.img}}">
+                              
+                              <mat-form-field style="width: 100%; text-align: center;">
+                                <textarea matInput placeholder="Imagen" type="text"  name="pOperacionimg" [(ngModel)]="pOperacion.img"></textarea>
+                              </mat-form-field>
+                              <button  *ngIf="pOperacion.img" mat-raised-button [disabled]="!pOperacion.img" (click)="saveLogo()" class="L10" color="accent" matTooltip="Nomina Electroica" matTooltipPosition="below"><mat-icon>backup</mat-icon></button>
+                            </div>      -->
+                      
+                          <mat-form-field style="text-align: center;">
+                            <input matInput placeholder="C.C/ NIT" type="number"  name="facturacioncodigo" [(ngModel)]="facturacionElectronica.factOperacion.identification_number" required>
+                          </mat-form-field>
+                          <mat-form-field style="width: 100px; text-align: center;">
+                            <input matInput placeholder="Digto Verificacion" type="number"  name="facturacioncodigo" [(ngModel)]="facturacionElectronica.factOperacion.dv" required>
+                          </mat-form-field>
+
+                          <mat-form-field style="text-align: center; width: 400px;">
+                            <input matInput placeholder="Representante" type="text"  name="facturacioncodigo" [(ngModel)]="facturacionElectronica.factOperacion.representante" required>
+                          </mat-form-field>
+                          <mat-form-field style="width: 200px; text-align: center;">
+                            <input matInput placeholder="C.C. Representante" type="number"  name="facturacioncodigo" [(ngModel)]="facturacionElectronica.factOperacion.cedula" required>
+                          </mat-form-field>
+                        
+
+                    
+                          <div>
+                            <mat-form-field style="width: 100px; text-align: center;">
+                              <input matInput [disabled]="true" placeholder="Tipo Documento" type="number"  name="type_document_identification_id" [(ngModel)]="facturacionElectronica.factOperacion.type_document_identification_id" required>
+                            </mat-form-field>
+                            <mat-icon style="cursor: pointer;" [matMenuTriggerFor]="menu">search</mat-icon>
+                            <mat-menu #menu="matMenu">
+                              <ng-template let-item let-last="last" ngFor [ngForOf]="Type_document_identification_id">
+                                  <button  [class.tc-blue-600]="facturacionElectronica.factOperacion.type_document_identification_id == item.id" mat-menu-item  [disabled]="" (click)="facturacionElectronica.factOperacion.type_document_identification_id = item.id"><mat-icon>{{item.icon}}</mat-icon>{{item.valor}}</button>
+                              </ng-template>
+                            </mat-menu>
+                          </div>
+                          
+                          <div>
+                            <mat-form-field flex style="width: 100px; text-align: center;">
+                              <input matInput [disabled]="true" placeholder="Tipo de Persona" type="number"  name="type_organization_id" [(ngModel)]="facturacionElectronica.factOperacion.type_organization_id" required>
+                            </mat-form-field>
+                            <mat-icon style="cursor: pointer;" [matMenuTriggerFor]="menuTipe">search</mat-icon>
+                            <mat-menu #menuTipe="matMenu">
+                              <ng-template let-item let-last="last" ngFor [ngForOf]="Type_organization_id">
+                                  <button  [class.tc-blue-600]="facturacionElectronica.factOperacion.type_organization_id == item.id" mat-menu-item  [disabled]="" (click)="facturacionElectronica.factOperacion.type_organization_id = item.id"><mat-icon>{{item.icon}}</mat-icon>{{item.valor}}</button>
+                              </ng-template>
+                            </mat-menu>
+                          </div>
+
+                          <div>
+                            <mat-form-field flex style="width: 100px; text-align: center;">
+                              <input matInput [disabled]="true" placeholder="Regimen" type="number"  name="type_regime_id" [(ngModel)]="facturacionElectronica.factOperacion.type_regime_id" required>
+                            </mat-form-field>
+                            <mat-icon style="cursor: pointer;" [matMenuTriggerFor]="menuRegi">search</mat-icon>
+                            <mat-menu #menuRegi="matMenu">
+                              <ng-template let-item let-last="last" ngFor [ngForOf]="Type_regime_id">
+                                  <button  [class.tc-blue-600]="facturacionElectronica.factOperacion.type_regime_id == item.id" mat-menu-item  [disabled]="" (click)="facturacionElectronica.factOperacion.type_regime_id = item.id"><mat-icon>{{item.icon}}</mat-icon>{{item.valor}}</button>
+                              </ng-template>
+                            </mat-menu>
+                          </div>
+
+                          <div>
+                            <mat-form-field flex style="width: 100px; text-align: center;">
+                              <input matInput [disabled]="true"  placeholder="Contribuyente" type="text"  name="type_liability_id" [(ngModel)]="facturacionElectronica.factOperacion.type_liability_id" required>
+                            </mat-form-field>
+                            <mat-icon style="cursor: pointer;" [matMenuTriggerFor]="menuImpu">search</mat-icon>
+                            <mat-menu #menuImpu="matMenu">
+                              <ng-template let-item let-last="last" ngFor [ngForOf]="Type_liability_id">
+                                  <button  [class.tc-blue-600]="facturacionElectronica.factOperacion.type_liability_id == item.id" mat-menu-item  [disabled]="" (click)="facturacionElectronica.factOperacion.type_liability_id = item.id"><mat-icon>{{item.icon}}</mat-icon>{{item.valor}}</button>
+                              </ng-template>
+                            </mat-menu>
+                          </div>
+
+                    
+
+                          <mat-form-field style="width: 100%; text-align: center;">
+                            <input matInput placeholder="Nombre Juridico" type="text" style="width: 100%;"  name="business_name" [(ngModel)]="facturacionElectronica.factOperacion.business_name" required>
+                          </mat-form-field>
+                          <mat-form-field style="margin-left: 10px; text-align: center;">
+                            <input matInput placeholder="Registro Mercantil" type="text"  name="merchant_registration" [(ngModel)]="facturacionElectronica.factOperacion.merchant_registration" required>
+                          </mat-form-field>
+                          <div>
+                            <mat-form-field flex style="width: 100px; text-align: center;">
+                              <input matInput [disabled]="true" placeholder="Municipio" type="number"  name="municipialities" [(ngModel)]="facturacionElectronica.factOperacion.municipality_id" >
+                            </mat-form-field>
+                            <mat-icon style="cursor: pointer;" [matMenuTriggerFor]="menuCiudad">search</mat-icon>
+                            <mat-menu #menuCiudad="matMenu">
+                              <ng-template let-item let-last="last" ngFor [ngForOf]="municipialities">
+                                  <button   [class.tc-blue-600]="facturacionElectronica.factOperacion.municipality_id == item.id" mat-menu-item  [disabled]="" (click)="facturacionElectronica.factOperacion.municipality_id = item.id"><mat-icon>city</mat-icon>{{item.code}} {{item.name}}</button>
+                              </ng-template>
+                            </mat-menu>
+                          </div>
+                      
+                          <mat-form-field style="width: 100%; text-align: center;">
+                            <input matInput placeholder="Direccion" type="text"  name="address" [(ngModel)]="facturacionElectronica.factOperacion.address" required>
+                          </mat-form-field>
+                          <mat-form-field style="margin-left: 10px; text-align: center;">
+                            <input matInput placeholder="Telefono" type="number"  name="phone" [(ngModel)]="facturacionElectronica.factOperacion.phone" required>
+                          </mat-form-field>
+                          <mat-form-field style="width: 400px; text-align: center;">
+                            <input matInput placeholder="Correo ELectronic" type="text"  name="email" [(ngModel)]="facturacionElectronica.factOperacion.email" required>
+                          </mat-form-field>
+                          <mat-form-field  style="width: 100%; text-align: center;">
+                            <input matInput placeholder="Token" type="text"  name="token" [(ngModel)]="facturacionElectronica.token" required>
+                          </mat-form-field>
+                          <button  mat-stroked-button [disabled]="" (click)="registrarCompanyFcturacion()" class="bgc-blue-400 rigth" matTooltip="Guardar" matTooltipPosition="below"><mat-icon>save</mat-icon>GUARDAR</button>  
+                        </div>
+                        <h5>Softaware</h5>
+                        <div style="display: flex; flex-wrap: wrap;font-size: 1.2em; justify-content: center;"> 
+                          <mat-form-field style="width: 400px; text-align: center;">
+                            <input matInput placeholder="ID" type="text"  name="FactSoftwareID" [(ngModel)]="facturacionElectronica.factSoftware.id" required>
+                          </mat-form-field>
+                          <mat-form-field style="width: 200px; text-align: center;">
+                            <input matInput placeholder="pin" type="number"  name="FactSoftwarePin" [(ngModel)]="facturacionElectronica.factSoftware.pin" required>
+                          </mat-form-field>
+                          <button  mat-stroked-button [disabled]="" (click)="ActualizarSoftwre()" class="bgc-blue-400 rigth" matTooltip="Guardar" matTooltipPosition="below"><mat-icon>save</mat-icon>GUARDAR</button>  
+
+                        </div>
+                        <h5>Certificado</h5>
+                        <div style="display: flex; flex-wrap: wrap;font-size: 1.2em;">
+                        
+                          <mat-form-field style="width: 100%; text-align: center;">
+                            <textarea matInput placeholder="Certificado" type="text"  name="certificate" [(ngModel)]="facturacionElectronica.factCertificado.certificate" required></textarea>
+                          </mat-form-field>
+                          <!-- <button  mat-stroked-button [disabled]="" (click)="FechaCertificado()" class="bgc-blue-400 rigth" matTooltip="Fecha Vencimiento" matTooltipPosition="below"><mat-icon class="material-icons-tow-tone">calendar_month</mat-icon> {{facturacionElectronica.factCertificado.vencimiento}} </button>   -->
+
+
+                          <mat-form-field style="width: 400px; text-align: center;">
+                            <input matInput placeholder="Clave Certficado" type="text"  name="passwordCer" [(ngModel)]="facturacionElectronica.factCertificado.password" required>
+                          </mat-form-field>
+                          <mat-form-field style="text-align: center;">
+                            <input matInput placeholder="Fecha Vencimiento 'AAAA-MM-DD'" type="text"  name="certificado_date" [(ngModel)]="facturacionElectronica.factCertificado.vencimiento" required>
+                          </mat-form-field>
+                          <button  mat-stroked-button [disabled]="" (click)="ActualizarSertificado()" class="bgc-blue-400 rigth" matTooltip="Guardar" matTooltipPosition="below"><mat-icon>save</mat-icon>GUARDAR</button>  
+                        </div>
+                        </mat-card>
+                        <mat-card>
+                          <h3>RESOLUCION FACTURACION ELECTRONICA</h3>
+                          <div style="display: flex; flex-wrap: wrap;font-size: 1.2em; justify-content: center; text-align: center;">
+                            <mat-form-field style="width: 100%; text-align: center;">
+                              <textarea matInput placeholder="Protocolo" type="text"  name="protocoloElectronica" [(ngModel)]="facturacionElectronica.factCertificado.protocolo" required></textarea>
+                            </mat-form-field>
+                            <div>
+                              <mat-form-field flex style="width: 100px; text-align: center;">
+                                <input matInput  [disabled]="true" placeholder="Tipo Documento" type="number"  name="type_document_id" [(ngModel)]="facturacionElectronica.factResolucion.type_document_id" required>
+                              </mat-form-field>
+                              <mat-icon style="cursor: pointer;" [matMenuTriggerFor]="document_id">search</mat-icon>
+                              <mat-menu #document_id="matMenu">
+                                <ng-template let-item let-last="last" ngFor [ngForOf]="Type_document_id">
+                                    <button  [class.tc-blue-600]="facturacionElectronica.factResolucion.type_document_id == item.cod" mat-menu-item  [disabled]="" (click)="facturacionElectronica.factResolucion.type_document_id = item.cod"><mat-icon>{{item.icon}}</mat-icon>{{item.valor}}</button>
+                                </ng-template>
+                              </mat-menu>
+                            </div>
+                      
+
+                            <mat-form-field style="text-align: center;">
+                              <input matInput placeholder="Prefijo" type="text"  name="prefix" [(ngModel)]="facturacionElectronica.factResolucion.prefix" required>
+                            </mat-form-field>
+                            <mat-form-field style="text-align: center;">
+                              <input matInput placeholder="N° Resolucion" type="text"  name="resolution" [(ngModel)]="facturacionElectronica.factResolucion.resolution" required>
+                            </mat-form-field>
+                            <mat-form-field style="text-align: center;">
+                              <input matInput placeholder="Fecha Resolucion 'AAAA-MM-DD'" type="text"  name="resolution_date" [(ngModel)]="facturacionElectronica.factResolucion.resolution_date" required>
+                            </mat-form-field>
+                            <!-- <div style="margin: 5px 5px;">
+                              <button mat-stroked-button (click)="ValidarLlave()">Validar llave</button>
+                            </div> -->
+                            <mat-form-field style="width: 400px; text-align: center;">
+                              <input matInput placeholder="technical_key" type="text"  name="technical_key" [(ngModel)]="facturacionElectronica.factResolucion.technical_key" required>
+                            </mat-form-field >
+                          
+                            <mat-form-field style="text-align: center;">
+                              <input matInput placeholder="Actual" type="number"  name="onr" [(ngModel)]="facturacionElectronica.factResolucion.on" required>
+                            </mat-form-field>
+                            <mat-form-field style="text-align: center;">
+                              <input matInput placeholder="Desde" type="number"  name="from" [(ngModel)]="facturacionElectronica.factResolucion.from" required>
+                            </mat-form-field>
+                            <mat-form-field style="text-align: center;">
+                              <input matInput placeholder="Hasta" type="number"  name="to" [(ngModel)]="facturacionElectronica.factResolucion.to" required>
+                            </mat-form-field>
+                            <!-- <mat-form-field style="text-align: center;">
+                              <input matInput placeholder="generated_to_date" type="number"  name="generated_to_date" [(ngModel)]="facturacionElectronica.factResolucion.generated_to_date" required>
+                            </mat-form-field> -->
+                            <mat-form-field style="text-align: center;">
+                              <input matInput placeholder="Fecha Inicio 'AAAA-MM-DD'" type="text"  name="date_from" [(ngModel)]="facturacionElectronica.factResolucion.date_from" required>
+                            </mat-form-field>
+                            <mat-form-field style="text-align: center;">
+                              <input matInput placeholder="Fecha Final 'AAAA-MM-DD'" type="text"  name="date_to" [(ngModel)]="facturacionElectronica.factResolucion.date_to" required>
+                            </mat-form-field>
+
+                            <button  mat-stroked-button [disabled]="" (click)="ActualizarResolucionFacturacion()" class="bgc-blue-400 rigth" matTooltip="Guardar" matTooltipPosition="below"><mat-icon>save</mat-icon> GUARDAR</button>  
+                          </div>
+                          <!-- <h3>RESOLUCION DOCUMENTO SOPORTE</h3>
+                          <div style="display: flex; flex-wrap: wrap;font-size: 1.2em; justify-content: center; text-align: center;">
+                         
+                            <div>
+                              <mat-form-field flex style="width: 100px; text-align: center;">
+                                <input matInput  [disabled]="true" placeholder="Tipo Documento" type="number"  name="type_document_id" [(ngModel)]="facturacionElectronica.factResolucionDS.type_document_id" required>
+                              </mat-form-field>
+                              <mat-icon style="cursor: pointer;" [matMenuTriggerFor]="document_id">search</mat-icon>
+                              <mat-menu #document_id="matMenu">
+                                <ng-template let-item let-last="last" ngFor [ngForOf]="Type_document_id">
+                                    <button  [class.tc-blue-600]="facturacionElectronica.factResolucionDS.type_document_id == item.cod" mat-menu-item  [disabled]="" (click)="facturacionElectronica.factResolucionDS.type_document_id = item.cod"><mat-icon>{{item.icon}}</mat-icon>{{item.valor}}</button>
+                                </ng-template>
+                              </mat-menu>
+                            </div>
+                      
+
+                            <mat-form-field style="text-align: center;">
+                              <input matInput placeholder="Prefijo" type="text"  name="prefixDS" [(ngModel)]="facturacionElectronica.factResolucionDS.prefix" required>
+                            </mat-form-field>
+                            <mat-form-field style="text-align: center;">
+                              <input matInput placeholder="N° Resolucion" type="text"  name="resolutionDS" [(ngModel)]="facturacionElectronica.factResolucionDS.resolution" required>
+                            </mat-form-field>
+                            <mat-form-field style="text-align: center;">
+                              <input matInput placeholder="Fecha Resolucion 'AAAA-MM-DD'" type="text"  name="resolution_dateDS" [(ngModel)]="facturacionElectronica.factResolucionDS.resolution_date" required>
+                            </mat-form-field>
+                          
+                          
+                            <mat-form-field style="text-align: center;">
+                              <input matInput placeholder="Actual" type="number"  name="onrDS" [(ngModel)]="facturacionElectronica.factResolucionDS.on" required>
+                            </mat-form-field>
+                            <mat-form-field style="text-align: center;">
+                              <input matInput placeholder="Desde" type="number"  name="fromDS" [(ngModel)]="facturacionElectronica.factResolucionDS.from" required>
+                            </mat-form-field>
+                            <mat-form-field style="text-align: center;">
+                              <input matInput placeholder="Hasta" type="number"  name="toDS" [(ngModel)]="facturacionElectronica.factResolucionDS.to" required>
+                            </mat-form-field>
+                         
+                            <mat-form-field style="text-align: center;">
+                              <input matInput placeholder="Fecha Inicio 'AAAA-MM-DD'" type="text"  name="date_fromDS" [(ngModel)]="facturacionElectronica.factResolucionDS.date_from" required>
+                            </mat-form-field>
+                            <mat-form-field style="text-align: center;">
+                              <input matInput placeholder="Fecha Final 'AAAA-MM-DD'" type="text"  name="date_toDS" [(ngModel)]="facturacionElectronica.factResolucionDS.date_to" required>
+                            </mat-form-field>
+
+                            <button  mat-stroked-button [disabled]="" (click)="ActualizarResolucionFacturacionDS()" class="bgc-blue-400 rigth" matTooltip="Guardar" matTooltipPosition="below"><mat-icon>account_balance</mat-icon></button>  
+                          </div>
+                          <h3>Nota Crédito</h3>
+                          <div style="display: flex; flex-wrap: wrap;font-size: 1.2em; justify-content: center;">
+                            <div>
+                              <mat-form-field flex style="width: 100px; text-align: center;">
+                                <input matInput  [disabled]="true" placeholder="Tipo Documento" type="number"  name="factNotaCreditotype_document_id" [(ngModel)]="facturacionElectronica.factNotaCredito.type_document_id" required>
+                              </mat-form-field>
+                              <mat-icon style="cursor: pointer;" [matMenuTriggerFor]="documentNc">search</mat-icon>
+                              <mat-menu #documentNc="matMenu">
+                                <ng-template let-item let-last="last" ngFor [ngForOf]="Type_document_id">
+                                    <button  [class.tc-blue-600]="facturacionElectronica.factNotaCredito.type_document_id == item.cod" mat-menu-item  [disabled]="" (click)="facturacionElectronica.factNotaCredito.type_document_id = item.cod"><mat-icon>{{item.icon}}</mat-icon>{{item.valor}}</button>
+                                </ng-template>
+                              </mat-menu>
+                            </div>
+                            <mat-form-field style="width: 400px; text-align: center;">
+                              <input matInput placeholder="Actual°" type="number"  name="onw" [(ngModel)]="facturacionElectronica.factNotaCredito.on" required>
+                            </mat-form-field>
+                            <mat-form-field style="width: 400px; text-align: center;">
+                              <input matInput placeholder="Desde N°" type="number"  name="from" [(ngModel)]="facturacionElectronica.factNotaCredito.from" required>
+                            </mat-form-field>
+                            <mat-form-field style="width: 400px; text-align: center;">
+                              <input matInput placeholder="Hasta N°" type="number"  name="to" [(ngModel)]="facturacionElectronica.factNotaCredito.to" required>
+                            </mat-form-field>
+                            <mat-form-field style="width: 400px; text-align: center;">
+                              <input matInput placeholder="Prefijo" type="text"  name="prefix" [(ngModel)]="facturacionElectronica.factNotaCredito.prefix" required>
+                            </mat-form-field>
+                            <button  mat-stroked-button [disabled]="" (click)="ActualizarResolucionNotasCredito()" class="bgc-blue-400 rigth" matTooltip="Guardar" matTooltipPosition="below"><mat-icon>account_balance</mat-icon></button>  
+                          </div>
+
+                          <h3>Nota Debito</h3>
+                          <div style="display: flex; flex-wrap: wrap;font-size: 1.2em; justify-content: center;">
+                            <div>
+                              <mat-form-field flex style="width: 100px; text-align: center;">
+                                <input matInput  [disabled]="true" placeholder="Tipo Documento" type="number"  name="factNotaCreditotype_document_id" [(ngModel)]="facturacionElectronica.factNotaDebito.type_document_id" required>
+                              </mat-form-field>
+                              <mat-icon style="cursor: pointer;" [matMenuTriggerFor]="documentNd">search</mat-icon>
+                              <mat-menu #documentNd="matMenu">
+                                <ng-template let-item let-last="last" ngFor [ngForOf]="Type_document_id">
+                                    <button  [class.tc-blue-600]="facturacionElectronica.factNotaDebito.type_document_id == item.cod" mat-menu-item  [disabled]="" (click)="facturacionElectronica.factNotaDebito.type_document_id = item.cod"><mat-icon>{{item.icon}}</mat-icon>{{item.valor}}</button>
+                                </ng-template>
+                              </mat-menu>
+                            </div>
+                            <mat-form-field style="width: 400px; text-align: center;">
+                              <input matInput placeholder="Actual" type="number"  name="on" [(ngModel)]="facturacionElectronica.factNotaDebito.on" required>
+                            </mat-form-field>
+                            <mat-form-field style="width: 400px; text-align: center;">
+                              <input matInput placeholder="Desde N°" type="number"  name="from" [(ngModel)]="facturacionElectronica.factNotaDebito.from" required>
+                            </mat-form-field>
+                            <mat-form-field style="width: 400px; text-align: center;">
+                              <input matInput placeholder="Hasta N°" type="number"  name="to" [(ngModel)]="facturacionElectronica.factNotaDebito.to" required>
+                            </mat-form-field>
+                            <mat-form-field style="width: 400px; text-align: center;">
+                              <input matInput placeholder="Prefijo" type="text"  name="prefix" [(ngModel)]="facturacionElectronica.factNotaDebito.prefix" required>
+                            </mat-form-field>
+                            <button  mat-stroked-button [disabled]="" (click)="ActualizarResolucionNotasDebito()" class="bgc-blue-400 rigth" matTooltip="Guardar" matTooltipPosition="below"><mat-icon>account_balance</mat-icon></button>  
+                          </div> -->
+
+                        </mat-card>
+                  </mat-card-content>
+
+                  <mat-divider></mat-divider>
+                  <mat-card-actions>
+
+                  
+                  </mat-card-actions>
+              </mat-card-content> 
+          </div>
+        </div>
+  </mat-card-content>       
+</div>
+
+</mat-card>

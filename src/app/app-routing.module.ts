@@ -4,6 +4,7 @@ import { ConfigComponent } from './pages/config/config.component';
 import { CumplimientoComponent } from './pages/cumplimiento/cumplimiento.component';
 import { DashBoardComponent } from './pages/dash-board/dash-board.component';
 import { DataBaseComponent } from './pages/data-base/data-base.component';
+import { ElectronicaComponent } from './pages/electronica/electronica.component';
 import { HomeComponent } from './pages/home/home.component';
 import { ImportarInfoComponent } from './pages/importar-info/importar-info.component';
 import { LoginComponent } from './pages/login/login.component';
@@ -53,6 +54,9 @@ const routes: Routes = [
   },{
     component:OperacionComponent,
     path: 'Operaciones', 
+  },{
+    component:ElectronicaComponent,
+    path: 'Electronica', 
   }
 
 ];

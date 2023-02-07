@@ -35,17 +35,17 @@ function registerInfo(req, res){
 async function agregarConfiguracion(req, res){
     var params = req.body;
     var coll = 'Config';
-    console.log('entro agregr config')
+    //console.log('entro agregr config')
     const url = 'mongodb://localhost:27017';
     const client = new MongoClient(url);
     const dbName = 'DutyFree';
    
         await client.connect();
-        console.log('Connected successfully to server');
+        //console.log('Connected successfully to server');
         const db = client.db(dbName);
         const collection = db.collection(coll);
         const insertResult = await collection.insertOne(params);
-        console.log('Inserted documents =>', insertResult);
+        //console.log('Inserted documents =>', insertResult);
         res.status(200).send(insertResult);
 }
 
@@ -53,13 +53,13 @@ async function getDataConfig(req, res){
     var params = req.body;
     var coll = 'Config';
     let ID = req.params.id;
-    console.log('id', ID)
+    //console.log('id', ID)
     const url = 'mongodb://localhost:27017';
     const client = new MongoClient(url);
     const dbName = 'DutyFree';
    
         await client.connect();
-        console.log('Connected successfully to server');
+        //console.log('Connected successfully to server');
         const db = client.db(dbName);
         const collection = await db.collection(coll);
         let arrayCollections = []
@@ -73,13 +73,13 @@ async function updateDataConfiguracion(req, res){
     var params = req.body;
     var coll = 'Config';
    
-    console.log('75 config '+ params._id)
+    //console.log('75 config '+ params._id)
     const url = 'mongodb://localhost:27017';
     const client = new MongoClient(url);
     const dbName = 'DutyFree';
    
         await client.connect();
-        console.log('Connected successfully to server');
+        //console.log('Connected successfully to server');
         const db = client.db(dbName);
         const collection = await db.collection(coll);
 
@@ -99,7 +99,7 @@ async function updateDataConfiguracion(req, res){
         }},{ upsert: false }, function(err,doc) {
             if (err) { throw err; }
             else { 
-                console.log(doc)
+                //console.log(doc)
                 client.close();
                 res.status(200).send(doc); }
           });        
@@ -108,12 +108,12 @@ async function updateDataConfiguracion(req, res){
 async function updateClaveEmpleadoConfiguracion(req, res){
     var params = req.body;
     var coll = 'Config';
-    console.log('75 config '+ params._id)
+    //console.log('75 config '+ params._id)
     const url = 'mongodb://localhost:27017';
     const client = new MongoClient(url);
     const dbName = 'DutyFree';
         await client.connect();
-        console.log('Connected successfully to server');
+        //console.log('Connected successfully to server');
         const db = client.db(dbName);
         const collection = await db.collection(coll);
 
@@ -123,7 +123,7 @@ async function updateClaveEmpleadoConfiguracion(req, res){
         }},{ upsert: false }, function(err,doc) {
             if (err) { throw err; }
             else { 
-                console.log(doc)
+                //console.log(doc)
                 client.close();
                 res.status(200).send(doc); }
           });        
@@ -132,18 +132,18 @@ async function updateClaveEmpleadoConfiguracion(req, res){
 async function agregarPresupuesto(req, res){
     var params = req.body;
     var coll = 'Presupuestos';
-    console.log(params)
+    //console.log(params)
     const url = 'mongodb://localhost:27017';
     const client = new MongoClient(url);
     const dbName = 'DutyFree';
    
         await client.connect();
-        console.log('Connected successfully to server');
+        //console.log('Connected successfully to server');
         const db = client.db(dbName);
         const collection = db.collection(coll);
        
         const insertResult = await collection.insertOne(params);
-        console.log('Inserted documents =>', insertResult);
+        //console.log('Inserted documents =>', insertResult);
         res.status(200).send(insertResult);
 }
 
@@ -151,20 +151,20 @@ async function getDataPresupuesto(req, res){
     var params = req.body;
     var coll = 'Presupuestos';
      var ID = req.params.id
-    // console.log(params)
+    // //console.log(params)
     const url = 'mongodb://localhost:27017';
     const client = new MongoClient(url);
     const dbName = 'DutyFree';
    
         await client.connect();
-        console.log('Connected successfully to server');
+        //console.log('Connected successfully to server');
         const db = client.db(dbName);
         const collection = await db.collection(coll);
         let arrayCollections = []
         var reg = await collection.find({operacion:ID}).forEach(element => {
             arrayCollections.push(element)
          });
-        // console.log(reg)
+        // //console.log(reg)
         res.status(200).send(arrayCollections);
 }
 
@@ -172,33 +172,33 @@ async function getDataPresupuesto(req, res){
 async function getDataPresupuestoTag(req, res){
     var params = req.params.tag;
     var coll = 'Presupuestos';
-    // console.log(params)
+    // //console.log(params)
     const url = 'mongodb://localhost:27017';
     const client = new MongoClient(url);
     const dbName = 'DutyFree';
         await client.connect();
-        console.log('Connected successfully to server');
+        //console.log('Connected successfully to server');
         const db = client.db(dbName);
         const collection = await db.collection(coll);
         let arrayCollections = []
         var reg = await collection.find({tag:params}).forEach(element => {
             arrayCollections.push(element)
          });
-        // console.log(reg)
+        // //console.log(reg)
         res.status(200).send(arrayCollections);
 }
 
 async function updateDataPresupuesto(req, res){
     var params = req.body;
     var coll = 'Presupuestos';
-    console.log('console update PRES')
-    // console.log(params)
+    //console.log('//console update PRES')
+    // //console.log(params)
     const url = 'mongodb://localhost:27017';
     const client = new MongoClient(url);
     const dbName = 'DutyFree';
    
         await client.connect();
-        console.log('Connected successfully to server');
+        //console.log('Connected successfully to server');
         const db = client.db(dbName);
         const collection = await db.collection(coll);
 
@@ -227,7 +227,7 @@ async function updateDataPresupuesto(req, res){
         }},{ upsert: false }, function(err,doc) {
             if (err) { throw err; }
             else { 
-                console.log(doc)
+                //console.log(doc)
                 res.status(200).send(doc); }
           });
 
@@ -238,20 +238,20 @@ async function updateDataPresupuesto(req, res){
 async function deleteDataPresupuesto(req, res){
     var params = req.body;
     var coll = 'Presupuestos';
-    console.log('console delete PRES')
-    // console.log(params)
+    //console.log('//console delete PRES')
+    // //console.log(params)
     const url = 'mongodb://localhost:27017';
     const client = new MongoClient(url);
     const dbName = 'DutyFree';
    
         await client.connect();
-        console.log('Connected successfully to server');
+        //console.log('Connected successfully to server');
         const db = client.db(dbName);
         const collection = await db.collection(coll);
         collection.deleteOne({_id : ObjectId(params._id)}, function(err,doc) {
             if (err) { throw err; }
             else { 
-                console.log(doc)
+                //console.log(doc)
                 res.status(200).send(doc); }
           });
 
@@ -262,36 +262,36 @@ async function deleteDataPresupuesto(req, res){
 async function agregarInfo(req, res){
     var params = req.body;
     var coll = req.params.tag;
-    // console.log(params)
+    // //console.log(params)
     const url = 'mongodb://localhost:27017';
     const client = new MongoClient(url);
     const dbName = 'DutyFree';
    
         await client.connect();
-        // console.log('Connected successfully to server');
+        // //console.log('Connected successfully to server');
         const db = client.db(dbName);
         const collection = db.collection(coll);
        
         const insertResult = await collection.insertMany(params);
-        // console.log('Inserted documents =>', insertResult);
+        // //console.log('Inserted documents =>', insertResult);
         res.status(200).send(insertResult);
 }
 
 async function getCollections(req, res){
     var params = req.body;
     var coll = req.params.tag;
-    console.log(params)
+    //console.log(params)
     const url = 'mongodb://localhost:27017';
     const client = new MongoClient(url);
     const dbName = 'DutyFree';
    
         await client.connect();
-        console.log('Connected successfully to server');
+        //console.log('Connected successfully to server');
         const db = client.db(dbName);
         // const collection = db.collection(coll);
         let arrayCollections = []
         const collections = await db.listCollections().forEach(element => {
-            // console.log(element)    
+            // //console.log(element)    
             arrayCollections.push(element.name)
          });;
        
@@ -301,18 +301,18 @@ async function getCollections(req, res){
 async function getCollectionsInventarios(req, res){
     var params = req.body;
     var coll = req.params.tag;
-    console.log(params)
+    //console.log(params)
     const url = 'mongodb://localhost:27017';
     const client = new MongoClient(url);
     const dbName = 'DutyFreeInventarios';
    
         await client.connect();
-        console.log('Connected successfully to server');
+        //console.log('Connected successfully to server');
         const db = client.db(dbName);
         // const collection = db.collection(coll);
         let arrayCollections = []
         const collections = await db.listCollections().forEach(element => {
-            // console.log(element)    
+            // //console.log(element)    
             arrayCollections.push(element.name)
          });;
        
@@ -322,12 +322,12 @@ async function getCollectionsInventarios(req, res){
 async function renametCollectionsInventarios(req, res){
     var params = req.body;
     var coll = req.params.tag;
-    console.log(params)
+    //console.log(params)
     const url = 'mongodb://localhost:27017';
     const client = new MongoClient(url);
     const dbName = 'DutyFreeInventarios';
         await client.connect();
-        console.log('Connected successfully to server');
+        //console.log('Connected successfully to server');
         const db = client.db(dbName);
 
         var coll_off = 'off_'+ coll
@@ -339,12 +339,12 @@ async function renametCollectionsInventarios(req, res){
 async function renametCollectionsDutyFree(req, res){
     var params = req.body;
     var coll = req.params.tag;
-    console.log(params)
+    //console.log(params)
     const url = 'mongodb://localhost:27017';
     const client = new MongoClient(url);
     const dbName = 'DutyFree';
         await client.connect();
-        console.log('Connected successfully to server');
+        //console.log('Connected successfully to server');
         const db = client.db(dbName);
 
         var coll_off = 'off_'+ coll
@@ -356,12 +356,12 @@ async function renametCollectionsDutyFree(req, res){
 async function deleteCollectionsInventarios(req, res){
     var params = req.body;
     var coll = req.params.tag;
-    console.log(params)
+    //console.log(params)
     const url = 'mongodb://localhost:27017';
     const client = new MongoClient(url);
     const dbName = 'DutyFreeInventarios';
         await client.connect();
-        console.log('Connected successfully to server');
+        //console.log('Connected successfully to server');
         const db = client.db(dbName);
         db.collection(coll).drop(function(err, newColl) {
             if (err) { 
@@ -380,15 +380,15 @@ async function getDataCollection(req, res){
     const client = new MongoClient(url);
     const dbName = 'DutyFree';
         await client.connect();
-        console.log('Connected successfully to server');
+        //console.log('Connected successfully to server');
         const db = client.db(dbName);
         const collection = await db.collection(coll);
         let arrayCollections = []
         var reg = await collection.find().forEach(element => {
-            // console.log(element)    
+            // //console.log(element)    
             arrayCollections.push(element)
          });
-        // console.log(reg)
+        // //console.log(reg)
         res.status(200).send(arrayCollections);
 }
 
@@ -397,15 +397,15 @@ async function getDataCollectionPaginate(req, res){
     const page = req.query.page || 0;
     const dataPage = req.query.data || 500;
 
-    console.log(page)
-    console.log(dataPage)
+    //console.log(page)
+    //console.log(dataPage)
 
     var coll = req.params.tag;
     const url = 'mongodb://localhost:27017';
     const client = new MongoClient(url);
     const dbName = 'DutyFree';
         await client.connect();
-        console.log('Connected successfully to server paginate');
+        //console.log('Connected successfully to server paginate');
         const db = client.db(dbName);
         const collection = await db.collection(coll);
         let arrayCollections = []
@@ -426,104 +426,104 @@ async function getDataCollectionPaginate(req, res){
 async function getDataCollectionVendedor(req, res){
     var params = req.body;
     var coll = req.params.tag;
-    // console.log(params)
+    // //console.log(params)
     const url = 'mongodb://localhost:27017';
     const client = new MongoClient(url);
     const dbName = 'DutyFree';
    
         await client.connect();
-        // console.log('Connected successfully to server');
+        // //console.log('Connected successfully to server');
         const db = client.db(dbName);
         const collection = await db.collection(coll);
         let arrayCollections = []
         var reg = await collection.find({Codi: params.cod}).forEach(element => {
-            // console.log(element)    
+            // //console.log(element)    
             arrayCollections.push(element)
          });
-        // console.log(reg)
+        // //console.log(reg)
         res.status(200).send(arrayCollections);
 }
 
 async function getDataCollectionEstado(req, res){
     var estado = req.params.estado;
     var coll = req.params.tag;
-    console.log(estado)
-    console.log(coll)
+    //console.log(estado)
+    //console.log(coll)
     const url = 'mongodb://localhost:27017';
     const client = new MongoClient(url);
     const dbName = 'DutyFree';
    
         await client.connect();
-        console.log('Connected successfully to server');
+        //console.log('Connected successfully to server');
         const db = client.db(dbName);
         const collection = await db.collection(coll);
         let arrayCollections = []
         var reg = await collection.find({Estado:estado}).forEach(element => {
-            // console.log(element)    
+            // //console.log(element)    
             arrayCollections.push(element)
          });
-        // console.log(reg)
+        // //console.log(reg)
         res.status(200).send(arrayCollections);
 }
 
 async function getDataCollectionKey(req, res){
     var params = req.body;
     var coll = req.params.tag;
-    console.log(params)
+    //console.log(params)
     const url = 'mongodb://localhost:27017';
     const client = new MongoClient(url);
     const dbName = 'DutyFree';
    
         await client.connect();
-        console.log('Connected successfully to server');
+        //console.log('Connected successfully to server');
         const db = client.db(dbName);
         const collection = await db.collection(coll);
         let arrayCollections = []
         var reg = await collection.find(params).forEach(element => {
-            console.log(element)    
+            //console.log(element)    
             arrayCollections.push(element)
          });
-        // console.log(reg)
+        // //console.log(reg)
         res.status(200).send(arrayCollections);
 }
 
 async function getHeadersCollection(req, res){
     var params = req.body;
     var coll = req.params.tag;
-    console.log(params)
+    //console.log(params)
     const url = 'mongodb://localhost:27017';
     const client = new MongoClient(url);
     const dbName = 'DutyFree';
    
         await client.connect();
-        console.log('Connected successfully to server');
+        //console.log('Connected successfully to server');
         const db = client.db(dbName);
         const collection = await db.collection(coll);
    
         let reg =  await collection.findOne()
 
-        // console.log(reg)
+        // //console.log(reg)
         res.status(200).send(Object.keys(reg));
 }
 
 async function updateDataCollection(req, res){
     var params = req.body;
     var coll = req.params.tag;
-    console.log('console update' + coll)
-    console.log(params)
+    //console.log('//console update' + coll)
+    //console.log(params)
     const url = 'mongodb://localhost:27017';
     const client = new MongoClient(url);
     const dbName = 'DutyFree';
    
         await client.connect();
-        console.log('Connected successfully to server');
+        //console.log('Connected successfully to server');
         const db = client.db(dbName);
         const collection = await db.collection(coll);
 
         collection.findOneAndUpdate({_id : ObjectId(params._id)},{$set:{params}},{ upsert: true }, function(err,doc) {
             if (err) { throw err; }
             else { 
-                console.log(doc)
+                //console.log(doc)
                 res.status(200).send(doc); }
           });
 
@@ -534,21 +534,21 @@ async function updateDataCollection(req, res){
 async function updateDataVendedorCollection(req, res){
     var params = req.body;
     var coll = req.params.tag;
-    console.log('console update' + coll)
-    console.log(params)
+    //console.log('//console update' + coll)
+    //console.log(params)
     const url = 'mongodb://localhost:27017';
     const client = new MongoClient(url);
     const dbName = 'DutyFree';
    
         await client.connect();
-        console.log('Connected successfully to server');
+        //console.log('Connected successfully to server');
         const db = client.db(dbName);
         const collection = await db.collection(coll);
 
         collection.findOneAndUpdate({_id : ObjectId(params._id)},{$set:{Nombre_del_vend: params.Nombre_del_vend,Codi :params.Codi, Costo_de_v:params.Costo_de_v, UNITCOST:params.UNITCOSTw }},{ upsert: false }, function(err,doc) {
             if (err) { throw err; }
             else { 
-                console.log(doc)
+                //console.log(doc)
                 res.status(200).send(doc); }
           });
 
@@ -560,21 +560,21 @@ async function deleteDataCollection(req, res){
     var params = req.body;
     var coll = req.params.tag;
     var doc = req.params.doc;
-    console.log('console update' + coll)
-    console.log(params)
+    //console.log('//console update' + coll)
+    //console.log(params)
     const url = 'mongodb://localhost:27017';
     const client = new MongoClient(url);
     const dbName = 'DutyFree';
    
         await client.connect();
-        console.log('Connected successfully to server');
+        //console.log('Connected successfully to server');
         const db = client.db(dbName);
         const collection = await db.collection(coll);
 
         collection.findOneAndDelete({_id : ObjectId(doc)}, function(err,doc) {
             if (err) { throw err; }
             else { 
-                console.log(doc)
+                //console.log(doc)
                 res.status(200).send(doc); }
           });
 
@@ -586,18 +586,18 @@ async function deleteDataCollection(req, res){
 async function consultarInfoCategoria(req, res){
         var params = req.body;
         var coll = req.params.tag;
-         console.log(params)
+         //console.log(params)
         await client.connect();
-        console.log('Connected successfully to server');
+        //console.log('Connected successfully to server');
         const collection = db.collection(coll);
         collection.aggregate([
                     { $group: {
-                        _id: "$CLASIFICACION",
+                        _id: '$CLASIFICACION',
                         Ventas:{$sum:'$Importe'},
                         Unidades:{$sum: '$CANTIDAD'},
                         Codigo: {$addToSet : "$CATEGORIA"},
                         Cop: {$sum: '$COP'},
-                        Cost: {$sum: {$toInt: "$COSTO DE VENTA"}},
+                        Cost: {$sum: {$toInt: "$Costo_de_v"}},
                         Detalle: {$addToSet : { 
                             vendedor: "$VENDEDOR",
                             cod_vend: "$CODIGO_VENDEDOR",
@@ -610,6 +610,7 @@ async function consultarInfoCategoria(req, res){
                         $sort : { Ventas: -1 }
                       }
                 ]).toArray(function(err, items) {
+                    //console.log(items)
             res.status(200).send(items);
         });
 }
@@ -617,9 +618,9 @@ async function consultarInfoCategoria(req, res){
 async function consultarInfoCategoriaTienda(req, res){
         var params = req.body;
         var coll = req.params.tag;
-         console.log(params)
+         //console.log(params)
         await client.connect();
-        console.log('Connected successfully to server');
+        //console.log('Connected successfully to server');
         const collection = db.collection(coll);
         collection.aggregate([
                     { $group: {
@@ -648,9 +649,9 @@ async function consultarInfoCategoriaTienda(req, res){
 async function consultarInfoFolio(req, res){
     var params = req.body;
     var coll = req.params.tag;
-     console.log(params)
+     //console.log(params)
     await client.connect();
-    console.log('Connected successfully to server');
+    //console.log('Connected successfully to server');
     const collection = db.collection(coll);
     collection.aggregate([
                 { $group: {
@@ -684,7 +685,7 @@ async function consultarInfoFolio(req, res){
 async function getfacturacionSiigo(req, res){
     var coll = req.params.tag;
     await client.connect();
-    console.log('Connected successfully to server');
+    //console.log('Connected successfully to server');
     const collection = db.collection(coll);
 
     collection.aggregate([ 
@@ -712,10 +713,10 @@ async function getfacturacionSiigo(req, res){
 
 async function getInformePresupuesoVendedor(req, res){
     var params = req.body;
-         console.log(params)
+         //console.log(params)
          
         await client.connect();
-        console.log('Connected successfully to server');
+        //console.log('Connected successfully to server');
         var coll = req.params.tag;
         const collection = db.collection(coll);
         collection.aggregate([
@@ -741,9 +742,9 @@ async function getInformePresupuesoVendedor(req, res){
 
 async function getInformeVendedor(req, res){
     var params = req.body;
-         console.log(params)
+         //console.log(params)
         await client.connect();
-        console.log('Connected successfully to server');
+        //console.log('Connected successfully to server');
         var coll = req.params.tag;
         const collection = db.collection(coll);
         collection.aggregate([
@@ -772,9 +773,9 @@ async function getInformeVendedor(req, res){
 
 async function getInformeCajeros(req, res){
     var params = req.body;
-         console.log(params)
+         //console.log(params)
         await client.connect();
-        console.log('Connected successfully to server');
+        //console.log('Connected successfully to server');
         var coll = req.params.tag;
         const collection = db.collection(coll);
         collection.aggregate([
@@ -821,7 +822,7 @@ function getRegistros(req, res){
 function updateInfo(req, res){    
     var update = req.body;
     var Id = req.body._id;
-    console.log(Id)
+    //console.log(Id)
     Info.findByIdAndUpdate(Id, update, (err, update)=>{
         if(err){
             res.status(500).send({message: 'Error al actualizar la Informacion'});
@@ -840,11 +841,11 @@ function getInfoDato(req, res){
     var dato =  new RegExp(params.search, "i");
     let string = JSON.stringify("'info." + params.key +"':" +  params.search)
     // JSON.parse
-    console.log(string)
+    //console.log(string)
     Info.find({"info.Folio":dato})    
             .exec(function(err, finders){
                 if(err){
-                    console.log(err)
+                    //console.log(err)
                     res.status(500).send({message: 'Error en Peticion de informacion' });
                 }else {
                     if(!finders){
@@ -861,18 +862,18 @@ function getInfoDato(req, res){
 async function agregarConteo(req, res){
     var params = req.body;
     var coll = req.params.tag;
-    // console.log(params)
+    // //console.log(params)
     const url = 'mongodb://localhost:27017';
     const client = new MongoClient(url);
     const dbName = 'DutyFreeInventarios';
    
         await client.connect();
-        // console.log('Connected successfully to server');
+        // //console.log('Connected successfully to server');
         const db = client.db(dbName);
         const collection = db.collection(coll);
        
         const insertResult = await collection.insertMany(params);
-        // console.log('Inserted documents =>', insertResult);
+        // //console.log('Inserted documents =>', insertResult);
         res.status(200).send(insertResult);
 }
 
@@ -881,27 +882,27 @@ async function contarEan(req, res){
     var coll = req.params.tag;
     let io = req.app.get('io');
     let scan = params.scan +'';
-    console.log(params.scan)
-    console.log('684  '+ coll)
+    //console.log(params.scan)
+    //console.log('684  '+ coll)
     const url = 'mongodb://localhost:27017';
     const client = new MongoClient(url);
     const dbName = 'DutyFreeInventarios';
    
         await client.connect();
-        console.log('Connected successfully to server');
+        //console.log('Connected successfully to server');
         const db = client.db(dbName);
         const collection = await db.collection(coll);
         collection.updateOne({EAN:scan},
             {$push:{Conteo0:params}}, function(err,doc) {
             if (err) {
-                console.log(err) 
+                //console.log(err) 
                 throw err; }
             else { 
-                console.log(doc)
+                //console.log(doc)
                 collection.findOne({EAN:scan},
                      function(err,docEAN) {
-                        console.log(doc)
-                            console.log(docEAN)
+                        //console.log(doc)
+                            //console.log(docEAN)
                             io.emit('scan'+coll, params);
                             client.close();
                             res.status(200).send(docEAN); 
@@ -916,13 +917,13 @@ async function contarSKU(req, res){
     var coll = req.params.tag;
     let io = req.app.get('io');
     let scan = params.scan +'';
-    console.log('680  '+ params)
+    //console.log('680  '+ params)
     const url = 'mongodb://localhost:27017';
     const client = new MongoClient(url);
     const dbName = 'DutyFreeInventarios';
    
         await client.connect();
-        console.log('Connected successfully to server');
+        //console.log('Connected successfully to server');
         const db = client.db(dbName);
         const collection = await db.collection(coll);
         collection.updateOne({Codigo1:scan},
@@ -931,8 +932,8 @@ async function contarSKU(req, res){
             else {
                   collection.findOne({Codigo1:scan},
                      function(err,docEAN) {
-                        console.log(doc)
-                            console.log(docEAN)
+                        //console.log(doc)
+                            //console.log(docEAN)
                             io.emit('scan'+coll, params);
                             client.close();
                             res.status(200).send(docEAN); 
@@ -944,13 +945,13 @@ async function contarSKU(req, res){
 async function getConteoTag(req, res){
     var params = req.body;
     var coll = req.params.tag;
-    console.log(params)
+    //console.log(params)
     const url = 'mongodb://localhost:27017';
     const client = new MongoClient(url);
     const dbName = 'DutyFreeInventarios';
    
         await client.connect();
-        console.log('Connected successfully to server');
+        //console.log('Connected successfully to server');
         const db = client.db(dbName);
         const collection = db.collection(coll);
         let arrayCollections = []
@@ -968,13 +969,13 @@ async function updateDataConteoDefinitivo(req, res){
     const client = new MongoClient(url);
     const dbName = 'DutyFreeInventarios';
         await client.connect();
-        console.log('Connected successfully to server');
+        //console.log('Connected successfully to server');
         const db = client.db(dbName);
         const collection = await db.collection(coll);
         collection.updateOne({_id:ObjectId(params._id)},{$set:{Conteo0:params.Conteo0,Definitivo:params.Definitivo,}},{ upsert: false }, function(err,doc) {
             if (err) { throw err; }
             else { 
-                console.log(doc)
+                //console.log(doc)
                 client.close();
                 res.status(200).send(doc); }
           });        
@@ -987,13 +988,13 @@ async function updateDataConteoDefinitivoDefinitvo(req, res){
     const client = new MongoClient(url);
     const dbName = 'DutyFreeInventarios';
         await client.connect();
-        console.log('Connected successfully to server');
+        //console.log('Connected successfully to server');
         const db = client.db(dbName);
         const collection = await db.collection(coll);
         collection.updateOne({_id:ObjectId(params._id)},{$set:{Definitivo:params.Definitivo, Estado:params.Estado, Conteo:params.Conteo, Diferencia:params.Diferencia}},{ upsert: false }, function(err,doc) {
             if (err) { throw err; }
             else { 
-                console.log(doc)
+                //console.log(doc)
                 client.close();
                 res.status(200).send(doc); }
           });        
@@ -1006,13 +1007,13 @@ async function updateDataConteoJustificacion(req, res){
     const client = new MongoClient(url);
     const dbName = 'DutyFreeInventarios';
         await client.connect();
-        console.log('Connected successfully to server');
+        //console.log('Connected successfully to server');
         const db = client.db(dbName);
         const collection = await db.collection(coll);
         collection.updateOne({_id:ObjectId(params._id)},{$set:{justificacion:params.justificacion,}},{ upsert: false }, function(err,doc) {
             if (err) { throw err; }
             else { 
-                console.log(doc)
+                //console.log(doc)
                 client.close();
                 res.status(200).send(doc); }
           });        
@@ -1026,13 +1027,13 @@ async function updateDataConteo1(req, res){
     const client = new MongoClient(url);
     const dbName = 'DutyFreeInventarios';
         await client.connect();
-        console.log('Connected successfully to server');
+        //console.log('Connected successfully to server');
         const db = client.db(dbName);
         const collection = await db.collection(coll);
         collection.updateOne({_id:ObjectId(params._id)},{$set:{Conteo0:params.Conteo0, Conteo1:params.Conteo1}},{ upsert: false }, function(err,doc) {
             if (err) { throw err; }
             else { 
-                console.log(doc)
+                //console.log(doc)
                 client.close();
                 res.status(200).send(doc); }
           });        
@@ -1045,13 +1046,13 @@ async function updateDataConteo2(req, res){
     const client = new MongoClient(url);
     const dbName = 'DutyFreeInventarios';
         await client.connect();
-        console.log('Connected successfully to server');
+        //console.log('Connected successfully to server');
         const db = client.db(dbName);
         const collection = await db.collection(coll);
         collection.updateOne({_id:ObjectId(params._id)},{$set:{Conteo0:params.Conteo0, Conteo2:params.Conteo2}},{ upsert: false }, function(err,doc) {
             if (err) { throw err; }
             else { 
-                console.log(doc)
+                //console.log(doc)
                 client.close();
                 res.status(200).send(doc); }
           });        
@@ -1064,13 +1065,13 @@ async function updateDataConteo3(req, res){
     const client = new MongoClient(url);
     const dbName = 'DutyFreeInventarios';
         await client.connect();
-        console.log('Connected successfully to server');
+        //console.log('Connected successfully to server');
         const db = client.db(dbName);
         const collection = await db.collection(coll);
         collection.updateOne({_id:ObjectId(params._id)},{$set:{Conteo0:params.Conteo0, Conteo3:params.Conteo3}},{ upsert: false }, function(err,doc) {
             if (err) { throw err; }
             else { 
-                console.log(doc)
+                //console.log(doc)
                 client.close();
                 res.status(200).send(doc); }
           });        
@@ -1083,13 +1084,13 @@ async function updateDataConteo4(req, res){
     const client = new MongoClient(url);
     const dbName = 'DutyFreeInventarios';
         await client.connect();
-        console.log('Connected successfully to server');
+        //console.log('Connected successfully to server');
         const db = client.db(dbName);
         const collection = await db.collection(coll);
         collection.updateOne({_id:ObjectId(params._id)},{$set:{Conteo0:params.Conteo0, Conteo4:params.Conteo4}},{ upsert: false }, function(err,doc) {
             if (err) { throw err; }
             else { 
-                console.log(doc)
+                //console.log(doc)
                 client.close();
                 res.status(200).send(doc); }
           });        
@@ -1097,12 +1098,12 @@ async function updateDataConteo4(req, res){
 
 async function renameCollectionsDB(req, res){
     var params = req.body;
-    console.log(params)
+    //console.log(params)
     const url = 'mongodb://localhost:27017';
     const client = new MongoClient(url);
     const dbName = params.dataBase;
         await client.connect();
-        console.log('Connected successfully to server');
+        //console.log('Connected successfully to server');
         const db = client.db(dbName);
         var coll_off = params.collNew 
         var coll = params.collOrigin 

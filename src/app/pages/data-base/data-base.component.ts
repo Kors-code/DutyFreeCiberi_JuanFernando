@@ -27,7 +27,7 @@ export class DataBaseComponent implements OnInit {
   log:boolean = false;
   config:any;
   check= false;
-  displayedColumns: string[] = ['check','folio', 'fecha', 'vendedor','pdf' ,'siigo', 'facsiigo','importe', 'trm', 'cop', 'ver'];
+  displayedColumns: string[] = ['folio', 'fecha', 'vendedor','siigo', 'facsiigo','importe', 'trm', 'cop', 'ver'];
   pOperacion:Operacion
   constructor(public _infoService:InfoService,  public _socketService:SocketIOService,
     public _siigoService:SiigoService,

@@ -1,7 +1,6 @@
 <mat-card>
   <mat-progress-bar mode="indeterminate" *ngIf="log" ></mat-progress-bar> 
   <div style="display: flex; justify-content: center;">
-
     <div style="display: flex; justify-content: center;">
       <button mat-button [matMenuTriggerFor]="menuRef"><mat-icon class="mat-18">menu</mat-icon> <span>Conteos Activos</span> </button>
       <mat-menu #menuRef="matMenu">
@@ -33,7 +32,6 @@
         </ng-template> 
       </mat-menu>
     </div>
-    
   </div>
   <mat-tab-group  mat-align-tabs="center" *ngIf="tag">
     <mat-tab label="IMPORTAR CONTEO" *ngIf="importar">
@@ -60,7 +58,7 @@
               <div *ngIf="marcas.length != 0" style="display: flex; justify-content: center;">
                 <mat-form-field appearance="fill" style="width: 60%;">
                   <mat-label>Marcas</mat-label>
-                  <mat-select multiple [formControl]="marca"  >
+                  <mat-select multiple [formControl]="marca">
                     <mat-option *ngFor="let topping of marcas" [value]="topping">{{topping}}</mat-option>
                   </mat-select>
                 </mat-form-field>
@@ -70,7 +68,9 @@
           
           <button *ngIf="registros.length != 0" flex mat-raised-button color="accent" [disabled]="log"  (click)="subirConteo()" class="text-upper" style="width: 90%; margin:15px auto;margin-left: 20px;">{{registros.length}} Subir Conteo <mat-icon>update_file</mat-icon></button>
           <span *ngIf="progreso != 0" style="color: blue;">{{progreso | number:'0.0-2'}}% </span> <mat-progress-bar *ngIf="progreso != 0" mode="determinate" [value]="progreso" color="accent" style="width: 90%; margin: 0 auto;"></mat-progress-bar>
-      </mat-card-content>
+      
+      
+        </mat-card-content>
     </mat-tab>
     <mat-tab label="PANEL DE CONTEO" *ngIf="panel">
       <mat-card-content>
@@ -1145,7 +1145,7 @@
             <td style="border-bottom:1px solid grey ;">{{shoe.Codigo1}} </td>
             <td style="border-bottom:1px solid grey ;">{{shoe.EAN}}</td>
             <td style="border-bottom:1px solid grey ;">{{shoe.Descripcion_1}}</td>
-            <td style="border-bottom:1px solid grey ; text-align: center;" *ngIf="!verPrecio(tag)" >{{shoe.Sugerido |  number:'0.0-2'}}</td>
+            <td style="border-bottom:1px solid grey ; text-align: center;" *ngIf="!verPrecio(tag)" >{{shoe.PRECIO |  number:'0.0-2'}}</td>
             <td style="border-bottom:1px solid grey ;">[ {{shoe.Conteo0[shoe.Conteo0.length -1].unds}} unds ]  </td>
             <td style="border-bottom:1px solid grey ;">  {{shoe.Conteo0[shoe.Conteo0.length -1].time | date:"mediumTime"}}</td>
             <td style="border-bottom:1px solid grey ; text-align: center;"> {{cuantas(shoe.Conteo0)}} Unds</td>

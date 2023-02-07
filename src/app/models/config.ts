@@ -59,3 +59,6 @@ export class Tienda {
         public presupuesto_cop: number = 0,  
     ){}
 }
+
+
+

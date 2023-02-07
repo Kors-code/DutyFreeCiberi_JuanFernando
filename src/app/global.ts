@@ -1,11 +1,11 @@
 export var GLOBAL = {
-    // url_app: '/api/', 
-    url_app: 'http://localhost:6511/api/',
-    // url_socket: 'ws://localhost:38081',
-    // url_app: 'https://ciberi.co/api/',  
+    url_app: '/api/', 
+    // url_app: 'http://localhost:6511/api/',
+    url_socket: 'ws://localhost:6511',
+    url_fact:'https://dian.ciberi.co/api/ubl2.1/',
     url: 'https://ciberi.co/api/',
-    url_socket: 'https://ciberi.co',
-    version:'1.3.0',
+    // url_socket: 'https://ciberi.co',
+    version:'1.3.2',
     company: 'ciberi.co'
 }
 

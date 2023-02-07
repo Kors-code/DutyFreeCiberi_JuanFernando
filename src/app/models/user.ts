@@ -78,6 +78,15 @@ export class Permisos {
                 escribir:true,
             },
             {   
+                titulo:"Facturación Electrónica",
+                description:"Trasmision de informacion",
+                link:'/Electronica',
+                img:'electronica.svg',
+                editar:true,
+                eliminar:true,
+                escribir:true,
+            },
+            {   
                 titulo:"Usuarios",
                 description:"Gestion de Usuarios",
                 link:'/Users',
@@ -164,15 +173,16 @@ export class Permisos {
             //     eliminar:true,
             //     escribir:true,
             // },
-            // {   
-            //     titulo:"Informes Personalizados",
-            //     description:"Informes a la medida",
-            //     link:'/Informes',
-            //     img:'informes.svg',
-            //     editar:true,
-            //     eliminar:true,
-            //     escribir:true,
-            // },
+            {   
+                titulo:"Informes Personalizados",
+                description:"Informes a la medida",
+                link:'/Informes',
+                img:'informes.svg',
+                editar:true,
+                eliminar:true,
+                escribir:true,
+            },
+
             {   
                 titulo:"Operaciones",
                 description:"Gestion de centros de trabajo",

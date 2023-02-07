@@ -6,6 +6,7 @@ var UserController = require('../controllers/users');
 var infoController = require('../controllers/info');
 var siigoController = require('../controllers/siigo');
 var OperacionController = require('../controllers/operacion');
+var ElectronicaController = require('../controllers/electronica');
 
 var api = express.Router();
 var md_auth = require('../middelwares/authenticated');
@@ -125,6 +126,13 @@ api.get('/operaciones',md_auth.ensureAuth, OperacionController.getOperaciones);
 api.post('/reg-operacion/', md_auth.ensureAuth, OperacionController.saveOperacion);
 api.delete('/operacion/:id',md_auth.ensureAuth, OperacionController.deleteOperacion);
 api.put('/operacion', md_auth.ensureAuth,  OperacionController.updateOperacion);
+
+// RUTAS OPERACION
+
+api.get('/electronica',md_auth.ensureAuth, ElectronicaController.getElectronica);
+api.post('/reg-electronica/', md_auth.ensureAuth, ElectronicaController.saveElectronica);
+api.delete('/electronica/:id',md_auth.ensureAuth, ElectronicaController.deleteElectronica);
+api.put('/electronica', md_auth.ensureAuth,  ElectronicaController.updateElectronica);
 
 
 module.exports = api;

@@ -23,6 +23,7 @@ import { SiigoComponent } from './pages/siigo-conection/siigo.component';
 import { CumplimientoComponent, DialogChangePass } from './pages/cumplimiento/cumplimiento.component';
 import { DialogConteoDetail, tomaInventarioComponent } from './pages/toma-inventario/toma-inventario.component';
 import { OperacionComponent } from './pages/operaciones/operacion.component';
+import { ElectronicaComponent } from './pages/electronica/electronica.component';
 
 
 @NgModule({
@@ -45,7 +46,8 @@ import { OperacionComponent } from './pages/operaciones/operacion.component';
     tomaInventarioComponent,
     DialogConteoDetail,
     DialogChangePass,
-    OperacionComponent
+    OperacionComponent,
+    ElectronicaComponent
   ],
   imports: [
     BrowserModule,
