@@ -545,7 +545,7 @@ async function updateDataVendedorCollection(req, res){
         const db = client.db(dbName);
         const collection = await db.collection(coll);
 
-        collection.findOneAndUpdate({_id : ObjectId(params._id)},{$set:{Nombre_del_vend: params.Nombre_del_vend,Codi :params.Codi, Costo_de_v:params.Costo_de_v, UNITCOST:params.UNITCOSTw }},{ upsert: false }, function(err,doc) {
+        collection.findOneAndUpdate({_id : ObjectId(params._id)},{$set:{VENDEDOR: params.VENDEDOR,CODIGO_VENDEDOR :params.CODIGO_VENDEDOR, Costo_de_v:params.Costo_de_v, UNITCOST:params['COSTO DE VENTA'] }},{ upsert: false }, function(err,doc) {
             if (err) { throw err; }
             else { 
                 //console.log(doc)

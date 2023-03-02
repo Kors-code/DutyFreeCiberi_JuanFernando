@@ -429,10 +429,8 @@ export class DialogDataJson {
   }
 
   addEmpleado(){
-    // // console.log(this.info)
-    // // console.log(this.newEmpleado)
-    this.info.Nombre_del_vend = this.newEmpleado.name
-    this.info.Codi = Number(this.newEmpleado.codigo)
+    this.info.VENDEDOR = this.newEmpleado.name
+    this.info.CODIGO_VENDEDOR = Number(this.newEmpleado.codigo)
   }
 
 }
