@@ -36,6 +36,7 @@ app.get('*', function(request, response, next) {
 });
 
 var uri ="mongodb://127.0.0.1:27017/DutyFree";
+// var uri ="mongodb://mongoadmin:ciberi.co@db.ciberi.co:7519/DutyFree?authMechanism=DEFAULT&authSource=admin";
 
 var port = 6511;
 

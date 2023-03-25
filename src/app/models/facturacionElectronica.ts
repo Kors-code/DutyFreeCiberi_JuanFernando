@@ -6,6 +6,7 @@ export class AdminPvconfigFacElectronica {
         public factSoftware= new FactSoftware(),
         public factCertificado= new FactCertificado(),
         public factResolucion= new FactResolucion(),
+        public factResoluciones:any[]= [],
         public factResolucionDS= new FactResolucion(),
         public factNotaCredito= new FactNotaCredito(),
         public factNotaDebito= new FactNotaDebito(),

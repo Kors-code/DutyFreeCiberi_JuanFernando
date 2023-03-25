@@ -367,6 +367,7 @@ export class DashBoardComponent implements OnInit {
   getPresupuestosTag(tag:string){
     this._infoService.getPresupuestoTag(tag).subscribe(
       res=>{
+        // console.log(res)
         this.presupuesto = res[0];
         this.getDataCollections(tag)
         // this.getInformePresupuestoVendedor(tag)

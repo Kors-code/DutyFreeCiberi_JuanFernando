@@ -7,6 +7,36 @@ import { AdminPvconfigFacElectronica } from '../models/facturacionElectronica';
 interface token{
     token:any
   }
+
+  interface getNumericRange{
+    ResponseDian:{
+        Envelope:{
+            Body:{
+                GetNumberingRangeResponse:{
+                    GetNumberingRangeResult:{
+                        OperationCode:string,
+                        OperationDescription:string,    
+                        ResponseList:{
+                            NumberRangeResponse:[
+                                {
+                                    FromNumber:string, 
+                                    Prefix:string,  
+                                    ResolutionDate:string,
+                                    ResolutionNumber:string,
+                                    TechnicalKey:string,
+                                    ToNumber:string,
+                                    ValidDateFrom:string,
+                                    ValidDateTo:string,  
+                                }
+                            ] 
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+  }
 // import * as sha384 from 'crypto-js/sha384'
 
 @Injectable({
@@ -350,9 +380,8 @@ export class FacturaElectronicaService {
                         
     }
 
-    getNumericRange(register:any){
-        let token = register.token
-        let paramas = JSON.stringify(register.data);
+    getNumericRange(register:any, token:string){
+        let paramas = JSON.stringify(register);
             let headers = new HttpHeaders(
                 {
                     'Content-Type': 'application/json',
@@ -360,7 +389,7 @@ export class FacturaElectronicaService {
                     'Authorization': 'Bearer '+ token
                 }
             );   
-            return this._http.post(this.url_fact+'numbering-range', paramas,{headers:headers})
+            return this._http.post<getNumericRange>(this.url_fact+'numbering-range', paramas,{headers:headers})
                         
     }
 

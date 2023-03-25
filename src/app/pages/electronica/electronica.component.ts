@@ -2,7 +2,7 @@ import { DOCUMENT } from '@angular/common';
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { AdminPvconfigFacElectronica } from 'src/app/models/facturacionElectronica';
+import { AdminPvconfigFacElectronica, FactResolucion } from 'src/app/models/facturacionElectronica';
 import { Operacion } from 'src/app/models/operacion';
 import { municipialities, type_document_id, type_document_identification_id, type_liability_id, type_organization_id, type_regime_id } from 'src/app/models/type_document_identification_id';
 import { FacturaElectronicaService } from 'src/app/services/facturacionElectronica.service';
@@ -149,7 +149,7 @@ export class ElectronicaComponent implements OnInit {
     
     this._factElecService.putResolucion(resol).subscribe(
       res =>{
-        console.log(res);
+        //console(res);
         this._factElecService.updateElectronica(this.facturacionElectronica).subscribe(
           result =>{ 
            let data = {titulo: 'Exito', info:'Actualizado correctamente', type: 'Confirm', icon:'done_all'}
@@ -200,7 +200,7 @@ export class ElectronicaComponent implements OnInit {
     
     this._factElecService.putResolucion(resol).subscribe(
       res =>{
-        console.log(res);
+        //console(res);
         this._factElecService.updateElectronica(this.facturacionElectronica).subscribe(
           result =>{ 
            let data = {titulo: 'Exito', info:'Actualizado correctamente', type: 'Confirm', icon:'done_all'}
@@ -254,9 +254,9 @@ registrarCompanyFcturacion(){
 
   this._factElecService.registrarOperacion(reg).subscribe(
     res =>{
-      console.log(res);
+      //console(res);
       let token = res.token
-      console.log(token);
+      //console(token);
       
       if(token){
         this.facturacionElectronica.token = token;
@@ -308,7 +308,7 @@ ActualizarSoftwre(){
   this._factElecService.putSoftware(soft).subscribe(
     res =>{
       if(res){
-        console.log(res)
+        //console(res)
         // this.facturacionElectronica.token = token;
         this._factElecService.updateElectronica(this.facturacionElectronica).subscribe(
           result =>{ 
@@ -323,7 +323,7 @@ ActualizarSoftwre(){
             })
   
 
-          })
+        })
         
       }
       //(res);
@@ -362,22 +362,20 @@ ActualizarResolucionNotasCredito(){
     res =>{
       //(res);
       if(res){
-        // this._adminPvConfigService.updateConfig(this.configuracion).subscribe(
-        //   result =>{ 
-        //    let data = {titulo: 'Exito', info:res.message, type: 'Confirm', icon:'done_all'}
+        this._factElecService.updateElectronica(this.facturacionElectronica).subscribe(
+          result =>{ 
+           let data = {titulo: 'Exito', info:'Actualizado correctamente', type: 'Confirm', icon:'done_all'}
+              let dialogRef = this.dialog.open(DialogConfirm,{
+              data: data
+            });
   
-        //     let dialogRef = this.dialog.open(DialogConfirm,{
-        //       data: data
-            
-        //     });
-  
-        //     dialogRef.afterClosed().subscribe(result => {
-        //       if(result){ 
-        //       }
-        //     })
+            dialogRef.afterClosed().subscribe(result => {
+              if(result){ 
+              }
+            })
   
 
-        //   })
+        })
       }
     },err =>{
       let data: Object
@@ -411,25 +409,20 @@ ActualizarResolucionNotasDebito(){
   
   this._factElecService.putNotasDebito(soft).subscribe(
     res =>{
-      //(res);
-      // if(res){
-      //   this._adminPvConfigService.updateConfig(this.configuracion).subscribe(
-      //     result =>{ 
-      //      let data = {titulo: 'Exito', info:res.message, type: 'Confirm', icon:'done_all'}
-  
-      //       let dialogRef = this.dialog.open(DialogConfirm,{
-      //         data: data
-            
-      //       });
-  
-      //       dialogRef.afterClosed().subscribe(result => {
-      //         if(result){ 
-      //         }
-      //       })
-  
+      this._factElecService.updateElectronica(this.facturacionElectronica).subscribe(
+        result =>{ 
+         let data = {titulo: 'Exito', info:'Actualizado correctamente', type: 'Confirm', icon:'done_all'}
+            let dialogRef = this.dialog.open(DialogConfirm,{
+            data: data
+          });
 
-      //     })
-      // }
+          dialogRef.afterClosed().subscribe(result => {
+            if(result){ 
+            }
+          })
+
+
+      })
     },err =>{
       let data: Object
       //(err);
@@ -453,25 +446,52 @@ getElectronica(){
     res=>{
       if(res._id){
         this.facturacionElectronica = res;
-        console.log(res)
+        this.facturacionElectronica.factResolucion = new FactResolucion();
+        //console(res)
       }
-     
-      // let data = {titulo: 'Exito', info:'Procesado Correctamente', type: 'Confirm', icon:'done_all'}
-  
-      //       let dialogRef = this.dialog.open(DialogConfirm,{
-      //         data: data
-            
-      //       });
-
     }
   )
+}
+
+verAgregar(){
+  if(this.facturacionElectronica.factResoluciones.length != 0){
+    let pos = this.facturacionElectronica.factResoluciones.map(function(e) { return e.resolution; }).indexOf(this.facturacionElectronica.factResolucion.resolution);
+    if(pos == -1){
+      return true
+    }else{
+      return false
+    }
+  }else{
+    return true
+  }
+
+}
+
+agregarResolucion(){
+  if(!this.facturacionElectronica.factResoluciones){
+    this.facturacionElectronica.factResoluciones = [];
+  }
+  this.facturacionElectronica.factResoluciones.push(this.facturacionElectronica.factResolucion);
+  this.facturacionElectronica.factResolucion = new FactResolucion();
+}
+
+nuevaResoucion(){
+  this.facturacionElectronica.factResolucion = new FactResolucion();
+}
+
+deleteResolucion(i:number){
+  this.facturacionElectronica.factResoluciones.splice(i,1);
+}
+
+passResolucion(item:FactResolucion){
+  this.facturacionElectronica.factResolucion = item;
 }
 
 RegisterElectronica(){
   this._factElecService.saveElectronica(this.facturacionElectronica).subscribe(
     res=>{
       this.facturacionElectronica = res;
-      console.log(res)
+      //console(res)
       let data = {titulo: 'Exito', info:'Procesado Correctamente', type: 'Confirm', icon:'done_all'}
   
             let dialogRef = this.dialog.open(DialogConfirm,{
@@ -485,6 +505,7 @@ RegisterElectronica(){
 }
 
 updateElectronica(){
+  this.facturacionElectronica.factResolucion = new FactResolucion();
   this._factElecService.updateElectronica(this.facturacionElectronica).subscribe(
     res=>{
       let data = {titulo: 'Exito', info:'Actualizado Correctamente', type: 'Confirm', icon:'done_all'}
@@ -502,6 +523,23 @@ deleteElectronica(){
   this._factElecService.deleteElectronica(this.facturacionElectronica._id).subscribe(
     res=>{
       let data = {titulo: 'Exito', info:'Elimindo Correctamente', type: 'Confirm', icon:'done_all'}
+  
+      let dialogRef = this.dialog.open(DialogConfirm,{
+        data: data
+      
+      });
+    }
+  )
+}
+
+getNumericRange(){
+  this._factElecService.getNumericRange({IDSoftware: this.facturacionElectronica.factSoftware.id}, this.facturacionElectronica.token).subscribe(
+    res=>{
+
+      //console(res)
+      let msg = res.ResponseDian.Envelope.Body.GetNumberingRangeResponse.GetNumberingRangeResult.OperationDescription;
+      let rangos = JSON.stringify(res.ResponseDian.Envelope.Body.GetNumberingRangeResponse.GetNumberingRangeResult.ResponseList.NumberRangeResponse)
+      let data = {titulo: 'Consulta', info:msg + ' Rangos '+rangos, type: 'Confirm', icon:'search'}
   
       let dialogRef = this.dialog.open(DialogConfirm,{
         data: data

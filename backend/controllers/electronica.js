@@ -19,7 +19,7 @@ function saveElectronica(req, res){
     electronica.created_at = params.created_at;
     electronica.update_at = params.update_at;
     electronica.operacion = params.operacion;
-
+    electronica.factResoluciones = params.factResoluciones;
     electronica.created_at = new Date();
       
     electronica.save((err, electronica) => {

@@ -49,7 +49,7 @@ export class HomeComponent implements OnInit {
   this.identity = this._userService.getIdentity();
   this.user = new User();
   this.Modulos = new Permisos().permisos;  
-  console.log(this.pOperacion );
+  // console.log(this.pOperacion );
 }
 
 
@@ -242,7 +242,7 @@ Logout(){
 
 goApp(item:Operacion){
   this.pOperacion = item
-  console.log(this.pOperacion)
+  // console.log(this.pOperacion)
   localStorage.removeItem('predeterminateOperacion');
   localStorage.setItem('predeterminateOperacion', JSON.stringify(item));
   window.location.reload();
