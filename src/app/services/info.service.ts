@@ -485,4 +485,80 @@ generarPDF(register:any, tag:string){
     return this._http.post<agregar>(this.url+'pdf-folio/'+ tag, paramas, {headers:headers});
 }
 
+
+// POS SERVICE
+
+    agregarConsecutivo(register:any){
+        let paramas = JSON.stringify(register);
+        let headers = new HttpHeaders({
+            'content-Type':'application/json',
+            'Authorization': this.getToken()
+        });
+        return this._http.post<agregar>(this.url+'reg-consecutivo/', paramas, {headers:headers});
+    }
+
+    getConsecutivosperacion(tag:string){
+        // let paramas = JSON.stringify(register);
+        let headers = new HttpHeaders({
+            // 'Content-Type': 'application/json',
+            'Authorization': this.getToken()
+        });
+        return this._http.get<any>(this.url+'consecutivos-op/'+tag, {headers:headers});
+    }
+
+
+    updateConsecutivo(update:any){
+        let params = JSON.stringify(update);
+        let headers = new HttpHeaders({
+            'Content-Type': 'application/json',
+            'Authorization': this.getToken()
+        });
+        return this._http.put<response>(this.url +'consecutivo/',
+                params, {headers:headers})
+    }
+
+    deleteConsecutivo(register:any){
+        // let paramas = JSON.stringify(register);
+        let headers = new HttpHeaders({
+            'content-Type':'application/json',
+            'Authorization': this.getToken()
+        });
+        return this._http.delete<agregar>(this.url+'consecutivo/'+register,  {headers:headers});
+    }
+
+
+    
+// POS PRODUCTOS
+
+getProducto(tag:string){
+    // let paramas = JSON.stringify(register);
+    let headers = new HttpHeaders({
+        // 'Content-Type': 'application/json',
+        'Authorization': this.getToken()
+    });
+    return this._http.get<any>(this.url+'producto/'+tag, {headers:headers});
+}
+
+// NOTAS DE VENTA
+
+agregarNotaVenta(register:any){
+    let paramas = JSON.stringify(register);
+    let headers = new HttpHeaders({
+        'content-Type':'application/json',
+        'Authorization': this.getToken()
+    });
+    return this._http.post<agregar>(this.url+'nota-venta/', paramas, {headers:headers});
+}
+
+getNotasVentaUser(tag:string){
+    // let paramas = JSON.stringify(register);
+    let headers = new HttpHeaders({
+        // 'Content-Type': 'application/json',
+        'Authorization': this.getToken()
+    });
+    return this._http.get<any>(this.url+'notas-venta-user/'+tag, {headers:headers});
+}
+
+
+
 }

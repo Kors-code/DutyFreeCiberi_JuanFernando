@@ -91,8 +91,13 @@ export class ElectronicaComponent implements OnInit {
     
     this._factElecService.putSertificado(soft).subscribe(
       res =>{
-        //(res);
+        console.log(res);
         if(res){
+
+          let data = {titulo: 'Exito', info:'Actualizado correctamente', type: 'Confirm', icon:'done_all'}
+          let dialogRef = this.dialog.open(DialogConfirm,{
+          data: data
+        });
           // this._factElecService.updateConfig(this.facturacionElectronica).subscribe(
           //   result =>{ 
           //    let data = {titulo: 'Exito', info:res.message, type: 'Confirm', icon:'done_all'}

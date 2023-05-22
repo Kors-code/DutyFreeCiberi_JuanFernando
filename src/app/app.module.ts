@@ -24,6 +24,9 @@ import { CumplimientoComponent, DialogChangePass } from './pages/cumplimiento/cu
 import { DialogConteoDetail, tomaInventarioComponent } from './pages/toma-inventario/toma-inventario.component';
 import { OperacionComponent } from './pages/operaciones/operacion.component';
 import { ElectronicaComponent } from './pages/electronica/electronica.component';
+import { posComponent } from './pages/pos/pos.component';
+import { DialogClienteDetail } from './pages/pos/clientes.component';
+import { DialogMediosPagoDetail } from './pages/pos/mediosPago.component';
 
 
 @NgModule({
@@ -47,7 +50,11 @@ import { ElectronicaComponent } from './pages/electronica/electronica.component'
     DialogConteoDetail,
     DialogChangePass,
     OperacionComponent,
-    ElectronicaComponent
+    ElectronicaComponent,
+    posComponent,
+    DialogClienteDetail,
+    DialogMediosPagoDetail
+
   ],
   imports: [
     BrowserModule,
@@ -65,6 +72,6 @@ import { ElectronicaComponent } from './pages/electronica/electronica.component'
   providers: [],
   bootstrap: [AppComponent],
   entryComponents:[DialogConfirm, DialogDataJson, DialogDataVendedor,
-    DialogConteoDetail, DialogChangePass]
+    DialogConteoDetail, DialogChangePass, DialogClienteDetail, DialogMediosPagoDetail]
 })
 export class AppModule { }

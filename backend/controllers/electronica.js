@@ -1,5 +1,4 @@
 
-
 var Electronica = require('../models/electronica');
 
 function saveElectronica(req, res){

@@ -7,6 +7,8 @@ var infoController = require('../controllers/info');
 var siigoController = require('../controllers/siigo');
 var OperacionController = require('../controllers/operacion');
 var ElectronicaController = require('../controllers/electronica');
+var ConsecutivoController = require('../controllers/consecutivo');
+var NotasVentaController = require('../controllers/notaVenta');
 
 var api = express.Router();
 var md_auth = require('../middelwares/authenticated');
@@ -127,13 +129,33 @@ api.post('/reg-operacion/', md_auth.ensureAuth, OperacionController.saveOperacio
 api.delete('/operacion/:id',md_auth.ensureAuth, OperacionController.deleteOperacion);
 api.put('/operacion', md_auth.ensureAuth,  OperacionController.updateOperacion);
 
-// RUTAS OPERACION
+// RUTAS ELECTRONICA
 
 api.get('/electronica',md_auth.ensureAuth, ElectronicaController.getElectronica);
 api.post('/reg-electronica/', md_auth.ensureAuth, ElectronicaController.saveElectronica);
 api.delete('/electronica/:id',md_auth.ensureAuth, ElectronicaController.deleteElectronica);
 api.put('/electronica', md_auth.ensureAuth,  ElectronicaController.updateElectronica);
 
+
+// RUTAS CONSECUTIVOS
+
+api.get('/consecutivos-op/:id',md_auth.ensureAuth, ConsecutivoController.getConsecutivoOperacion);
+api.post('/reg-consecutivo', md_auth.ensureAuth, ConsecutivoController.saveConsecutivo);
+api.delete('/consecutivo/:id',md_auth.ensureAuth, ConsecutivoController.deleteConsecutivo);
+api.put('/consecutivo', md_auth.ensureAuth,  ConsecutivoController.updateConsecutivo);
+
+
+// RUTAS PRODUCTOS
+
+api.get('/producto/:id',md_auth.ensureAuth, infoController.getProductoEan);
+
+
+// RUTAS CONSECUTIVOS
+
+api.get('/notas-venta-user/:id',md_auth.ensureAuth, NotasVentaController.getNotaVentaUser);
+api.post('/nota-venta', md_auth.ensureAuth, NotasVentaController.saveNotaVenta);
+// api.delete('/consecutivo/:id',md_auth.ensureAuth, ConsecutivoController.deleteConsecutivo);
+// api.put('/consecutivo', md_auth.ensureAuth,  ConsecutivoController.updateConsecutivo);
 
 module.exports = api;
 

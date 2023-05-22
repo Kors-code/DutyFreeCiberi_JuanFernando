@@ -1,0 +1,75 @@
+
+<div style="display: flex;">
+    <h1>
+        <button  (click)="cancelar()" mat-stroked-button aria-label="Clear" color="scondary" style="margin: 10px 10px;">
+            <mat-icon>cancel</mat-icon> Cerrar
+        </button>
+        Pase de Abordar 
+    </h1>
+    <mat-form-field appearance="fill" style="text-align: center; font-size: 1em; margin-right: 20px; width: 60%;">
+        <input matInput placeholder="SCAN" type="number" #scanEle name="scan" [(ngModel)]="scan" (change)="saveScan()">
+        <button  matSuffix mat-icon-button aria-label="Clear" (click)="badCliente()">
+          <mat-icon>qr_code_scanner</mat-icon>
+        </button>
+    </mat-form-field>
+</div>  
+<mat-form-field style="margin-right: 20px;" appearance="fill">
+    <mat-label>STEB BAG</mat-label>
+    <input matInput type="text" name="STEB_BAG" [(ngModel)]="cliente.STEB_BAG">
+  </mat-form-field>
+  <mat-form-field style="margin-right: 20px;" appearance="fill">
+    <mat-label>Tipo Identificacion</mat-label>
+    <input matInput type="text" name="TipoIdentificacion" [(ngModel)]="cliente.TipoIdentificacion">
+  </mat-form-field>
+  <mat-form-field style="margin-right: 20px;" appearance="fill">
+    <mat-label>N° Identificacion</mat-label>
+    <input matInput type="text" name="NIdentificacion" [(ngModel)]="cliente.NIdentificacion">
+  </mat-form-field>
+  <mat-form-field style="margin-right: 20px;" appearance="fill">
+    <mat-label>Pasajero</mat-label>
+    <input matInput type="text" name="Pasajero" [(ngModel)]="cliente.Pasajero">
+  </mat-form-field>
+  <mat-form-field style="margin-right: 20px;" appearance="fill">
+    <mat-label>Direccion</mat-label>
+    <input matInput type="text" name="Direccion" [(ngModel)]="cliente.Direccion">
+  </mat-form-field>
+  <mat-form-field style="margin-right: 20px;" appearance="fill">
+    <mat-label>Origen</mat-label>
+    <input matInput type="text" name="Origen" [(ngModel)]="cliente.Origen">
+  </mat-form-field>
+  <mat-form-field style="margin-right: 20px;" appearance="fill">
+    <mat-label>Aerolinea</mat-label>
+    <input matInput type="text" name="Aerolinea" [(ngModel)]="cliente.Aerolinea">
+  </mat-form-field>
+  <mat-form-field style="margin-right: 20px;" appearance="fill">
+    <mat-label>Asiento</mat-label>
+    <input matInput type="text" name="Asiento" [(ngModel)]="cliente.Asiento">
+  </mat-form-field>
+  <mat-form-field style="margin-right: 20px;" appearance="fill">
+    <mat-label>Fecha</mat-label>
+    <input matInput type="text" name="Fecha" [(ngModel)]="cliente.Fecha">
+  </mat-form-field>
+  <mat-form-field style="margin-right: 20px;" appearance="fill">
+    <mat-label>Correo</mat-label>
+    <input matInput type="text" name="Correo" [(ngModel)]="cliente.Correo">
+  </mat-form-field>
+  <mat-form-field style="margin-right: 20px;" appearance="fill">
+    <mat-label>Destino</mat-label>
+    <input matInput type="text" name="Destino" [(ngModel)]="cliente.Destino">
+  </mat-form-field>
+
+  <mat-form-field style="margin-right: 20px;" appearance="fill">
+    <mat-label>Vuelo</mat-label>
+    <input matInput type="text" name="Vuelo" [(ngModel)]="cliente.Vuelo">
+  </mat-form-field>
+  <mat-form-field style="margin-right: 20px;" appearance="fill">
+    <mat-label>Nacionalidad</mat-label>
+    <input matInput type="text" name="Nacionalidad" [(ngModel)]="cliente.Nacionalidad">
+  </mat-form-field>
+  <mat-form-field style="margin-right: 20px;" appearance="fill">
+    <mat-label>Sexo</mat-label>
+    <input matInput type="text" name="Sexo" [(ngModel)]="cliente.Sexo">
+  </mat-form-field>
+  <button  (click)="confirmar()" mat-stroked-button aria-label="Clear" color="accent" style="margin: 10px 10px;">
+     Asignar <mat-icon>send</mat-icon>
+</button>

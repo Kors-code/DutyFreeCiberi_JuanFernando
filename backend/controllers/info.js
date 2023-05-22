@@ -95,7 +95,8 @@ async function updateDataConfiguracion(req, res){
             passEmailSalida:params.passEmailSalida,
             notificar:params.notificar,
             protocoloFacturacion:params.protocoloFacturacion,
-            operacion:params.operacion
+            operacion:params.operacion,
+            dataOperacion:params.dataOperacion,
         }},{ upsert: false }, function(err,doc) {
             if (err) { throw err; }
             else { 
@@ -1112,6 +1113,26 @@ async function renameCollectionsDB(req, res){
         });  
 }
 
+async function getProductoEan(req, res){
+    var coll = 'Productos';
+    let ID = req.params.id;
+    //console.log('id', ID)
+    const url = 'mongodb://localhost:27017';
+    const client = new MongoClient(url);
+    const dbName = 'DutyFree';
+   
+        await client.connect();
+        //console.log('Connected successfully to server');
+        const db = client.db(dbName);
+        const collection = await db.collection(coll);
+        let arrayCollections = []
+        var reg = await collection.find({CODIGO:ID}).forEach(element => {
+            arrayCollections.push(element)
+         });
+        res.status(200).send(arrayCollections);
+}
+
+
 module.exports = {
     registerInfo,
     updateInfo,
@@ -1162,7 +1183,9 @@ module.exports = {
 
 
     renametCollectionsInventarios,
-    deleteCollectionsInventarios
+    deleteCollectionsInventarios,
+
+    getProductoEan
 }
 
 

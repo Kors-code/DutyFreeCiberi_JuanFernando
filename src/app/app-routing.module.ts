@@ -13,6 +13,7 @@ import { OperacionComponent } from './pages/operaciones/operacion.component';
 import { SiigoComponent } from './pages/siigo-conection/siigo.component';
 import { tomaInventarioComponent } from './pages/toma-inventario/toma-inventario.component';
 import { UsersComponent } from './pages/users/users.component';
+import { posComponent } from './pages/pos/pos.component';
 
 const routes: Routes = [
   {
@@ -57,6 +58,10 @@ const routes: Routes = [
   },{
     component:ElectronicaComponent,
     path: 'Electronica', 
+  },
+  {
+    component:posComponent,
+    path: 'Pos', 
   }
 
 ];

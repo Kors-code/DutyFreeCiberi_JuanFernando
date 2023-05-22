@@ -7,6 +7,7 @@ export class Config{
             public siigoKey:string = '',  
             public tags:any[] = [],
             public empleados:Empleado[] = [],
+            public dataOperacion:DataOperacion = new DataOperacion(),
             public categorias:any[] = new Categorias().categorias,
             public tiendas:any[] = [],
             public inventarios:any[] = [],
@@ -16,6 +17,18 @@ export class Config{
             public protocoloFacturacion:string = '',
             public operacion:string = '',
         ){}
+}
+
+export class DataOperacion {
+
+    constructor(
+        public identification_number: string = '',
+        public dv: string = '',
+        public business_name: string = '',
+        public address: string = '',
+        public phone: string = '',
+        public email: string = '',
+    ){}
 }
 
 
@@ -48,6 +61,7 @@ export class Tienda {
     constructor(
         public _id: any = undefined,
         public tienda: string = '',
+        public nombre: string = '',
         public centro_costos: string = '',
         public resolucion: string = '',
         public part: number = 0,

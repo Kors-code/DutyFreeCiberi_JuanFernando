@@ -87,6 +87,15 @@ export class Permisos {
                 escribir:true,
             },
             {   
+                titulo:"Facturación POS",
+                description:"Documentos Manuales",
+                link:'/Pos',
+                img:'pos.svg',
+                editar:true,
+                eliminar:true,
+                escribir:true,
+            },
+            {   
                 titulo:"Usuarios",
                 description:"Gestion de Usuarios",
                 link:'/Users',

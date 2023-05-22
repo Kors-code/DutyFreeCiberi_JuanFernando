@@ -23,6 +23,31 @@
             <input matInput type="text" [(ngModel)]="config.siigoKey">
           </mat-form-field>
       </mat-card-content>
+      <mat-card-content>
+ <h3> Operacion</h3>
+        <mat-form-field style="text-align: center;">
+          <input matInput placeholder="C.C/ NIT" type="number"  name="facturacioncodigo" [(ngModel)]="config.dataOperacion.identification_number" required>
+        </mat-form-field>
+
+        <mat-form-field style="width: 100px; text-align: center;">
+          <input matInput placeholder="Digto Verificacion" type="number"  name="facturacioncodigo" [(ngModel)]="config.dataOperacion.dv" required>
+        </mat-form-field>
+
+        <mat-form-field style="width: 100%; text-align: center;">
+          <input matInput placeholder="Nombre Juridico" type="text" style="width: 100%;"  name="business_name" [(ngModel)]="config.dataOperacion.business_name" required>
+        </mat-form-field>
+
+
+        <mat-form-field style="width: 100%; text-align: center;">
+          <input matInput placeholder="Direccion" type="text"  name="address" [(ngModel)]="config.dataOperacion.address" required>
+        </mat-form-field>
+        <mat-form-field style="margin-left: 10px; text-align: center;">
+          <input matInput placeholder="Telefono" type="number"  name="phone" [(ngModel)]="config.dataOperacion.phone" required>
+        </mat-form-field>
+        <mat-form-field style="width: 400px; text-align: center;">
+          <input matInput placeholder="Correo ELectronic" type="text"  name="email" [(ngModel)]="config.dataOperacion.email" required>
+        </mat-form-field>
+      </mat-card-content>
     </mat-expansion-panel>
     
     <mat-expansion-panel>
@@ -251,7 +276,7 @@
         </button>
       
           <mat-form-field style="margin-right: 25px;" appearance="fill">
-            <mat-label>titulo</mat-label>
+            <mat-label>Codigo</mat-label>
             <input matInput type="text" [(ngModel)]="tienda.tienda">
           </mat-form-field>
             <mat-form-field style="margin-right: 25px;" appearance="fill">
@@ -259,7 +284,11 @@
             <input matInput type="text" [(ngModel)]="tienda.centro_costos">
           </mat-form-field>
 
-          
+          <mat-form-field style="margin-right: 25px;" appearance="fill">
+            <mat-label>Nombre</mat-label>
+            <input matInput type="text" [(ngModel)]="tienda.nombre">
+          </mat-form-field>
+
           <mat-form-field style="width:80% ;">
             <mat-label>Resolucion Facturacion</mat-label>
             <textarea matInput name="protocolo" [(ngModel)]="tienda.resolucion"></textarea>
@@ -453,6 +482,63 @@
       <mat-expansion-panel>
         <mat-expansion-panel-header>
           <mat-panel-title>
+            <mat-icon>tv</mat-icon>
+               CONSECUTIVOS NOTAS DE VENTA POS
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <mat-card-content>
+          <mat-form-field style="margin-right: 20px;" appearance="fill">
+            <mat-label>Resolucion</mat-label>
+            <input matInput type="text" [(ngModel)]="consecutivo.resolucion">
+          </mat-form-field>
+
+          <mat-form-field style="margin-right: 20px;" appearance="fill">
+            <mat-label>Prefijo</mat-label>
+            <input matInput type="text" [(ngModel)]="consecutivo.prefix">
+          </mat-form-field>
+
+          <mat-form-field style="margin-right: 20px;" appearance="fill">
+            <mat-label>Consecutivo</mat-label>
+            <input matInput type="number" name="consecutivo" [(ngModel)]="consecutivo.consecutivo">
+          </mat-form-field>
+
+            <mat-form-field appearance="fill" style="margin-right: 20px;">
+              <mat-label>Tienda</mat-label>
+              <mat-select [(ngModel)]="consecutivo.tienda">
+                <ng-template let-item let-i="index" ngFor [ngForOf]="config.tiendas">
+                <mat-option [value]="item.tienda">
+                  {{ item.tienda }}
+                </mat-option>
+                </ng-template>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field style="width:80% ;">
+              <mat-label>Protocolo Facturacion</mat-label>
+              <textarea matInput name="protocolo" [(ngModel)]="consecutivo.protocolo"></textarea>
+            </mat-form-field>
+
+            <button  *ngIf="!consecutivo._id" [disabled]="" mat-raised-button aria-label="Clear" color="accent" (click)="saveResolucion()">
+              <mat-icon>change_circle</mat-icon> Guardar Resolucion</button>
+            <button *ngIf="consecutivo._id"  [disabled]="" mat-raised-button aria-label="Clear" color="primary" (click)="updateConsecutivo()">
+                <mat-icon>change_circle</mat-icon> Guardar Resolucion</button>
+
+        </mat-card-content> 
+        <mat-nav-list>
+          <ng-template let-item let-i="index" ngFor [ngForOf]="consecutivos">
+            <mat-list-item >
+              <button mat-icon-button (click)="deleteConsecutivo(item._id)">
+                <mat-icon>delete</mat-icon>
+             </button>
+               <h5 style="margin:0 10px;" (click)="pasConsecutivo(item)" > {{ item.tienda }} Prefijo: {{ item.prefix }}  Resolucion: {{item.resolucion}}
+              </h5>
+            </mat-list-item>
+          </ng-template> 
+        </mat-nav-list> 
+      </mat-expansion-panel>
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
             <mat-icon>code</mat-icon>
              Developer
           </mat-panel-title>
@@ -480,7 +566,13 @@
         </mat-card-content>
         
             
+       <mat-card-content>
+        <h3>Agregar Productos</h3>
+        <input  type="file" multiple="false" (change)="onFileChange($event)" style="font-size: 1.3em; margin-left: 10px;">
        
+        <button [disabled]="registros.length == 0" mat-raised-button aria-label="Clear" color="warn" (click)="AgregarProductos()">
+          <mat-icon>save</mat-icon> Agregar Productos</button>
+        </mat-card-content>
 
         
       </mat-expansion-panel>

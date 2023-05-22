@@ -1,0 +1,381 @@
+<mat-card>
+  <mat-progress-bar mode="indeterminate" *ngIf="log" ></mat-progress-bar> 
+  <div style="display: flex; justify-content: center;">
+   
+  </div>
+  <div>
+
+      <h3 style="text-align: center;">NOTA DE VENTA POS
+        <button  mat-stroked-button (click)="getNotasVentaUser()" aria-label="Clear" color="accent" style="margin: 10px 10px;">
+          <mat-icon>list</mat-icon> LISTADO</button>
+
+        <button  mat-stroked-button aria-label="Clear" (click)="nuevaNota()" color="accent" style="margin: 10px 10px;">
+          <mat-icon>add</mat-icon>NUEVA VENTA
+        </button>
+      
+      </h3>
+      <div *ngIf="fadeDiv == 'listado'">
+        Listado de ventas
+        <table  style="margin: 0 auto;  width: 80%; font-size: 1.1em;" class="mat-elevation-z8">
+          <tr>
+            <th>FECHA</th>
+            <th>FOLIO</th>
+            <th>TIENDA</th>
+            <th>CAJERO</th>
+            <th>VALOR</th>
+            <th>ESTADO</th>
+          </tr>
+          <ng-template let-item let-i="index" ngFor [ngForOf]="notasVentas">
+            <tr (click)="pasNota(item)">
+              <td>{{item.created_at}}</td>
+              <td> {{item.prefix }} {{item.consecutivo}}</td>
+              <td>  {{item.tienda}} </td>
+              <td> {{item.usuario.name}}</td>
+              <td> {{item.total}}</td>
+              <td> {{item.estado}}</td>
+            </tr>
+
+          </ng-template>
+        </table>
+      </div>
+
+      <div *ngIf="fadeDiv == 'detalle'">
+        <table style="margin: 0 auto;  width: 80%; font-size: 1.1em;" class="mat-elevation-z8">
+          <tr>
+            <td colspan="7">
+              <mat-form-field appearance="fill" style="margin-right: 20px; width: 100%;">
+                <mat-label>TIENDA</mat-label>
+                <mat-select [(ngModel)]="notaVenta.tienda">
+                  <ng-template let-item let-i="index" ngFor [ngForOf]="config.tiendas">
+                  <mat-option [value]="item.tienda">
+                    {{ item.nombre }} - 
+                    {{ item.tienda }} 
+                  </mat-option>
+                  </ng-template>
+                </mat-select>
+              </mat-form-field>
+            </td>
+          </tr>
+        
+          <tr>
+            <th style="text-align: left;"> <span style="margin-left: 10px;"> FOLIO</span> </th>
+            <th>{{notaVenta.consecutivo}}</th>
+            <th>TOTAL</th>
+            <th> {{notaVenta.total}}</th>
+            
+          </tr>
+          <tr>
+            <th style="text-align: left;">
+              <span style="margin-left: 10px;">FECHA</span>
+            </th>
+            <th>
+              {{date | date}}
+            </th>
+           
+            <th>
+    
+              <button  mat-stroked-button aria-label="Clear" color="accent" (click)="openDialogClientes()">
+                <mat-icon>person</mat-icon> Cliente
+              </button>
+            </th>
+            <th>
+            {{notaVenta.cliente?.Pasajero}}
+            </th>
+          </tr>
+          <tr>
+            <th style="text-align: left;">
+              <span style="margin-left: 10px;"> COD VEND.</span>
+             
+           
+            </th>
+            <td>
+              <div style="display: flex; justify-content: center; font-size: 0.7em;">
+                <mat-form-field appearance="fill" style="margin-right: 20px; width: 100%;">
+                  <mat-label>Vendedores</mat-label>
+                  <mat-select [(ngModel)]="notaVenta.vendedor">
+                    <ng-template let-item let-i="index" ngFor [ngForOf]="config.empleados">
+                    <mat-option [value]="item">
+                      {{ item.codigo }} - {{ item.name }} - {{ item.rol }}
+                    </mat-option>
+                    </ng-template>
+                  </mat-select>
+                </mat-form-field>
+                <!-- <button *ngIf="newEmpleado" mat-button (click)="addEmpleado()" ><mat-icon class="mat-18">add</mat-icon> <span>Agregar</span> </button>  -->
+              </div>
+    
+              <!-- <button  mat-stroked-button aria-label="Clear" color="accent" style="margin: 10px 10px;">
+                <mat-icon>face</mat-icon> Vendedor
+              </button> -->
+            </td>
+          
+            <th>
+    
+              <button  mat-stroked-button aria-label="Clear" color="accent" (click)="openDialogMediosPagos()">
+                <mat-icon>attach_money</mat-icon> Medio De Pago
+              </button>
+    
+            </th>
+            <th>
+              detalle pago
+            </th>
+          </tr>
+          <tr>
+            <th style="text-align: left;">
+              <span style="margin-left: 10px;">EAN</span>
+              
+            </th>
+            <td>
+    
+              <mat-form-field appearance="fill" style="text-align: center; font-size: 0.7em; margin-right: 20px; width: 100%;">
+                <input matInput placeholder="SCAN" type="text" name="search"  [(ngModel)]="search" (change)="getProducto(search)">
+                <button  matSuffix mat-icon-button aria-label="Clear" (click)="getProducto(search)">
+                  <mat-icon>search</mat-icon>
+                </button>
+            </mat-form-field>
+        
+    <!--      
+                  <input   placeholder="" style="font-size: 1.2em; text-align: center; border-radius: 10px; margin: 10px 10px;">
+                  <button  mat-stroked-button aria-label="Clear" color="accent" style="margin: 10px 10px;" (click)="getProducto(search)">
+                    <mat-icon>search</mat-icon>
+                  </button> -->
+    
+            </td>
+            <th>
+              TRM
+              <input   placeholder="" style="font-size: 1.2em; text-align: center; border-radius: 10px; margin: 10px 10px;" [(ngModel)]="trm"> 
+
+            </th>
+            
+            <th>
+              <input   placeholder="" style="font-size: 1.2em; text-align: center; border-radius: 10px; margin: 10px 10px;">
+            </th>
+            
+          </tr>
+          <tr>
+            <th></th>
+            <th></th>
+            <th> <button *ngIf="!notaVenta._id  && notaVenta.tienda && notaVenta.productos.length != 0"  mat-raised-button aria-label="Clear"  style="margin: 10px 10px; background-color: orange; color: #ffff; font-size: 1.2em;" (click)="saveNotaVenta()">
+              <mat-icon>tv</mat-icon> REGISTRAR
+            </button></th>
+            <th>
+              <button *ngIf="notaVenta._id" mat-raised-button aria-label="Clear"  style="margin: 10px 10px; background-color: orange; color: #ffff; font-size: 1.2em;" (click)="printNotaVenta()">
+                <mat-icon>print</mat-icon> IMPRIMIR
+              </button>
+            </th>
+         
+         
+          </tr>
+        </table>
+    
+        <table style="font-size: 1.1em; margin: 10px auto; width: 80%;"  class="mat-elevation-z8" >
+          <tr>
+            <th>
+              CODIGO
+            </th>
+            <th>
+              PRODUCTO
+            </th>
+            <th>CANTIDAD</th>
+            <th>
+              PRECIO
+            </th>
+            <th>
+              IMPORTE NETO
+            </th>
+          </tr>
+          <ng-template let-item let-i="index" ngFor [ngForOf]="notaVenta.productos">
+            <tr>
+              <td>
+                {{item.CODIGO}}
+              </td>
+              <td>
+                {{item.DESCRIPCION}}
+              </td>
+              <td style="text-align: center;">
+                {{item.cantidad}}
+              </td>
+              <td style="text-align: right;">
+                {{item.RETAIL}}
+              </td>
+              <td style="text-align: right;">
+                {{item.RETAIL * item.cantidad }}
+              </td>
+            </tr>
+    
+          </ng-template>
+         
+    
+        </table>
+
+      </div>
+    
+
+
+    
+
+
+ </div>
+
+
+
+
+
+
+
+
+ 
+
+</mat-card>
+
+<div id="notaVenta">
+     
+      <table style="margin: 0 auto;">
+        <tr>
+          <img src="assets/logo.png" alt="logo">
+        </tr>
+        <tr>
+          <th>{{config.dataOperacion.business_name}}</th>
+        </tr>
+        <tr>
+          <th>NIT: {{config.dataOperacion.identification_number}}-{{config.dataOperacion.identification_number}}</th>
+        </tr>
+        <tr>
+          <th>
+            {{config.dataOperacion.address}}
+          </th>
+        </tr>
+        <tr>
+          <th>
+            {{notaVenta.created_at}}
+          </th>
+        </tr>
+      </table>
+      <table style="font-size: 1.1em; margin: 10px auto; width: 80%;"  class="mat-elevation-z8" >
+        <tr>
+          <th>UND</th>
+          <th>
+            DESCRIPCION
+          </th>
+         
+          <th>
+            PRECIO
+          </th>
+      
+        </tr>
+        <ng-template let-item let-i="index" ngFor [ngForOf]="notaVenta.productos">
+          <tr>
+            <td style="text-align: center;">
+              {{item.cantidad}}
+            </td>
+            <td>
+              {{item.DESCRIPCION}} SKU {{item.CODIGO}}
+            </td>
+           
+            <td style="text-align: right;">
+              {{item.RETAIL * item.cantidad }}
+            </td>
+          </tr>
+  
+        </ng-template>
+       
+  
+      </table>
+      <table style="margin: 0 auto;">
+        <tr>
+          <td>TRM USD</td><td></td>
+          <td>VALOR BRUTO</td><td></td>
+        </tr>
+        <tr>
+          <td>TRM EUR</td><td></td>
+          <td>DESCUENTOS</td><td></td>
+        </tr>
+        <tr>
+          <td></td><td></td>
+          <td>TOTAL DLL</td><td></td>
+        </tr>
+        <tr>
+          <td></td><td></td>
+          <td>TOTAL COP</td><td></td>
+        </tr>
+        <tr>
+          <td></td><td></td>
+          <td>TOTAL EUR</td><td></td>
+        </tr>
+        <tr>
+          <td></td><td></td>
+          <td>CAMBIO</td><td></td>
+        </tr>
+      </table>
+
+      <table style="margin: 0 auto;">
+        <tr>
+          <th colspan="4">PAX</th>
+        </tr>
+        <tr>
+          <th>Nombre</th><td>{{notaVenta.cliente?.Pasajero}}</td>
+        </tr>
+        <tr>
+          <th>Origen</th><td>{{notaVenta.cliente?.Origen}}</td>
+        </tr>
+        <tr>
+          <th>Destino</th><td>{{notaVenta.cliente?.Destino}}</td>
+        </tr>
+        <tr>
+          <th>Aerolinea</th><td>{{notaVenta.cliente?.Aerolinea}}</td>
+        </tr>
+        <tr>
+          <th>Vuelo</th><td>{{notaVenta.cliente?.Vuelo}}</td>
+        </tr>
+        <tr>
+          <th>Asiento</th><td>{{notaVenta.cliente?.Asiento}}</td>
+        </tr>
+        <tr>
+          <th>Pasaporte</th><td>{{notaVenta.cliente?.Pasaporte}}</td> <th>Pais</th><td>{{notaVenta.cliente?.Origen}}</td>
+        </tr>
+        <tr>
+          <th>STEB BAG</th><td>{{notaVenta.cliente?.STEB_BAG }}</td>
+        </tr>
+
+      </table>
+
+      <table style="margin: 0 auto;">
+        <tr>
+          <td>VENTA DE EXPORTACION
+            <p style="text-align: justify;">
+              Todos los datos personales recopilados
+              no seran distribuidos o utilizados
+              con propositos diferentes a dar
+              cumplimiento a regulaciones aduanales
+            </p>
+
+          </td>
+        </tr>
+        <tr>
+          <td style="text-align: center;">
+            NO SOMOS GRANDES CONTRIBUYENTES
+            RESPONSABLE DE IVA/NO SOMOS AUTORRETENEDORES
+          </td>
+        </tr>
+        <tr>
+          <td style="text-align: center;">{{notaVenta.protocolo}}</td>
+        </tr>
+        <tr>
+          <td style="text-align: center;">PASADOS 30 DIAS DESPUES DE LA COMPRA NO SE ACEPTAN
+            RECLAMOS NI DEVOLUCIONES
+          </td>
+        </tr>
+        <tr style="text-align: center;">
+          <td>Atendido por: {{notaVenta.vendedor.name}}</td>
+        </tr>
+        <tr>
+          <td style="text-align: center;">
+            Servicio al cliente: +57 (317) 432-6895
+            contactomde@skyfreeshop.org
+            Visitanos: dutyfreepartners.com
+            Siguenos en instagram y facebook @skyfreeshopcolombia
+          </td>
+
+        </tr>
+
+      </table>
+</div>

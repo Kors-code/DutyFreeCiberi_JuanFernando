@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { Categoria, Cumplimiento } from '../../models/presupuesto';
-import { Config, Empleado, Tienda } from '../../models/config';
+import { Config, DataOperacion, Empleado, Tienda } from '../../models/config';
 import { InfoService } from 'src/app/services/info.service';
 import { ThisReceiver } from '@angular/compiler';
 import { DialogConfirm } from '../confirm-dialog/confirm-dialog.component';
@@ -9,6 +9,8 @@ import { DOCUMENT } from '@angular/common';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Operacion } from 'src/app/models/operacion';
 import { UserService } from 'src/app/services/user.service';
+import { Consecutivo } from 'src/app/models/consecutivo';
+import * as XLSX from 'xlsx';
 
 @Component({
   selector: 'app-config',
@@ -27,6 +29,9 @@ tagInv='';
 nuevo= false;
 email= '';
 public pOperacion:Operacion;
+consecutivos:Consecutivo[]=[];
+consecutivo:Consecutivo;
+
 
 Roles = ['Ventas', 'Skin', 'Lider', 'Gerente Ventas', 'Gerente']
   constructor(public dialog: MatDialog, @Inject(DOCUMENT) doc: any,
@@ -37,11 +42,13 @@ Roles = ['Ventas', 'Skin', 'Lider', 'Gerente Ventas', 'Gerente']
     this.cumplimiento = new Cumplimiento();
     this.empleado = new Empleado();
     this.pOperacion = this._userService.getPredetermidaOperacion();
-    //console.log(this.config)
+    this.consecutivo = new Consecutivo()
+    console.log(this.consecutivo)
    }
 
   ngOnInit(): void {
     this.getConfig()
+    this.getConsecutivosOperacion();
   }
 
 
@@ -63,6 +70,52 @@ Roles = ['Ventas', 'Skin', 'Lider', 'Gerente Ventas', 'Gerente']
       res=>{
         console.log(res)
       })
+  }
+
+  saveResolucion(){
+    this.consecutivo.operacion = this.pOperacion._id
+    console.log(this.consecutivo)
+    this._infoService.agregarConsecutivo(this.consecutivo).subscribe(
+      res=>{
+        this.consecutivo = new Consecutivo();
+        this.getConsecutivosOperacion();
+        console.log(res)
+      })
+
+  }
+
+  updateConsecutivo(){
+    this._infoService.updateConsecutivo(this.consecutivo).subscribe(
+      res=>{
+        this.consecutivo = new Consecutivo();
+        this.getConsecutivosOperacion();
+        console.log(res)
+      })
+  }
+
+  getConsecutivosOperacion(){
+    this._infoService.getConsecutivosperacion(this.pOperacion._id).subscribe(
+      res=>{
+        this.consecutivos = res;
+        
+        console.log(res)
+      })
+  }
+
+  deleteConsecutivo(i:any){
+    console.log(i)
+    this._infoService.deleteConsecutivo(i).subscribe(
+      res=>{
+        // this.consecutivos = res;
+        console.log(res)
+        this.getConsecutivosOperacion();
+      })
+
+  }
+
+  pasConsecutivo(item:Consecutivo){
+    console.log(item)
+    this.consecutivo = item;
   }
 
 
@@ -97,6 +150,10 @@ Roles = ['Ventas', 'Skin', 'Lider', 'Gerente Ventas', 'Gerente']
         console.log(res)
         if(res.length != 0){
           this.config = res[0];
+
+          if( !this.config.dataOperacion){
+            this.config.dataOperacion= new DataOperacion()
+          }
         }
        
       },err=>{
@@ -340,6 +397,73 @@ Roles = ['Ventas', 'Skin', 'Lider', 'Gerente Ventas', 'Gerente']
 
   deleteEmail(i: number){
     this.config.notificar.splice(i, 1);      
+  }
+
+  log= false;
+  data:any[] = []; 
+
+  onFileChange(evt: any) {
+    const target : DataTransfer =  <DataTransfer>(evt.target);
+    
+    if (target.files.length !== 1) throw new Error('Cannot use multiple files');
+
+    const reader: FileReader = new FileReader();
+
+    reader.onload = (e: any) => {
+      const bstr: string = e.target.result;
+
+      const wb: XLSX.WorkBook = XLSX.read(bstr, { type: 'binary' });
+
+      const wsname : string = wb.SheetNames[0];
+      const ws: XLSX.WorkSheet = wb.Sheets[wsname];
+      this.data = (XLSX.utils.sheet_to_json(ws, { header: 1 }));
+
+      
+
+      ////console.log('Data',this.data);
+      // ////// ////console.log('Costumer',this.dataCostumer);
+      this.convertirJson()
+
+    };
+
+    reader.readAsBinaryString(target.files[0]);
+
+  }
+
+
+  
+  registros:any = [];
+  registrosCostumer:any = [];
+  lotesCmprobantes:any = [];
+  lote:any = [];
+  itemsContable:any = [];
+  itemsFacturaVentas:any = [];
+  convertirJson(){
+    this.log= true;
+    let keys = Object.values(this.data[0])
+    for(var i = 1;i < this.data.length; i++){
+      let arr = this.data[i];
+      let par = Object.values(arr);
+      let reg = []
+      for (let i = 0; i < keys.length; i++) {
+        let obje = [keys[i], par[i] || '' ]
+        reg.push(obje)
+      }
+      this.registros.push(Object.fromEntries(reg))
+    }
+
+    this.log= false;
+   
+    console.log(this.registros)
+    let lotes = 200;
+   
+  }
+
+  AgregarProductos(){
+    this._infoService.agregarInfo(this.registros, 'Productos').subscribe(
+      res=>{
+        console.log(res)
+    })
   }
 
 }
