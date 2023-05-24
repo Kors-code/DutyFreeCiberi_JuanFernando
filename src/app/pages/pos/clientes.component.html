@@ -6,13 +6,20 @@
         </button>
         Pase de Abordar 
     </h1>
-    <mat-form-field appearance="fill" style="text-align: center; font-size: 1em; margin-right: 20px; width: 60%;">
+    <mat-form-field *ngIf="!data._id" appearance="fill" style="text-align: center; font-size: 1em; margin-right: 20px; width: 60%;">
         <input matInput placeholder="SCAN" type="number" #scanEle name="scan" [(ngModel)]="scan" (change)="saveScan()">
-        <button  matSuffix mat-icon-button aria-label="Clear" (click)="badCliente()">
+        <button  matSuffix mat-icon-button aria-label="Clear" (change)="saveScan()">
           <mat-icon>qr_code_scanner</mat-icon>
+        </button>
+        <button *ngIf="identity.origen =='Developer'" matSuffix mat-icon-button aria-label="Clear" (click)="badCliente()">
+          <mat-icon>person</mat-icon>
         </button>
     </mat-form-field>
 </div>  
+<mat-form-field style="margin-right: 20px;" appearance="fill">
+  <mat-label>PAX</mat-label>
+  <input matInput type="text" name="PAX" [(ngModel)]="cliente.pax">
+</mat-form-field>
 <mat-form-field style="margin-right: 20px;" appearance="fill">
     <mat-label>STEB BAG</mat-label>
     <input matInput type="text" name="STEB_BAG" [(ngModel)]="cliente.STEB_BAG">
@@ -70,6 +77,6 @@
     <mat-label>Sexo</mat-label>
     <input matInput type="text" name="Sexo" [(ngModel)]="cliente.Sexo">
   </mat-form-field>
-  <button  (click)="confirmar()" mat-stroked-button aria-label="Clear" color="accent" style="margin: 10px 10px;">
+  <button *ngIf="!data._id" (click)="confirmar()" mat-stroked-button aria-label="Clear" color="accent" style="margin: 10px 10px;">
      Asignar <mat-icon>send</mat-icon>
 </button>

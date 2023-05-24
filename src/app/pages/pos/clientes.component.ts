@@ -1,6 +1,7 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Cliente } from 'src/app/models/notaVenta';
+import { UserService } from 'src/app/services/user.service';
 
 
 @Component({
@@ -11,14 +12,22 @@ import { Cliente } from 'src/app/models/notaVenta';
   export class DialogClienteDetail {
     motivos:any;
     consecutivo:any;
-    cliente:Cliente
+    cliente:Cliente= new Cliente();
     scan:any;
+    identity:any;
     constructor(
       public dialogRef: MatDialogRef<DialogClienteDetail>,
-      @Inject(MAT_DIALOG_DATA) public data: any) {
+      @Inject(MAT_DIALOG_DATA) public data: any,
+      public _userService:UserService) {
 
-        this.cliente =new Cliente();
-        console.log(this.cliente)
+        // console.log(this.data)
+        if(this.data.cliente){
+          this.cliente = this.data.cliente
+        }else{
+          this.cliente = new Cliente();
+        }
+        this.identity = this._userService.getIdentity();
+        // // console.log(this.cliente)
        }
   
     onNoClick(): void {
@@ -26,7 +35,8 @@ import { Cliente } from 'src/app/models/notaVenta';
     }
 
     saveScan(){
-      console.log(this.scan)
+      // console.log(this.scan)
+      this.cliente.scan = this.scan;
     }
   
     cancelar(){
@@ -53,6 +63,7 @@ import { Cliente } from 'src/app/models/notaVenta';
       this.cliente.Vuelo="v4556";
       this.cliente.Nacionalidad ="COL";
       this.cliente.Sexo="MASC";
+      this.cliente.pax="PAX4556"
 
     }
   

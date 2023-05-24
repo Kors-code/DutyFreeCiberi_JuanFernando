@@ -1,38 +1,99 @@
 <mat-card>
   <mat-progress-bar mode="indeterminate" *ngIf="log" ></mat-progress-bar> 
-  <div style="display: flex; justify-content: center;">
-   
-  </div>
   <div>
-
       <h3 style="text-align: center;">NOTA DE VENTA POS
-        <button  mat-stroked-button (click)="getNotasVentaUser()" aria-label="Clear" color="accent" style="margin: 10px 10px;">
-          <mat-icon>list</mat-icon> LISTADO</button>
+        <button  mat-stroked-button [matMenuTriggerFor]="menuRef" aria-label="Clear" color="accent" style="margin: 10px 10px;">
+          <mat-icon>search</mat-icon> CONSULTAR</button>
 
         <button  mat-stroked-button aria-label="Clear" (click)="nuevaNota()" color="accent" style="margin: 10px 10px;">
           <mat-icon>add</mat-icon>NUEVA VENTA
         </button>
+
+        <button *ngIf="identity.rol == 'Admin'"  mat-stroked-button aria-label="Clear" (click)="productos()" color="accent" style="margin: 10px 10px;">
+          <mat-icon>storefront</mat-icon>ACTUALIZAR PRODUCTOS
+        </button>
       
       </h3>
+      <mat-card-content style="text-align: center;" *ngIf="fadeDiv == 'productos'">
+        <button  (click)="cancelar()" mat-stroked-button aria-label="Clear" color="scondary" style="margin: 10px 10px;">
+          <mat-icon>arrow_back</mat-icon> Regresar
+      </button>
+        <h3>Agregar Productos</h3>
+        <input type="file" multiple="false" (change)="onFileChange($event)" style="font-size: 1.3em; margin-left: 10px; background-color: orange;color:white;">
+       
+        <button *ngIf="registros.length != 0" [disabled]="" mat-raised-button aria-label="Clear" style="color: white; background-color: orange; margin-left: 20px;" (click)="AgregarProductos()">
+          <mat-icon>save</mat-icon> Agregar {{registros.length}} Productos</button>
+        </mat-card-content>
+
+      <div style="display: flex; justify-content: center;" *ngIf="getfechaSRcalendar">
+        <button [disabled]="" mat-fab style="margin-left: 10px" class="" (click)="getfechaSRcalendar = false" color="secondary"><mat-icon>cancel</mat-icon></button>
+        <div style="margin-left: 10px">
+          <mat-form-field>
+              <input matInput [matDatepicker]="picker" placeholder="Fecha Incial" name="incial" [(ngModel)]="fechaInicialInfo">
+              <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+              <mat-datepicker #picker></mat-datepicker>
+          </mat-form-field>
+      </div> 
+      <div  style="margin-left: 10px">
+
+          <mat-form-field>
+              <input matInput [disabled]="!fechaInicialInfo"  [matDatepicker]="picker2" placeholder="Fecha Final" name="incial" [(ngModel)]="fechaFinalInfo">
+              <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+              <mat-datepicker #picker2></mat-datepicker>
+          </mat-form-field>
+      </div>
+      <button [disabled]="!fechaFinalInfo" mat-fab style="margin-left: 10px" class="bgc-blue-500 push-left-mat" (click)="getMonitoreoPersonalizado()"><mat-icon>send</mat-icon></button>
+      </div>
+      <mat-menu #menuRef="matMenu">
+          <button  mat-menu-item (click)="getNotasActivasVentaUser()">
+            <mat-icon class="mat-18">list</mat-icon> Mis documentos activos
+          </button>
+          <button  mat-menu-item (click)="getNotasVentaUser()">
+            <mat-icon class="mat-18">list</mat-icon> Documentos generados
+          </button>
+          <span *ngIf="identity.rol == 'Admin'" >
+            <button  mat-menu-item (click)="getNotasVentaActivasOperacion()">
+              <mat-icon class="mat-18">list</mat-icon> Activas Operacion
+            </button>
+            <button  mat-menu-item (click)="getNotasVentaOperacion()">
+              <mat-icon class="mat-18">list</mat-icon> Historico Operacion
+            </button>
+            <button mat-menu-item [disabled]="" (click)="getfechaSR('h')"><mat-icon>today</mat-icon>Hoy</button>
+            <button mat-menu-item [disabled]="" (click)="getfechaSR('a')"><mat-icon>today</mat-icon>Ayer</button>
+            <button mat-menu-item  [disabled]="" (click)="getfechaSR('m')"><mat-icon>today</mat-icon>Mes Actual</button>  
+            <button mat-menu-item  [disabled]="" (click)="getfechaSR('y')"><mat-icon>today</mat-icon>Año Actual</button> 
+            <button mat-menu-item  [disabled]="" (click)="getfechaSRcalendar = true"><mat-icon>today</mat-icon>Personalizado</button>  
+          </span>
+          
+
+      </mat-menu>
       <div *ngIf="fadeDiv == 'listado'">
-        Listado de ventas
-        <table  style="margin: 0 auto;  width: 80%; font-size: 1.1em;" class="mat-elevation-z8">
+         <h1 style="text-align: center;">
+          <button  *ngIf="notasVentas.length != 0 && identity.rol == 'Admin'" mat-stroked-button (click)="downloadFile(lineasNotaVentas, 'Notas de Ventas')">
+            <mat-icon>cloud_download</mat-icon>
+            <span> Descargar {{notasVentas.length}} Documentos</span>
+          </button>
+          Documentos {{notasVentas.length}}</h1>
+        <table  style="margin: 0 auto;  width: 80%; font-size: 1.4em;" class="mat-elevation-z8">
           <tr>
             <th>FECHA</th>
             <th>FOLIO</th>
             <th>TIENDA</th>
             <th>CAJERO</th>
-            <th>VALOR</th>
             <th>ESTADO</th>
+            <th>VALOR</th>
+            <th>FOLIO</th>
+            
           </tr>
           <ng-template let-item let-i="index" ngFor [ngForOf]="notasVentas">
-            <tr (click)="pasNota(item)">
-              <td>{{item.created_at}}</td>
+            <tr (click)="pasNota(item)" class="over">
+              <td>{{item.created_at | date:'medium'}}</td>
               <td> {{item.prefix }} {{item.consecutivo}}</td>
               <td>  {{item.tienda}} </td>
               <td> {{item.usuario.name}}</td>
-              <td> {{item.total}}</td>
-              <td> {{item.estado}}</td>
+              <td > {{item.estado}}</td>
+              <td style="text-align: right;"> {{item.total | number:'1.0-2'}}</td>
+              <td> {{item.folio}}</td>
             </tr>
 
           </ng-template>
@@ -42,10 +103,24 @@
       <div *ngIf="fadeDiv == 'detalle'">
         <table style="margin: 0 auto;  width: 80%; font-size: 1.1em;" class="mat-elevation-z8">
           <tr>
+            <th></th>
+            <th></th>
+            <th> <button *ngIf="!notaVenta._id  && notaVenta.tienda && notaVenta.productos.length != 0 && notaVenta.cliente  && notaVenta.mediosPago.total"  mat-raised-button aria-label="Clear"  style="margin: 10px 10px; background-color: orange; color: #ffff; font-size: 1.2em;" (click)="saveNotaVenta()">
+              <mat-icon>tv</mat-icon> REGISTRAR NOTA DE VENTA
+            </button></th>
+            <th>
+              <button *ngIf="notaVenta._id" mat-raised-button aria-label="Clear"  style="margin: 10px 10px; background-color: orange; color: #ffff; font-size: 1.2em;" (click)="printNotaVenta()">
+                <mat-icon>print</mat-icon> IMPRIMIR
+              </button>
+            </th>
+         
+         
+          </tr>
+          <tr>
             <td colspan="7">
-              <mat-form-field appearance="fill" style="margin-right: 20px; width: 100%;">
+              <mat-form-field appearance="fill" style="margin-right: 20px; width: 100%;" >
                 <mat-label>TIENDA</mat-label>
-                <mat-select [(ngModel)]="notaVenta.tienda">
+                <mat-select [(ngModel)]="notaVenta.tienda" [disabled]="notaVenta._id != ''">
                   <ng-template let-item let-i="index" ngFor [ngForOf]="config.tiendas">
                   <mat-option [value]="item.tienda">
                     {{ item.nombre }} - 
@@ -59,9 +134,9 @@
         
           <tr>
             <th style="text-align: left;"> <span style="margin-left: 10px;"> FOLIO</span> </th>
-            <th>{{notaVenta.consecutivo}}</th>
-            <th>TOTAL</th>
-            <th> {{notaVenta.total}}</th>
+            <th style="font-size: 1.5em;">{{notaVenta.prefix}} {{notaVenta.consecutivo}}</th>
+            <th style="font-size: 1.5em; text-align: right;">TOTAL</th>
+            <th style="font-size: 1.5em;"> {{notaVenta.total}}</th>
             
           </tr>
           <tr>
@@ -69,69 +144,80 @@
               <span style="margin-left: 10px;">FECHA</span>
             </th>
             <th>
-              {{date | date}}
+              {{date | date:'medium'}}
             </th>
            
-            <th>
-    
-              <button  mat-stroked-button aria-label="Clear" color="accent" (click)="openDialogClientes()">
-                <mat-icon>person</mat-icon> Cliente
+            <th style="text-align: right;">
+              <button [disabled]="" mat-stroked-button aria-label="Clear" color="accent" (click)="openDialogMediosPagos()">
+                <mat-icon>attach_money</mat-icon> Medio De Pago
               </button>
+
+         
             </th>
             <th>
-            {{notaVenta.cliente?.Pasajero}}
+              <ng-template let-item let-i="index" ngFor [ngForOf]="notaVenta.mediosPago.formaPagos">
+                 <span *ngIf="item.Importe != 0" style="width: 100%;">| {{item.FormaPago}}  {{item.Importe | number:'1.0-2'}}</span>
+              </ng-template> 
             </th>
+            
           </tr>
           <tr>
             <th style="text-align: left;">
               <span style="margin-left: 10px;"> COD VEND.</span>
-             
-           
             </th>
             <td>
-              <div style="display: flex; justify-content: center; font-size: 0.7em;">
+              <div *ngIf="!notaVenta._id" style="display: flex; justify-content: center; font-size: 0.7em;">
                 <mat-form-field appearance="fill" style="margin-right: 20px; width: 100%;">
                   <mat-label>Vendedores</mat-label>
                   <mat-select [(ngModel)]="notaVenta.vendedor">
                     <ng-template let-item let-i="index" ngFor [ngForOf]="config.empleados">
-                    <mat-option [value]="item">
+                    <mat-option [value]="item" *ngIf=" item.rol == 'Ventas'">
                       {{ item.codigo }} - {{ item.name }} - {{ item.rol }}
                     </mat-option>
                     </ng-template>
                   </mat-select>
                 </mat-form-field>
+                
                 <!-- <button *ngIf="newEmpleado" mat-button (click)="addEmpleado()" ><mat-icon class="mat-18">add</mat-icon> <span>Agregar</span> </button>  -->
               </div>
-    
+              <span *ngIf="notaVenta._id"> {{notaVenta.vendedor.codigo}} {{notaVenta.vendedor.name}} </span>
               <!-- <button  mat-stroked-button aria-label="Clear" color="accent" style="margin: 10px 10px;">
                 <mat-icon>face</mat-icon> Vendedor
               </button> -->
             </td>
           
-            <th>
+            <th style="text-align: right;">
     
-              <button  mat-stroked-button aria-label="Clear" color="accent" (click)="openDialogMediosPagos()">
-                <mat-icon>attach_money</mat-icon> Medio De Pago
+              <button [disabled]="" mat-stroked-button aria-label="Clear" color="accent" (click)="openDialogClientes()">
+                <mat-icon>person</mat-icon> Cliente PAX
               </button>
     
             </th>
             <th>
-              detalle pago
-            </th>
+              {{notaVenta.cliente?.pax}} - {{notaVenta.cliente?.Pasajero}}
+              </th>
+           
           </tr>
           <tr>
             <th style="text-align: left;">
-              <span style="margin-left: 10px;">EAN</span>
-              
+              <span style="margin-left: 10px;" *ngIf="!notaVenta._id">EAN</span>
+              <span style="margin-left: 10px;" *ngIf="notaVenta._id">FOLIO MACRO</span>
+              <button style="margin-left: 10px;" *ngIf="notaVenta._id && notaVenta.estado == 'Activa'"  matSuffix mat-icon-button aria-label="Clear" (click)="updateNotaVenta()">
+                <mat-icon>save</mat-icon> GUARDAR FOLIO
+              </button>
             </th>
             <td>
-    
-              <mat-form-field appearance="fill" style="text-align: center; font-size: 0.7em; margin-right: 20px; width: 100%;">
-                <input matInput placeholder="SCAN" type="text" name="search"  [(ngModel)]="search" (change)="getProducto(search)">
+            <div *ngIf="notaVenta._id" >
+              <input  [disabled]="notaVenta.estado != 'Activa'"  placeholder="" style="font-size: 1.2em; text-align: center; border-radius: 10px; margin: 10px 10px;"  [(ngModel)]="notaVenta.folio">
+              
+            </div>
+
+              <mat-form-field  *ngIf="!notaVenta._id " appearance="fill" style="text-align: center; font-size: 0.7em; margin-right: 20px; width: 100%;">
+                <input matInput placeholder="SCAN" [disabled]="notaVenta.mediosPago.total" type="text" name="search"  [(ngModel)]="search" (change)="getProducto(search)">
                 <button  matSuffix mat-icon-button aria-label="Clear" (click)="getProducto(search)">
                   <mat-icon>search</mat-icon>
                 </button>
-            </mat-form-field>
+             </mat-form-field>
         
     <!--      
                   <input   placeholder="" style="font-size: 1.2em; text-align: center; border-radius: 10px; margin: 10px 10px;">
@@ -141,32 +227,24 @@
     
             </td>
             <th>
-              TRM
-              <input   placeholder="" style="font-size: 1.2em; text-align: center; border-radius: 10px; margin: 10px 10px;" [(ngModel)]="trm"> 
+              TRM USD
+              <input [disabled]="notaVenta._id != ''"  placeholder="" style="font-size: 1.2em; text-align: center; border-radius: 10px; margin: 10px 10px;" [(ngModel)]="trm"> 
 
             </th>
             
             <th>
-              <input   placeholder="" style="font-size: 1.2em; text-align: center; border-radius: 10px; margin: 10px 10px;">
+              TRM EUR
+              <input  [disabled]="notaVenta._id != ''"  placeholder="" style="font-size: 1.2em; text-align: center; border-radius: 10px; margin: 10px 10px;"  [(ngModel)]="trm_euro">
             </th>
             
           </tr>
-          <tr>
-            <th></th>
-            <th></th>
-            <th> <button *ngIf="!notaVenta._id  && notaVenta.tienda && notaVenta.productos.length != 0"  mat-raised-button aria-label="Clear"  style="margin: 10px 10px; background-color: orange; color: #ffff; font-size: 1.2em;" (click)="saveNotaVenta()">
-              <mat-icon>tv</mat-icon> REGISTRAR
-            </button></th>
-            <th>
-              <button *ngIf="notaVenta._id" mat-raised-button aria-label="Clear"  style="margin: 10px 10px; background-color: orange; color: #ffff; font-size: 1.2em;" (click)="printNotaVenta()">
-                <mat-icon>print</mat-icon> IMPRIMIR
-              </button>
-            </th>
-         
-         
-          </tr>
-        </table>
     
+        </table>
+        <div style="max-height: 400px; overflow-y: scroll; font-size: 1.1em; margin: 10px auto; width: 80%;"  class="mat-elevation-z8">
+          <ng-template let-item let-i="index" ngFor [ngForOf]="productSearch">
+            <p class="prod" (click)="pasProducto(item)">{{item.CODIGO}} - {{item.DESCRIPCION}}</p>
+        </ng-template>
+        </div>
         <table style="font-size: 1.1em; margin: 10px auto; width: 80%;"  class="mat-elevation-z8" >
           <tr>
             <th>
@@ -177,10 +255,10 @@
             </th>
             <th>CANTIDAD</th>
             <th>
-              PRECIO
+              VAL. UND
             </th>
             <th>
-              IMPORTE NETO
+              TOTAL
             </th>
           </tr>
           <ng-template let-item let-i="index" ngFor [ngForOf]="notaVenta.productos">
@@ -192,13 +270,18 @@
                 {{item.DESCRIPCION}}
               </td>
               <td style="text-align: center;">
-                {{item.cantidad}}
+                <input  [disabled]="notaVenta._id != ''" (change)="totalizar()" placeholder="" style="font-size: 1.2em; text-align: center; border-radius: 10px; margin: 10px 10px;"  [(ngModel)]="item.cantidad">
               </td>
               <td style="text-align: right;">
                 {{item.RETAIL}}
               </td>
               <td style="text-align: right;">
                 {{item.RETAIL * item.cantidad }}
+              </td>
+              <td>
+                <button *ngIf="notaVenta._id != ''" mat-stroked-button aria-label="Clear" color="secondary" (click)="deleteProducto(i)">
+                  <mat-icon  style="color: tomato;">delete</mat-icon> 
+                </button>
               </td>
             </tr>
     
@@ -246,19 +329,24 @@
         </tr>
         <tr>
           <th>
-            {{notaVenta.created_at}}
+            {{notaVenta.created_at | date:'medium'}}
+          </th>
+        </tr>
+        <tr>
+          <th>
+            NOTA DE VENTA N° {{notaVenta.prefix}} {{notaVenta.consecutivo}}
           </th>
         </tr>
       </table>
-      <table style="font-size: 1.1em; margin: 10px auto; width: 80%;"  class="mat-elevation-z8" >
+      <table style="font-size: 1.1em; margin: 10px auto; width: 100%;"  class="mat-elevation-z8" >
         <tr>
-          <th>UND</th>
-          <th>
-            DESCRIPCION
+          <th style="border: 1px solid black;">Und</th>
+          <th style="border: 1px solid black;">
+            Descripcion
           </th>
          
-          <th>
-            PRECIO
+          <th style="border: 1px solid black;">
+            Precio
           </th>
       
         </tr>
@@ -267,12 +355,12 @@
             <td style="text-align: center;">
               {{item.cantidad}}
             </td>
-            <td>
+            <td style="font-size: 0.7em;">
               {{item.DESCRIPCION}} SKU {{item.CODIGO}}
             </td>
            
-            <td style="text-align: right;">
-              {{item.RETAIL * item.cantidad }}
+            <td style="text-align: right;border-left: 1px solid black;">
+              {{item.RETAIL * item.cantidad | number:'1.0-2'}}
             </td>
           </tr>
   
@@ -280,67 +368,75 @@
        
   
       </table>
-      <table style="margin: 0 auto;">
+      <table style="margin: 0 auto; font-size: 0.7em; width: 100%; border-top: 1px solid black;">
         <tr>
-          <td>TRM USD</td><td></td>
-          <td>VALOR BRUTO</td><td></td>
+          <td colspan="2">TRM USD</td> <td style="text-align: right;">{{notaVenta.trm}}</td>
+          <td colspan="2" style="border: 1px solid black;">VALOR BRUTO</td><td style="text-align: right; font-size: 1.5em;border: 1px solid black;">{{notaVenta.total | number:'1.0-2'}}</td>
         </tr>
         <tr>
-          <td>TRM EUR</td><td></td>
-          <td>DESCUENTOS</td><td></td>
+          <td colspan="2">TRM EUR</td><td style="text-align: right;">{{notaVenta.trm_euro}}</td>
+          <td colspan="2">DESCUENTO</td><td style="text-align: right;">{{notaVenta.descuento}}</td>
         </tr>
         <tr>
-          <td></td><td></td>
-          <td>TOTAL DLL</td><td></td>
+          
+          <td colspan="3">
+           
+
+          </td>
+          <td colspan="2">TOTAL DLL</td><td style="text-align: right;">{{notaVenta.total | number:'1.0-2'}}</td>
         </tr>
         <tr>
-          <td></td><td></td>
-          <td>TOTAL COP</td><td></td>
+          <td colspan="3"> Forma Pago</td>
+          <td colspan="2">TOTAL COP</td><td style="text-align: right;">{{notaVenta.total * notaVenta.trm | number:'1.0-0'}}</td>
         </tr>
         <tr>
-          <td></td><td></td>
-          <td>TOTAL EUR</td><td></td>
+          <td colspan="3">
+            <ng-template let-item let-i="index" ngFor [ngForOf]="notaVenta.mediosPago.formaPagos">
+               <span *ngIf="item.Importe != 0" style="width: 100%;"> | {{item.FormaPago}}  {{item.Importe}}</span>
+            </ng-template> 
+          </td>
+          <td colspan="2">TOTAL EUR</td><td style="text-align: right;">{{(notaVenta.total * notaVenta.trm) / notaVenta.trm_euro | number:'1.0-2'}}</td>
         </tr>
         <tr>
-          <td></td><td></td>
-          <td>CAMBIO</td><td></td>
+          <td colspan="3"></td>
+          <td colspan="2">CAMBIO</td><td style="text-align: right;"> {{notaVenta.mediosPago.cambio | number:'1.0-2'}}</td>
         </tr>
       </table>
 
-      <table style="margin: 0 auto;">
+      <table style="margin: 0 auto; border-top: 1px solid black; width: 100%;">
         <tr>
           <th colspan="4">PAX</th>
         </tr>
         <tr>
-          <th>Nombre</th><td>{{notaVenta.cliente?.Pasajero}}</td>
+          <th>Nombre</th><td colspan="3">{{notaVenta.cliente?.Pasajero}}</td>
         </tr>
         <tr>
-          <th>Origen</th><td>{{notaVenta.cliente?.Origen}}</td>
+          <th>Origen</th><td colspan="3">{{notaVenta.cliente?.Origen}}</td>
         </tr>
         <tr>
-          <th>Destino</th><td>{{notaVenta.cliente?.Destino}}</td>
+          <th>Destino</th><td colspan="3">{{notaVenta.cliente?.Destino}}</td>
         </tr>
         <tr>
-          <th>Aerolinea</th><td>{{notaVenta.cliente?.Aerolinea}}</td>
+          <th>Aerolinea</th><td colspan="3">{{notaVenta.cliente?.Aerolinea}}</td>
         </tr>
         <tr>
-          <th>Vuelo</th><td>{{notaVenta.cliente?.Vuelo}}</td>
+          <th>Vuelo</th><td colspan="3">{{notaVenta.cliente?.Vuelo}}</td>
         </tr>
         <tr>
-          <th>Asiento</th><td>{{notaVenta.cliente?.Asiento}}</td>
+          <th>Asiento</th><td colspan="3">{{notaVenta.cliente?.Asiento}}</td>
         </tr>
         <tr>
-          <th>Pasaporte</th><td>{{notaVenta.cliente?.Pasaporte}}</td> <th>Pais</th><td>{{notaVenta.cliente?.Origen}}</td>
+          <th>Pasaporte</th><td>{{notaVenta.cliente?.pax}}</td> <th>Pais</th><td>{{notaVenta.cliente?.Origen}}</td>
         </tr>
         <tr>
-          <th>STEB BAG</th><td>{{notaVenta.cliente?.STEB_BAG }}</td>
+          <th>STEB BAG</th><td colspan="3">{{notaVenta.cliente?.STEB_BAG }}</td>
         </tr>
 
       </table>
 
-      <table style="margin: 0 auto;">
+      <table style="margin: 0 auto; border-top: 1px solid black; width: 100%;">
         <tr>
-          <td>VENTA DE EXPORTACION
+          <td style="text-align: center;">VENTA DE EXPORTACION
             <p style="text-align: justify;">
               Todos los datos personales recopilados
               no seran distribuidos o utilizados
@@ -351,30 +447,29 @@
           </td>
         </tr>
         <tr>
-          <td style="text-align: center;">
+          <td style="text-align: center; border-top: 1px solid black">
             NO SOMOS GRANDES CONTRIBUYENTES
             RESPONSABLE DE IVA/NO SOMOS AUTORRETENEDORES
           </td>
         </tr>
         <tr>
-          <td style="text-align: center;">{{notaVenta.protocolo}}</td>
+          <td style="text-align: center; border-top: 1px solid black">{{notaVenta.protocolo}}</td>
         </tr>
         <tr>
-          <td style="text-align: center;">PASADOS 30 DIAS DESPUES DE LA COMPRA NO SE ACEPTAN
+          <td style="text-align: center; border-top: 1px solid black">PASADOS 30 DIAS DESPUES DE LA COMPRA NO SE ACEPTAN
             RECLAMOS NI DEVOLUCIONES
           </td>
         </tr>
-        <tr style="text-align: center;">
-          <td>Atendido por: {{notaVenta.vendedor.name}}</td>
+        <tr >
+          <td style="text-align: center; border-top: 1px solid black">Atendido por: {{notaVenta.vendedor.name}}</td>
         </tr>
         <tr>
-          <td style="text-align: center;">
+          <td style="text-align: center;border-top: 1px solid black">
             Servicio al cliente: +57 (317) 432-6895
             contactomde@skyfreeshop.org
             Visitanos: dutyfreepartners.com
             Siguenos en instagram y facebook @skyfreeshopcolombia
           </td>
-
         </tr>
 
       </table>

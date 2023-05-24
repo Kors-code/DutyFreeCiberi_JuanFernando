@@ -54,6 +54,7 @@ api.get('/get-image-user/:imageFile', UserController.getImageFile);
 // INFO RUTAS
 api.post('/info',md_auth.ensureAuth,  infoController.registerInfo);
 api.post('/info-lote/:tag',md_auth.ensureAuth,  infoController.agregarInfo);
+api.post('/replace-info-lote/:tag',md_auth.ensureAuth,  infoController.remplazarInfo);
 api.post('/info-paginate',md_auth.ensureAuth, infoController.getRegistros);
 api.put('/update-info',  md_auth.ensureAuth, infoController.updateInfo);
 api.post('/info-search',md_auth.ensureAuth, infoController.getInfoDato);
@@ -153,9 +154,13 @@ api.get('/producto/:id',md_auth.ensureAuth, infoController.getProductoEan);
 // RUTAS CONSECUTIVOS
 
 api.get('/notas-venta-user/:id',md_auth.ensureAuth, NotasVentaController.getNotaVentaUser);
+api.get('/notas-venta-activa-user/:id',md_auth.ensureAuth, NotasVentaController.getNotaVentaActivaUser);
+api.post('/notas-venta-date',md_auth.ensureAuth, NotasVentaController.totalVentasPeriodo);
+api.get('/notas-venta-op/:id',md_auth.ensureAuth, NotasVentaController.getNotaVentaOperacion);
+api.get('/notas-venta-activa-op/:id',md_auth.ensureAuth, NotasVentaController.getNotaVentaActivasOperacion);
 api.post('/nota-venta', md_auth.ensureAuth, NotasVentaController.saveNotaVenta);
 // api.delete('/consecutivo/:id',md_auth.ensureAuth, ConsecutivoController.deleteConsecutivo);
-// api.put('/consecutivo', md_auth.ensureAuth,  ConsecutivoController.updateConsecutivo);
+api.put('/nota-venta', md_auth.ensureAuth,  NotasVentaController.updateNotaVenta);
 
 module.exports = api;
 

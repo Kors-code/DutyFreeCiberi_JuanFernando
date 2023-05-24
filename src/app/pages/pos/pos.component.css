@@ -7,3 +7,13 @@
 #notaVenta{
     display: none;
 }
+
+.over:hover{
+    background-color: rgba(128, 128, 128, 0.54);
+    cursor: pointer;
+}
+
+.prod:hover{
+    background-color: rgba(128, 128, 128, 0.54);
+    cursor: pointer;
+}

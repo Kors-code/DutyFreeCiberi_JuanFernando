@@ -47,6 +47,15 @@ export class InfoService {
         return this._http.post<agregar>(this.url+'info-lote/'+tag, paramas, {headers:headers});
     }
 
+    remplazarInfo(user_to_register:any, tag:string){
+        let paramas = JSON.stringify(user_to_register);
+        let headers = new HttpHeaders({
+            'content-Type':'application/json',
+            'Authorization': this.getToken()
+        });
+        return this._http.post<agregar>(this.url+'replace-info-lote/'+tag, paramas, {headers:headers});
+    }
+
     getRegistros(register:any){
         let paramas = JSON.stringify(register);
         let headers = new HttpHeaders({
@@ -550,6 +559,16 @@ agregarNotaVenta(register:any){
     return this._http.post<agregar>(this.url+'nota-venta/', paramas, {headers:headers});
 }
 
+getNotasVentasPeriodo(register:any){
+    let paramas = JSON.stringify(register);
+    let headers = new HttpHeaders({
+        'content-Type':'application/json',
+        'Authorization': this.getToken()
+    });
+    return this._http.post<any>(this.url+'notas-venta-date/', paramas, {headers:headers});
+}
+
+
 getNotasVentaUser(tag:string){
     // let paramas = JSON.stringify(register);
     let headers = new HttpHeaders({
@@ -558,6 +577,50 @@ getNotasVentaUser(tag:string){
     });
     return this._http.get<any>(this.url+'notas-venta-user/'+tag, {headers:headers});
 }
+
+getNotasVentaOperacion(tag:string){
+    // let paramas = JSON.stringify(register);
+    let headers = new HttpHeaders({
+        // 'Content-Type': 'application/json',
+        'Authorization': this.getToken()
+    });
+    return this._http.get<any>(this.url+'notas-venta-op/'+tag, {headers:headers});
+}
+
+getNotasVentaActivaUser(tag:string){
+    // let paramas = JSON.stringify(register);
+    let headers = new HttpHeaders({
+        // 'Content-Type': 'application/json',
+        'Authorization': this.getToken()
+    });
+    return this._http.get<any>(this.url+'notas-venta-activa-user/'+tag, {headers:headers});
+}
+
+getNotasVentaActivaOperacion(tag:string){
+    // let paramas = JSON.stringify(register);
+    let headers = new HttpHeaders({
+        // 'Content-Type': 'application/json',
+        'Authorization': this.getToken()
+    });
+    return this._http.get<any>(this.url+'notas-venta-activa-op/'+tag, {headers:headers});
+}
+
+updateNotaVenta(update:any){
+    let params = JSON.stringify(update);
+    let headers = new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': this.getToken()
+    });
+    return this._http.put<response>(this.url +'nota-venta/',
+            params, {headers:headers})
+}
+
+geTRM(){
+
+    return this._http.get<any>('https://api.exchangeratesapi.io/latest?base=USD&symbols=MXN');
+}
+
+
 
 
 

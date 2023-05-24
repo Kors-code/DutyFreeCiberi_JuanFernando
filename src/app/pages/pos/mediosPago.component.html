@@ -1,12 +1,75 @@
-<h1>medios de pago en linea</h1>
-<table style="margin: 0 auto;  width: 80%; font-size: 1em;" class="mat-elevation-z8">
+<h1>
+    <button  (click)="cancelar()" mat-stroked-button aria-label="Clear" color="scondary" style="margin: 10px 10px;">
+        <mat-icon>cancel</mat-icon> Cerrar
+    </button>
+
+    Medios de pago 
+    <button  *ngIf="mediosPago.restante == 0" (click)="confirmar()" mat-stroked-button aria-label="Clear" color="accent" style="margin: 10px 10px;">
+        Asignar <mat-icon>send</mat-icon>
+    </button>
+</h1>
+<table>
+    <tr>
+        <td>
+            total
+            <input step="0.02" disabled="{{mediosPago._id != 0}}"  placeholder="total" style="font-size: 1.2em; text-align: center; border-radius: 10px; margin: 10px 10px; width: 150px;" [(ngModel)]="mediosPago.total"> 
+        </td>
+        <td>
+            <!-- USD
+            <input   placeholder="USD" style="font-size: 1.2em; text-align: center; border-radius: 10px; margin: 10px 10px; width: 150px;" [(ngModel)]="mediosPago.trm">  -->
+        </td>
+        <td>
+            Entregado
+            <input step="0.02"  placeholder="Recibido" style="font-size: 1.2em; text-align: center; border-radius: 10px; margin: 10px 10px; width: 150px;" [(ngModel)]="mediosPago.recibido"> 
+        </td>
+        <td>
+            Restante
+            <input step="0.02" disabled="{{mediosPago._id != 0}}"  placeholder="EUR" style="font-size: 1.2em; text-align: center; border-radius: 10px; margin: 10px 10px; width: 150px;" [(ngModel)]="mediosPago.restante"> 
+        </td>
+        <td>
+            Cambio USD
+            <input step="0.02" disabled="{{mediosPago._id != 0}}"  placeholder="EUR" style="font-size: 1.2em; text-align: center; border-radius: 10px; margin: 10px 10px; width: 150px;" [(ngModel)]="mediosPago.cambio"> 
+        </td>
+        <td>
+            Cambio COP
+            <input step="0.00" disabled="{{mediosPago._id != 0}}"  placeholder="EUR" style="font-size: 1.2em; text-align: center; border-radius: 10px; margin: 10px 10px; width: 150px;" value="{{mediosPago.cambio * mediosPago.trm}}"> 
+        </td>
+    </tr>
+</table>
+
+
+<table style="margin: 0 auto;  width: 100%; font-size: 1.3em;" class="mat-elevation-z8">
 <tr>
     <th>Forma Pago</th>
     <th>Moneda</th>
+    <th></th>
     <th>Importe</th>
     <th>Cambio</th>
     <th>Importe Pago</th>
     <th>Restante</th>
     <th>Tipo Cambio</th>
 </tr>
+<ng-template let-item let-i="index" ngFor [ngForOf]="mediosPago.formaPagos">
+    <tr>
+        <td>{{item.FormaPago}}</td>
+        <td>{{item.Moneda}}</td>
+        <td>
+            <button *ngIf="mediosPago.restante != 0 && item.Importe == 0" (click)="restante(item)" mat-stroked-button aria-label="Clear" color="accent" style="margin: 10px 10px;">
+                 <mat-icon>done_all</mat-icon>
+            </button>
+        </td>
+        <td style="text-align: right;">
+            <input disabled="{{mediosPago._id != 0}}"  placeholder="" style="font-size: 1.2em; text-align: center; border-radius: 10px; margin: 10px 10px; width: 150px;" type="number" (change)="totalizar()" [(ngModel)]="item.Importe"> 
+        </td>
+        <td style="text-align: right;">{{item.Cambio | number:'1.0-2'}}</td>
+        <td style="text-align: right;">{{item.ImportePago | number:'1.0-0'}}</td>
+        
+        <td style="text-align: right;">{{(mediosPago.restante * mediosPago.trm) / item.TipoCambio | number:'1.0-0'}}</td>
+
+        <td style="text-align: right;">{{item.TipoCambio | number:'1.0-2'}}</td>
+    </tr>
+
+</ng-template>
+
+
 </table>

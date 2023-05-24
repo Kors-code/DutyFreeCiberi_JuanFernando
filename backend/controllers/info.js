@@ -260,6 +260,23 @@ async function deleteDataPresupuesto(req, res){
         
 }
 
+async function remplazarInfo(req, res){
+    var params = req.body;
+    var coll = req.params.tag;
+    // //console.log(params)
+    const url = 'mongodb://localhost:27017';
+    const client = new MongoClient(url);
+    const dbName = 'DutyFree';
+   
+        await client.connect();
+        // //console.log('Connected successfully to server');
+        const db = client.db(dbName);
+        const collectionDelete = await db.collection(coll).deleteMany();
+        const collection = db.collection(coll)
+        const insertResult = await collection.insertMany(params);
+        res.status(200).send(insertResult);
+}
+
 async function agregarInfo(req, res){
     var params = req.body;
     var coll = req.params.tag;
@@ -1129,7 +1146,24 @@ async function getProductoEan(req, res){
         var reg = await collection.find({CODIGO:ID}).forEach(element => {
             arrayCollections.push(element)
          });
-        res.status(200).send(arrayCollections);
+         if(arrayCollections.length != 0){
+            res.status(200).send(arrayCollections);
+         }else{
+            var reg = await collection.find({UPC1:ID}).forEach(element => {
+                arrayCollections.push(element)
+             }); 
+             if(arrayCollections.length != 0){
+                res.status(200).send(arrayCollections);
+             }else{
+                let dato =  new RegExp( ID, "i");
+                let reg = await collection.find({DESCRIPCION: {$regex:dato}}).forEach(element => {
+                    arrayCollections.push(element)
+                 }); 
+                 res.status(200).send(arrayCollections);
+             }
+
+         }
+        
 }
 
 
@@ -1184,6 +1218,7 @@ module.exports = {
 
     renametCollectionsInventarios,
     deleteCollectionsInventarios,
+    remplazarInfo,
 
     getProductoEan
 }

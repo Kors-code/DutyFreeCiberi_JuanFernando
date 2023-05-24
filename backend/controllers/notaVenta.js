@@ -35,6 +35,9 @@ function saveNotaVenta(req, res){
                 notaVenta.trm=params.trm;
                 notaVenta.mediosPago=params.mediosPago;
                 notaVenta.productos=params.productos;
+                notaVenta.descuento= params.descuento;
+                notaVenta.trm_euro= params.trm_euro;
+                notaVenta.folio = params.folio;
                 
                 
                 notaVenta.save((err, result) => {
@@ -72,6 +75,79 @@ function getNotaVentaUser(req, res){
     });
 }
 
+function getNotaVentaActivaUser(req, res){
+
+    var Id = req.params.id;
+    // console.log(OperacionId);
+    NotaVenta.find({"usuario._id":Id, estado:'Activa'}, (err, response) => {
+       if(err){
+            res.status(500).send({message: 'Error al consultar listado'});
+        }else {
+            if(!response){
+                res.status(404).send({message: 'No se ha encontrado el listdo'});
+            }else {
+                res.status(200).send(response);
+
+                }
+            }
+    });
+}
+
+function getNotaVentaOperacion(req, res){
+
+    var Id = req.params.id;
+    // console.log(OperacionId);
+    NotaVenta.find({operacion:Id}, (err, response) => {
+       if(err){
+            res.status(500).send({message: 'Error al consultar listado'});
+        }else {
+            if(!response){
+                res.status(404).send({message: 'No se ha encontrado el listdo'});
+            }else {
+                res.status(200).send(response);
+
+                }
+            }
+    });
+}
+
+function getNotaVentaActivasOperacion(req, res){
+    var Id = req.params.id;
+    NotaVenta.find({operacion:Id, estado:'Activa'}, (err, response) => {
+       if(err){
+            res.status(500).send({message: 'Error al consultar listado'});
+        }else {
+            if(!response){
+                res.status(404).send({message: 'No se ha encontrado el listdo'});
+            }else {
+                res.status(200).send(response);
+
+                }
+            }
+    });
+}
+
+function totalVentasPeriodo(req, res){
+
+    var fecha_final = new Date(req.body.fecha_final); 
+    var fecha_inicial = new Date(req.body.fecha_inicial);
+
+    NotaVenta.find( { 
+        created_at: {$gte: fecha_inicial, $lte : fecha_final},
+    }, (err, response) => {
+       if(err){
+            res.status(500).send({message: 'Error al consultar listado'});
+        }else {
+            if(!response){
+                res.status(404).send({message: 'No se ha encontrado el listdo'});
+            }else {
+                res.status(200).send(response);
+
+                }
+            }
+    });
+}
+
 function deleteCuadre(req, res){
     var Id = req.params.id;
     console.log(Id);
@@ -88,26 +164,31 @@ function deleteCuadre(req, res){
     });
 }
 
-function updateCuadre(req, res){
-var Id = req.body._id;
-var update = req.body;
+function updateNotaVenta(req, res){
+    var Id = req.body._id;
+    var update = req.body;
 
-Cuadre.findByIdAndUpdate(Id, update, (err, consecutivo)=>{
-    if(err){
-        res.status(500).send({message: 'Error al actualizar el Electronica'});
-    }else{
-        if(!consecutivo){
-           res.status(404).send({message: 'No se ha podido Actualizar el Electronica'}); 
+    NotaVenta.findByIdAndUpdate(Id, update, (err, consecutivo)=>{
+        if(err){
+            res.status(500).send({message: 'Error al actualizar el Electronica'});
         }else{
-            res.status(200).send(consecutivo);
+            if(!consecutivo){
+            res.status(404).send({message: 'No se ha podido Actualizar el Electronica'}); 
+            }else{
+                res.status(200).send(consecutivo);
+                }
             }
-        }
-});
+    });
 }
+
 
 
 module.exports = {
     saveNotaVenta,
-    getNotaVentaUser
-
+    getNotaVentaUser,
+    getNotaVentaOperacion,
+    updateNotaVenta,
+    totalVentasPeriodo,
+    getNotaVentaActivasOperacion,
+    getNotaVentaActivaUser
 }

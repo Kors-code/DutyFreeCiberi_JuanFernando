@@ -8,6 +8,7 @@ var Schema = Schema({
     consecutivo:Number,
     prefix:String,
     estado:String,
+    folio:String,
     tienda:String,
     operacion:String,
     resolucion:String,
@@ -19,6 +20,8 @@ var Schema = Schema({
     info:String,
     total:Number,
     trm:Number,
+    descuento:Number,
+    trm_euro:Number,
     mediosPago:Schema.Types.Mixed,
     productos:Schema.Types.Mixed,
 

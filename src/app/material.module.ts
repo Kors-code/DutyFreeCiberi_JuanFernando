@@ -8,7 +8,7 @@ import {MatButtonToggleModule} from '@angular/material/button-toggle';
 import {MatCardModule} from '@angular/material/card';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatChipsModule} from '@angular/material/chips';
-import {MatCommonModule} from '@angular/material/core';
+import {MatCommonModule, MatNativeDateModule} from '@angular/material/core';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import {MatTreeModule} from '@angular/material/tree';
 import {MatDatepickerModule} from '@angular/material/datepicker';
@@ -73,7 +73,7 @@ import {MatTooltipModule} from '@angular/material/tooltip';
     MatTabsModule,
     MatToolbarModule,
     MatTooltipModule,
-    // MatNativeDateModule,
+    MatNativeDateModule,
     ScrollingModule,
     MatTreeModule,
     // MaterialFileInputModule,

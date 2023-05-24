@@ -28,6 +28,7 @@ export class DataOperacion {
         public address: string = '',
         public phone: string = '',
         public email: string = '',
+        public trm_euro: number = 0,
     ){}
 }
 

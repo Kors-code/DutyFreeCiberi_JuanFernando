@@ -41,6 +41,10 @@ export class posComponent implements OnInit {
   notaVenta:NotaVenta
   notasVentas:NotaVenta[]=[];
   trm=0;
+  trm_euro=0;
+  fechaInicialInfo: any;
+  fechaFinalInfo: any;
+  getfechaSRcalendar:boolean = false;
   constructor( public dialog: MatDialog, @Inject(DOCUMENT) doc: any,
               public _infoService:InfoService,
               public _socketService:SocketIOService,
@@ -57,11 +61,14 @@ export class posComponent implements OnInit {
       this.trmApi =  new TrmApi("aEOKmLbbPROhCr6iDiieAGCqt");
       this.trmApi
         .latest()
-        .then((data:any) =>  console.log(this.trm =  data.valor))
-        .catch((error:any) => console.log(error));
+        .then((data:any) => {
+          // // console.log(data)
+          this.trm = Math.round(data.valor); 
+        } )
+        .catch((error:any) => error);
 
         this.pOperacion=_userService.getPredetermidaOperacion();
-        console.log(this.pOperacion)
+        // console.log(this.identity)
     }
 
   ngOnInit(): void {
@@ -69,32 +76,69 @@ export class posComponent implements OnInit {
     this.date = new Date();
     this.getConfig();
     this.getNotasVentaUser();
+
+    // this.getTRM();
     // this._mongoService.main();
   }
 
   nuevaNota(){
     this.fadeDiv='detalle';
-    this.notaVenta = new NotaVenta()
+    this.notaVenta = new NotaVenta();
+    // console.log(this.notaVenta)
+    this.trm_euro = this.config.dataOperacion.trm_euro;
   }
 
   listado(){
     this.fadeDiv='listado';
-    this.notaVenta = new NotaVenta()
+    this.notaVenta = new NotaVenta();
+    this.trm_euro = this.config.dataOperacion.trm_euro;
   }
 
+getTRM(){
+  this._infoService.geTRM().subscribe(
+    res=>{
+      // console.log(res)
+    }
+  )
+}
 
+getMonitoreoPersonalizado(){
+
+  var month = this.fechaFinalInfo.getMonth() + 1;
+  var day = this.fechaFinalInfo.getDate();
+  var year = this.fechaFinalInfo.getFullYear();
+  var fecha_final = new Date(year + "." + month + "." + day + "." + "23" + ":" + "59");
+  this.getVentasPeriodo(this.fechaInicialInfo, fecha_final);
+}
+
+
+getVentasPeriodo(feha_inicial:any, fecha_final:any) {
+  let pet = { fecha_inicial:feha_inicial, fecha_final:fecha_final }
+  
+  this._infoService.getNotasVentasPeriodo(pet).subscribe(
+    res=>{
+      // console.log(res)
+      this.notasVentas = res;
+        this.fadeDiv='listado';
+        this.notaVenta = new NotaVenta();
+        this.dowloadVentas();
+    }
+  )
+
+}
 
   getConfig(){
-    console.log('cobfig')
+    // console.log('cobfig')
     this._infoService.getConfig(this.pOperacion._id).subscribe(
       res=>{
-        console.log(res)
+        // console.log(res)
         if(res.length != 0){
           this.config = res[0];
+          this.trm_euro = this.config.dataOperacion.trm_euro;
         }
        
       },err=>{
-        console.log(err)
+        // console.log(err)
       }
     )
   }
@@ -106,14 +150,83 @@ export class posComponent implements OnInit {
         this.notasVentas = res;
         this.fadeDiv='listado';
         this.notaVenta = new NotaVenta()
+        this.dowloadVentas();
       }
     )
   }
 
+  getNotasActivasVentaUser(){
+    this._infoService.getNotasVentaActivaUser(this.identity._id).subscribe(
+      res=>{
+        this.notasVentas = res;
+        this.fadeDiv='listado';
+        this.notaVenta = new NotaVenta()
+        this.dowloadVentas();
+      }
+    )
+  }
+
+
+  lineasNotaVentas:any[]=[];
+
+  dowloadVentas(){
+    this.lineasNotaVentas=[];
+    for (let i = 0; i < this.notasVentas.length; i++) {
+      const element = this.notasVentas[i];
+      for (let x = 0; x < element.productos.length; x++) {
+        const prod = element.productos[x];
+        let linea = {
+          fecha: new Date(element.created_at).toLocaleDateString(), 
+          documento: element.prefix + element.consecutivo,
+          estado: element.estado,  
+          folio_macro: element.folio,
+          tienda: element.tienda,
+          cajero: element.usuario.name,
+          vendedor: element.vendedor.name + ' ' + element.vendedor.codigo,
+          producto_codigo: prod.CODIGO,
+          producto_PLU: prod.PLU1,
+          producto: prod.DESCRIPCION,
+          valor_und: prod.RETAIL,
+          cantidad: prod.cantidad,
+          total:  prod.cantidad *prod.RETAIL,
+          cliente_name: element.cliente.Pasajero,
+          cliente_pax: element.cliente.pax
+        }
+        this.lineasNotaVentas.push(linea)
+        
+      }
+    }
+  }
+
+  getNotasVentaOperacion(){
+    this._infoService.getNotasVentaOperacion(this.pOperacion._id).subscribe(
+      res=>{
+        this.notasVentas = res;
+        this.fadeDiv='listado';
+        this.notaVenta = new NotaVenta();
+        this.dowloadVentas();
+      }
+    )
+  }
+
+  getNotasVentaActivasOperacion(){
+    this._infoService.getNotasVentaActivaOperacion(this.pOperacion._id).subscribe(
+      res=>{
+        this.notasVentas = res;
+        this.fadeDiv='listado';
+        this.notaVenta = new NotaVenta();
+        this.dowloadVentas();
+      }
+    )
+  }
+  
+
   pasNota(item:any){
-    console.log(item)
+    // console.log(item)
     this.notaVenta=item
     this.fadeDiv='detalle';
+    this.trm = item.trm
+    this.trm_euro = item.trm_euro
   }
 
   openSnackBar(message: string, action: string = 'Ok') {
@@ -124,12 +237,12 @@ export class posComponent implements OnInit {
 
   openDialogClientes(){
     let dialogRef = this.dialog.open(DialogClienteDetail,{
-      data: {info:' hola'}
+      data: {cliente:this.notaVenta.cliente, _id:this.notaVenta._id}
     });
     dialogRef.afterClosed().subscribe(result => {
       if(result){
         this.notaVenta.cliente = result
-        console.log( this.notaVenta)
+        // console.log( this.notaVenta)
       }
     })
 
@@ -137,27 +250,42 @@ export class posComponent implements OnInit {
 
   openDialogMediosPagos(){
     let dialogRef = this.dialog.open(DialogMediosPagoDetail,{
-      data: {info:' hola'}
+      data: {total:this.notaVenta.total, trm:this.trm, trm_euro:this.trm_euro,medioPago:this.notaVenta.mediosPago}
     });
     dialogRef.afterClosed().subscribe(result => {
-    
+      if(result){
+        this.notaVenta.mediosPago = result
+        // console.log(this.notaVenta)
+      }
     })
 
   }
 
   search=""
+  productSearch:any=[]
   getProducto(item:string){
     this._infoService.getProducto(item).subscribe(
       res=>{
-        console.log(res)
+        // console.log(res)
         if(res.length != 0){
           res[0].cantidad = 1
-          this.notaVenta.productos.unshift(res[0])
+          if(res.length == 1){
+            this.notaVenta.productos.unshift(res[0])
+          }else{
+            this.productSearch = res
+          }
           this.totalizar();
           this.search=""
         }
       }
     )
+  }
+
+
+  pasProducto(item:any){
+
+    this.notaVenta.productos.unshift(item);
+    this. productSearch=[];
   }
 
   totalizar(){
@@ -174,13 +302,23 @@ export class posComponent implements OnInit {
     this.notaVenta.operacion = this.pOperacion._id;
     this.notaVenta.usuario= this.identity;
     this.notaVenta.trm = this.trm;
-
-    console.log(this.notaVenta)
+    this.notaVenta.trm_euro =  this.trm_euro;
+    // console.log(this.notaVenta)
     this._infoService.agregarNotaVenta(this.notaVenta).subscribe(
       res=>{
-        console.log(res)
-        this.notaVenta = new NotaVenta();
-        this.printNotaVenta()
+        // console.log(res)
+        // this.notaVenta = res;
+        this.printNotaVenta();
+        this.getNotasActivasVentaUser();
+      }
+    )
+  }
+
+  updateNotaVenta(){
+    this.notaVenta.estado="Cerrada"
+    this._infoService.updateNotaVenta(this.notaVenta).subscribe(
+      res=>{
+        // console.log(res)
       }
     )
   }
@@ -207,5 +345,153 @@ export class posComponent implements OnInit {
     popupWin.document.close();
   }
 
+
+  d:Date= new Date();
+  getfechaSR(c:string){
+    // console.log(c)
+    this.d = new Date();
+    var month = this.d.getMonth() + 1;
+    var day = this.d.getDate();
+    var year = this.d.getFullYear();
+    var hour = this.d.getHours();
+    var min = this.d.getMinutes();
+    // //(month)
+    // //(day)
+    // //(year)
+    
+    if (c == "h") {
+      var feha_inicial = new Date(year + "." + month + "." + day);
+      var fecha_final = new Date(
+        year + "." + month + "." + day + "." + "23" + ":" + "59"
+      );
+      this.getVentasPeriodo(feha_inicial, fecha_final);
+    }
+    if (c == "s") {
+      var feha_inicial = new Date(year + "." + month + "." + day);
+      var fecha_final = new Date(year + "." + month + "." + day + "." + "23" + ":" + "59");
+      this.getVentasPeriodo(feha_inicial, fecha_final);
+    }
+    if (c == "a") {
+      var feha_inicial = new Date(year + "." + month + "." + (day - 1));
+      var fecha_final = new Date(year + "." + month + "." + (day - 1) + "." + "23" + ":" + "59");
+      this.getVentasPeriodo(feha_inicial, fecha_final);
+    }
+    if (c == "m") {
+      var feha_inicial = new Date(year + "." + month + "." + "01");
+      var fecha_final = new Date(year + "." + month + "." + day + "." + "23" + ":" + "59");
+      this.getVentasPeriodo(feha_inicial, fecha_final);
+    }
+    if (c == "y") {
+      var feha_inicial = new Date(year + "." + "01" + "." + "01");
+      var fecha_final = new Date(year + "." + month + "." + day + "." + "23" + ":" + "59");
+      this.getVentasPeriodo(feha_inicial, fecha_final);
+    }
+
+    // this.fechaInicialInfo = feha_inicial;
+    // this.fechaFinalInfo = fecha_final;
+    // this.setDatosGraficoVentas();
+  }
+
+  downloadFile(data: any, title:string) {
+    const replacer = (key:any, value:any) => value === null ? '' : value; // specify how you want to handle null values here
+    const header = Object.keys(data[0]);
+    let csv = data.map((row: { [x: string]: any; }) => header.map(fieldName => JSON.stringify(row[fieldName], replacer)).join(','));
+    csv.unshift(header.join(','));
+    let csvArray = csv.join('\r\n');
+  
+    var a = document.createElement('a');
+    var blob = new Blob([csvArray], {type: 'text/csv' }),
+    url = window.URL.createObjectURL(blob);
+  
+    a.href = url;
+    a.download = title+".csv";
+    a.click();
+    window.URL.revokeObjectURL(url);
+    a.remove();
+  }
+
+  data:any[] = []; 
+
+  onFileChange(evt: any) {
+    const target : DataTransfer =  <DataTransfer>(evt.target);
+    
+    if (target.files.length !== 1) throw new Error('Cannot use multiple files');
+
+    const reader: FileReader = new FileReader();
+
+    reader.onload = (e: any) => {
+      const bstr: string = e.target.result;
+
+      const wb: XLSX.WorkBook = XLSX.read(bstr, { type: 'binary' });
+
+      const wsname : string = wb.SheetNames[0];
+      const ws: XLSX.WorkSheet = wb.Sheets[wsname];
+      this.data = (XLSX.utils.sheet_to_json(ws, { header: 1 }));
+
+      ////// console.log('Data',this.data);
+      // ////// ////// console.log('Costumer',this.dataCostumer);
+      this.convertirJson()
+
+    };
+
+    reader.readAsBinaryString(target.files[0]);
+
+  }
+
+  registros:any = [];
+  convertirJson(){
+    this.log= true;
+    let keys = Object.values(this.data[0])
+    for(var i = 1;i < this.data.length; i++){
+      let arr = this.data[i];
+      let par = Object.values(arr);
+      let reg = []
+      for (let i = 0; i < keys.length; i++) {
+        let obje = [keys[i], par[i] || '' ]
+        reg.push(obje)
+      }
+      this.registros.push(Object.fromEntries(reg))
+    }
+
+    this.log= false;
+   
+    // console.log(this.registros)
+    let lotes = 200;
+   
+  }
+
+  AgregarProductos(){
+    this.log = true
+    this._infoService.remplazarInfo(this.registros, 'Productos').subscribe(
+      res=>{
+        this.registros = [];
+        this.data=[];
+
+        this.log = false
+        let data = {titulo: 'Registro Exitoso ', info:'Se Registraron ' + res.insertedCount + ' de ' + this.registros.length, type: 'Confirm', icon:'done_all'}
+        let dialogRef = this.dialog.open(DialogConfirm,{
+          data: data
+        });
+
+       
+
+        // console.log(res)
+    })
+  }
+
+  productos(){
+    this.fadeDiv= 'productos'
+  }
+
+  cancelar(){
+    this.fadeDiv= 'listado',
+    this.registros = [];
+    this.data=[];
+  }
+
+  deleteProducto(i:number){
+    this.notaVenta.productos.splice(i,1);
+    this.totalizar();
+  }
   
 }

@@ -9,7 +9,7 @@
     <mat-expansion-panel>
       <mat-expansion-panel-header>
         <mat-panel-title>
-          <mat-icon>cell_tower</mat-icon>  Siigo API
+          <mat-icon>cell_tower</mat-icon>  Siigo API | Configuracion Operacion
         </mat-panel-title>
       
       </mat-expansion-panel-header>
@@ -24,15 +24,16 @@
           </mat-form-field>
       </mat-card-content>
       <mat-card-content>
- <h3> Operacion</h3>
+        <h3> Operacion</h3>
+        <mat-form-field style="width: 400px; text-align: center;">
+          <input matInput placeholder="TRM EURO" type="number"  name="trm_euro" [(ngModel)]="config.dataOperacion.trm_euro" required>
+        </mat-form-field>
         <mat-form-field style="text-align: center;">
           <input matInput placeholder="C.C/ NIT" type="number"  name="facturacioncodigo" [(ngModel)]="config.dataOperacion.identification_number" required>
         </mat-form-field>
-
         <mat-form-field style="width: 100px; text-align: center;">
           <input matInput placeholder="Digto Verificacion" type="number"  name="facturacioncodigo" [(ngModel)]="config.dataOperacion.dv" required>
         </mat-form-field>
-
         <mat-form-field style="width: 100%; text-align: center;">
           <input matInput placeholder="Nombre Juridico" type="text" style="width: 100%;"  name="business_name" [(ngModel)]="config.dataOperacion.business_name" required>
         </mat-form-field>
