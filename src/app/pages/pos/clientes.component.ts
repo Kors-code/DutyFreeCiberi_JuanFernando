@@ -35,7 +35,7 @@ import { UserService } from 'src/app/services/user.service';
     }
 
     saveScan(){
-      // console.log(this.scan)
+      console.log(this.scan)
       this.cliente.scan = this.scan;
     }
   

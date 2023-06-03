@@ -62,8 +62,10 @@ export class posComponent implements OnInit {
       this.trmApi
         .latest()
         .then((data:any) => {
-          // // console.log(data)
-          this.trm = Math.round(data.valor); 
+          console.log(data)
+
+          
+          // this.trm = data.valor; 
         } )
         .catch((error:any) => error);
 
@@ -92,6 +94,7 @@ export class posComponent implements OnInit {
     this.fadeDiv='listado';
     this.notaVenta = new NotaVenta();
     this.trm_euro = this.config.dataOperacion.trm_euro;
+    this.trm = this.config.dataOperacion.trm_usd;
   }
 
 getTRM(){
@@ -135,6 +138,7 @@ getVentasPeriodo(feha_inicial:any, fecha_final:any) {
         if(res.length != 0){
           this.config = res[0];
           this.trm_euro = this.config.dataOperacion.trm_euro;
+          this.trm = this.config.dataOperacion.trm_usd;
         }
        
       },err=>{
@@ -166,6 +170,24 @@ getVentasPeriodo(feha_inicial:any, fecha_final:any) {
     )
   }
 
+  updateTRM(){
+
+    this.config.dataOperacion.trm_euro = this.trm_euro;
+    this.config.dataOperacion.trm_usd = this.trm;
+
+    console.log(this.config.dataOperacion)
+
+    this._infoService.updateTrmOperacion(this.config).subscribe(
+      res=>{
+        console.log(res);
+        let data = {titulo: 'Registro Exitoso ', info:'Se Actualizaron las Divisas ', type: 'Confirm', icon:'done_all'}
+        let dialogRef = this.dialog.open(DialogConfirm,{
+          data: data
+        });
+      }
+    )
+  }
+
 
   lineasNotaVentas:any[]=[];
 
@@ -190,10 +212,26 @@ getVentasPeriodo(feha_inicial:any, fecha_final:any) {
           cantidad: prod.cantidad,
           total:  prod.cantidad *prod.RETAIL,
           cliente_name: element.cliente.Pasajero,
-          cliente_pax: element.cliente.pax
+          cliente_pax: element.cliente.pax,
+          cliente_STEB_BAG: element.cliente.STEB_BAG,
+          cliente_TipoIdentificacion: element.cliente.TipoIdentificacion,
+          cliente_NIdentificacion: element.cliente.NIdentificacion,
+          cliente_Pasajero: element.cliente.Pasajero,
+          cliente_Direccion: element.cliente.Direccion,
+          cliente_Origen: element.cliente.Origen,
+          cliente_Aerolinea: element.cliente.Aerolinea,
+          cliente_Asiento: element.cliente.Asiento,
+          cliente_Fecha: element.cliente.Fecha,
+          cliente_Correo: element.cliente.Correo,
+          cliente_Destino: element.cliente.Destino,
+          cliente_Vuelo: element.cliente.Vuelo,
+          cliente_Nacionalidad: element.cliente.Nacionalidad,
+          cliente_Sexo: element.cliente.Sexo,
+          cliente_scan: element.cliente.scan,
         }
         this.lineasNotaVentas.push(linea)
         
+
       }
     }
   }
@@ -268,9 +306,13 @@ getVentasPeriodo(feha_inicial:any, fecha_final:any) {
       res=>{
         // console.log(res)
         if(res.length != 0){
-          res[0].cantidad = 1
+          
           if(res.length == 1){
+            res[0].cantidad = 1;
+            res[0].descuento = 0;
+            res[0].val_descuento = 0;
             this.notaVenta.productos.unshift(res[0])
+            console.log(this.notaVenta.productos)
           }else{
             this.productSearch = res
           }
@@ -283,16 +325,30 @@ getVentasPeriodo(feha_inicial:any, fecha_final:any) {
 
 
   pasProducto(item:any){
-
+    item.cantidad = 1;
+    item.descuento = 0;
+    item.val_descuento = 0;
     this.notaVenta.productos.unshift(item);
     this. productSearch=[];
+    this.totalizar();
   }
 
   totalizar(){
-    this.notaVenta.total = 0
+    this.notaVenta.total = 0;
+    this.notaVenta.descuento = 0;
+
     for (let i = 0; i < this.notaVenta.productos.length; i++) {
       const element = this.notaVenta.productos[i];
-      this.notaVenta.total = this.notaVenta.total + (element.RETAIL * element.cantidad)
+
+      if(element.descuento != 0){
+        console.log(element)
+        element.val_descuento = element.RETAIL * (element.descuento / 100) * element.cantidad
+        this.notaVenta.descuento = this.notaVenta.descuento +  element.val_descuento;
+      }else{
+        element.val_descuento = 0;
+      }
+
+      this.notaVenta.total = this.notaVenta.total + ((element.RETAIL * element.cantidad) - element.val_descuento);
       
     }
   }
@@ -303,13 +359,19 @@ getVentasPeriodo(feha_inicial:any, fecha_final:any) {
     this.notaVenta.usuario= this.identity;
     this.notaVenta.trm = this.trm;
     this.notaVenta.trm_euro =  this.trm_euro;
+    this.log = true;
     // console.log(this.notaVenta)
     this._infoService.agregarNotaVenta(this.notaVenta).subscribe(
       res=>{
-        // console.log(res)
-        // this.notaVenta = res;
-        this.printNotaVenta();
-        this.getNotasActivasVentaUser();
+        
+        this.notaVenta = res;
+        
+        setTimeout(() => {
+          this.log = false;
+           this.printNotaVenta();
+        }, 1000);
+       
+        // this.getNotasActivasVentaUser();
       }
     )
   }

@@ -106,6 +106,32 @@ async function updateDataConfiguracion(req, res){
           });        
 }
 
+async function updateDataOperacionConfiguracion(req, res){
+    var params = req.body;
+    var coll = 'Config';
+   
+    //console.log('75 config '+ params._id)
+    const url = 'mongodb://localhost:27017';
+    const client = new MongoClient(url);
+    const dbName = 'DutyFree';
+   
+        await client.connect();
+        //console.log('Connected successfully to server');
+        const db = client.db(dbName);
+        const collection = await db.collection(coll);
+
+        collection.updateOne({_id:ObjectId(params._id)},{$set:{
+           
+            dataOperacion:params.dataOperacion,
+        }},{ upsert: false }, function(err,doc) {
+            if (err) { throw err; }
+            else { 
+                //console.log(doc)
+                client.close();
+                res.status(200).send(doc); }
+          });        
+}
+
 async function updateClaveEmpleadoConfiguracion(req, res){
     var params = req.body;
     var coll = 'Config';
@@ -1199,6 +1225,7 @@ module.exports = {
     agregarConfiguracion,
     getDataConfig,
     updateDataConfiguracion,
+    updateDataOperacionConfiguracion,
     updateClaveEmpleadoConfiguracion,
     updateDataVendedorCollection,
     agregarConteo,

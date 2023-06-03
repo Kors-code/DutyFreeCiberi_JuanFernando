@@ -363,6 +363,16 @@ export class InfoService {
                 params, {headers:headers})
     }
 
+    updateTrmOperacion(update:any){
+        let params = JSON.stringify(update);
+        let headers = new HttpHeaders({
+            'Content-Type': 'application/json',
+            'Authorization': this.getToken()
+        });
+        return this._http.put<response>(this.url +'config-trm/',
+                params, {headers:headers})
+    }
+
     getToken(){
         let token = localStorage.getItem('token');
         if(token != "undefined"){
@@ -556,7 +566,7 @@ agregarNotaVenta(register:any){
         'content-Type':'application/json',
         'Authorization': this.getToken()
     });
-    return this._http.post<agregar>(this.url+'nota-venta/', paramas, {headers:headers});
+    return this._http.post<any>(this.url+'nota-venta/', paramas, {headers:headers});
 }
 
 getNotasVentasPeriodo(register:any){

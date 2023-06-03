@@ -29,6 +29,7 @@ export class DataOperacion {
         public phone: string = '',
         public email: string = '',
         public trm_euro: number = 0,
+        public trm_usd: number = 0,
     ){}
 }
 

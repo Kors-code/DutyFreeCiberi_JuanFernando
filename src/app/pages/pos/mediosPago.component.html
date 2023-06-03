@@ -51,7 +51,7 @@
 </tr>
 <ng-template let-item let-i="index" ngFor [ngForOf]="mediosPago.formaPagos">
     <tr>
-        <td>{{item.FormaPago}}</td>
+        <td> <span style="margin-left: 20px;">{{item.FormaPago}}</span></td>
         <td>{{item.Moneda}}</td>
         <td>
             <button *ngIf="mediosPago.restante != 0 && item.Importe == 0" (click)="restante(item)" mat-stroked-button aria-label="Clear" color="accent" style="margin: 10px 10px;">
@@ -66,7 +66,7 @@
         
         <td style="text-align: right;">{{(mediosPago.restante * mediosPago.trm) / item.TipoCambio | number:'1.0-0'}}</td>
 
-        <td style="text-align: right;">{{item.TipoCambio | number:'1.0-2'}}</td>
+        <td style="text-align: right;"> <span style="margin-right: 20px;">{{item.TipoCambio | number:'1.0-2'}}</span></td>
     </tr>
 
 </ng-template>

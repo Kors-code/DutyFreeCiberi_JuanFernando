@@ -26,6 +26,9 @@
       <mat-card-content>
         <h3> Operacion</h3>
         <mat-form-field style="width: 400px; text-align: center;">
+          <input matInput placeholder="TRM USD" type="number"  name="trm_usd" [(ngModel)]="config.dataOperacion.trm_usd" required>
+        </mat-form-field>
+        <mat-form-field style="width: 400px; text-align: center;">
           <input matInput placeholder="TRM EURO" type="number"  name="trm_euro" [(ngModel)]="config.dataOperacion.trm_euro" required>
         </mat-form-field>
         <mat-form-field style="text-align: center;">

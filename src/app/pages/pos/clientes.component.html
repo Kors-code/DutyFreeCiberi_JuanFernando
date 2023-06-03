@@ -7,7 +7,7 @@
         Pase de Abordar 
     </h1>
     <mat-form-field *ngIf="!data._id" appearance="fill" style="text-align: center; font-size: 1em; margin-right: 20px; width: 60%;">
-        <input matInput placeholder="SCAN" type="number" #scanEle name="scan" [(ngModel)]="scan" (change)="saveScan()">
+        <input matInput placeholder="SCAN" #scanEle name="scan" [(ngModel)]="scan" (change)="saveScan()">
         <button  matSuffix mat-icon-button aria-label="Clear" (change)="saveScan()">
           <mat-icon>qr_code_scanner</mat-icon>
         </button>

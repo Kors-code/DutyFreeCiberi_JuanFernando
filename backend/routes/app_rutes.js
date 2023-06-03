@@ -102,6 +102,7 @@ api.get('/configuracion/:id', md_auth.ensureAuth,  infoController.getDataConfig)
 
 api.put('/configuracion', md_auth.ensureAuth,  infoController.updateDataConfiguracion);
 api.put('/config-clave-empleado', md_auth.ensureAuth,  infoController.updateClaveEmpleadoConfiguracion);
+api.put('/config-trm', md_auth.ensureAuth,  infoController.updateDataOperacionConfiguracion);
 
 
 // INVENTARIOS 

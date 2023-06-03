@@ -6,19 +6,33 @@
           <mat-icon>search</mat-icon> CONSULTAR</button>
 
         <button  mat-stroked-button aria-label="Clear" (click)="nuevaNota()" color="accent" style="margin: 10px 10px;">
-          <mat-icon>add</mat-icon>NUEVA VENTA
+          <mat-icon>add</mat-icon> NUEVA VENTA
         </button>
 
         <button *ngIf="identity.rol == 'Admin'"  mat-stroked-button aria-label="Clear" (click)="productos()" color="accent" style="margin: 10px 10px;">
-          <mat-icon>storefront</mat-icon>ACTUALIZAR PRODUCTOS
+          <mat-icon>storefront</mat-icon> ACTUALIZAR INFORMACION
         </button>
       
       </h3>
       <mat-card-content style="text-align: center;" *ngIf="fadeDiv == 'productos'">
         <button  (click)="cancelar()" mat-stroked-button aria-label="Clear" color="scondary" style="margin: 10px 10px;">
           <mat-icon>arrow_back</mat-icon> Regresar
-      </button>
-        <h3>Agregar Productos</h3>
+        </button>
+        <div>
+          <mat-form-field style="width: 400px; text-align: center;">
+            <input matInput placeholder="TRM USD" type="number"  name="trm_usd" [(ngModel)]="trm" required>
+          </mat-form-field>
+          <mat-form-field style="width: 400px; text-align: center;">
+            <input matInput placeholder="TRM EURO" type="number"  name="trm_euro" [(ngModel)]="trm_euro" required>
+          </mat-form-field>
+          <button  (click)="updateTRM()" mat-stroked-button aria-label="Clear" color="scondary" style="margin: 10px 10px;">
+            <mat-icon>save</mat-icon> GUARDAR
+          </button>
+        </div>
+
+
+  
+        <h3>Actualizar Productos</h3>
         <input type="file" multiple="false" (change)="onFileChange($event)" style="font-size: 1.3em; margin-left: 10px; background-color: orange;color:white;">
        
         <button *ngIf="registros.length != 0" [disabled]="" mat-raised-button aria-label="Clear" style="color: white; background-color: orange; margin-left: 20px;" (click)="AgregarProductos()">
@@ -77,7 +91,7 @@
         <table  style="margin: 0 auto;  width: 80%; font-size: 1.4em;" class="mat-elevation-z8">
           <tr>
             <th>FECHA</th>
-            <th>FOLIO</th>
+            <th>N° DOC.</th>
             <th>TIENDA</th>
             <th>CAJERO</th>
             <th>ESTADO</th>
@@ -87,13 +101,13 @@
           </tr>
           <ng-template let-item let-i="index" ngFor [ngForOf]="notasVentas">
             <tr (click)="pasNota(item)" class="over">
-              <td>{{item.created_at | date:'medium'}}</td>
+              <td> <span style="margin-left: 20px;">{{item.created_at | date:'medium'}}</span></td>
               <td> {{item.prefix }} {{item.consecutivo}}</td>
               <td>  {{item.tienda}} </td>
               <td> {{item.usuario.name}}</td>
               <td > {{item.estado}}</td>
               <td style="text-align: right;"> {{item.total | number:'1.0-2'}}</td>
-              <td> {{item.folio}}</td>
+              <td style="text-align: center;"> {{item.folio}}</td>
             </tr>
 
           </ng-template>
@@ -101,7 +115,7 @@
       </div>
 
       <div *ngIf="fadeDiv == 'detalle'">
-        <table style="margin: 0 auto;  width: 80%; font-size: 1.1em;" class="mat-elevation-z8">
+        <table style="margin: 0 auto;  width: 95%; font-size: 1.1em;" class="mat-elevation-z8">
           <tr>
             <th></th>
             <th></th>
@@ -113,8 +127,6 @@
                 <mat-icon>print</mat-icon> IMPRIMIR
               </button>
             </th>
-         
-         
           </tr>
           <tr>
             <td colspan="7">
@@ -135,8 +147,29 @@
           <tr>
             <th style="text-align: left;"> <span style="margin-left: 10px;"> FOLIO</span> </th>
             <th style="font-size: 1.5em;">{{notaVenta.prefix}} {{notaVenta.consecutivo}}</th>
-            <th style="font-size: 1.5em; text-align: right;">TOTAL</th>
-            <th style="font-size: 1.5em;"> {{notaVenta.total}}</th>
+            <th style="font-size: 1.2em; text-align: right; display: flex; flex-direction: column;">
+              <span>PARCIAL</span> 
+              <span style="color: green;">DESCUENTO</span> 
+              <span>TOTAL</span> 
+              <span style="color: tomato;" *ngIf="notaVenta.mediosPago.cambio">CAMBIO:</span>
+            </th>
+
+            <th style="font-size: 1.2em; text-align: right"> 
+              <span style="display: flex; flex-direction: column; margin-right: 30px;">
+                <span>
+                  {{notaVenta.total + notaVenta.descuento| number:'2.0-2' }} USD 
+                </span>
+                <span style="color: green;">
+                 - {{notaVenta.descuento | number:'2.0-2' }} USD 
+                </span>
+                  <span>
+                    {{notaVenta.total | number:'2.0-2' }} USD
+                  </span>
+                  <span style="color: tomato;" *ngIf="notaVenta.mediosPago.cambio"> {{notaVenta.mediosPago.cambio | number:'2.0-2' }} USD  | {{ (notaVenta.mediosPago.cambio * notaVenta.mediosPago.trm) | number:'1.0-0' }} COP</span>
+              </span>
+            
+             
+            </th>
             
           </tr>
           <tr>
@@ -257,6 +290,7 @@
             <th>
               VAL. UND
             </th>
+            <th>% DESC.</th>
             <th>
               TOTAL
             </th>
@@ -270,20 +304,25 @@
                 {{item.DESCRIPCION}}
               </td>
               <td style="text-align: center;">
-                <input  [disabled]="notaVenta._id != ''" (change)="totalizar()" placeholder="" style="font-size: 1.2em; text-align: center; border-radius: 10px; margin: 10px 10px;"  [(ngModel)]="item.cantidad">
+                <input  [disabled]="notaVenta._id != '' || notaVenta.mediosPago.total" (change)="totalizar()" placeholder="" style="font-size: 1.2em; text-align: center; border-radius: 10px; margin: 10px 10px;"  [(ngModel)]="item.cantidad">
               </td>
-              <td style="text-align: right;">
-                {{item.RETAIL}}
-              </td>
-              <td style="text-align: right;">
-                {{item.RETAIL * item.cantidad }}
-              </td>
+              <th style="text-align: center;">
+                {{item.RETAIL | number:'1.0-2'}} 
+              </th>
               <td>
-                <button *ngIf="notaVenta._id != ''" mat-stroked-button aria-label="Clear" color="secondary" (click)="deleteProducto(i)">
+                <input type="number" [disabled]="notaVenta._id != '' || notaVenta.mediosPago.total" (change)="totalizar()" placeholder="" style="font-size: 1.2em; text-align: center; border-radius: 10px; margin: 10px 10px; width: 100px;"  [(ngModel)]="item.descuento">
+                <strong style="color: tomato;" *ngIf="item.val_descuento != 0"> - {{item.val_descuento | number:'1.0-2'}} USD </strong>
+              </td>
+              <th style="text-align: center;">
+                {{(item.RETAIL * item.cantidad) - item.val_descuento | number:'1.0-2'}}
+              </th>
+              <td>
+                <button *ngIf="notaVenta._id == ''" [disabled]="notaVenta.mediosPago.total"  mat-stroked-button aria-label="Clear" color="secondary" (click)="deleteProducto(i)">
                   <mat-icon  style="color: tomato;">delete</mat-icon> 
                 </button>
               </td>
             </tr>
+
     
           </ng-template>
          
@@ -370,12 +409,12 @@
       </table>
       <table style="margin: 0 auto; font-size: 0.7em; width: 100%; border-top: 1px solid black;">
         <tr>
-          <td colspan="2">TRM USD</td> <td style="text-align: right;">{{notaVenta.trm}}</td>
-          <td colspan="2" style="border: 1px solid black;">VALOR BRUTO</td><td style="text-align: right; font-size: 1.5em;border: 1px solid black;">{{notaVenta.total | number:'1.0-2'}}</td>
+          <td colspan="2">TRM USD</td> <td style="text-align: right;">{{notaVenta.trm | number:'1.0-0'}}</td>
+          <td colspan="2" style="border: 1px solid black;"><strong>VALOR BRUTO</strong> </td><td style="text-align: right; font-size: 1.2em;border: 1px solid black;">{{notaVenta.total + notaVenta.descuento | number:'1.0-2'}}</td>
         </tr>
         <tr>
-          <td colspan="2">TRM EUR</td><td style="text-align: right;">{{notaVenta.trm_euro}}</td>
-          <td colspan="2">DESCUENTO</td><td style="text-align: right;">{{notaVenta.descuento}}</td>
+          <td colspan="2">TRM EUR</td><td style="text-align: right;">{{notaVenta.trm_euro | number:'1.0-0'}}</td>
+          <td colspan="2">DESCUENTO</td><td style="text-align: right;"> - {{notaVenta.descuento | number:'1.0-0'}}</td>
         </tr>
         <tr>
           
@@ -383,7 +422,7 @@
            
 
           </td>
-          <td colspan="2">TOTAL DLL</td><td style="text-align: right;">{{notaVenta.total | number:'1.0-2'}}</td>
+          <td colspan="2"  style="border: 1px solid black;"> <strong>TOTAL USD</strong> </td><td style="text-align: right; border: 1px solid black;"> <strong>{{notaVenta.total | number:'1.0-2'}}</strong></td>
         </tr>
         <tr>
           <td colspan="3"> Forma Pago</td>
@@ -392,14 +431,14 @@
         <tr>
           <td colspan="3">
             <ng-template let-item let-i="index" ngFor [ngForOf]="notaVenta.mediosPago.formaPagos">
-               <span *ngIf="item.Importe != 0" style="width: 100%;"> | {{item.FormaPago}}  {{item.Importe}}</span>
+               <span *ngIf="item.Importe != 0" style="width: 100%;"> | {{item.FormaPago}}  {{item.Importe | number:'1.0-2'}}</span>
             </ng-template> 
           </td>
           <td colspan="2">TOTAL EUR</td><td style="text-align: right;">{{(notaVenta.total * notaVenta.trm) / notaVenta.trm_euro | number:'1.0-2'}}</td>
         </tr>
         <tr>
           <td colspan="3"></td>
-          <td colspan="2">CAMBIO</td><td style="text-align: right;"> {{notaVenta.mediosPago.cambio | number:'1.0-2'}}</td>
+          <td colspan="2">CAMBIO</td><td style="text-align: right;"> {{notaVenta.mediosPago.cambio | number:'1.0-2'}} USD</td>
         </tr>
       </table>
 
