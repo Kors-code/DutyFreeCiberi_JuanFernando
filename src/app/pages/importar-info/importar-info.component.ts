@@ -471,13 +471,15 @@ export class ImportarInfoComponent implements OnInit {
         let posTienda = this.config.tiendas.map(function(e: { tienda: any; }) { return e.tienda; }).indexOf(registros[i]['PDV']);
         let tienda :any
 
-        // ////console.log('tienda en configuracion',posTienda)
+        console.log('tienda en configuracion',posTienda)
 
         if(posTienda != -1){
-          tienda = this.config.tiendas[posTienda].centro_costos;
+          tienda =this.config.tiendas[posTienda].centro_costos;
         }
 
-        ////console.log('tienda', tienda)
+        tienda= '676'
+
+        console.log('tienda', tienda)
 
         let dtaComprobante = {
           account:{
@@ -603,7 +605,7 @@ export class ImportarInfoComponent implements OnInit {
       iddoc:31800,
     }
 
-    //console.log(credenciales)
+    console.log(credenciales)
 
     this._siigoService.saveComprobantesSiigo(credenciales).subscribe(
       res=>{
@@ -633,7 +635,8 @@ export class ImportarInfoComponent implements OnInit {
         dialogRef.afterClosed().subscribe(result => {
 
         })
-        // ////console.log(err)
+        console.log(err)
+
       }
     )
 

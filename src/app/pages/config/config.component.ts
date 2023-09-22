@@ -33,7 +33,7 @@ consecutivos:Consecutivo[]=[];
 consecutivo:Consecutivo;
 
 
-Roles = ['Ventas', 'Skin', 'Lider', 'Gerente Ventas', 'Gerente']
+Roles = ['Ventas', 'Skin', 'Lider', 'Gerente Ventas', 'Gerente','Cajero']
   constructor(public dialog: MatDialog, @Inject(DOCUMENT) doc: any,
   public _infoService:InfoService,
   private _snackBar: MatSnackBar, public _userService:UserService) {

@@ -16,6 +16,7 @@ var Schema = Schema({
     usuario:Schema.Types.Mixed,
     cliente:Schema.Types.Mixed,
     vendedor:Schema.Types.Mixed,
+    cajero:Schema.Types.Mixed,
     tienda_id:String,
     info:String,
     total:Number,

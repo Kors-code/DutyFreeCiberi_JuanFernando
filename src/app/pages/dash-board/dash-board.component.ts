@@ -168,6 +168,8 @@ export class DashBoardComponent implements OnInit {
           //console.log(this.dataColl)
 
           this.dataColl.forEach((element: {
+            _id: any;
+            FOLIO: any;
             CODIGO_VENDEDOR: any; VENDEDOR: any; PDV: any; Importe: number; COP: number; CLASIFICACION: any; Clasi: any; 
           }) => {
             let cod = element.CODIGO_VENDEDOR;
@@ -175,9 +177,11 @@ export class DashBoardComponent implements OnInit {
             let pdv = this.presupuesto.tiendas.map(function(e:any) { return e.tienda; }).indexOf(PDV);
 
             // //console.log(pdv)
+            console.log(this.presupuesto.ventas)
+            console.log(element._id,  element.COP)
             this.presupuesto.ventas_usd = this.presupuesto.ventas_usd + element.Importe;
             this.presupuesto.ventas = this.presupuesto.ventas + element.COP;
-            // //console.log(PDV, pdv)
+            
             if(pdv != -1){
               // //console.log(this.presupuesto.tiendas[pdv].usd);
               this.presupuesto.tiendas[pdv].usd =  this.presupuesto.tiendas[pdv].usd + element.Importe;

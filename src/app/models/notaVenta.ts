@@ -12,6 +12,7 @@ export class NotaVenta {
         public usuario:any = [],
         public cliente:any = undefined,
         public vendedor:any = [],
+        public cajero:any = undefined,
         public tienda_id:string = "",
         public info:string = "",
         public total:number = 0,
@@ -21,7 +22,6 @@ export class NotaVenta {
         public trm_euro:number = 0,
         public mediosPago:any = [], 
         public productos:any=[],
-
 
         public created_at:Date = new Date,
         public update_at:Date = new Date,

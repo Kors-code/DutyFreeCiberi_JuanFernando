@@ -5,7 +5,7 @@ export var GLOBAL = {
     url_fact:'https://dian.ciberi.co/api/ubl2.1/',
     url: 'https://ciberi.co/api/',
     // url_socket: 'https://ciberi.co',
-    version:'1.4.0',
+    version:'1.4.3',
     company: 'ciberi.co'
 }
 

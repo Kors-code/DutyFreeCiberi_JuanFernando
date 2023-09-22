@@ -62,10 +62,8 @@ export class posComponent implements OnInit {
       this.trmApi
         .latest()
         .then((data:any) => {
-          console.log(data)
+          // console.log(data)
 
-          
-          // this.trm = data.valor; 
         } )
         .catch((error:any) => error);
 
@@ -175,7 +173,7 @@ getVentasPeriodo(feha_inicial:any, fecha_final:any) {
     this.config.dataOperacion.trm_euro = this.trm_euro;
     this.config.dataOperacion.trm_usd = this.trm;
 
-    console.log(this.config.dataOperacion)
+    // console.log(this.config.dataOperacion)
 
     this._infoService.updateTrmOperacion(this.config).subscribe(
       res=>{
@@ -195,6 +193,11 @@ getVentasPeriodo(feha_inicial:any, fecha_final:any) {
     this.lineasNotaVentas=[];
     for (let i = 0; i < this.notasVentas.length; i++) {
       const element = this.notasVentas[i];
+      let cajero = '';
+      if( element.cajero){
+        cajero = element.cajero.codigo + element.cajero.codigo;
+      }
+      
       for (let x = 0; x < element.productos.length; x++) {
         const prod = element.productos[x];
         let linea = {
@@ -203,7 +206,8 @@ getVentasPeriodo(feha_inicial:any, fecha_final:any) {
           estado: element.estado,  
           folio_macro: element.folio,
           tienda: element.tienda,
-          cajero: element.usuario.name,
+          usuario: element.usuario.name,
+          cajero: cajero,
           vendedor: element.vendedor.name + ' ' + element.vendedor.codigo,
           producto_codigo: prod.CODIGO,
           producto_PLU: prod.PLU1,
@@ -211,6 +215,9 @@ getVentasPeriodo(feha_inicial:any, fecha_final:any) {
           valor_und: prod.RETAIL,
           cantidad: prod.cantidad,
           total:  prod.cantidad *prod.RETAIL,
+          '%_descuento': prod.descuento,
+          val_descuento: prod.val_descuento,
+          total_neto: (prod.RETAIL * prod.cantidad) - prod.val_descuento,
           cliente_name: element.cliente.Pasajero,
           cliente_pax: element.cliente.pax,
           cliente_STEB_BAG: element.cliente.STEB_BAG,
@@ -324,6 +331,21 @@ getVentasPeriodo(feha_inicial:any, fecha_final:any) {
   }
 
 
+  searchCajeroS:string = '';
+
+  searchCajero(item:any){
+    let pos = this.config.empleados.map(function(e: { codigo: any; }) { return e.codigo; }).indexOf(item);
+    if(pos != -1){
+      this.notaVenta.cajero = this.config.empleados[pos]
+      this.searchCajeroS = ''
+    }else{
+      this.openSnackBar('NO SE HA ENCONTRADO EL CAJERO')
+    }
+
+    // console.log(pos)
+
+  }
+
   pasProducto(item:any){
     item.cantidad = 1;
     item.descuento = 0;
@@ -377,7 +399,8 @@ getVentasPeriodo(feha_inicial:any, fecha_final:any) {
   }
 
   updateNotaVenta(){
-    this.notaVenta.estado="Cerrada"
+    this.notaVenta.estado="Cerrada";
+    this.notaVenta.update_at = new Date();
     this._infoService.updateNotaVenta(this.notaVenta).subscribe(
       res=>{
         // console.log(res)

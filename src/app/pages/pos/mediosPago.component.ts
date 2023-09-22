@@ -94,17 +94,17 @@ import { FormaPago, MediosPago } from 'src/app/models/notaVenta';
             // console.log(this.mediosPago.cambio)
             this.mediosPago.restante = 0;
           }else{
-            this.mediosPago.restante = Math.round(this.mediosPago.total - this.mediosPago.recibido) ;
+            this.mediosPago.restante = this.mediosPago.total - this.mediosPago.recibido ;
             this.mediosPago.cambio = 0;
           }
         }
 
         if(element.Importe != 0 && element.Moneda == 'COP'){
           // console.log(element.Importe)
-          this.mediosPago.recibido = this.mediosPago.recibido + Math.round(( element.Importe / this.mediosPago.trm));
+          this.mediosPago.recibido = this.mediosPago.recibido + ( element.Importe / this.mediosPago.trm);
           // console.log( this.mediosPago.recibido)
           if(this.mediosPago.recibido >=  this.mediosPago.total){
-            this.mediosPago.cambio =  Math.round(this.mediosPago.recibido - this.mediosPago.total);
+            this.mediosPago.cambio =  this.mediosPago.recibido - this.mediosPago.total;
             this.mediosPago.restante = 0;
           }else{
             this.mediosPago.restante = this.mediosPago.restante - element.Importe;
@@ -120,7 +120,7 @@ import { FormaPago, MediosPago } from 'src/app/models/notaVenta';
 
 
     restante(item:any){
-      item.Importe = Math.round((this.mediosPago.restante * this.mediosPago.trm) / item.TipoCambio);
+      item.Importe = (this.mediosPago.restante * this.mediosPago.trm) / item.TipoCambio;
       this.totalizar()
     }
 

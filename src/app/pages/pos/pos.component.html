@@ -104,7 +104,7 @@
               <td> <span style="margin-left: 20px;">{{item.created_at | date:'medium'}}</span></td>
               <td> {{item.prefix }} {{item.consecutivo}}</td>
               <td>  {{item.tienda}} </td>
-              <td> {{item.usuario.name}}</td>
+              <td> {{item.cajero?.codigo}} {{item.cajero?.name}} </td>
               <td > {{item.estado}}</td>
               <td style="text-align: right;"> {{item.total | number:'1.0-2'}}</td>
               <td style="text-align: center;"> {{item.folio}}</td>
@@ -117,8 +117,8 @@
       <div *ngIf="fadeDiv == 'detalle'">
         <table style="margin: 0 auto;  width: 95%; font-size: 1.1em;" class="mat-elevation-z8">
           <tr>
-            <th></th>
-            <th></th>
+            <th> <span *ngIf="notaVenta._id">Fecha Cierre</span></th>
+            <th><span *ngIf="notaVenta._id">{{notaVenta.update_at | date:'medium'}}</span></th>
             <th> <button *ngIf="!notaVenta._id  && notaVenta.tienda && notaVenta.productos.length != 0 && notaVenta.cliente  && notaVenta.mediosPago.total"  mat-raised-button aria-label="Clear"  style="margin: 10px 10px; background-color: orange; color: #ffff; font-size: 1.2em;" (click)="saveNotaVenta()">
               <mat-icon>tv</mat-icon> REGISTRAR NOTA DE VENTA
             </button></th>
@@ -179,7 +179,6 @@
             <th>
               {{date | date:'medium'}}
             </th>
-           
             <th style="text-align: right;">
               <button [disabled]="" mat-stroked-button aria-label="Clear" color="accent" (click)="openDialogMediosPagos()">
                 <mat-icon>attach_money</mat-icon> Medio De Pago
@@ -192,6 +191,8 @@
                  <span *ngIf="item.Importe != 0" style="width: 100%;">| {{item.FormaPago}}  {{item.Importe | number:'1.0-2'}}</span>
               </ng-template> 
             </th>
+            
+           
             
           </tr>
           <tr>
@@ -219,6 +220,7 @@
               </button> -->
             </td>
           
+          
             <th style="text-align: right;">
     
               <button [disabled]="" mat-stroked-button aria-label="Clear" color="accent" (click)="openDialogClientes()">
@@ -233,14 +235,53 @@
           </tr>
           <tr>
             <th style="text-align: left;">
+              <span style="margin-left: 10px;"> COD CAJERO.</span>
+            </th>
+      
+            <td>
+              <div *ngIf="!notaVenta._id" style="display: flex; justify-content: center; font-size: 1em;">
+
+                <mat-form-field  *ngIf="!notaVenta.cajero" appearance="fill" style="text-align: center; font-size: 0.7em; margin-right: 20px; width: 100%;">
+                  <input matInput placeholder="Codigo Cajero" type="text" name="searchCajeroS"  [(ngModel)]="searchCajeroS" (change)="searchCajero(searchCajeroS)">
+                  <button  matSuffix mat-icon-button aria-label="Clear" (click)="searchCajero(searchCajeroS)">
+                    <mat-icon>search</mat-icon>
+                  </button>
+               </mat-form-field>
+                
+                <!-- <button *ngIf="newEmpleado" mat-button (click)="addEmpleado()" ><mat-icon class="mat-18">add</mat-icon> <span>Agregar</span> </button>  -->
+              </div>
+              <span *ngIf="notaVenta.cajero"> {{notaVenta.cajero.codigo}} {{notaVenta.cajero.name}} 
+                <mat-icon *ngIf="!notaVenta._id" (click)="notaVenta.cajero = []">cancel</mat-icon>
+              </span>
+              <!-- <button  mat-stroked-button aria-label="Clear" color="accent" style="margin: 10px 10px;">
+                <mat-icon>face</mat-icon> Vendedor
+              </button> -->
+            </td>
+          
+            <th style="text-align: right;">
+    
+              <!-- <mat-form-field *ngIf="notaVenta._id">
+                <input matInput [matDatepicker]="picker" placeholder="Fecha Registro" name="incial" [(ngModel)]="fechaInicialInfo">
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+            </mat-form-field> -->
+    
+            </th>
+            <th>
+          
+            </th>
+           
+          </tr>
+          <tr>
+            <th style="text-align: left;">
               <span style="margin-left: 10px;" *ngIf="!notaVenta._id">EAN</span>
               <span style="margin-left: 10px;" *ngIf="notaVenta._id">FOLIO MACRO</span>
-              <button style="margin-left: 10px;" *ngIf="notaVenta._id && notaVenta.estado == 'Activa'"  matSuffix mat-icon-button aria-label="Clear" (click)="updateNotaVenta()">
+              <button style="margin-left: 10px;" *ngIf="notaVenta._id && notaVenta.estado == 'Activa'"  matSuffix mat-stroked-button aria-label="Clear" (click)="updateNotaVenta()">
                 <mat-icon>save</mat-icon> GUARDAR FOLIO
               </button>
             </th>
             <td>
-            <div *ngIf="notaVenta._id" >
+            <div *ngIf="notaVenta._id" style="margin-left: 25px;" >
               <input  [disabled]="notaVenta.estado != 'Activa'"  placeholder="" style="font-size: 1.2em; text-align: center; border-radius: 10px; margin: 10px 10px;"  [(ngModel)]="notaVenta.folio">
               
             </div>
@@ -273,12 +314,12 @@
           </tr>
     
         </table>
-        <div style="max-height: 400px; overflow-y: scroll; font-size: 1.1em; margin: 10px auto; width: 80%;"  class="mat-elevation-z8">
+        <div style="max-height: 400px; overflow-y: scroll; font-size: 1.1em; margin: 10px auto; width: 95%;"  class="mat-elevation-z8">
           <ng-template let-item let-i="index" ngFor [ngForOf]="productSearch">
             <p class="prod" (click)="pasProducto(item)">{{item.CODIGO}} - {{item.DESCRIPCION}}</p>
         </ng-template>
         </div>
-        <table style="font-size: 1.1em; margin: 10px auto; width: 80%;"  class="mat-elevation-z8" >
+        <table style="font-size: 1.1em; margin: 10px auto; width: 95%;"  class="mat-elevation-z8" >
           <tr>
             <th>
               CODIGO
@@ -409,12 +450,12 @@
       </table>
       <table style="margin: 0 auto; font-size: 0.7em; width: 100%; border-top: 1px solid black;">
         <tr>
-          <td colspan="2">TRM USD</td> <td style="text-align: right;">{{notaVenta.trm | number:'1.0-0'}}</td>
+          <td colspan="2">TRM USD</td> <td style="text-align: right;">{{notaVenta.trm | number:'1.0-2'}}</td>
           <td colspan="2" style="border: 1px solid black;"><strong>VALOR BRUTO</strong> </td><td style="text-align: right; font-size: 1.2em;border: 1px solid black;">{{notaVenta.total + notaVenta.descuento | number:'1.0-2'}}</td>
         </tr>
         <tr>
-          <td colspan="2">TRM EUR</td><td style="text-align: right;">{{notaVenta.trm_euro | number:'1.0-0'}}</td>
-          <td colspan="2">DESCUENTO</td><td style="text-align: right;"> - {{notaVenta.descuento | number:'1.0-0'}}</td>
+          <td colspan="2">TRM EUR</td><td style="text-align: right;">{{notaVenta.trm_euro | number:'1.0-2'}}</td>
+          <td colspan="2">DESCUENTO</td><td style="text-align: right;"> - {{notaVenta.descuento | number:'1.0-2'}}</td>
         </tr>
         <tr>
           

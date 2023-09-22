@@ -38,6 +38,7 @@ function saveNotaVenta(req, res){
                 notaVenta.descuento= params.descuento;
                 notaVenta.trm_euro= params.trm_euro;
                 notaVenta.folio = params.folio;
+                notaVenta.cajero = params.cajero;
                 
                 
                 notaVenta.save((err, result) => {
