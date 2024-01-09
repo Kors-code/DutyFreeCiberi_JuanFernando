@@ -231,50 +231,176 @@ async function sendInvoiceSiigo(req, res){
 
 }
 
-function sendComprobanteSiigo(req, res){
+async function sendComprobanteSiigo(req, res){
   var unirest = require('unirest');
   var params = req.body;
   // console.log(params)
-  var token;
-  var req = unirest('POST', 'https://api.siigo.com/auth')
-    .headers({
-      'Content-Type': 'application/json'
-    })
-    .send(JSON.stringify({
-      "username": params.user,
-      "access_key": params.key
-    }))
-    .end(async function (resp){ 
-      if (resp.error) throw new Error(resp.error); 
-      token = resp.body.access_token;
 
-      var req2 = unirest('POST', 'https://api.siigo.com/v1/journals')
-      .headers({
-        'Content-Type': 'application/json',
-        'Partner-ID': 'TestNat',
-        'Authorization': 'Bearer '+ token
-      })
-      .send(JSON.stringify({
-        document: {
-          id: params.iddoc
-        },
-        date: params.date,
-        items:params.data,
-        observations: params.obs
-      }))
-      .end(function (respu) { 
-        // console.log(respu)
-        if (respu.error){
-          // console.log(respu.error)
+  await client.connect();
+  const db = client.db(dbName);
+  const collection = await db.collection('Config');
 
-          res.status(400).send({message: 'Error ' +respu.raw_body }); 
-        }else{
-          res.status(200).send(respu.body)
-        }
-        console.log(respu.raw_body);
-      });
+  let Consecutivo = 0;
+  // console.log(collection)
+
+  if(params.iddoc == 5086){
+    let confi = await collection.findOneAndUpdate({operacion:params._id},
+      { $inc: {consecutivoCompCosto: 1 }},
+      { upsert: false }, function(err,doc) {
+          if (err) { throw err; }
+          else { 
+              console.log('doc 1', doc.value.consecutivoCompCosto)
+
+              Consecutivo = doc.value.consecutivoCompCosto
+
+                var token;
+                  var req = unirest('POST', 'https://api.siigo.com/auth')
+                    .headers({
+                      'Content-Type': 'application/json'
+                    })
+                    .send(JSON.stringify({
+                      "username": params.user,
+                      "access_key": params.key
+                    }))
+                    .end(async function (resp){ 
+                      if (resp.error) throw new Error(resp.error); 
+                      token = resp.body.access_token;
+
+                      var req2 = unirest('POST', 'https://api.siigo.com/v1/journals')
+                      .headers({
+                        'Content-Type': 'application/json',
+                        'Partner-ID': 'TestNat',
+                        'Authorization': 'Bearer '+ token
+                      })
+                      .send(JSON.stringify({
+                        document: {
+                          id: params.iddoc
+                        },
+                        date: params.date,
+                        items:params.data,
+                        number:Consecutivo,
+                        observations: params.obs
+                      }))
+                      .end(function (respu) { 
+                        // console.log(respu)
+                        if (respu.error){
+                          res.status(400).send({message: 'Error ' +respu.raw_body }); 
+                        }else{
+                          res.status(200).send(respu.body)
+                        }
+                       
+                      });
+                    
+                    })
+
+
+              console.log('consecutivo', Consecutivo)
+              client.close();
+          }
+              
+        });
+  }
+
+  if(params.iddoc == 31800){
+    let confi = await
+    collection.findOneAndUpdate({operacion:params._id},
+      { $inc: {consecutivoCompVenta: 1 }},
+      { upsert: false }, function(err,doc) {
+          if (err) { throw err; }
+          else { 
+              // console.log('doc', doc)
+              Consecutivo = doc.value.consecutivoCompVenta
+              var token;
+                  var req = unirest('POST', 'https://api.siigo.com/auth')
+                    .headers({
+                      'Content-Type': 'application/json'
+                    })
+                    .send(JSON.stringify({
+                      "username": params.user,
+                      "access_key": params.key
+                    }))
+                    .end(async function (resp){ 
+                      if (resp.error) throw new Error(resp.error); 
+                      token = resp.body.access_token;
+
+                      var req2 = unirest('POST', 'https://api.siigo.com/v1/journals')
+                      .headers({
+                        'Content-Type': 'application/json',
+                        'Partner-ID': 'TestNat',
+                        'Authorization': 'Bearer '+ token
+                      })
+                      .send(JSON.stringify({
+                        document: {
+                          id: params.iddoc
+                        },
+                        date: params.date,
+                        items:params.data,
+                        observations: params.obs
+                      }))
+                      .end(function (respu) { 
+                        // console.log(respu)
+                        if (respu.error){
+                          // console.log(respu.error)
+
+                          res.status(400).send({message: 'Error ' +respu.raw_body }); 
+                        }else{
+                          res.status(200).send(respu.body)
+                        }
+                        console.log(respu.raw_body);
+                      });
+                    
+                    })
+
+                    client.close();
+          }
+              
+        });
+  }
+   
+  // console.log('consecutivo 2', Consecutivo)
+
+
+  // var token;
+  // var req = unirest('POST', 'https://api.siigo.com/auth')
+  //   .headers({
+  //     'Content-Type': 'application/json'
+  //   })
+  //   .send(JSON.stringify({
+  //     "username": params.user,
+  //     "access_key": params.key
+  //   }))
+  //   .end(async function (resp){ 
+  //     if (resp.error) throw new Error(resp.error); 
+  //     token = resp.body.access_token;
+
+  //     var req2 = unirest('POST', 'https://api.siigo.com/v1/journals')
+  //     .headers({
+  //       'Content-Type': 'application/json',
+  //       'Partner-ID': 'TestNat',
+  //       'Authorization': 'Bearer '+ token
+  //     })
+  //     .send(JSON.stringify({
+  //       document: {
+  //         id: params.iddoc
+  //       },
+  //       date: params.date,
+  //       items:params.data,
+  //       number:params.number,
+  //       observations: params.obs
+  //     }))
+  //     .end(function (respu) { 
+  //       // console.log(respu)
+  //       if (respu.error){
+  //         // console.log(respu.error)
+
+  //         res.status(400).send({message: 'Error ' +respu.raw_body }); 
+  //       }else{
+  //         res.status(200).send(respu.body)
+  //       }
+  //       console.log(respu.raw_body);
+  //     });
     
-    })
+  //   })
 
   
 
@@ -511,7 +637,8 @@ async function PdfFactura(req, res){
                               
                                       <td style="text-align: right; border-bottom: 1px solid grey;">
                                           {{ importe }}
-                                      </td>
+                                      </td>import { Consecutivo } from 'src/app/models/consecutivo';
+
                                   </tr>
                                {{/each}}
                                 

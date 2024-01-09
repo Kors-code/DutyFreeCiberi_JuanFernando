@@ -288,7 +288,7 @@ export class tomaInventarioComponent implements OnInit {
       this.data = (XLSX.utils.sheet_to_json(ws, { header: 1 }));
 
       // this.data.flat()  
-      //console.log(this.data);
+      console.log(this.data);
       this.log= false;
 
     };
@@ -386,6 +386,11 @@ export class tomaInventarioComponent implements OnInit {
     // this._socketService.emit('dataUpNow', JSON.stringify(this.registros))
   }
 
+  getInventario(doc:string){
+    this.tag = doc;
+    this.importar=false;
+  }
+
   verTagInventario(doc:string){
     if(doc.indexOf('off_')){
       return false;
@@ -456,7 +461,16 @@ export class tomaInventarioComponent implements OnInit {
   }
 
 
+  changeTag(item:string){
+    this.db=  this.tag + this.Fecha.replace("-", "_")+'_'+ this.Marca.replace(" ", "_") +'_'+ this.Clasificacion + '_'+ this.Responsable.replace(" ", "_")
+  }
+
+  db:string = '';
   tag:string = '';
+  Fecha:string = '';
+  Marca:string = '';
+  Clasificacion:string = '';
+  Responsable:string = '';
   saveInfoCompleto(registros: any){
     this.log= true;
     this._infoServce.agregarConteo(registros, this.tag).subscribe(
@@ -1182,64 +1196,139 @@ export class tomaInventarioComponent implements OnInit {
     });
   }
 
-  verProdFilter(filter:string ){
-   ////console.log(this.searProd) 
+
+  searCate =''
+  verProdFilterCategoria(filter:string ){
+   
    var arrayFilter: _Conteo[] =[]
-   if(this.searProd == ''){
+   if(this.searCate == ''){
     this.getCnteoTag()
    }else{
     if(filter=='Iguales'){
      this.Iguales.map(
       (element) =>{
-        let index = element.Descripcion_1.indexOf(this.searProd.toUpperCase())
-        ////console.log(index)
+        let index = element.Cla.indexOf(this.searCate.toUpperCase())
         if(index != -1){
           arrayFilter.push(element)
         }
       }
      )
-     this.Iguales = arrayFilter;
+     if(arrayFilter.length !=0){
+      this.Iguales = arrayFilter;
+     }
+    
     }
     if(filter=='Faltantes'){
       this.Faltantes.map(
        (element) =>{
-         let index = element.Descripcion_1.indexOf(this.searProd.toUpperCase())
+         let index = element.Cla.indexOf(this.searCate.toUpperCase())
          ////console.log(index)
          if(index != -1){
            arrayFilter.push(element)
          }
        }
       )
-      this.Faltantes = arrayFilter;
+      if(arrayFilter.length !=0){
+        this.Faltantes = arrayFilter;
+       }
+
      }
+
 
      if(filter=='Sobrantes'){
       this.Sobrantes.map(
        (element) =>{
-         let index = element.Descripcion_1.indexOf(this.searProd.toUpperCase())
+         let index = element.Cla.indexOf(this.searCate.toUpperCase())
          ////console.log(index)
          if(index != -1){
            arrayFilter.push(element)
          }
        }
       )
-      this.Sobrantes = arrayFilter;
+      if(arrayFilter.length !=0){
+        this.Sobrantes = arrayFilter;
+       }
+
      }
 
      if(filter=='Definitivas'){
       this.Definitivas.map(
        (element) =>{
-         let index = element.Descripcion_1.indexOf(this.searProd.toUpperCase())
+         let index = element.Cla.indexOf(this.searCate.toUpperCase())
         //  ////console.log(index)
          if(index != -1){
            arrayFilter.push(element)
          }
        }
       )
+      if(arrayFilter.length !=0){
       this.Definitivas = arrayFilter;
+      }
      }
    }
   }
+
+
+
+  verProdFilter(filter:string ){
+   
+    var arrayFilter: _Conteo[] =[]
+    if(this.searProd == ''){
+     this.getCnteoTag()
+    }else{
+     if(filter=='Iguales'){
+      this.Iguales.map(
+       (element) =>{
+         let index = element.Descripcion_1.indexOf(this.searProd.toUpperCase())
+         ////console.log(index)
+         if(index != -1){
+           arrayFilter.push(element)
+         }
+       }
+      )
+      this.Iguales = arrayFilter;
+     }
+     if(filter=='Faltantes'){
+       this.Faltantes.map(
+        (element) =>{
+          let index = element.Descripcion_1.indexOf(this.searProd.toUpperCase())
+          ////console.log(index)
+          if(index != -1){
+            arrayFilter.push(element)
+          }
+        }
+       )
+       this.Faltantes = arrayFilter;
+      }
+ 
+ 
+      if(filter=='Sobrantes'){
+       this.Sobrantes.map(
+        (element) =>{
+          let index = element.Descripcion_1.indexOf(this.searProd.toUpperCase())
+          ////console.log(index)
+          if(index != -1){
+            arrayFilter.push(element)
+          }
+        }
+       )
+       this.Sobrantes = arrayFilter;
+      }
+ 
+      if(filter=='Definitivas'){
+       this.Definitivas.map(
+        (element) =>{
+          let index = element.Descripcion_1.indexOf(this.searProd.toUpperCase())
+         //  ////console.log(index)
+          if(index != -1){
+            arrayFilter.push(element)
+          }
+        }
+       )
+       this.Definitivas = arrayFilter;
+      }
+    }
+   }
 
   
   up = 0

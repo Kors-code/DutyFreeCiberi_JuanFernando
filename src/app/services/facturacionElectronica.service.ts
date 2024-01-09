@@ -37,6 +37,36 @@ interface token{
     }
 
   }
+
+  interface ValidacionCufe{
+    ResponseDian:{
+        Envelope:{
+            Body:{
+              GetStatusResponse:{
+                GetStatusResult:{
+                  ErrorMessage:{},
+                  IsValid:string,
+                  StatusCode:string,
+                  StatusDescription:string,
+                  StatusMessage:string,
+                  XmlBase64Bytes:string
+                  XmlBytes:{
+                    _attributes:{
+                      nil:true
+                    }
+                  }
+                  XmlDocumentKey:string,
+                  XmlFileName:string
+  
+                }
+              }
+            
+            }
+        }
+    }
+  
+  }
+
 // import * as sha384 from 'crypto-js/sha384'
 
 @Injectable({
@@ -243,6 +273,22 @@ export class FacturaElectronicaService {
             );
             // console.log(paramas); 'invoice/'+set    
             return this._http.post(this.url_fact + 'invoice/'+set , paramas,{headers:headers})
+                        
+    }
+
+    statusDocumentCufe(register:any){
+        let token = register.token
+        let set = register.cufe
+        let paramas = JSON.stringify(register.data);
+            let headers = new HttpHeaders(
+                {
+                    'Content-Type': 'application/json',
+                    'Accept':'application/json',
+                    'Authorization': 'Bearer '+ token
+                }
+            );
+            // console.log(paramas); 'invoice/'+set    
+            return this._http.post<ValidacionCufe>(this.url_fact + 'status/document/'+set , paramas,{headers:headers})
                         
     }
 

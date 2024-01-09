@@ -16,6 +16,8 @@ export class Config{
             public notificar:any[] = [],
             public protocoloFacturacion:string = '',
             public operacion:string = '',
+            public consecutivoCompCosto=0,
+            public consecutivoCompVenta=0,
         ){}
 }
 

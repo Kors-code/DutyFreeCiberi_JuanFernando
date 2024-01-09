@@ -97,6 +97,8 @@ async function updateDataConfiguracion(req, res){
             protocoloFacturacion:params.protocoloFacturacion,
             operacion:params.operacion,
             dataOperacion:params.dataOperacion,
+            consecutivoCompCosto:params.consecutivoCompCosto,
+            consecutivoCompVenta:params.consecutivoCompVenta
         }},{ upsert: false }, function(err,doc) {
             if (err) { throw err; }
             else { 
@@ -927,7 +929,7 @@ async function contarEan(req, res){
     let io = req.app.get('io');
     let scan = params.scan +'';
     //console.log(params.scan)
-    //console.log('684  '+ coll)
+    console.log('684  '+ coll)
     const url = 'mongodb://localhost:27017';
     const client = new MongoClient(url);
     const dbName = 'DutyFreeInventarios';
@@ -938,9 +940,46 @@ async function contarEan(req, res){
         const collection = await db.collection(coll);
         collection.updateOne({EAN:scan},
             {$push:{Conteo0:params}}, function(err,doc) {
-            if (err) {
-                //console.log(err) 
-                throw err; }
+                console.log(doc)
+            if (doc.modifiedCount == 0) {
+                console.log('err',err) 
+                // throw err; 
+                collection.updateOne({UPC2:scan},
+                    {$push:{Conteo0:params}}, function(err,doc2) {
+                    if (doc2.modifiedCount == 0) {
+                        collection.updateOne({UPC3:scan},
+                            {$push:{Conteo0:params}}, function(err,doc3) {
+                            if (err) {
+                                console.log('err3',err)  
+                                throw err; }
+                            else { 
+                                //console.log(doc)
+                                collection.findOne({UPC3:scan},
+                                     function(err,docEAN) {
+                                        //console.log(doc)
+                                            //console.log(docEAN)
+                                            io.emit('scan'+coll, params);
+                                            client.close();
+                                            res.status(200).send(docEAN); 
+                                    })
+                               
+                            }
+                          }); 
+                    }
+                    else { 
+                        //console.log(doc)
+                        collection.findOne({UPC2:scan},
+                             function(err,docEAN) {
+                                //console.log(doc)
+                                    //console.log(docEAN)
+                                    io.emit('scan'+coll, params);
+                                    client.close();
+                                    res.status(200).send(docEAN); 
+                            })
+                       
+                    }
+                  }); 
+            }
             else { 
                 //console.log(doc)
                 collection.findOne({EAN:scan},
@@ -961,7 +1000,7 @@ async function contarSKU(req, res){
     var coll = req.params.tag;
     let io = req.app.get('io');
     let scan = params.scan +'';
-    //console.log('680  '+ params)
+    console.log('680  '+ params)
     const url = 'mongodb://localhost:27017';
     const client = new MongoClient(url);
     const dbName = 'DutyFreeInventarios';

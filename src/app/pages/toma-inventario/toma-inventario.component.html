@@ -11,9 +11,9 @@
         <button mat-menu-item (click)="tag = 'R_'" *ngIf="importar">
           <mat-icon class="mat-18" >add</mat-icon>  
             Nueva Recepcion 
-      </button>
+        </button>
         <ng-template let-doc let-i="index" ngFor [ngForOf]="collections">
-            <button mat-menu-item (click)="tag = doc" *ngIf="!verTagInventario(doc)">
+            <button mat-menu-item (click)="getInventario(doc)" *ngIf="!verTagInventario(doc)">
                 <mat-icon class="mat-18">check</mat-icon>  
                 {{doc}}   
             </button>
@@ -41,10 +41,24 @@
           </h2>
       
           <div style="display: flex; flex-wrap: wrap; justify-content: space-around; align-items: center;">
-            <mat-form-field  appearance="fill" style="text-align: center; font-size: 1em; margin-right: 20px; width: 200px;">
-              <input matInput placeholder="Titulo" type="text" name="tagS" [(ngModel)]="tag">
-            </mat-form-field>
+            
+            <div>
+              <mat-form-field   appearance="fill" style="text-align: center; font-size: 1em; margin-right: 20px; width: 200px;">
+                <input matInput placeholder="Fecha" type="text" name="Fecha" [(ngModel)]="Fecha" (change)="changeTag(Fecha)">
+              </mat-form-field>
+              <mat-form-field *ngIf="Fecha" appearance="fill" style="text-align: center; font-size: 1em; margin-right: 20px; width: 200px;">
+                <input matInput placeholder="Marca" type="text" name="Marca" [(ngModel)]="Marca" (change)="changeTag(Marca)">
+              </mat-form-field>
+              <mat-form-field *ngIf="Marca" appearance="fill" style="text-align: center; font-size: 1em; margin-right: 20px; width: 200px;">
+                <input matInput placeholder="Clasificacion" type="text" name="Clasificacion" [(ngModel)]="Clasificacion" (change)="changeTag(Clasificacion)">
+              </mat-form-field>
+              <mat-form-field *ngIf="Clasificacion" appearance="fill" style="text-align: center; font-size: 1em; margin-right: 20px; width: 200px;">
+                <input matInput placeholder="Responsable" type="text" name="Responsable" [(ngModel)]="Responsable" (change)="changeTag(Responsable)">
+              </mat-form-field>
+            </div>
+         
 
+              <h2>{{db}}</h2>
               <input *ngIf="tag" type="file" multiple="false" (change)="onFileChange($event)" style="font-size: 1.3em; margin-left: 10px;">
               <div *ngIf="clasificacion.length != 0" style="display: flex; justify-content: center;">
                 <mat-form-field appearance="fill" style="width: 60%;">
@@ -83,7 +97,7 @@
           <button *ngIf="conteo.length != 0" style="margin-right:20px;color: white;" mat-button mat-raised-button color="primary" (click)="estado = 'iguales'" [class.accent]="estado == 'iguales'">
             <mat-icon>done_all</mat-icon>
               Iguales {{undIguales  |  number:'0.0-0'}} unds
-          </button>
+            </button>
           <button  *ngIf="conteo.length != 0" style="margin-right:20px ;color: white;" mat-button mat-raised-button color="primary" (click)="estado = 'faltantes'" [class.accent]="estado == 'faltantes'">
             <mat-icon>do_not_disturb_on</mat-icon>
             Faltantes {{undFaltantes  |  number:'0.0-0'}} unds
@@ -118,8 +132,8 @@
             </button>
 
           </h1>
-          <table class="mat-elevation-z8" style="margin: 0 auto;">
-            <thead style="padding: 15px; font-size: 1em; border-radius: 10px;">
+          <table class="mat-elevation-z8" style="margin: 10px auto;">
+            <thead style="padding: 15px; font-size: 1em; border-radius: 10px; ">
               <tr>
                 <th>ITEMS</th>
                 <td>{{Iguales.length  |  number:'0.0-0'}}</td>
@@ -134,7 +148,7 @@
           </table>
           <table class="mat-elevation-z8" style="margin: 0 auto;">
             <thead style="padding: 15px; font-size: 1em; border-radius: 10px;">
-              <tr>
+              <tr style="border: 1px solid grey;">
                 <th style="border: 1px solid grey;">
                   Check
                   <mat-checkbox class="example-margin" (change)="checkIguales($event)"></mat-checkbox>
@@ -166,11 +180,18 @@
                   </mat-form-field>
                 </span> 
                 </th>
-                <th style="border: 1px solid grey;">CATEGORIA</th>
+                <th style="border: 1px solid grey;flex-direction: column;">CLA
+                  <mat-form-field style="text-align: center; color: black;width: 130px;">
+                    <input matInput  type="text" name="categoriaP" [(ngModel)]="searCate" (change)="verProdFilterCategoria('Iguales')">
+                    <button  matSuffix mat-icon-button aria-label="Clear">
+                      <mat-icon>search</mat-icon>
+                    </button>
+                  </mat-form-field>  
+                </th>
                 <th style="border: 1px solid grey;">
-                  <span style="display:flex; align-items: center;">PRODUCTO
+                  <span style="display:flex; align-items: center; flex-direction: column;">PRODUCTO
                     <mat-form-field style="text-align: center; color: black;width: 130px;">
-                      <input matInput  type="text" name="producto" [(ngModel)]="searProd" (change)="verProdFilter('Iguales')">
+                      <input matInput  type="text" placeholder="Categoria" name="producto" [(ngModel)]="searProd" (change)="verProdFilter('Iguales')">
                       <button  matSuffix mat-icon-button aria-label="Clear">
                         <mat-icon>search</mat-icon>
                       </button>
@@ -290,7 +311,7 @@
                 Descargar 
             </button>
           </h1>
-          <table class="mat-elevation-z8" style="margin: 0 auto;">
+          <table class="mat-elevation-z8" style="margin: 20px auto;">
             <thead style="padding: 15px; font-size: 1em; border-radius: 10px;">
               <tr>
                 <th>ITEMS</th>
@@ -307,12 +328,12 @@
           </table>
           <table class="mat-elevation-z8" style="margin: 0 auto;">
             <thead style="padding: 15px; font-size: 1em; border-radius: 10px;">
-              <tr>
-                <th >
+              <tr >
+                <th style="border: 1px solid grey;">
                   Check
                   <mat-checkbox class="example-margin" (change)="checkFaltantes($event)"></mat-checkbox>
                   </th>
-                <th>
+                <th style="border: 1px solid grey;">
             
                    <span style="display:flex; align-items: center;">SKU
                     <button *ngIf="Faltantes[0].Exist_Final > Faltantes[Faltantes.length-1].Exist_Final" mat-icon-button aria-label="Clear" (click)="filterSKUFaltantes()">
@@ -329,7 +350,7 @@
                   </mat-form-field>
                 </span> 
                 </th>
-                <th > 
+                <th style="border: 1px solid grey;"> 
                   <span style="display:flex; align-items: center;">EAN 
                   
                   <mat-form-field style="text-align: center; color: black;width: 130px;">
@@ -340,9 +361,18 @@
                   </mat-form-field>
                 </span> 
                 </th>
-                <th>CATEGORIA</th>
                 <th style="border: 1px solid grey;">
-                  <span style="display:flex; align-items: center;">PRODUCTO
+                  <span style="display:flex; align-items: center;flex-direction: column;">CLA
+                    <mat-form-field style="text-align: center; color: black;width: 130px;">
+                      <input matInput  type="text" name="searCate" [(ngModel)]="searCate" (change)="verProdFilterCategoria('Faltantes')">
+                      <button  matSuffix mat-icon-button aria-label="Clear">
+                        <mat-icon>search</mat-icon>
+                      </button>
+                    </mat-form-field>
+                  </span>
+                </th>
+                <th style="border: 1px solid grey;">
+                  <span style="display:flex; align-items: center; flex-direction: column;">PRODUCTO
                     <mat-form-field style="text-align: center; color: black;width: 130px;">
                       <input matInput  type="text" name="producto" [(ngModel)]="searProd" (change)="verProdFilter('Faltantes')">
                       <button  matSuffix mat-icon-button aria-label="Clear">
@@ -351,7 +381,7 @@
                     </mat-form-field>
                   </span>
                 </th>
-                <th>
+                <th style="border: 1px solid grey;">
                   <span style="display:flex; justify-content: center; align-items: center;">
                     EXISTENCIA
                     <button *ngIf="Faltantes[0].Exist_Final > Faltantes[Faltantes.length-1].Exist_Final" mat-icon-button aria-label="Clear" (click)="filterEanFaltantes()">
@@ -363,11 +393,11 @@
                   </span>
                  
                 </th>
-                <th>CONTEO</th>
-                <th>DIFERENCIA</th>
-                <th>CONTEOS</th>
-                <th>COSTO USD</th>
-                <th>
+                <th style="border: 1px solid grey;">CONTEO</th>
+                <th style="border: 1px solid grey;">DIFERENCIA</th>
+                <th style="border: 1px solid grey;">CONTEOS</th>
+                <th style="border: 1px solid grey;">COSTO USD</th>
+                <th style="border: 1px solid grey;">
                   <span style="display:flex; justify-content: center; align-items: center;">
                   COSTO COP
                   <button *ngIf="Faltantes[0].COST_PROM > Faltantes[Faltantes.length-1].COST_PROM" mat-icon-button aria-label="Clear" (click)="filterCOPFaltantes()">
@@ -462,7 +492,7 @@
                 Descargar 
             </button>
           </h1>
-          <table class="mat-elevation-z8" style="margin: 0 auto;">
+          <table class="mat-elevation-z8" style="margin: 20px auto;">
             <thead style="padding: 15px; font-size: 1em; border-radius: 10px;">
               <tr>
                 <th>ITEMS</th>
@@ -479,12 +509,12 @@
           </table>
           <table class="mat-elevation-z8" style="margin: 0 auto;">
             <thead style="padding: 15px; font-size: 1em; border-radius: 10px;">
-              <tr>
-                <th >
+              <tr >
+                <th style="border: 1px solid grey;">
                   Check
                   <mat-checkbox class="example-margin" (change)="checkSobrantes($event)"></mat-checkbox>
                   </th>
-                <th>
+                <th style="border: 1px solid grey;">
             
                    <span style="display:flex; align-items: center;">SKU
                     <button *ngIf="Sobrantes[0].Exist_Final > Sobrantes[Sobrantes.length-1].Exist_Final" mat-icon-button aria-label="Clear" (click)="filterSKUSobrantes()">
@@ -501,7 +531,7 @@
                   </mat-form-field>
                 </span> 
                 </th>
-                <th > 
+                <th style="border: 1px solid grey;"> 
                   <span style="display:flex; align-items: center;">EAN 
                   
                   <mat-form-field style="text-align: center; color: black;width: 130px;">
@@ -512,9 +542,18 @@
                   </mat-form-field>
                 </span> 
                 </th>
-                <th>CATEGORIA</th>
                 <th style="border: 1px solid grey;">
-                  <span style="display:flex; align-items: center;">PRODUCTO
+                  <span style="display:flex; align-items: center; flex-direction: column;">CLA
+                    <mat-form-field style="text-align: center; color: black;width: 130px;">
+                      <input matInput  type="text" name="searCate" [(ngModel)]="searCate" (change)="verProdFilterCategoria('Sobrantes')">
+                      <button  matSuffix mat-icon-button aria-label="Clear">
+                        <mat-icon>search</mat-icon>
+                      </button>
+                    </mat-form-field>
+                  </span>
+                </th>
+                <th style="border: 1px solid grey;">
+                  <span style="display:flex; align-items: center; flex-direction: column;">PRODUCTO
                     <mat-form-field style="text-align: center; color: black;width: 130px;">
                       <input matInput  type="text" name="producto" [(ngModel)]="searProd" (change)="verProdFilter('Sobrantes')">
                       <button  matSuffix mat-icon-button aria-label="Clear">
@@ -523,7 +562,7 @@
                     </mat-form-field>
                   </span>
                 </th>
-                <th>
+                <th style="border: 1px solid grey;">
                   <span style="display:flex; justify-content: center; align-items: center;">
                     EXISTENCIA
                     <button *ngIf="Sobrantes[0].Exist_Final > Sobrantes[Sobrantes.length-1].Exist_Final" mat-icon-button aria-label="Clear" (click)="filterEanSobrantes()">
@@ -535,11 +574,11 @@
                   </span>
                  
                 </th>
-                <th>CONTEO</th>
-                <th>DIFERENCIA</th>
-                <th>CONTEOS</th>
-                <th>COSTO USD</th>
-                <th>
+                <th style="border: 1px solid grey;">CONTEO</th>
+                <th style="border: 1px solid grey;">DIFERENCIA</th>
+                <th style="border: 1px solid grey;">CONTEOS</th>
+                <th style="border: 1px solid grey;">COSTO USD</th>
+                <th style="border: 1px solid grey;">
                   <span style="display:flex; justify-content: center; align-items: center;">
                   COSTO COP
                   <button *ngIf="Sobrantes[0].COST_PROM > Sobrantes[Sobrantes.length-1].COST_PROM" mat-icon-button aria-label="Clear" (click)="filterCOPSobrantes()">
@@ -626,7 +665,7 @@
             </button>
           </h1>
           <div *ngIf="Definitivas.length !=0">
-            <table class="mat-elevation-z8" style="margin: 0 auto;">
+            <table class="mat-elevation-z8" style="margin: 20px auto;">
               <thead style="padding: 15px; font-size: 1em; border-radius: 10px;">
                 <tr>
                   <th>ITEMS</th>
@@ -676,18 +715,28 @@
                   </th>
                   <th style="border: 1px solid grey;" > 
                     <span style="display:flex; align-items: center;">EAN 
-<!--                     
+                    
                     <mat-form-field style="text-align: center; color: black;width: 130px;">
                       <input matInput  type="text" name="unds" [(ngModel)]="searcEan">
                       <button  matSuffix mat-icon-button aria-label="Clear">
                         <mat-icon>search</mat-icon>
                       </button>
-                    </mat-form-field> -->
+                    </mat-form-field>
                   </span> 
                   </th>
-                  <th style="border: 1px solid grey;">CATEGORIA</th>
+                  <th style="border: 1px solid grey; flex-direction: column;">
+                    <span style="display:flex; align-items: center;">CLA
+                      <mat-form-field style="text-align: center; color: black;width: 130px;">
+                        <input matInput  type="text" name="searCate" [(ngModel)]="searCate" (change)="verProdFilterCategoria('Definitivas')">
+                        <button  matSuffix mat-icon-button aria-label="Clear">
+                          <mat-icon>search</mat-icon>
+                        </button>
+                      </mat-form-field>
+                    </span>
+                  
+                  </th>
                   <th style="border: 1px solid grey;">
-                    <span style="display:flex; align-items: center;">PRODUCTO
+                    <span style="display:flex; align-items: center; flex-direction: column;">PRODUCTO
                       <mat-form-field style="text-align: center; color: black;width: 130px;">
                         <input matInput  type="text" name="producto" [(ngModel)]="searProd" (change)="verProdFilter('Definitivas')">
                         <button  matSuffix mat-icon-button aria-label="Clear">

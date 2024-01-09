@@ -5,7 +5,7 @@ export var GLOBAL = {
     url_fact:'https://dian.ciberi.co/api/ubl2.1/',
     url: 'https://ciberi.co/api/',
     // url_socket: 'https://ciberi.co',
-    version:'1.4.3',
+    version:'1.4.5',
     company: 'ciberi.co'
 }
 
@@ -19,4 +19,4 @@ export var GLOBAL = {
 // produccion max-size err;
 // node --max_old_space_size=8192 ./node_modules/@angular/cli/bin/ng build --prod --build-optimizer
 
-// electron-packager . DutyFree_121 --platform=win32 --arch=x64 --icon=./favicon.ico
+// electron-packager . DutyFree_1 --platform=win32 --arch=x64 --icon=./favicon.ico

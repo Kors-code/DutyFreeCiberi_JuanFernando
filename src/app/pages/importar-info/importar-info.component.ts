@@ -238,10 +238,6 @@ export class ImportarInfoComponent implements OnInit {
       const ws: XLSX.WorkSheet = wb.Sheets[wsname];
       this.data = (XLSX.utils.sheet_to_json(ws, { header: 1 }));
 
-      
-
-      ////console.log('Data',this.data);
-      // ////// ////console.log('Costumer',this.dataCostumer);
       this.convertirJson()
       this.log= false;
     };
@@ -463,10 +459,8 @@ export class ImportarInfoComponent implements OnInit {
       }
 
       let pos2 = this.cuentas.map(function(e: { cod: any; }) { return e.cod; }).indexOf( parseInt(registros[i]['CLASIFICACION']));
-      ////console.log(pos2)
-      if(pos2 != -1){
 
-        // ////console.log(this.config.tiendas)
+      if(pos2 != -1){
 
         let posTienda = this.config.tiendas.map(function(e: { tienda: any; }) { return e.tienda; }).indexOf(registros[i]['PDV']);
         let tienda :any
@@ -476,10 +470,6 @@ export class ImportarInfoComponent implements OnInit {
         if(posTienda != -1){
           tienda =this.config.tiendas[posTienda].centro_costos;
         }
-
-        tienda= '676'
-
-        console.log('tienda', tienda)
 
         let dtaComprobante = {
           account:{
@@ -591,9 +581,11 @@ export class ImportarInfoComponent implements OnInit {
       user:this.config.siigoUser,
       key:this.config.siigoKey,
       data: this.itemsContable,
+      number:2534,
       date:this.date,
       obs:this.obs,
       iddoc:5086,
+      _id:this.pOperacion._id
     }
 
     let credencialesVentas={
@@ -603,13 +595,14 @@ export class ImportarInfoComponent implements OnInit {
       date:this.date,
       obs:this.obs,
       iddoc:31800,
+      _id:this.pOperacion._id
     }
 
-    console.log(credenciales)
+    // console.log(credenciales)
 
     this._siigoService.saveComprobantesSiigo(credenciales).subscribe(
       res=>{
-        // ////console.log(res)
+        console.log(res);
         this.openSnackBar('CMV GENERADO CORRECTAMENTE','EXITO')
         this._siigoService.saveComprobantesSiigo(credencialesVentas).subscribe(
           resp=>{

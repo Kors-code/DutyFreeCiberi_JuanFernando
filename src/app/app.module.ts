@@ -27,6 +27,7 @@ import { ElectronicaComponent } from './pages/electronica/electronica.component'
 import { posComponent } from './pages/pos/pos.component';
 import { DialogClienteDetail } from './pages/pos/clientes.component';
 import { DialogMediosPagoDetail } from './pages/pos/mediosPago.component';
+import { ValidacionComponent } from './pages/validacionElectronicas/validacion.component';
 
 
 @NgModule({
@@ -53,7 +54,8 @@ import { DialogMediosPagoDetail } from './pages/pos/mediosPago.component';
     ElectronicaComponent,
     posComponent,
     DialogClienteDetail,
-    DialogMediosPagoDetail
+    DialogMediosPagoDetail,
+    ValidacionComponent
 
   ],
   imports: [

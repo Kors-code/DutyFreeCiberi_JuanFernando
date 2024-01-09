@@ -87,6 +87,14 @@ export class Permisos {
                 escribir:true,
             },
             {   
+                titulo:"Validacion Electronica",
+                description:"Revision estatus ",
+                link:'/Validacion',
+                img:'validacion.svg',
+                editar:true,
+                eliminar:true,
+                escribir:true,
+            },{   
                 titulo:"Facturación POS",
                 description:"Documentos Manuales",
                 link:'/Pos',

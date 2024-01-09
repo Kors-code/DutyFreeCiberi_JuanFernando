@@ -14,6 +14,7 @@ import { SiigoComponent } from './pages/siigo-conection/siigo.component';
 import { tomaInventarioComponent } from './pages/toma-inventario/toma-inventario.component';
 import { UsersComponent } from './pages/users/users.component';
 import { posComponent } from './pages/pos/pos.component';
+import { ValidacionComponent } from './pages/validacionElectronicas/validacion.component';
 
 const routes: Routes = [
   {
@@ -62,8 +63,11 @@ const routes: Routes = [
   {
     component:posComponent,
     path: 'Pos', 
+  },
+  {
+    component:ValidacionComponent,
+    path:'Validacion'
   }
-
 ];
 
 @NgModule({

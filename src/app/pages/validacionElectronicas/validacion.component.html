@@ -1,0 +1,16 @@
+<h1 style="text-align: center;">Validar Facturas Electrónicas</h1>
+<mat-card style="display: flex; flex-wrap: wrap; justify-content: center;">
+ 
+  <mat-form-field style="width: 80%; text-align: center;">
+    <input matInput placeholder="CUFE" type="text"  name="facturacionElectronicaset_pruebas" [(ngModel)]="cufe" required>
+  </mat-form-field>
+  <button  mat-stroked-button [disabled]="!cufe" (click)="getFacturacionStatus(cufe)" class="bgc-blue-400 rigth" matTooltip="Validar" matTooltipPosition="below">VALIDAR <mat-icon>send</mat-icon></button>  
+  
+  <div *ngIf="response" style="text-align: center; margin: 0 auto;">
+    <h3>Es valido el Documento: <span style="color: blue;">{{response?.IsValid}}</span> </h3>
+    <h3>Descripcion: <span style="color: blue;">{{response?.StatusDescription}}</span></h3>
+    <h3>Estatus: <span style="color: blue;">{{response.StatusMessage}}</span></h3>
+  </div>
+  <!-- <p>{{response | json}}</p> -->
+    
+</mat-card>
