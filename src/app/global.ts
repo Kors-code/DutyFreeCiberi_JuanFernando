@@ -1,13 +1,30 @@
 export var GLOBAL = {
     url_app: '/api/', 
     // url_app: 'http://localhost:6511/api/',
+    // url_app: 'https://dutyfree.ciberi.net/api/',
     url_socket: 'ws://localhost:6511',
-    url_fact:'https://dian.ciberi.co/api/ubl2.1/',
+
+    // url_fact:'https://dian.ciberi.co/api/ubl2.1/',
+
+    url_fact:'https://duty-fac-electronica.ciberi.net/api/ubl2.1/',
+
     url: 'https://ciberi.co/api/',
     // url_socket: 'https://ciberi.co',
     version:'1.4.5',
     company: 'ciberi.co'
+
 }
+
+
+export var DUTYFREEDIAN ={
+    email:'dutyfreedian@gmail.com',
+    pass:'11/mi_exitototal/11',
+    url2024PCC : 'ssh -i "C:/Users/Administrador/Documents/ciberi Desarrollo/POS/puntodeventa/frontend/pen/dutyDian.pem" ubuntu@ec2-18-220-131-52.us-east-2.compute.amazonaws.com',
+    url:'https://duty-fac-electronica.ciberi.net/'
+ }
+
+
+
 
 
 // Ofid.Marquez@dutyfreepartners.com

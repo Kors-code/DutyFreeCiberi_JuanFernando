@@ -15,6 +15,7 @@ import { tomaInventarioComponent } from './pages/toma-inventario/toma-inventario
 import { UsersComponent } from './pages/users/users.component';
 import { posComponent } from './pages/pos/pos.component';
 import { ValidacionComponent } from './pages/validacionElectronicas/validacion.component';
+import { SiigoComprobantesComponent } from './pages/siigo-comprobantes-caja/siigo-comprobante.component';
 
 const routes: Routes = [
   {
@@ -48,6 +49,10 @@ const routes: Routes = [
     component:SiigoComponent,
     path: 'Siigo-conection'
   },{
+    component:SiigoComprobantesComponent,
+    path: 'Siigo-comprobantes'
+  },
+  {
     component:CumplimientoComponent,
     path: 'Cumplimieto', 
   },{

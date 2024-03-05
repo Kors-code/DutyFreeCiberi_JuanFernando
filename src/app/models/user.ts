@@ -163,6 +163,15 @@ export class Permisos {
                 escribir:true,
             },
             {   
+                titulo:"Comprobantes SIIGO",
+                description:"Gestiona la  de Comprobantes a plataforma Siigo",
+                link:'/Siigo-comprobantes',
+                img:'doc.svg',
+                editar:true,
+                eliminar:true,
+                escribir:true,
+            },
+            {   
                 titulo:"Cumplimiento",
                 description:"Resultados y tendencia de cumplimiento ",
                 link:'/Cumplimieto',

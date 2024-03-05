@@ -28,6 +28,7 @@ import { posComponent } from './pages/pos/pos.component';
 import { DialogClienteDetail } from './pages/pos/clientes.component';
 import { DialogMediosPagoDetail } from './pages/pos/mediosPago.component';
 import { ValidacionComponent } from './pages/validacionElectronicas/validacion.component';
+import { SiigoComprobantesComponent } from './pages/siigo-comprobantes-caja/siigo-comprobante.component';
 
 
 @NgModule({
@@ -55,7 +56,8 @@ import { ValidacionComponent } from './pages/validacionElectronicas/validacion.c
     posComponent,
     DialogClienteDetail,
     DialogMediosPagoDetail,
-    ValidacionComponent
+    ValidacionComponent,
+    SiigoComprobantesComponent
 
   ],
   imports: [

@@ -928,14 +928,14 @@ async function contarEan(req, res){
     var coll = req.params.tag;
     let io = req.app.get('io');
     let scan = params.scan +'';
-    //console.log(params.scan)
+    console.log(params.scan)
     console.log('684  '+ coll)
     const url = 'mongodb://localhost:27017';
     const client = new MongoClient(url);
     const dbName = 'DutyFreeInventarios';
    
         await client.connect();
-        //console.log('Connected successfully to server');
+        console.log('Connected successfully to server');
         const db = client.db(dbName);
         const collection = await db.collection(coll);
         collection.updateOne({EAN:scan},

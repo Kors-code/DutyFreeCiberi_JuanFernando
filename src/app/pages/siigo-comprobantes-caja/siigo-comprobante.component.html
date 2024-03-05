@@ -1,0 +1,93 @@
+
+<mat-card>
+  <mat-progress-bar mode="indeterminate" *ngIf="log" ></mat-progress-bar> 
+  <h2 style="text-align: center;">COMPROBANTES SIIGO
+    <span>{{procesado}}</span>
+  </h2>
+  <div style="display: flex; flex-wrap: wrap; justify-content: center; align-items: center;">
+    <!-- <mat-form-field appearance="fill" style="text-align: center; font-size: 1.3em; margin-right: 20px;">
+      <mat-label>TRM</mat-label>
+      <input matInput placeholder="TRM" type="number" name="trm" [(ngModel)]="trm">
+    </mat-form-field> -->
+    <mat-form-field appearance="fill">
+      <mat-label>Tag Base Datos</mat-label>
+      <mat-select [(ngModel)]="tag">
+        <mat-option *ngFor="let item of config.tags" [value]="item.tag">
+          {{item.tag}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field> 
+      <!-- <input *ngIf="tag" type="file" multiple="false" (change)="onFileChange($event)" style="font-size: 1.3em; margin-left: 10px;"> -->
+      <input type="file" class="file-input"
+      (change)="onFileSelected($event)" #fileUpload>
+        <div style="margin: 20px 20px;">
+          <h3>{{fileName || "SELECCIONA INFORMACION "}}</h3>
+          <button mat-stroked-button color="primary" class="upload-btn"
+            (click)="fileUpload.click()"> DAVIVIENDA
+              <mat-icon>attach_file</mat-icon>
+          </button>
+        </div>
+    </div>
+  <!-- <button *ngIf="registros.length != 0" flex mat-raised-button color="accent" [disabled]="log"  (click)="saveInfoCompleto(registros)" class="text-upper" style="width: 90%; margin:15px auto;margin-left: 20px;"> {{registros.length}} Documentos - Registrar Informacion<mat-icon layout-padding>send</mat-icon></button> -->
+  <!-- <button *ngIf="dataSource" flex mat-raised-button color="accent" [disabled]="progreso != 0"  (click)="authSiigo(tag)" class="text-upper" style="width: 90%; margin:15px auto;margin-left: 20px;">  Generar PDF {{documentos.length}} Respaldo POS <mat-icon>update_file</mat-icon></button> -->
+  <div *ngIf="lotesCmprobantes.length !=0" style="display: flex; flex-wrap: wrap; justify-content: center; width: 100%;margin: 0 auto;">
+    <mat-form-field appearance="fill" style="text-align: center; font-size: 1em; margin-right: 20px;">
+      <mat-label>Fecha Comprobante</mat-label>
+      <input matInput placeholder="Data Base" type="date" name="tag" [(ngModel)]="date">
+    </mat-form-field>
+    <mat-form-field appearance="fill" style="text-align: center; font-size: 1em; margin-right: 20px;">
+      <mat-label>observaciones</mat-label>
+      <input matInput [disabled]="!date" placeholder="Data Base" type="text" name="observaciones" [(ngModel)]="obs">
+    </mat-form-field>
+   <div>
+   </div>
+    <mat-chip-list  style="margin: 0 auto; font-size: 3em;">
+      <ng-template let-doc let-i="index" ngFor [ngForOf]="lotesCmprobantes">
+        <mat-chip color="accent"  [class._100]=" procesado != 0 &&i <= procesado" [disabled]="!obs || log"   (click)="generarRegistros(doc)"  >
+          <mat-chip-avatar>
+            <img src="assets/metas.svg" alt="Photo of a Shiba Inu"/>
+              </mat-chip-avatar>
+              {{i + 1}} <span *ngIf="doc.Siigo" >- {{doc?.Siigo[0]?.name}}  - {{doc?.Siigo[1]?.name}}</span>  - {{doc.length}} Items Costo {{costo(doc) | number:'0.0-0'}}  Venta {{venta(doc) | number:'0.0-0'}}
+          </mat-chip>
+      </ng-template>
+      
+    </mat-chip-list>
+     <button  flex mat-raised-button color="warn" [disabled]=""  (click)="procesarInformacion()" class="text-upper" style="width: 90%; margin:15px auto;margin-left: 20px; color: white;"> Subir {{registros.length}} registros <span style="font-size: 1.3em; color:blue"> {{lotesCmprobantes.length * 2}}</span> Comprobantes  Siigo <mat-icon>save</mat-icon></button>
+     <button *ngIf="procesado == lotesCmprobantes.length " flex mat-raised-button color="warn" [disabled]=""  (click)="reload()" class="text-upper" style="width: 90%; margin:15px auto;margin-left: 20px; color: white;"> se registraron los comprobamtes agregar nuevos<mat-icon>refresh</mat-icon></button>
+  </div>
+
+ <span *ngIf="progreso != 0" style="color: blue;">{{progreso | number:'0.0-2'}}% </span> <mat-progress-bar *ngIf="progreso != 0" mode="determinate" [value]="progreso" color="accent" style="width: 90%; margin: 0 auto;"></mat-progress-bar>
+  
+ <table *ngIf="dataSource" mat-table [dataSource]="dataSource"  matSort class="mat-elevation-z8" style="width: 90%; margin: 0 auto;">
+    <!--- Note that these columns can be defined in any order.
+          The actual rendered columns are set as a property on the row definition" -->
+  
+    <!-- Position Column -->
+    <ng-container  matColumnDef="folio">
+      <th mat-header-cell  *matHeaderCellDef > FOLIO. </th>
+      <td mat-cell *matCellDef="let element"> {{element._id}} </td>
+    </ng-container>
+  
+    <!-- Name Column -->
+    <!-- <ng-container matColumnDef="usd">
+      <th mat-header-cell *matHeaderCellDef> USD </th>
+      <td mat-cell *matCellDef="let element"> {{element.Usd | number}} </td>
+    </ng-container> -->
+   
+    <ng-container matColumnDef="unds">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> UNIDADES </th>
+      <td mat-cell *matCellDef="let element"> {{element.Unidades | number}} </td>
+    </ng-container>
+    <ng-container matColumnDef="cop">
+      <th mat-header-cell *matHeaderCellDef> COP </th>
+      <td mat-cell *matCellDef="let element"> {{element.Cop | number }} </td>
+    </ng-container>
+    <ng-container matColumnDef="detail">
+      <th mat-header-cell *matHeaderCellDef> ARTICULOS </th>
+      <td mat-cell *matCellDef="let element">{{element.Detalle.length }} </td>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+
+</mat-card>

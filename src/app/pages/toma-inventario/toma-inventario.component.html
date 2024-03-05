@@ -1037,7 +1037,7 @@
               <h1 style="text-align:center;">Detalle Diferencias</h1>
             <table class="mat-elevation-z8" style="width: 90%; margin: 0 auto; font-size: 0.8em;" class="mat-elevation-z8">
               <thead style="padding: 15px; font-size: 1em; border-radius: 10px;">
-                <tr>
+                <tr *ngIf="Definitivas.length != 0">
                   <th>
                      <span style="display:flex; align-items: center;">SKU
                     <!-- <mat-form-field style="text-align: center; color: black;width: 90px;">
@@ -1062,7 +1062,7 @@
                   <th>CATEGORIA</th>
                   <th>PRODUCTO</th>
                   <th>
-                    <span style="display:flex; justify-content: center; align-items: center;">
+                    <span  style="display:flex; justify-content: center; align-items: center;">
                       EXISTENCIA
                       <button *ngIf="Definitivas[0].Exist_Final > Definitivas[Definitivas.length-1].Exist_Final" mat-icon-button aria-label="Clear" (click)="filterExistDefinitivos()">
                         <mat-icon>arrow_upward</mat-icon>

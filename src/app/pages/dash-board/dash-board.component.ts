@@ -178,7 +178,7 @@ export class DashBoardComponent implements OnInit {
 
             // //console.log(pdv)
             console.log(this.presupuesto.ventas)
-            console.log(element._id,  element.COP)
+            console.log(element._id,  element.COP, element.Importe )
             this.presupuesto.ventas_usd = this.presupuesto.ventas_usd + element.Importe;
             this.presupuesto.ventas = this.presupuesto.ventas + element.COP;
             
@@ -897,7 +897,7 @@ export class DashBoardComponent implements OnInit {
     this._infoService.getInformeCategoriasTienda(tag).subscribe(
       res=>{
         this.informeCategTieda = res;
-        //console.log(res);
+        console.log(res);
         for (let index = 0; index <  this.informeCategTieda.length; index++) {
           const element =  this.informeCategTieda[index];
           // // ////////////console.log(element.PDV)

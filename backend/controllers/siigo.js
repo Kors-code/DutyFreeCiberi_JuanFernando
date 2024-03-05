@@ -278,7 +278,6 @@ async function sendComprobanteSiigo(req, res){
                         },
                         date: params.date,
                         items:params.data,
-                        number:Consecutivo,
                         observations: params.obs
                       }))
                       .end(function (respu) { 

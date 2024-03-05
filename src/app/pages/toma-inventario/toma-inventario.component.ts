@@ -360,12 +360,6 @@ export class tomaInventarioComponent implements OnInit {
         this.data[0][pos9] = 'TOTAL_FINAL_INV_USD'
       }
 
-
-//       TOTAL_FINAL_INV
-// TOTAL_FINAL_INV_USD
-
-      //console.log('Data', this.data);
-
       this.convertirJson()
       this.log= false;
     };
@@ -473,7 +467,8 @@ export class tomaInventarioComponent implements OnInit {
   Responsable:string = '';
   saveInfoCompleto(registros: any){
     this.log= true;
-    this._infoServce.agregarConteo(registros, this.tag).subscribe(
+    console.log(this.db);
+    this._infoServce.agregarConteo(registros, this.db).subscribe(
       res =>{
         let dato = res
         // ////console.log(dato)
@@ -847,12 +842,12 @@ export class tomaInventarioComponent implements OnInit {
       ubicacion:this.ubicacion,
     }
 
-    //console.log(this.tag)
+    console.log(this.tag)
     if(this.scaner){
       this._infoServce.agregarScaneo(scan, this.tag).subscribe(
         res =>{
           let dato = res
-          //console.log(dato)
+          console.log(res)
           if(dato){
             if(this.ultimosConteos.length <= 50){ 
               this.ultimosConteos.unshift(dato)
