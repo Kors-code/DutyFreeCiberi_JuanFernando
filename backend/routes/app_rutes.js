@@ -53,6 +53,9 @@ api.get('/get-image-user/:imageFile', UserController.getImageFile);
 
 // INFO RUTAS
 api.post('/info',md_auth.ensureAuth,  infoController.registerInfo);
+api.post('/info-comprobante',md_auth.ensureAuth,  siigoController.agregarInfoComprobante);
+api.get('/comprobantes',md_auth.ensureAuth, siigoController.getComprobantes);
+
 api.post('/info-lote/:tag',md_auth.ensureAuth,  infoController.agregarInfo);
 api.post('/replace-info-lote/:tag',md_auth.ensureAuth,  infoController.remplazarInfo);
 api.post('/info-paginate',md_auth.ensureAuth, infoController.getRegistros);
@@ -88,6 +91,7 @@ api.post('/invoice-siigo/:tag',md_auth.ensureAuth, siigoController.getFacturacio
 api.post('/journals-siigo/:tag',md_auth.ensureAuth, siigoController.getComprobantesSiigo);
 api.post('/journals',md_auth.ensureAuth, siigoController.sendComprobanteSiigo);
 
+api.post('/listado-siigo/:tag',md_auth.ensureAuth, siigoController.getListadoSiigo);
 // PRESUPUESTOS
 api.post('/presupuesto', md_auth.ensureAuth,  infoController.agregarPresupuesto);
 api.get('/presupuestos/:id', md_auth.ensureAuth,  infoController.getDataPresupuesto);

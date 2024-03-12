@@ -1,19 +1,26 @@
 {
   "name": "duty_free",
-  "version": "1.4.7",
+  "version": "1.5.0",
   "description": "backend duty-free",
   "main": "main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "postinstall": "",
     "on": "electron .",
-    "pack": "build --dir",
-    "pkg-win":"electron-packager . DutyFree_147 --platform=win32 --arch=x64 --icon=./favicon.ico"
+    "build": "electron-builder --win",
+    "build-dev": "electron-builder build --win --publish never",
+    "deploy": "electron-builder build --win --publish never",
+    "package-mac": "electron-packager . --overwrite --platform=darwin --arch=x64 --icon=assets/icons/mac/icon.icns --prune=true --out=release-builds",
+    "pkg-win": "electron-packager . ciberi --platform=win32 --arch=x64 --icon=./build/icon.png --out dist/",
+    "package-linux": "electron-packager . electron-tutorial-app --overwrite --asar=true --platform=linux --arch=x64 --icon=assets/icons/png/1024x1024.png --prune=true --out=release-builds"
   },
-  "author": "ciberi.co",
-  "license": "ISC",
   "build": {
-    "appId": "duty-app",
+    "appId": "co.duty-free.app",
     "asar": true,
+    "artifactName": "${productName}-${version}.${ext}",
+    "productName": "duty_free",
+    "directories": {
+      "output": "${productName}-${version}"
+    },
     "dmg": {
       "contents": [
         {
@@ -35,24 +42,48 @@
       ]
     },
     "win": {
-      "target": "NSIS",
-      "icon": "favicon.ico"
+      "target": "nsis",
+      "icon": "build/duty.jpg",
+      "publisherName":"ciberi.co",
+      "publish": [
+        {
+          "provider": "s3",
+          "bucket": "duty-free-app",
+          "region": "us-east-2",
+          "channel": "latest"
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "installerIcon": "icon.ico",
+      "uninstallerIcon": "icon.ico",
+      "uninstallDisplayName": "Desistalar ciberi duty-free",
+      "license": "licence.md",
+      "allowToChangeInstallationDirectory": true
     },
     "extraFiles": [
       {
         "from": "./public",
         "to": "public"
+      },
+      {
+        "from": "./logs",
+        "to": "logs"
       }
     ],
     "files": [
       "**/*"
     ]
   },
+  "author": "ciberi.co",
+  "license": "ISC",
   "dependencies": {
     "bcrypt-nodejs": "^0.0.3",
     "body-parser": "^1.19.1",
     "connect-multiparty": "^2.2.0",
-    "electron-packager": "^15.4.0",
+    "electron-log": "^5.1.1",
+    "electron-updater": "^6.1.8",
     "express": "^4.17.2",
     "handlebars-pdf": "^1.0.1",
     "jwt-simple": "^0.5.6",
@@ -66,6 +97,9 @@
     "unirest": "^0.6.0"
   },
   "devDependencies": {
-    "electron": "^17.1.0"
+    "electron": "^17.1.0",
+    "electron-builder": "^24.13.3"
   }
 }
+
+

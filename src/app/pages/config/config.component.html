@@ -13,6 +13,34 @@
         </mat-panel-title>
       
       </mat-expansion-panel-header>
+
+      <mat-card-content>
+        <h3> Operacion</h3>
+        <mat-form-field style="width: 400px; text-align: center;">
+          <input matInput placeholder="TRM USD" type="number"  name="trm_usd" [(ngModel)]="config.dataOperacion.trm_usd" required>
+        </mat-form-field>
+        <mat-form-field style="width: 400px; text-align: center;">
+          <input matInput placeholder="TRM EURO" type="number"  name="trm_euro" [(ngModel)]="config.dataOperacion.trm_euro" required>
+        </mat-form-field>
+        <mat-form-field style="text-align: center;">
+          <input matInput placeholder="C.C/ NIT" type="number"  name="facturacioncodigo" [(ngModel)]="config.dataOperacion.identification_number" required>
+        </mat-form-field>
+        <mat-form-field style="width: 100px; text-align: center;">
+          <input matInput placeholder="Digto Verificacion" type="number"  name="facturacioncodigo" [(ngModel)]="config.dataOperacion.dv" required>
+        </mat-form-field>
+        <mat-form-field style="width: 100%; text-align: center;">
+          <input matInput placeholder="Nombre Juridico" type="text" style="width: 100%;"  name="business_name" [(ngModel)]="config.dataOperacion.business_name" required>
+        </mat-form-field>
+        <mat-form-field style="width: 100%; text-align: center;">
+          <input matInput placeholder="Direccion" type="text"  name="address" [(ngModel)]="config.dataOperacion.address" required>
+        </mat-form-field>
+        <mat-form-field style="margin-left: 10px; text-align: center;">
+          <input matInput placeholder="Telefono" type="number"  name="phone" [(ngModel)]="config.dataOperacion.phone" required>
+        </mat-form-field>
+        <mat-form-field style="width: 400px; text-align: center;">
+          <input matInput placeholder="Correo ELectronic" type="text"  name="email" [(ngModel)]="config.dataOperacion.email" required>
+        </mat-form-field>
+      </mat-card-content>
       <mat-card-content> 
         <mat-form-field style="margin-right: 25px;" appearance="fill">
             <mat-label>siigoUser</mat-label>
@@ -33,39 +61,114 @@
             <input matInput type="number" [(ngModel)]="config.consecutivoCompVenta">
           </mat-form-field>
 
+          <mat-form-field style="width: 60%;" appearance="fill">
+            <mat-label>Consecutivo Recibo Caja</mat-label>
+            <input matInput type="number" [(ngModel)]="config.consecutivoCompCaja">
+          </mat-form-field>
 
+      </mat-card-content>
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <mat-icon>person_pin</mat-icon> Cuentas SIIGO
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <mat-card-content>
+          <mat-form-field style="text-align: center;">
+            <input matInput placeholder="Titulo" type="text" style="width: 100%;"  name="tercerotitulo" [(ngModel)]="tercero.titulo" required>
+          </mat-form-field>
+          <mat-form-field style="text-align: center;">
+            <input matInput placeholder="Cuenta Siigo" type="text" style="width: 100%;"  name="tercerocuenta" [(ngModel)]="tercero.cuenta" required>
+          </mat-form-field>
+          <mat-form-field style="text-align: center;">
+            <input matInput placeholder="NIT | id Siigo" type="text" style="width: 100%;"  name="terceroid_tercero" [(ngModel)]="tercero.id_tercero" required>
+          </mat-form-field>
+          <mat-form-field style="text-align: center;">
+            <input matInput placeholder="Centro de Costos" type="text" style="width: 100%;"  name="tercerocentro_costos" [(ngModel)]="tercero.centro_costos" required>
+          </mat-form-field>
           
+          <mat-form-field style="text-align: center;">
+            <input matInput placeholder="Movimiento" type="text" style="width: 100%;"  name="tercerodescripcion" [(ngModel)]="tercero.descripcion" required>
+          </mat-form-field>
+          <mat-checkbox   name="tercero.due" [(ngModel)]="tercero.due" > Vencimiento
+          </mat-checkbox>
+        </mat-card-content>
+        <div style="display: flex; align-items: flex-end; width: 100%;">
+          <button *ngIf="!tercero._id && tercero.titulo" mat-stroked-button  aria-label="Clear" (click)="addCuenta()">
+            <mat-icon>add</mat-icon> Agregar
+          </button>
+          <button *ngIf="tercero._id" mat-stroked-button  aria-label="Clear" (click)="editTERCERO()">
+            <mat-icon>edit</mat-icon> Editar
+          </button>
+        </div>
+        <mat-nav-list>
+          <ng-template let-item let-i="index" ngFor [ngForOf]="config.cuentas">
+            <mat-list-item >
+              <button mat-icon-button (click)="deleteTercero(i)">
+                <mat-icon>delete</mat-icon>
+             </button>
+               <h5 style="margin:0 10px;" (click)="tercero = item">
+                {{item.titulo}} - {{item.descripcion}}
+              </h5>
+            </mat-list-item>
+          </ng-template>
+         
+          
+        </mat-nav-list>
 
-      </mat-card-content>
-      <mat-card-content>
-        <h3> Operacion</h3>
-        <mat-form-field style="width: 400px; text-align: center;">
-          <input matInput placeholder="TRM USD" type="number"  name="trm_usd" [(ngModel)]="config.dataOperacion.trm_usd" required>
-        </mat-form-field>
-        <mat-form-field style="width: 400px; text-align: center;">
-          <input matInput placeholder="TRM EURO" type="number"  name="trm_euro" [(ngModel)]="config.dataOperacion.trm_euro" required>
-        </mat-form-field>
-        <mat-form-field style="text-align: center;">
-          <input matInput placeholder="C.C/ NIT" type="number"  name="facturacioncodigo" [(ngModel)]="config.dataOperacion.identification_number" required>
-        </mat-form-field>
-        <mat-form-field style="width: 100px; text-align: center;">
-          <input matInput placeholder="Digto Verificacion" type="number"  name="facturacioncodigo" [(ngModel)]="config.dataOperacion.dv" required>
-        </mat-form-field>
-        <mat-form-field style="width: 100%; text-align: center;">
-          <input matInput placeholder="Nombre Juridico" type="text" style="width: 100%;"  name="business_name" [(ngModel)]="config.dataOperacion.business_name" required>
-        </mat-form-field>
 
 
-        <mat-form-field style="width: 100%; text-align: center;">
-          <input matInput placeholder="Direccion" type="text"  name="address" [(ngModel)]="config.dataOperacion.address" required>
-        </mat-form-field>
-        <mat-form-field style="margin-left: 10px; text-align: center;">
-          <input matInput placeholder="Telefono" type="number"  name="phone" [(ngModel)]="config.dataOperacion.phone" required>
-        </mat-form-field>
-        <mat-form-field style="width: 400px; text-align: center;">
-          <input matInput placeholder="Correo ELectronic" type="text"  name="email" [(ngModel)]="config.dataOperacion.email" required>
-        </mat-form-field>
-      </mat-card-content>
+
+
+      </mat-expansion-panel>
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <mat-icon>upload_file</mat-icon>  Comprobantes SIIGO
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <mat-card-content>
+          <mat-form-field style="text-align: center;">
+            <input matInput placeholder="Titulo" type="text" style="width: 100%;"  name="comprobantetitulo" [(ngModel)]="comprobante.titulo" required>
+          </mat-form-field>
+          <mat-form-field style="text-align: center;">
+            <input matInput placeholder="Id Siigo" type="text" style="width: 100%;"  name="comprobanteidSiigo" [(ngModel)]="comprobante.idSiigo" required>
+          </mat-form-field>
+          <mat-form-field style="text-align: center;">
+            <input matInput placeholder="Codigo" type="text" style="width: 100%;"  name="comprobantedescripcion" [(ngModel)]="comprobante.descripcion" required>
+          </mat-form-field>
+        </mat-card-content>
+        <div style="display: flex; align-items: flex-end; width: 100%;">
+          <button *ngIf="!comprobante._id && comprobante.titulo" mat-stroked-button  aria-label="Clear" (click)="addComprobante()">
+            <mat-icon>add</mat-icon> Agregar
+          </button>
+          <button *ngIf="comprobante._id" mat-stroked-button  aria-label="Clear" (click)="editComprobante()">
+            <mat-icon>edit</mat-icon> Editar
+          </button>
+        </div>
+        <mat-nav-list>
+          <ng-template let-item let-i="index" ngFor [ngForOf]="config.comprobantes">
+            <mat-list-item >
+              <button mat-icon-button (click)="deleteComprobante(i)">
+                <mat-icon>delete</mat-icon>
+             </button>
+               <h5 style="margin:0 10px;" (click)="comprobante = item">
+                {{item.titulo}} - {{item.descripcion}}
+              </h5>
+            </mat-list-item>
+          </ng-template>
+         
+          
+        </mat-nav-list>
+
+
+
+
+
+      </mat-expansion-panel>
+
+
+    
     </mat-expansion-panel>
     
     <mat-expansion-panel>

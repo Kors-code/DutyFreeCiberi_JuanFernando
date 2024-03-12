@@ -10,7 +10,7 @@ import { MongoDbService } from 'src/app/services/mongodbservice';
 import { SiigoService } from '../../services/siigo.service'
 import {MatSort} from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { Config } from 'src/app/models/config';
+import { Comprobante, Config, ItenmComprobanteSiigo, TerceroSiigo } from 'src/app/models/config';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { UserService } from 'src/app/services/user.service';
 import { Operacion } from 'src/app/models/operacion';
@@ -31,7 +31,9 @@ export class SiigoComprobantesComponent implements OnInit {
   displayedColumns: string[] = ['folio', 'unds', 'cop', 'detail'];
   @ViewChild(MatSort, {static: true}) sort!: MatSort;
   pOperacion:Operacion
-  constructor( public dialog: MatDialog, @Inject(DOCUMENT) doc: any,
+  comprobante:Comprobante
+  constructor( 
+              public dialog: MatDialog, @Inject(DOCUMENT) doc: any,
               public _infoServce:InfoService,
               public _socketService:SocketIOService,
               // public _mongoService: MongoDbService
@@ -40,6 +42,7 @@ export class SiigoComprobantesComponent implements OnInit {
               _userService:UserService
     ) { 
       this.config = new Config();
+      this.comprobante = new Comprobante()
       // this.trmApi =  new TrmApi("aEOKmLbbPROhCr6iDiieAGCqt");
       // this.trmApi
       //   .latest()
@@ -51,7 +54,18 @@ export class SiigoComprobantesComponent implements OnInit {
 
   ngOnInit(): void {
     this.getConfig()
+    this. getComprobantes()
+   
     // this._mongoService.main();
+  }
+
+  listadoComprobantes:any[]=[]
+  getComprobantes(){
+    this._siigoService.getDataComprobantes().subscribe(
+      res=>{
+        // console.log(res)
+        this.listadoComprobantes= res;
+      });
   }
 
   openSnackBar(message: string, action: string = 'Ok') {
@@ -165,13 +179,23 @@ export class SiigoComprobantesComponent implements OnInit {
   ]; 
 		
 
+  getListadoSiigo(list:string){
+    let credenciales={
+      user:this.config.siigoUser,
+      key:this.config.siigoKey
+    }
+    this._siigoService.ListadosSiigo(credenciales,list).subscribe(
+      res=>{console.log(res)}
+    )
+  }
+
   getConfig(){
     this._infoServce.getConfig(this.pOperacion._id).subscribe(
       res=>{
         if(res.length != 0){
           this.config = res[0];
           localStorage.setItem('categ',JSON.stringify(this.config.categorias))
-
+          // this.getListadoSiigo('cost-centers')
           ////console.log(this.config)
         }
        
@@ -290,14 +314,14 @@ export class SiigoComprobantesComponent implements OnInit {
   saveInfoCompleto(registros: any){
     this.log= true;
     let dialogRef
-    this._infoServce.agregarInfo(registros, this.tag).subscribe(
+    this._infoServce.agregarInfo(registros, 'RC_' + this.tag).subscribe(
       res =>{
         let dato = res
         this.procesado++
-        // ////console.log(this.procesado)
+  
         if(this.procesado <= this.lotesCmprobantes.length){
           if(this.procesado << this.lotesCmprobantes.length){
-            this.generarRegistros(this.lotesCmprobantes[this.procesado])
+            this.generarRegistros()
             this.dialog.closeAll()
             let data = {titulo: 'Progreso '+ this.procesado + ' de ' + this.lotesCmprobantes.length, info:'Se Registraron ' + res.insertedCount + ' de ' + registros.length, type: 'Confirm', icon:'done_all'}
             dialogRef = this.dialog.open(DialogConfirm,{
@@ -434,7 +458,7 @@ export class SiigoComprobantesComponent implements OnInit {
    
     console.log(this.registros)
     let lotes = 200;
-    this.chunckArrayInGroups(this.registros, lotes)
+    // this.chunckArrayInGroups(this.registros, lotes)
    
   }
 
@@ -446,76 +470,165 @@ export class SiigoComprobantesComponent implements OnInit {
       return this.lotesCmprobantes = chunk;
   }
 
-  generarRegistros(registros: any[]){
-    console.log( registros)
-    if(registros){
+  generarRegistros(){
+    console.log( this.registros)
     this.log = true
     this.itemsContable =[]
     this.itemsFacturaVentas=[]
-    for(var i = 0;i < registros.length; i++){
-        let dtaComprobante2 = {
+    this.procesado=0
+    for(var i = 0;i < this.registros.length; i++){
+    
+
+          let Comisiones ={
+            account: {
+              code: '53051501',
+              movement: "Debit"
+            },
+            customer: {
+              identification: this.registros[i]['tercero'],
+              branch_office: 0
+            },
+            
+            description: "RC VTAS CTG PAGO TARJETA DAVIVIENDA  " + this.date,
+            cost_center: this.registros[i]['centro_costo'],
+            value: parseInt(this.registros[i]['Valor Comisión']) 
+          }
+
+          this.itemsContable.push(Comisiones)
+
+          let Retefuente ={
+            account: {
+              code: '13551508',
+              movement: "Debit"
+            },
+            customer: {
+              identification: this.registros[i]['tercero'],
+              branch_office: 0
+            },
+      
+            tax:{
+              id:'18171'
+            },
+            description: "RC VTAS CTG PAGO TARJETA DAVIVIENDA RETEFUENTE " + this.date,
+            cost_center: this.registros[i]['centro_costo'],
+            value: parseInt(this.registros[i]['Ret. Fuente']) 
+          }
+    
+          this.itemsContable.push(Retefuente)
+
+        let dtaComprobanteCaja = {
               account: {
-                code: registros[i],
+                code: this.registros[i]['cuenta'],
                 movement: "Debit"
               },
               customer: {
-                identification: "209048401",
+                identification: this.registros[i]['tercero'],
                 branch_office: 0
               },
-              description: "Descripción Débito",
-              cost_center: 235,
-              value: 119000
+ 
+              description: "RC VTAS PAGO TARJETA DAVIVIENDA " + this.date,
+              cost_center: this.registros[i]['centro_costo'],
+              value: parseInt(this.registros[i]['Valor Neto']) 
         }
-    
-        this.itemsContable.push(dtaComprobante2)  
+
+        this.itemsContable.push(dtaComprobanteCaja) 
+
+        let VentaMostrador = {
+          account: {
+            code: '13050501',
+            movement: "Credit"
+          },
+          customer: {
+            identification: '222222222',
+            branch_office: 0
+          },     
+          due:{
+            date:this.date,
+            prefix:'RC',
+            consecutive:i+1,
+            quote:1
+          },
+          description: "RC VTAS PAGO TARJETA DAVIVIENDA " + this.date,
+          cost_center: this.registros[i]['centro_costo'],
+          value: parseInt(this.registros[i]['Valor Consumo']) 
+    }
+
+    this.itemsContable.push(VentaMostrador) 
     
     }
+
+    console.log(this.itemsContable.length)
+  if(this.itemsContable.length <= 400 ){
 
     let credenciales={
       user:this.config.siigoUser,
       key:this.config.siigoKey,
       data: this.itemsContable,
-      number:2534,
       date:this.date,
-      iddoc:5086,
+      iddoc:34002,
       _id:this.pOperacion._id,
-      observations: 'Observaciones'
+      obs: this.obs
     }
-
+    console.log(credenciales);
     this._siigoService.saveComprobantesSiigo(credenciales).subscribe(
       res=>{
         console.log(res);
-        this.openSnackBar('COMPROBANTE DE INGRESO GENERADO CORRECTAMENTE','EXITO');
-      },err =>{
-        this.log = true
-        let data = {titulo: 'Error', info:err.error.message, type: 'Confirm', icon:'error'}
-  
+        this._siigoService.agregarInfoComprobante(res).subscribe(
+          res=>{
+            console.log(res);
+            let data = {titulo: 'Exito ', info:'Comprobante Davivienda Generado Correctamente' ,type: 'Confirm', icon:'done_all'}
+            let dialogRef = this.dialog.open(DialogConfirm,{
+              data: data
+            });
+            dialogRef.afterClosed().subscribe(result => {
+              window.location.reload();
+            })
+          }
+        )
+
+      },err=>{
+
+        let data = {titulo: 'Error ', info:err.error.message ,type: 'Confirm', icon:'done_all'}
         let dialogRef = this.dialog.open(DialogConfirm,{
           data: data
         });
-      
         dialogRef.afterClosed().subscribe(result => {
-
+          window.location.reload();
         })
         console.log(err)
+    })
 
+  }else{
+    this.lotesCmprobantes = [];
+    console.log(this.itemsContable.length);
+    this.chunckArrayInGroups(this.itemsContable,400);
+    console.log(this.lotesCmprobantes);
+      let credenciales={
+        user:this.config.siigoUser,
+        key:this.config.siigoKey,
+        data: this.lotesCmprobantes[0],
+        date:this.date,
+        iddoc:34002,
+        _id:this.pOperacion._id,
+        obs: this.obs
       }
-    )
 
-
-    }else{
-      this.log = false
-      let data = {titulo: 'Registro Exitoso '+ this.procesado + 'de ' + this.lotesCmprobantes.length, info:'Se Registraron los comprobantes correctamente ', type: 'Confirm', icon:'done_all'}
-      let dialogRef = this.dialog.open(DialogConfirm,{
-        data: data
-      });
-    }
+      this.saveComprobanteLotes(credenciales)
+  }
+   
   }
 
   procesado = 0
   procesarInformacion(){
     this.procesado = 0
-    this.generarRegistros(this.lotesCmprobantes[0])
+    if(this.itau){
+      this.openSnackBar('ITAU')
+      this.generarRegistrosItaU()
+    }else{
+      this.openSnackBar('Davivienda')
+      this.generarRegistros()
+    }
+    
   }
 
   costo(doc: any[]){
@@ -567,7 +680,6 @@ export class SiigoComprobantesComponent implements OnInit {
     window.location.reload();
   }
 
-
   fileName = '';
   onFileSelected(event:any) {
 
@@ -616,44 +728,404 @@ convertirJsonComprobante(){
       this.registros.push(Object.fromEntries(reg))
     }
 
+    for(var i = 0;i < this.registros.length; i++){
+
+      let fecha = this.registros[i]['Fecha Vale'];  
+      this.registros[i].Importe = Number(this.registros[i]['Valor Neto'])
+   
+      let detalle = 'RC VTAS PAGO TARJETA DAVIVIENDA ' + this.registros[i]['Fecha Vale'].toString() ;
+     
+      if(detalle.length >= 101){
+        detalle = detalle.slice(0, 100);
+      }
+      this.registros[i].Detalle = detalle;
+      // console.log(this.config.cuentas)
+      let pos2 = this.config.cuentas.map(function(e: { titulo: string; }) { return e.titulo; }).indexOf('DAVIVIENDA');
+      // console.log(pos2)
+      
+      if(pos2 != -1){
+        let cuenta:TerceroSiigo = this.config.cuentas[pos2]
+        this.registros[i].titulo= cuenta.titulo;
+        this.registros[i].cuenta= cuenta.cuenta;
+        this.registros[i].tercero= cuenta.id_tercero;
+        this.registros[i].centro_costo= cuenta.centro_costos;
+    }
+
+    this.log= false;
     // console.log(this.registros)
+  }
+}
+
+itau=false;
+onFileSelectedItau(event:any) {
+  const file:File = event.target.files[0];
+  this.itau=true;
+  if (file) {
+    // console.log(file)
+      this.fileName = file.name;
+
+      this.log= true;
+  const target : DataTransfer =  <DataTransfer>(event.target);
+  
+  if (target.files.length !== 1) throw new Error('Cannot use multiple files');
+
+  const reader: FileReader = new FileReader();
+
+  reader.onload = (e: any) => {
+    const bstr: string = e.target.result;
+
+    const wb: XLSX.WorkBook = XLSX.read(bstr, { type: 'binary' });
+    const wsname : string = wb.SheetNames[0];
+    const ws: XLSX.WorkSheet = wb.Sheets[wsname];
+    this.data = (XLSX.utils.sheet_to_json(ws, { header: 1 }));
+    this.convertirJsonComprobanteItau()
+    this.log= false;
+  };
+
+  reader.readAsBinaryString(target.files[0]);
+    
+  }
+}
+
+convertirJsonComprobanteItau(){
+  this.registros=[];
+  this.log= true;
+    let keys = Object.values(this.data[0])
+    for(var i = 1;i < this.data.length; i++){
+      let arr = this.data[i];
+      let par = Object.values(arr);
+      let reg = []
+      for (let i = 0; i < keys.length; i++) {
+        let obje = [keys[i], par[i] || '' ]
+        reg.push(obje)
+      }
+      this.registros.push(Object.fromEntries(reg))
+    }
 
     for(var i = 0;i < this.registros.length; i++){
 
-      let fecha =  this.registros[i]['Fecha de Abono'];
-      console.log(fecha);
-      let split = new Date(fecha).toDateString().split("/");
-
-      this.registros[i].Importe = Number(this.registros[i]['Valor Neto'])
-    
-
-      if(parseInt(split[0]) <= 9){
-        this.registros[i].Day = '0'+ split[0];
-        // ////// ////console.log( this.registros[i].Day)
-      }else{
-        this.registros[i].Day = split[0];
-        // ////// ////console.log( this.registros[i].Day)
-      }
-
-      this.registros[i].Month = split[1];
-      this.registros[i].Year = '20'+split[2];
-
-      let detalle = 'FAC '+this.registros[i]['Valor Neto'];
+      let fecha = this.registros[i]['DIA']+'-'+this.registros[i]['MES']+'-'+new Date().getFullYear();
+      // console.log(fecha);
+      this.registros[i].fecha = fecha
       
+      let detalle = 'RC VTAS PAGO TARJETA ITAU ' + new Date(fecha);
+     
       if(detalle.length >= 101){
         detalle = detalle.slice(0, 100);
       }
 
       this.registros[i].Detalle = detalle;
-
+      // console.log(this.config.cuentas)
+      let pos2 = this.config.cuentas.map(function(e: { titulo: string; }) { return e.titulo; }).indexOf('ITAU');
+      // console.log(pos2)
+      
+      if(pos2 != -1){
+        let cuenta:TerceroSiigo = this.config.cuentas[pos2]
+        this.registros[i].titulo= cuenta.titulo;
+        this.registros[i].cuenta= cuenta.cuenta;
+        this.registros[i].tercero= cuenta.id_tercero;
+        this.registros[i].centro_costo= cuenta.centro_costos;
     }
     this.log= false;
-   
-    console.log(this.registros)
     let lotes = 200;
-    this.chunckArrayInGroups(this.registros, lotes)
+  }
+      console.log(this.registros)
 }
 
+async generarRegistrosItaU(){
+  console.log('entro')
+  console.log( this.registros)
+  this.procesado=0
+  this.log = true
+  this.itemsContable =[]
+  this.itemsFacturaVentas=[]
+  for(var i = 0;i < this.registros.length; i++){
+
+    if(this.registros[i]['VALOR NETO']){
+      // console.log(registros[i]['VLR.COMISION'])
+      let dtaComprobanteCaja = {
+        account: {
+          code: this.registros[i]['cuenta'],
+          movement: "Debit"
+        },
+        customer: {
+          identification: this.registros[i]['tercero'],
+          branch_office: 0
+        },
+        description: "RC VTAS PAGO TARJETA ITAU " + this.date + this.registros[i]['NUMERO TARJETA'],
+        cost_center: this.registros[i]['centro_costo'],
+        value: parseInt(this.registros[i]['VALOR NETO']) 
+      } 
+  
+      this.itemsContable.push(dtaComprobanteCaja)
+  
+      let Retefuente ={
+        account: {
+          code: '13551508',
+          movement: "Debit"
+        },
+        customer: {
+          identification: this.registros[i]['tercero'],
+          branch_office: 0
+        },
+        tax:{
+          id:'18171'
+        },
+        description: "RC VTAS CTG PAGO TARJETA ITAU RETEFUENTE " + this.date,
+        cost_center: this.registros[i]['centro_costo'],
+        value: parseInt(this.registros[i]['RETEFUENTE']) 
+      }
+      this.itemsContable.push(Retefuente)
+    
+          let Comisiones ={
+            account: {
+              code: '53051501',
+              movement: "Debit"
+            },
+            customer: {
+              identification: this.registros[i]['tercero'],
+              branch_office: 0
+            },
+            
+            description: "RC VTAS CTG PAGO TARJETA ITAU  " + this.date,
+            cost_center: this.registros[i]['centro_costo'],
+            value: parseInt(this.registros[i]['VLR.COMISION']) 
+          }
+  
+        this.itemsContable.push(Comisiones)
+  
+        let VentaMostrador = {
+          account: {
+            code: '13050501',
+            movement: "Credit"
+          },
+          customer: {
+            identification: '222222222',
+            branch_office: 0
+          },     
+          due:{
+            date:this.date,
+            prefix:'RC',
+            consecutive:i+1,
+            quote:1
+          },
+          description: "RC VTAS PAGO TARJETA ITAU " + this.date,
+          cost_center: this.registros[i]['centro_costo'],
+          value: parseInt(this.registros[i]['VALOR VENTA']) 
+        }
+  
+      this.itemsContable.push(VentaMostrador) 
+    }
+  
+  }
+  console.log(this.itemsContable.length)
+  if(this.itemsContable.length <= 400 ){
+    let credenciales={
+      user:this.config.siigoUser,
+      key:this.config.siigoKey,
+      data: this.itemsContable,
+      date:this.date,
+      iddoc:34002,
+      _id:this.pOperacion._id,
+      obs: this.obs
+    }
+    console.log(credenciales);
+
+      this._siigoService.saveComprobantesSiigo(credenciales).subscribe(
+      res=>{
+        console.log(res);
+
+        this._siigoService.agregarInfoComprobante(res).subscribe(
+          res=>{
+            console.log(res);
+            let data = {titulo: 'Exito ', info:'Comprobante Generado Correctamente' ,type: 'Confirm', icon:'done_all'}
+            let dialogRef = this.dialog.open(DialogConfirm,{
+              data: data
+            });
+            dialogRef.afterClosed().subscribe(result => {
+              window.location.reload();
+            })
+    
+          }
+        )
+      },err=>{
+        console.log(err)
+        let data = {titulo: 'Error ', info:err.error.message ,type: 'Confirm', icon:'error'}
+        let dialogRef = this.dialog.open(DialogConfirm,{
+          data: data
+        });
+        dialogRef.afterClosed().subscribe(result => {
+          window.location.reload();
+        })
+
+        console.log(err)
+      })
+  }else{
+    this.lotesCmprobantes = [];
+    console.log(this.itemsContable.length);
+    this.chunckArrayInGroups(this.itemsContable,400);
+    console.log(this.lotesCmprobantes);
+   
+      let credenciales={
+        user:this.config.siigoUser,
+        key:this.config.siigoKey,
+        data: this.lotesCmprobantes[0],
+        date:this.date,
+        iddoc:34002,
+        _id:this.pOperacion._id,
+        obs: this.obs
+      }
+
+      this.saveComprobanteLotes(credenciales)
+    
+  }
+}
+
+
+
+saveComprobanteLotes(credenciales:any){
+  console.log(credenciales);
+  this._siigoService.saveComprobantesSiigo(credenciales).subscribe(
+  res=>{
+   console.log(res);
+   this._siigoService.agregarInfoComprobante(res).subscribe(
+     res=>{
+       console.log(res);
+       this.procesado++
+       if( this.procesado == this.lotesCmprobantes.length){
+        let data = {titulo: 'Exito ', info:'Comprobante Generado Correctamente' ,type: 'Confirm', icon:'done_all'}
+        let dialogRef = this.dialog.open(DialogConfirm,{
+          data: data
+        });
+        dialogRef.afterClosed().subscribe(result => {
+          window.location.reload();
+        })
+       }else{
+        if(this.lotesCmprobantes[this.procesado].length != 0){
+          let credenciales={
+            user:this.config.siigoUser,
+            key:this.config.siigoKey,
+            data: this.lotesCmprobantes[this.procesado],
+            date:this.date,
+            iddoc:34002,
+            _id:this.pOperacion._id,
+            obs: this.obs
+          }
+          this.saveComprobanteLotes(credenciales)
+        }else{
+          let data = {titulo: 'Exito ', info:'Comprobante Generado Correctamente' ,type: 'Confirm', icon:'done_all'}
+          let dialogRef = this.dialog.open(DialogConfirm,{
+            data: data
+          });
+          dialogRef.afterClosed().subscribe(result => {
+            window.location.reload();
+          })
+        }
+      
+       }
+      
+     }
+   )
+ },err=>{
+   console.log(err)
+   let data = {titulo: 'Error ', info:err.error.message ,type: 'Confirm', icon:'error'}
+   let dialogRef = this.dialog.open(DialogConfirm,{
+     data: data
+   });
+   dialogRef.afterClosed().subscribe(result => {
+     window.location.reload();
+   })
+
+   console.log(err)
+})
+}
+
+
+
+cuenta:any
+addCuenta(cuenta:TerceroSiigo){
+  console.log(cuenta)
+  let item = new ItenmComprobanteSiigo();
+  item.account = { code:cuenta.cuenta, movement:cuenta.descripcion}
+  item.customer = {
+    identification: cuenta.id_tercero,
+    branch_office: 0
+  }
+
+  if(!cuenta.due){
+      item.due = undefined;
+  }else{
+    let due = {
+      consecutive:this.comprobante.data.length +1,
+      date:this.comprobante.date,
+      prefix:"RC",
+      quote:1
+    }
+    item.due= due 
+  }
+
+  item.cost_center = cuenta.centro_costos;
+  this.comprobante.data.unshift(item);
+
+  console.log(this.comprobante)
+}
+
+addCuentaBorrador(){
+  let item = new ItenmComprobanteSiigo();
+  this.comprobante.data.unshift(item);
+}
+
+
+credit = 0;
+debit = 0;
+totalizarComprobante(){
+  this.credit = 0;
+  this.debit = 0;
+    for (let i  = 0; i  < this.comprobante.data.length; i ++) {
+      const element = this.comprobante.data[i ];
+      if(element.account.movement == 'Credit'){
+        this.credit =  this.credit + element.value;
+      }if(element.account.movement == 'Debit'){
+        this.debit = this.debit + element.value;
+      }
+    }
+}
+
+
+saveComprobante(){
+  this.log= true;
+  this.comprobante.user=this.config.siigoUser,
+  this.comprobante.key =this.config.siigoKey,
+  this.comprobante._id = this.pOperacion._id;
+  this.comprobante._idOperacionstring = this.pOperacion._id;
+
+  console.log(this.comprobante)
+  this._siigoService.saveComprobantesSiigo(this.comprobante).subscribe(
+    res=>{
+      this.log= false;
+      console.log(res);
+      this._siigoService.agregarInfoComprobante(res).subscribe(
+        res=>{
+          console.log(res);
+          let data = {titulo: 'Exito ', info:'Comprobante Generado Correctamente' ,type: 'Confirm', icon:'done_all'}
+          let dialogRef = this.dialog.open(DialogConfirm,{
+            data: data
+          });
+          dialogRef.afterClosed().subscribe(result => {
+            window.location.reload();
+          })
+  
+        })
+
+    },err=>{
+      console.log(err)
+      this.log= false;
+      let data = {titulo: 'Error ', info:err.error.message ,type: 'Confirm', icon:'done_all'}
+      let dialogRef = this.dialog.open(DialogConfirm,{
+        data: data
+      });
+      console.log(err)
+  })}
 
 }
 

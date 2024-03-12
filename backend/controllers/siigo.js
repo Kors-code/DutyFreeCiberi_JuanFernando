@@ -3,7 +3,8 @@
 var path = require('path');
 const { MongoClient } = require('mongodb');
 var fs = require('fs');
-let PDF = require('handlebars-pdf')
+let PDF = require('handlebars-pdf');
+const { param } = require('../routes/app_rutes');
 
     const url = 'mongodb://localhost:27017';
     const client = new MongoClient(url);
@@ -355,51 +356,138 @@ async function sendComprobanteSiigo(req, res){
               
         });
   }
-   
-  // console.log('consecutivo 2', Consecutivo)
+  console.log('comprobante de caja', params.iddoc)
+  if(params.iddoc == 34002){
+    console.log('comprobante de caja')
+    let confi = await collection.findOneAndUpdate({operacion:params._id},
+      { $inc: {consecutivoCompCaja: 1 }},
+      { upsert: false }, function(err,doc) {
+          if (err) { throw err; }
+          else { 
+              console.log('doc 1', doc.value.consecutivoCompCosto)
+              Consecutivo = doc.value.consecutivoCompCosto
+                var token;
+                  var req = unirest('POST', 'https://api.siigo.com/auth')
+                    .headers({
+                      'Content-Type': 'application/json'
+                    })
+                    .send(JSON.stringify({
+                      "username": params.user,
+                      "access_key": params.key
+                    }))
+                    .end(async function (resp){ 
+                      if (resp.error) {throw new Error(resp.error)
+                      console.log(resp.error)}; 
+                      token = resp.body.access_token;
+                      var req2 = unirest('POST', 'https://api.siigo.com/v1/journals')
+                      .headers({
+                        'Content-Type': 'application/json',
+                        'Partner-ID': 'TestNat',
+                        'Authorization': 'Bearer '+ token
+                      })
+                      .send(JSON.stringify({
+                        document: {
+                          id: params.iddoc
+                        },
+                        date: params.date,
+                        items:params.data,
+                        observations: params.obs
+                      }))
+                      .end(function (respu) { 
+                        console.log(respu)
+                        if (respu.error){
+                          res.status(400).send({message: 'Error ' +respu.raw_body }); 
+                        }else{
+                          res.status(200).send(respu.body)
+                        }
+                       
+                      });
+                    })
+              console.log('consecutivo', Consecutivo)
+              client.close();
+          }     
+        });
+  }
+
+}
 
 
-  // var token;
-  // var req = unirest('POST', 'https://api.siigo.com/auth')
-  //   .headers({
-  //     'Content-Type': 'application/json'
-  //   })
-  //   .send(JSON.stringify({
-  //     "username": params.user,
-  //     "access_key": params.key
-  //   }))
-  //   .end(async function (resp){ 
-  //     if (resp.error) throw new Error(resp.error); 
-  //     token = resp.body.access_token;
+async function agregarInfoComprobante(req, res){
+  var coll = 'ComprobantesSiigo';
+  var params = req.body;
+  console.log('REGISTRO')
+  const url = 'mongodb://localhost:27017';
+  const client = new MongoClient(url);
+  const dbName = 'DutyFree';
+ 
+      await client.connect();
+  
+      const db = client.db(dbName);
+      const collection = db.collection(coll);
+      const insertResult = await collection.insertOne(params);
+      res.status(200).send(insertResult);
 
-  //     var req2 = unirest('POST', 'https://api.siigo.com/v1/journals')
-  //     .headers({
-  //       'Content-Type': 'application/json',
-  //       'Partner-ID': 'TestNat',
-  //       'Authorization': 'Bearer '+ token
-  //     })
-  //     .send(JSON.stringify({
-  //       document: {
-  //         id: params.iddoc
-  //       },
-  //       date: params.date,
-  //       items:params.data,
-  //       number:params.number,
-  //       observations: params.obs
-  //     }))
-  //     .end(function (respu) { 
-  //       // console.log(respu)
-  //       if (respu.error){
-  //         // console.log(respu.error)
+}
 
-  //         res.status(400).send({message: 'Error ' +respu.raw_body }); 
-  //       }else{
-  //         res.status(200).send(respu.body)
-  //       }
-  //       console.log(respu.raw_body);
-  //     });
+async function getComprobantes(req, res){
+  var coll = 'ComprobantesSiigo';
+
+ // //console.log(params)
+ const url = 'mongodb://localhost:27017';
+ const client = new MongoClient(url);
+ const dbName = 'DutyFree';
+
+     await client.connect();
+     //console.log('Connected successfully to server');
+     const db = client.db(dbName);
+     const collection = await db.collection(coll);
+     let arrayCollections = []
+     var reg = await collection.find({}).forEach(element => {
+         arrayCollections.push(element)
+      });
+  
+     res.status(200).send(arrayCollections);
+}
+
+
+function getListadoSiigo(req, res){
+  var pg = req.params.tag;
+  var params = req.body;
+  var unirest = require('unirest');
+  var token;
+  var req = unirest('POST', 'https://api.siigo.com/auth')
+    .headers({
+      'Content-Type': 'application/json'
+    })
+    .send(JSON.stringify({
+      "username": params.user,
+      "access_key": params.key
+    }))
+    .end(async function (resp){ 
+      if (resp.error) console.log(resp.error); 
+      token = resp.body.access_token;
+
+      var req2 = unirest('GET', 'https://api.siigo.com/v1/'+pg)
+      .headers({
+        'Authorization': 'Bearer ' + token,
+        'Partner-Id':'DutyFree'
+      })
+      .send("")
+      .end(function (respu) { 
+        if (resp.error){
+          //console.log(resp.error)
+          res.status(404).send({message: 'Error ' +resp.error }); 
+        }  
+        //console.log(res.raw_body);
+        res.status(200).send(respu.body)
+       
+      });
     
-  //   })
+    })
+
+
+
+
 
   
 
@@ -735,5 +823,8 @@ module.exports ={
     getFacturacionSiigo,
     getComprobantesSiigo,
     sendComprobanteSiigo,
-    PdfFactura
+    PdfFactura,
+    getListadoSiigo,
+    agregarInfoComprobante,
+    getComprobantes
 }

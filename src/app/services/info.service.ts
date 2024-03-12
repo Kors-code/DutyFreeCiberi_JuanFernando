@@ -47,6 +47,8 @@ export class InfoService {
         return this._http.post<agregar>(this.url+'info-lote/'+tag, paramas, {headers:headers});
     }
 
+  
+
     remplazarInfo(user_to_register:any, tag:string){
         let paramas = JSON.stringify(user_to_register);
         let headers = new HttpHeaders({

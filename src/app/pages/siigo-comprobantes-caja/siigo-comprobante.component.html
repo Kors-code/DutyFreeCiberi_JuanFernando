@@ -4,46 +4,51 @@
   <h2 style="text-align: center;">COMPROBANTES SIIGO
     <span>{{procesado}}</span>
   </h2>
+  <mat-tab-group mat-align-tabs="center">
+    <mat-tab label="CARGAR INFORMES" style="width: 100%;">
   <div style="display: flex; flex-wrap: wrap; justify-content: center; align-items: center;">
-    <!-- <mat-form-field appearance="fill" style="text-align: center; font-size: 1.3em; margin-right: 20px;">
-      <mat-label>TRM</mat-label>
-      <input matInput placeholder="TRM" type="number" name="trm" [(ngModel)]="trm">
-    </mat-form-field> -->
-    <mat-form-field appearance="fill">
-      <mat-label>Tag Base Datos</mat-label>
-      <mat-select [(ngModel)]="tag">
-        <mat-option *ngFor="let item of config.tags" [value]="item.tag">
-          {{item.tag}}
-        </mat-option>
-      </mat-select>
-    </mat-form-field> 
-      <!-- <input *ngIf="tag" type="file" multiple="false" (change)="onFileChange($event)" style="font-size: 1.3em; margin-left: 10px;"> -->
-      <input type="file" class="file-input"
-      (change)="onFileSelected($event)" #fileUpload>
-        <div style="margin: 20px 20px;">
-          <h3>{{fileName || "SELECCIONA INFORMACION "}}</h3>
-          <button mat-stroked-button color="primary" class="upload-btn"
-            (click)="fileUpload.click()"> DAVIVIENDA
-              <mat-icon>attach_file</mat-icon>
-          </button>
-        </div>
+   
+    <h3 *ngIf="fileName">Archivo: {{fileName }}</h3>
+      <div *ngIf="!fileName">
+        <input type="file" class="file-input"
+        (change)="onFileSelected($event)" #fileUpload>
+          <div style="margin: 20px 20px;">
+            <h3>{{fileName || "INFORMACION DAVIVIENDA"}}</h3>
+            <button mat-stroked-button color="warn" class="upload-btn"
+              (click)="fileUpload.click()"> DAVIVIENDA
+                <mat-icon>attach_file</mat-icon>
+            </button>
+          </div>
+      </div >
+      
+      <div *ngIf="!fileName">
+        <input type="file" class="file-input"
+        (change)="onFileSelectedItau($event)" #fileUploaditau>
+          <div style="margin: 20px 20px;">
+            <h3>{{fileName || "INFORMACION BANCO ITAU"}}</h3>
+            <button mat-stroked-button color="accent" class="upload-btn"
+              (click)="fileUploaditau.click()"> BANCO ITAU
+                <mat-icon>attach_file</mat-icon>
+            </button>
+          </div>
+      </div>
+      
+
     </div>
   <!-- <button *ngIf="registros.length != 0" flex mat-raised-button color="accent" [disabled]="log"  (click)="saveInfoCompleto(registros)" class="text-upper" style="width: 90%; margin:15px auto;margin-left: 20px;"> {{registros.length}} Documentos - Registrar Informacion<mat-icon layout-padding>send</mat-icon></button> -->
   <!-- <button *ngIf="dataSource" flex mat-raised-button color="accent" [disabled]="progreso != 0"  (click)="authSiigo(tag)" class="text-upper" style="width: 90%; margin:15px auto;margin-left: 20px;">  Generar PDF {{documentos.length}} Respaldo POS <mat-icon>update_file</mat-icon></button> -->
-  <div *ngIf="lotesCmprobantes.length !=0" style="display: flex; flex-wrap: wrap; justify-content: center; width: 100%;margin: 0 auto;">
+  <div *ngIf="registros.length !=0" style="display: flex; flex-wrap: wrap; justify-content: center; width: 100%; margin: 0 auto;">
     <mat-form-field appearance="fill" style="text-align: center; font-size: 1em; margin-right: 20px;">
       <mat-label>Fecha Comprobante</mat-label>
-      <input matInput placeholder="Data Base" type="date" name="tag" [(ngModel)]="date">
+      <input matInput placeholder="Data Base" type="date" name="date" [(ngModel)]="date">
     </mat-form-field>
     <mat-form-field appearance="fill" style="text-align: center; font-size: 1em; margin-right: 20px;">
       <mat-label>observaciones</mat-label>
       <input matInput [disabled]="!date" placeholder="Data Base" type="text" name="observaciones" [(ngModel)]="obs">
     </mat-form-field>
-   <div>
-   </div>
     <mat-chip-list  style="margin: 0 auto; font-size: 3em;">
       <ng-template let-doc let-i="index" ngFor [ngForOf]="lotesCmprobantes">
-        <mat-chip color="accent"  [class._100]=" procesado != 0 &&i <= procesado" [disabled]="!obs || log"   (click)="generarRegistros(doc)"  >
+        <mat-chip color="accent"  [class._100]=" procesado != 0 &&i <= procesado" [disabled]="!obs || log">
           <mat-chip-avatar>
             <img src="assets/metas.svg" alt="Photo of a Shiba Inu"/>
               </mat-chip-avatar>
@@ -52,9 +57,10 @@
       </ng-template>
       
     </mat-chip-list>
-     <button  flex mat-raised-button color="warn" [disabled]=""  (click)="procesarInformacion()" class="text-upper" style="width: 90%; margin:15px auto;margin-left: 20px; color: white;"> Subir {{registros.length}} registros <span style="font-size: 1.3em; color:blue"> {{lotesCmprobantes.length * 2}}</span> Comprobantes  Siigo <mat-icon>save</mat-icon></button>
-     <button *ngIf="procesado == lotesCmprobantes.length " flex mat-raised-button color="warn" [disabled]=""  (click)="reload()" class="text-upper" style="width: 90%; margin:15px auto;margin-left: 20px; color: white;"> se registraron los comprobamtes agregar nuevos<mat-icon>refresh</mat-icon></button>
+     <button *ngIf="date && obs" flex mat-stroked-button color="accent" [disabled]="log"  (click)="procesarInformacion()" class="text-upper"> Subir {{registros.length}} Generar Comprobante <mat-icon>save</mat-icon></button>
+     <!-- <button *ngIf="procesado == lotesCmprobantes.length " flex mat-raised-button color="warn" [disabled]=""  (click)="reload()" class="text-upper" style="width: 90%; margin:15px auto;margin-left: 20px; color: white;"> se registraron los comprobamtes agregar nuevos<mat-icon>refresh</mat-icon></button> -->
   </div>
+
 
  <span *ngIf="progreso != 0" style="color: blue;">{{progreso | number:'0.0-2'}}% </span> <mat-progress-bar *ngIf="progreso != 0" mode="determinate" [value]="progreso" color="accent" style="width: 90%; margin: 0 auto;"></mat-progress-bar>
   
@@ -89,5 +95,132 @@
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
   </table>
+    </mat-tab>
+    <mat-tab label="Nuevo Compronbante" style="width: 100%;">
 
+
+  
+    <table style="width: 80%; margin: 0 auto;">
+      <tr>
+        <td>
+          <mat-form-field appearance="fill" style="text-align: center; font-size: 1em; margin-right: 20px;">
+            <mat-label>Fecha Comprobante</mat-label>
+            <input matInput placeholder="FECHA" type="date" name="tag" [(ngModel)]="comprobante.date">
+          </mat-form-field>
+        </td>
+        <td>    
+          <mat-form-field appearance="fill">
+          <mat-label>Comprobante</mat-label>
+          <mat-select [(ngModel)]="comprobante.iddoc" >
+            <mat-option *ngFor="let item of config.comprobantes" [value]="item.idSiigo">
+              {{item.titulo}} - {{item.descripcion}}
+            </mat-option> 
+          </mat-select>
+        </mat-form-field> 
+      </td>
+      <td>
+        <mat-form-field appearance="fill" style="text-align: center; font-size: 1em; margin-right: 20px;">
+          <mat-label>observaciones</mat-label>
+          <input matInput placeholder="Observaciones" type="text" name="comprobanteobs" [(ngModel)]="comprobante.obs">
+        </mat-form-field>
+      </td>
+        <td>    
+          <mat-form-field appearance="fill">
+          <mat-label>Agregar Cuenta</mat-label>
+          <mat-select [(ngModel)]="cuenta">
+            <mat-option *ngFor="let item of config.cuentas" [value]="cuenta"  (click)="addCuenta(item)">
+              {{item.cuenta}} - {{item.titulo}} - {{item.descripcion}}
+            </mat-option> 
+            <mat-option [value]="cuenta"  (click)="addCuentaBorrador()">
+                Cuenta - Borrador
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+       </td>
+       <td>
+        <button  *ngIf="credit && credit == debit" flex mat-raised-button color="warn" [disabled]=""  (click)="saveComprobante()" class="text-upper" style="width: 90%; margin:15px auto;margin-left: 20px; color: white;"> Generar Comprobante<mat-icon>save</mat-icon></button> 
+       </td>
+      </tr>
+      <tr>
+        <th>CENTRO COSTO</th>
+        <th>CUENTA</th>
+        <th>MOVIMIENTO</th>
+        <th>TERCERO</th>
+        <th>DESCRIPCION</th>
+        <th>VALOR</th>
+      </tr>
+      <tr *ngFor="let item of comprobante.data">
+        <!-- <td>{{item | json}}</td> -->
+        <td style="text-align: center;">
+          <mat-form-field style="text-align: center;">
+          <input matInput placeholder="" type="text" style="width: 100%;"  name="item.cost_center" [(ngModel)]="item.cost_center" >
+          </mat-form-field>
+        </td>
+        <td style="text-align: center;">
+          <mat-form-field style="text-align: center;">
+          <input matInput placeholder="" type="text" style="width: 100%;"  name="item.account.code" [(ngModel)]="item.account.code" >
+          </mat-form-field>
+        </td>
+        <td style="text-align: center;">
+          <mat-form-field >
+            <mat-select placeholder="Tipo" [(ngModel)]="item.account.movement">
+              <mat-option [value]="'Credit'" >
+                Credit
+              </mat-option> 
+              <mat-option [value]="'Debit'">
+                 Debit
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+        </td>
+        <td style="text-align: center;">
+          <mat-form-field style="text-align: center;">
+          <input matInput placeholder="" type="text" style="width: 100%;"  name="item.customer.identification" [(ngModel)]="item.customer.identification" required>
+          </mat-form-field>
+        </td>
+        <td style="text-align: center;">
+          <mat-form-field style="text-align: center;">
+            <input matInput placeholder="DESCRIPCION" type="text" style="width: 400px;"  name="item.description" [(ngModel)]="item.description" required>
+          </mat-form-field>
+        </td>
+        <td style="text-align: center;">
+          <mat-form-field style="text-align: center;">
+          <input matInput placeholder="Valor"  (keyup)="totalizarComprobante()" type="number" style="width: 100%;"  name="item.value" [(ngModel)]="item.value" required>
+        </mat-form-field>
+      </td>
+      </tr>
+      <tr>
+        <th> Total Creditos</th>
+        <th>  {{credit | number}}</th>
+        <th> Total DEBITOS</th>
+        <th> {{debit | number}}</th>
+      </tr>
+
+    </table>
+    <div>
+      
+    </div>
+    </mat-tab>
+    <mat-tab label="Listado" style="width: 100%;">
+      <table style="width: 90%; margin: 0 auto; font-size: 1.3em;" class="mat-elevation-z8">
+        <thead style="background-color:rgb(63, 62, 62) ; color:white; padding: 15px; font-size: 1em; border-radius: 10px;">
+          <tr>
+            <th>FECHA</th>
+            <th>COMPROBANTE</th>
+            <th>CONSECUTIVO</th>
+            <th>OBSERVACIONES</th>
+            <th>LINEAS</th>
+          </tr>
+        </thead>
+        <tr *ngFor="let item of listadoComprobantes">
+          <td>{{item.date}}</td>
+          <td>{{item.name}}</td>
+          <td>{{item.number}}</td>
+          <td>{{item.observations}}</td>
+          <td>{{item.items.length}}</td>
+        </tr>
+      </table>
+    </mat-tab>
+  </mat-tab-group>
 </mat-card>

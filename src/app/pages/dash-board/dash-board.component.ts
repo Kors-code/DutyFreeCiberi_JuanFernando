@@ -9,6 +9,7 @@ import { InfoService } from 'src/app/services/info.service';
 import { UserService } from 'src/app/services/user.service';
 import { DialogConfirm } from '../confirm-dialog/confirm-dialog.component';
 import { colorSets } from './paleta';
+import * as XLSX from 'xlsx';
 
 @Component({
   selector: 'app-dash-board',
@@ -408,7 +409,7 @@ export class DashBoardComponent implements OnInit {
         this.single = [];
         this.downloadVendedores = [];
         this.informe = res
-        // ////console.log(this.informe);
+        console.log('informe',this.informe);
         // this.facturasVendedor(this.informe[0].Detalle)
         for (let index = 0; index <  this.informe.length; index++) {
           const element =  this.informe[index];
@@ -803,6 +804,8 @@ export class DashBoardComponent implements OnInit {
     this.totalCategoriaCop = 0;
     this.totalCategoriaUnd = 0;
     this.totalCategoriaCosto = 0;
+    this.totalCoisiones=0
+    this.totalCoisionesCOP = 0
   
     this._infoService.getInformeCategorias(tag).subscribe(
       res=>{
@@ -850,6 +853,19 @@ export class DashBoardComponent implements OnInit {
         }
       })
 
+  }
+
+
+  exportexcelCumplimiento() {
+    /**passing table id**/
+    let data = document.getElementById('table-data');
+    const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(data);
+    /**Generate workbook and add the worksheet**/
+    const wb: XLSX.WorkBook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+
+    /*save to file*/
+    XLSX.writeFile(wb,'INFORVE VENDEDORES '+this.coleccion+'.xlsx');
   }
 
   dataPresupuest(){

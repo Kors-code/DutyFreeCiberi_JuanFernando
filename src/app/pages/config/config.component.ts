@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { Categoria, Cumplimiento } from '../../models/presupuesto';
-import { Config, DataOperacion, Empleado, Tienda } from '../../models/config';
+import { ComprobanteSiigo, Config, DataOperacion, Empleado, TerceroSiigo, Tienda } from '../../models/config';
 import { InfoService } from 'src/app/services/info.service';
 import { ThisReceiver } from '@angular/compiler';
 import { DialogConfirm } from '../confirm-dialog/confirm-dialog.component';
@@ -31,7 +31,8 @@ email= '';
 public pOperacion:Operacion;
 consecutivos:Consecutivo[]=[];
 consecutivo:Consecutivo;
-
+tercero:TerceroSiigo;
+comprobante:ComprobanteSiigo
 
 Roles = ['Ventas', 'Skin', 'Lider', 'Gerente Ventas', 'Gerente','Cajero']
   constructor(public dialog: MatDialog, @Inject(DOCUMENT) doc: any,
@@ -43,6 +44,8 @@ Roles = ['Ventas', 'Skin', 'Lider', 'Gerente Ventas', 'Gerente','Cajero']
     this.empleado = new Empleado();
     this.pOperacion = this._userService.getPredetermidaOperacion();
     this.consecutivo = new Consecutivo()
+    this.tercero= new TerceroSiigo();
+    this.comprobante = new ComprobanteSiigo();
     console.log(this.consecutivo)
    }
 
@@ -125,7 +128,7 @@ Roles = ['Ventas', 'Skin', 'Lider', 'Gerente Ventas', 'Gerente','Cajero']
     this._infoService.agregarConfiguracion(this.config).subscribe(
       res=>{
         if(res){
-                  console.log(res)
+          console.log(res)
           let data = {titulo: 'Confirmaciòn', info:'Configuracion generada Correctamente', type: 'Confirm', icon:'done_all'}
   
           let dialogRef = this.dialog.open(DialogConfirm,{
@@ -153,6 +156,12 @@ Roles = ['Ventas', 'Skin', 'Lider', 'Gerente Ventas', 'Gerente','Cajero']
 
           if( !this.config.dataOperacion){
             this.config.dataOperacion= new DataOperacion()
+          }
+          if(!this.config.cuentas){
+            this.config.cuentas = []
+          }
+          if(!this.config.comprobantes){
+            this.config.comprobantes = []
           }
         }
        
@@ -183,6 +192,36 @@ Roles = ['Ventas', 'Skin', 'Lider', 'Gerente Ventas', 'Gerente','Cajero']
         
       }
     )
+  }
+
+  deleteTercero(i:number){
+    this.config.cuentas.splice(i,1)
+  }
+
+  editTERCERO(){
+    this.tercero= new TerceroSiigo();
+  }
+
+  editComprobante(){
+
+  }
+
+  addCuenta(){
+    console.log(this.tercero);
+    this.tercero._id= new Date().getTime();
+    this.config.cuentas.push(this.tercero); 
+    this.tercero= new TerceroSiigo();
+  }
+
+  addComprobante(){
+    console.log(this.comprobante)
+    this.comprobante._id= new Date().getTime();
+    this.config.comprobantes.push(this.comprobante);
+    this.comprobante= new ComprobanteSiigo();
+  }
+
+  deleteComprobante(i:number){
+    this.config.comprobantes.splice(i,1)
   }
 
 

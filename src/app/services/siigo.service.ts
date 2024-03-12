@@ -36,6 +36,15 @@ export class SiigoService {
     this.url = GLOBAL.url_app;
    }
 
+   agregarInfoComprobante(user_to_register:any){
+    let paramas = JSON.stringify(user_to_register);
+    let headers = new HttpHeaders({
+        'content-Type':'application/json',
+        'Authorization': this.getToken()
+    });
+    return this._http.post<agregar>(this.url+'info-comprobante/', paramas, {headers:headers});
+}
+
     logginSiigo(user_to_register:any){
         let paramas = JSON.stringify(user_to_register);
         let headers = new HttpHeaders({
@@ -64,6 +73,16 @@ export class SiigoService {
       });
       return this._http.post<paginacion>(this.url+'journals-siigo/'+ tag,paramas, {headers:headers});
     }
+
+    ListadosSiigo(register:any,tag:string){
+      
+      let paramas = JSON.stringify(register);
+      let headers = new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': this.getToken()
+    });
+    return this._http.post<paginacion>(this.url+'listado-siigo/'+ tag,paramas, {headers:headers});
+  }
 
     saveComprobantes1Siigo(register:any,){
         let paramas = JSON.stringify(register);
@@ -101,6 +120,19 @@ export class SiigoService {
         return this._http.get<any>(this.url+'info-collection-estado/'+tag+'/'+estado, {headers:headers});
     
     }
+
+
+    getDataComprobantes(){
+      // let paramas = JSON.stringify(register);
+      let headers = new HttpHeaders({
+          // 'Content-Type': 'application/json',
+          'Authorization': this.getToken()
+      });
+      return this._http.get<any>(this.url+'comprobantes/', {headers:headers});
+  
+  }
+
+    
 
 
     getToken(){

@@ -98,7 +98,10 @@ async function updateDataConfiguracion(req, res){
             operacion:params.operacion,
             dataOperacion:params.dataOperacion,
             consecutivoCompCosto:params.consecutivoCompCosto,
-            consecutivoCompVenta:params.consecutivoCompVenta
+            consecutivoCompVenta:params.consecutivoCompVenta,
+            consecutivoCompCaja:params.consecutivoCompCaja,
+            cuentas:params.cuentas,
+            comprobantes:params.comprobantes
         }},{ upsert: false }, function(err,doc) {
             if (err) { throw err; }
             else { 
@@ -308,7 +311,7 @@ async function remplazarInfo(req, res){
 async function agregarInfo(req, res){
     var params = req.body;
     var coll = req.params.tag;
-    // //console.log(params)
+    console.log('REGISTRO')
     const url = 'mongodb://localhost:27017';
     const client = new MongoClient(url);
     const dbName = 'DutyFree';

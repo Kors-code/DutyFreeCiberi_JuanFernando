@@ -1,7 +1,7 @@
 {
   "name": "duty-free",
   "version": "0.0.0",
-  "main": "main.js",
+  "index": "index.js",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",

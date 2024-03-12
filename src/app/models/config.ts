@@ -5,6 +5,8 @@ export class Config{
             public _id: any = undefined,
             public siigoUser:string = '',  
             public siigoKey:string = '',  
+            public cuentas:any[] = [],
+            public comprobantes:any[]=[],
             public tags:any[] = [],
             public empleados:Empleado[] = [],
             public dataOperacion:DataOperacion = new DataOperacion(),
@@ -18,6 +20,7 @@ export class Config{
             public operacion:string = '',
             public consecutivoCompCosto=0,
             public consecutivoCompVenta=0,
+            public consecutivoCompCaja=0,
         ){}
 }
 
@@ -75,5 +78,58 @@ export class Tienda {
         public cumplimientos:any[] = [],   
         public ventas_cop: number = 0,
         public presupuesto_cop: number = 0,  
+    ){}
+}
+
+export class TerceroSiigo {
+    constructor(
+        public _id:number = 0,
+        public titulo: string = '',
+        public cuenta: number = 0,
+        public centro_costos: number = 0,
+        public id_tercero: number = 0,
+        public descripcion: string = '',
+        public due: boolean = false,
+    ){}
+}
+
+
+export class ComprobanteSiigo {
+    constructor(
+        public _id:number = 0,
+        public titulo: string = '',
+        public idSiigo: number = 0,
+        public descripcion: string = '',
+    ){}
+}
+
+
+export class ItenmComprobanteSiigo {
+    constructor(
+       public account: any=[],
+        public customer:any=[],
+        public description:string= "",
+        public cost_center: number= 0,
+        public value: string= "", 
+        public due:any ={
+                date: '',
+                prefix:'RC',
+                consecutive:1,
+                quote:1
+            },
+    ){}
+}
+
+
+export class Comprobante {
+    constructor(
+        public _id:string = '',
+        public user:string='',
+        public key:string='',
+        public data: any[]=[],
+        public date:string='',
+        public iddoc:string='',
+        public _idOperacionstring='',
+        public obs: string=''
     ){}
 }
