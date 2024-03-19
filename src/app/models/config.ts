@@ -123,13 +123,21 @@ export class ItenmComprobanteSiigo {
 
 export class Comprobante {
     constructor(
-        public _id:string = '',
+        public _id:any = undefined,
         public user:string='',
         public key:string='',
         public data: any[]=[],
         public date:string='',
         public iddoc:string='',
         public _idOperacionstring='',
-        public obs: string=''
+        public obs: string='',
+        public document:any=undefined,
+        public id:any=undefined,
+        public items:any=undefined,
+        public metadata:any=undefined,
+        public name:any=undefined,
+        public number:any=undefined,
+        public observations:any=undefined,
+
     ){}
 }

@@ -4,12 +4,17 @@
   <h2 style="text-align: center;">COMPROBANTES SIIGO
     <span>{{procesado}}</span>
   </h2>
-  <mat-tab-group mat-align-tabs="center">
+  <mat-tab-group mat-align-tabs="center" [selectedIndex]="selected.value"
+  (selectedIndexChange)="selected.setValue($event)">
     <mat-tab label="CARGAR INFORMES" style="width: 100%;">
   <div style="display: flex; flex-wrap: wrap; justify-content: center; align-items: center;">
-   
-    <h3 *ngIf="fileName">Archivo: {{fileName }}</h3>
-      <div *ngIf="!fileName">
+    <mat-form-field appearance="fill" style="text-align: center; font-size: 1em; margin-right: 20px;">
+      <mat-label>Fecha Comprobante</mat-label>
+      <input matInput placeholder="Data Base" type="date" name="date" [(ngModel)]="comprobante.date">
+    </mat-form-field>
+
+    <h3 *ngIf="fileName && comprobante.date">Archivo: {{fileName }}</h3>
+      <div *ngIf="!fileName && comprobante.date">
         <input type="file" class="file-input"
         (change)="onFileSelected($event)" #fileUpload>
           <div style="margin: 20px 20px;">
@@ -18,10 +23,13 @@
               (click)="fileUpload.click()"> DAVIVIENDA
                 <mat-icon>attach_file</mat-icon>
             </button>
+            <p>1. Elimina las cifras del encabezado</p>
+            <p>2 .Remplaza la Coma (/) por Barra (|)</p>
+            <p>3. Guarda el documento como libro de excel</p>
           </div>
       </div >
       
-      <div *ngIf="!fileName">
+      <div *ngIf="!fileName && comprobante.date">
         <input type="file" class="file-input"
         (change)="onFileSelectedItau($event)" #fileUploaditau>
           <div style="margin: 20px 20px;">
@@ -30,6 +38,8 @@
               (click)="fileUploaditau.click()"> BANCO ITAU
                 <mat-icon>attach_file</mat-icon>
             </button>
+            <p>1. Quita las cifras del encabezado</p>
+            <p>2 .Remplaza la Coma (,) por vacio ()</p>
           </div>
       </div>
       
@@ -38,21 +48,21 @@
   <!-- <button *ngIf="registros.length != 0" flex mat-raised-button color="accent" [disabled]="log"  (click)="saveInfoCompleto(registros)" class="text-upper" style="width: 90%; margin:15px auto;margin-left: 20px;"> {{registros.length}} Documentos - Registrar Informacion<mat-icon layout-padding>send</mat-icon></button> -->
   <!-- <button *ngIf="dataSource" flex mat-raised-button color="accent" [disabled]="progreso != 0"  (click)="authSiigo(tag)" class="text-upper" style="width: 90%; margin:15px auto;margin-left: 20px;">  Generar PDF {{documentos.length}} Respaldo POS <mat-icon>update_file</mat-icon></button> -->
   <div *ngIf="registros.length !=0" style="display: flex; flex-wrap: wrap; justify-content: center; width: 100%; margin: 0 auto;">
-    <mat-form-field appearance="fill" style="text-align: center; font-size: 1em; margin-right: 20px;">
+    <!-- <mat-form-field appearance="fill" style="text-align: center; font-size: 1em; margin-right: 20px;">
       <mat-label>Fecha Comprobante</mat-label>
       <input matInput placeholder="Data Base" type="date" name="date" [(ngModel)]="date">
     </mat-form-field>
     <mat-form-field appearance="fill" style="text-align: center; font-size: 1em; margin-right: 20px;">
       <mat-label>observaciones</mat-label>
       <input matInput [disabled]="!date" placeholder="Data Base" type="text" name="observaciones" [(ngModel)]="obs">
-    </mat-form-field>
+    </mat-form-field> -->
     <mat-chip-list  style="margin: 0 auto; font-size: 3em;">
       <ng-template let-doc let-i="index" ngFor [ngForOf]="lotesCmprobantes">
         <mat-chip color="accent"  [class._100]=" procesado != 0 &&i <= procesado" [disabled]="!obs || log">
           <mat-chip-avatar>
             <img src="assets/metas.svg" alt="Photo of a Shiba Inu"/>
               </mat-chip-avatar>
-              {{i + 1}} <span *ngIf="doc.Siigo" >- {{doc?.Siigo[0]?.name}}  - {{doc?.Siigo[1]?.name}}</span>  - {{doc.length}} Items Costo {{costo(doc) | number:'0.0-0'}}  Venta {{venta(doc) | number:'0.0-0'}}
+              {{i + 1}}- {{doc.length}} Lote Comprobante
           </mat-chip>
       </ng-template>
       
@@ -100,106 +110,112 @@
 
 
   
-    <table style="width: 80%; margin: 0 auto;">
-      <tr>
+    
+    <div>
+      <table style="width: 80%; margin: 20px auto;">
+        <tr>
+          <td>
+            <mat-form-field appearance="fill" style="text-align: center; font-size: 1em; margin-right: 20px;">
+              <mat-label>Fecha Comprobante</mat-label>
+              <input matInput   [disabled]="comprobante._id" placeholder="FECHA" type="date" name="tag" [(ngModel)]="comprobante.date">
+            </mat-form-field>
+          </td>
+          <td>    
+            <mat-form-field appearance="fill">
+            <mat-label>Comprobante</mat-label>
+            <mat-select [(ngModel)]="comprobante.iddoc" [disabled]="comprobante._id">
+              <mat-option *ngFor="let item of config.comprobantes" [value]="item.idSiigo">
+                {{item.titulo}} - {{item.descripcion}}
+              </mat-option> 
+            </mat-select>
+          </mat-form-field> 
+        </td>
         <td>
           <mat-form-field appearance="fill" style="text-align: center; font-size: 1em; margin-right: 20px;">
-            <mat-label>Fecha Comprobante</mat-label>
-            <input matInput placeholder="FECHA" type="date" name="tag" [(ngModel)]="comprobante.date">
+            <mat-label>observaciones</mat-label>
+            <input matInput placeholder="Observaciones" [disabled]="comprobante._id" type="text" name="comprobanteobs" [(ngModel)]="comprobante.obs">
           </mat-form-field>
         </td>
-        <td>    
-          <mat-form-field appearance="fill">
-          <mat-label>Comprobante</mat-label>
-          <mat-select [(ngModel)]="comprobante.iddoc" >
-            <mat-option *ngFor="let item of config.comprobantes" [value]="item.idSiigo">
-              {{item.titulo}} - {{item.descripcion}}
-            </mat-option> 
-          </mat-select>
-        </mat-form-field> 
-      </td>
-      <td>
-        <mat-form-field appearance="fill" style="text-align: center; font-size: 1em; margin-right: 20px;">
-          <mat-label>observaciones</mat-label>
-          <input matInput placeholder="Observaciones" type="text" name="comprobanteobs" [(ngModel)]="comprobante.obs">
-        </mat-form-field>
-      </td>
-        <td>    
-          <mat-form-field appearance="fill">
-          <mat-label>Agregar Cuenta</mat-label>
-          <mat-select [(ngModel)]="cuenta">
-            <mat-option *ngFor="let item of config.cuentas" [value]="cuenta"  (click)="addCuenta(item)">
-              {{item.cuenta}} - {{item.titulo}} - {{item.descripcion}}
-            </mat-option> 
-            <mat-option [value]="cuenta"  (click)="addCuentaBorrador()">
-                Cuenta - Borrador
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-       </td>
-       <td>
-        <button  *ngIf="credit && credit == debit" flex mat-raised-button color="warn" [disabled]=""  (click)="saveComprobante()" class="text-upper" style="width: 90%; margin:15px auto;margin-left: 20px; color: white;"> Generar Comprobante<mat-icon>save</mat-icon></button> 
-       </td>
-      </tr>
-      <tr>
-        <th>CENTRO COSTO</th>
-        <th>CUENTA</th>
-        <th>MOVIMIENTO</th>
-        <th>TERCERO</th>
-        <th>DESCRIPCION</th>
-        <th>VALOR</th>
-      </tr>
-      <tr *ngFor="let item of comprobante.data">
-        <!-- <td>{{item | json}}</td> -->
-        <td style="text-align: center;">
-          <mat-form-field style="text-align: center;">
-          <input matInput placeholder="" type="text" style="width: 100%;"  name="item.cost_center" [(ngModel)]="item.cost_center" >
-          </mat-form-field>
-        </td>
-        <td style="text-align: center;">
-          <mat-form-field style="text-align: center;">
-          <input matInput placeholder="" type="text" style="width: 100%;"  name="item.account.code" [(ngModel)]="item.account.code" >
-          </mat-form-field>
-        </td>
-        <td style="text-align: center;">
-          <mat-form-field >
-            <mat-select placeholder="Tipo" [(ngModel)]="item.account.movement">
-              <mat-option [value]="'Credit'" >
-                Credit
+          <td>    
+            <mat-form-field appearance="fill">
+            <mat-label>Agregar Cuenta</mat-label>
+            <mat-select [(ngModel)]="cuenta" [disabled]="comprobante._id">
+              <mat-option *ngFor="let item of config.cuentas" [value]="cuenta"  (click)="addCuenta(item)">
+                {{item.cuenta}} - {{item.titulo}} - {{item.descripcion}}
               </mat-option> 
-              <mat-option [value]="'Debit'">
-                 Debit
+              <mat-option [value]="cuenta"  (click)="addCuentaBorrador()">
+                  Cuenta - Borrador
               </mat-option>
             </mat-select>
           </mat-form-field>
-
+         </td>
+         <td >
+          <button  *ngIf="credit && credit == debit && comprobante.obs && !comprobante._id" flex mat-raised-button color="warn" [disabled]=""  (click)="saveComprobante()" class="text-upper" style="width: 90%; margin:15px auto;margin-left: 20px; color: white;"> Generar Comprobante<mat-icon>save</mat-icon></button> 
+          <button  *ngIf="comprobante._id" flex mat-raised-button color="warn" [disabled]=""  (click)="nuevo()" class="text-upper" style="width: 90%; margin:15px auto;margin-left: 20px; color: white;"> Nuevo<mat-icon>refresh</mat-icon></button>  
         </td>
-        <td style="text-align: center;">
-          <mat-form-field style="text-align: center;">
-          <input matInput placeholder="" type="text" style="width: 100%;"  name="item.customer.identification" [(ngModel)]="item.customer.identification" required>
+        </tr>
+        <tr *ngIf="comprobante._id">
+          <th>Siigo Id</th><td>{{comprobante.id}}</td>
+          <th>Folio</th><td>{{comprobante.name}}</td>
+          <th>Fecha</th><td>{{comprobante.date}}</td>
+        </tr>
+        <tr>
+          <th>CENTRO COSTO</th>
+          <th>CUENTA</th>
+          <th>MOVIMIENTO</th>
+          <th>TERCERO</th>
+          <th>DESCRIPCION</th>
+          <th>VALOR</th>
+        </tr>
+        <tr *ngFor="let item of comprobante.data">
+          <!-- <td>{{item | json}}</td> -->
+          <td style="text-align: center;">
+            <mat-form-field style="text-align: center;">
+            <input matInput placeholder=""  [disabled]="comprobante._id" type="text" style="width: 100%;"  name="item.cost_center" [(ngModel)]="item.cost_center" >
+            </mat-form-field>
+          </td>
+          <td style="text-align: center;">
+            <mat-form-field style="text-align: center;">
+            <input matInput placeholder="" [disabled]="comprobante._id" type="text" style="width: 100%;"  name="item.account.code" [(ngModel)]="item.account.code" >
+            </mat-form-field>
+          </td>
+          <td style="text-align: center;">
+            <mat-form-field >
+              <mat-select placeholder="Tipo" [(ngModel)]="item.account.movement" [disabled]="comprobante._id">
+                <mat-option [value]="'Credit'" >
+                  Credit
+                </mat-option> 
+                <mat-option [value]="'Debit'">
+                   Debit
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+  
+          </td>
+          <td style="text-align: center;">
+            <mat-form-field style="text-align: center;">
+            <input matInput placeholder=""  [disabled]="comprobante._id" type="text" style="width: 100%;"  name="item.customer.identification" [(ngModel)]="item.customer.identification" required>
+            </mat-form-field>
+          </td>
+          <td style="text-align: center;">
+            <mat-form-field style="text-align: center;">
+              <input matInput placeholder="DESCRIPCION" [disabled]="comprobante._id" type="text" style="width: 400px;"  name="item.description" [(ngModel)]="item.description" required>
+            </mat-form-field>
+          </td>
+          <td style="text-align: center;">
+            <mat-form-field style="text-align: center;">
+            <input matInput placeholder="Valor" [disabled]="comprobante._id"  (keyup)="totalizarComprobante()" type="number" style="width: 100%;"  name="item.value" [(ngModel)]="item.value" required>
           </mat-form-field>
         </td>
-        <td style="text-align: center;">
-          <mat-form-field style="text-align: center;">
-            <input matInput placeholder="DESCRIPCION" type="text" style="width: 400px;"  name="item.description" [(ngModel)]="item.description" required>
-          </mat-form-field>
-        </td>
-        <td style="text-align: center;">
-          <mat-form-field style="text-align: center;">
-          <input matInput placeholder="Valor"  (keyup)="totalizarComprobante()" type="number" style="width: 100%;"  name="item.value" [(ngModel)]="item.value" required>
-        </mat-form-field>
-      </td>
-      </tr>
-      <tr>
-        <th> Total Creditos</th>
-        <th>  {{credit | number}}</th>
-        <th> Total DEBITOS</th>
-        <th> {{debit | number}}</th>
-      </tr>
-
-    </table>
-    <div>
-      
+        </tr>
+        <tr>
+          <th> Total Creditos</th>
+          <th>  {{credit | number}}</th>
+          <th> Total DEBITOS</th>
+          <th> {{debit | number}}</th>
+        </tr>
+  
+      </table>
     </div>
     </mat-tab>
     <mat-tab label="Listado" style="width: 100%;">
@@ -213,12 +229,12 @@
             <th>LINEAS</th>
           </tr>
         </thead>
-        <tr *ngFor="let item of listadoComprobantes">
-          <td>{{item.date}}</td>
-          <td>{{item.name}}</td>
-          <td>{{item.number}}</td>
-          <td>{{item.observations}}</td>
-          <td>{{item.items.length}}</td>
+        <tr *ngFor="let item of listadoComprobantes" style="cursor: pointer;">
+          <td (click)="passComprobante(item)">{{item.date}}</td>
+          <td (click)="passComprobante(item)">{{item.name}}</td>
+          <td (click)="passComprobante(item)">{{item.number}}</td>
+          <td (click)="passComprobante(item)">{{item.observations}}</td>
+          <td (click)="passComprobante(item)">{{item.items.length}}</td>
         </tr>
       </table>
     </mat-tab>
