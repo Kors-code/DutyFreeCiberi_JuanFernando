@@ -33,7 +33,20 @@
 
   
         <h3>Actualizar Productos</h3>
-        <input type="file" multiple="false" (change)="onFileChange($event)" style="font-size: 1.3em; margin-left: 10px; background-color: orange;color:white;">
+        <div *ngIf="!fileName">
+          <input type="file" class="file-input"
+          (change)="onFileChange($event)" #fileUpload style="display: none;">
+            <div style="margin: 20px 20px;">
+              <h3>{{fileName || "INFORMACION"}}</h3>
+              <button mat-stroked-button color="warn" class="upload-btn"
+                (click)="fileUpload.click()"> SUBIR PRODUCTOS
+                  <mat-icon>attach_file</mat-icon>
+              </button>
+    
+            </div>
+        </div >
+        
+        <!-- <input type="file" multiple="false" (change)="onFileChange($event)" style="font-size: 1.3em; margin-left: 10px; background-color: orange;color:white;"> -->
        
         <button *ngIf="registros.length != 0" [disabled]="" mat-raised-button aria-label="Clear" style="color: white; background-color: orange; margin-left: 20px;" (click)="AgregarProductos()">
           <mat-icon>save</mat-icon> Agregar {{registros.length}} Productos</button>

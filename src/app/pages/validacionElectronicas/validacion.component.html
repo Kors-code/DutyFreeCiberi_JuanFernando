@@ -10,7 +10,11 @@
     <h3>Es valido el Documento: <span style="color: blue;">{{response?.IsValid}}</span> </h3>
     <h3>Descripcion: <span style="color: blue;">{{response?.StatusDescription}}</span></h3>
     <h3>Estatus: <span style="color: blue;">{{response.StatusMessage}}</span></h3>
+    <ng-template  let-element let-i="index" ngFor [ngForOf]="response.ErrorMessage.string" >
+      <h5>{{i}} - {{element}}</h5>
+    </ng-template>
   </div>
+  
   <!-- <p>{{response | json}}</p> -->
     
 </mat-card>

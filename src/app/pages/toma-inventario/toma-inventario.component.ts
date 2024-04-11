@@ -832,7 +832,7 @@ export class tomaInventarioComponent implements OnInit {
   unds = 1
   ultimosConteos:any[] = []
   saveScan(){
-    // ////console.log(this.ultimosConteos)
+
     this.log= true;
     let scan = {
       unds:this.unds,
@@ -856,7 +856,6 @@ export class tomaInventarioComponent implements OnInit {
               this.ultimosConteos.splice(this.ultimosConteos.length -1,1)
             }
            
-            // ////console.log(dato)
             this.log = false
             this.openSnackBar(this.scan + '')
             this.scan = undefined  
@@ -876,7 +875,7 @@ export class tomaInventarioComponent implements OnInit {
       this._infoServce.agregarScaneoSKU(scan, this.tag).subscribe(
         res =>{
           let dato = res
-          //console.log(dato)
+      
           if(dato){
             if(this.ultimosConteos.length <= 50){ 
               this.ultimosConteos.unshift(dato)
@@ -897,9 +896,7 @@ export class tomaInventarioComponent implements OnInit {
             this.scan = undefined  
             this.unds = 1
             this.scanElement.nativeElement.focus();
-          }
-          // ////console.log(dato)
-         
+          }         
         })
     }
   

@@ -33,7 +33,7 @@ export class ValidacionComponent implements OnInit {
 
   
   getFacturacionStatus(cufe:string){
-
+    this.response=undefined;
     let register = {
       token:this.facturacionElectronica.token,
       cufe:cufe,
@@ -45,10 +45,15 @@ export class ValidacionComponent implements OnInit {
 
     this._facturaElectronicaService.statusDocumentCufe(register).subscribe(
       res=>{
-    
+          console.log(res)
         this.response = res.ResponseDian.Envelope.Body.GetStatusResponse.GetStatusResult;
         console.log(this.response)
         this.cufe = ''
+      }, err=>{
+        console.log(err.error.text)
+        let message = JSON.parse(err.error.text) 
+
+       
       }
     )
 

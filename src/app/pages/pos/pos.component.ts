@@ -497,9 +497,12 @@ getVentasPeriodo(feha_inicial:any, fecha_final:any) {
 
   data:any[] = []; 
 
+
+  fileName = '';
   onFileChange(evt: any) {
     const target : DataTransfer =  <DataTransfer>(evt.target);
-    
+    const file:File = evt.target.files[0];
+    this.fileName = file.name;
     if (target.files.length !== 1) throw new Error('Cannot use multiple files');
 
     const reader: FileReader = new FileReader();
@@ -558,9 +561,6 @@ getVentasPeriodo(feha_inicial:any, fecha_final:any) {
           data: data
         });
 
-       
-
-        // console.log(res)
     })
   }
 

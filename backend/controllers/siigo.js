@@ -358,13 +358,17 @@ async function sendComprobanteSiigo(req, res){
   }
   console.log('comprobante de caja', params.iddoc)
   if(params.iddoc == 34002){
-    console.log('comprobante de caja')
+    console.log('comprobante de caja DAVIVIENDA')
     let confi = await collection.findOneAndUpdate({operacion:params._id},
       { $inc: {consecutivoCompCaja: 1 }},
       { upsert: false }, function(err,doc) {
           if (err) { throw err; }
           else { 
-              console.log('doc 1', doc.value.consecutivoCompCosto)
+              console.log('dataLength', params.data.length);
+              console.log('dataLength', params.iddoc);
+              console.log('dataLength', params.date);
+              console.log('dataLength', params.obs);
+
               Consecutivo = doc.value.consecutivoCompCosto
                 var token;
                   var req = unirest('POST', 'https://api.siigo.com/auth')
@@ -394,7 +398,7 @@ async function sendComprobanteSiigo(req, res){
                         observations: params.obs
                       }))
                       .end(function (respu) { 
-                        console.log(respu)
+                        // console.log(respu)
                         if (respu.error){
                           res.status(400).send({message: 'Error ' +respu.raw_body }); 
                         }else{

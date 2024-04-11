@@ -1,14 +1,13 @@
 export var GLOBAL = {
-    // url_app: '/api/',
-    url_app: 'http://localhost:6511/api/',
+    url_app: '/api/',
+    // url_app: 'http://localhost:6511/api/',
     // url_app: 'https://dutyfree.ciberi.net/api/',
-    url_socket: 'ws:http://localhost:6511',
+    url_socket: 'ws:http://127.0.0.1:6511',
     // url_fact:'https://dian.ciberi.co/api/ubl2.1/',
     url_fact:'https://duty-fac-electronica.ciberi.net/api/ubl2.1/',
     url: 'https://ciberi.co/api/',
     version:'1.4.5',
     company: 'ciberi.co'
-
 }
 
 

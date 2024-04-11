@@ -25,6 +25,7 @@
             </button>
             <p>1. Elimina las cifras del encabezado</p>
             <p>2 .Remplaza la Coma (/) por Barra (|)</p>
+            <p>2 .Elimina simbolo moneda ($)</p>
             <p>3. Guarda el documento como libro de excel</p>
           </div>
       </div >
@@ -42,8 +43,6 @@
             <p>2 .Remplaza la Coma (,) por vacio ()</p>
           </div>
       </div>
-      
-
     </div>
   <!-- <button *ngIf="registros.length != 0" flex mat-raised-button color="accent" [disabled]="log"  (click)="saveInfoCompleto(registros)" class="text-upper" style="width: 90%; margin:15px auto;margin-left: 20px;"> {{registros.length}} Documentos - Registrar Informacion<mat-icon layout-padding>send</mat-icon></button> -->
   <!-- <button *ngIf="dataSource" flex mat-raised-button color="accent" [disabled]="progreso != 0"  (click)="authSiigo(tag)" class="text-upper" style="width: 90%; margin:15px auto;margin-left: 20px;">  Generar PDF {{documentos.length}} Respaldo POS <mat-icon>update_file</mat-icon></button> -->
@@ -71,13 +70,10 @@
      <!-- <button *ngIf="procesado == lotesCmprobantes.length " flex mat-raised-button color="warn" [disabled]=""  (click)="reload()" class="text-upper" style="width: 90%; margin:15px auto;margin-left: 20px; color: white;"> se registraron los comprobamtes agregar nuevos<mat-icon>refresh</mat-icon></button> -->
   </div>
 
-
- <span *ngIf="progreso != 0" style="color: blue;">{{progreso | number:'0.0-2'}}% </span> <mat-progress-bar *ngIf="progreso != 0" mode="determinate" [value]="progreso" color="accent" style="width: 90%; margin: 0 auto;"></mat-progress-bar>
-  
+ <span *ngIf="progreso != 0" style="color: blue;">{{progreso | number:'0.0-2'}}% </span> <mat-progress-bar *ngIf="progreso != 0" mode="determinate" [value]="progreso" color="accent" style="width: 90%; margin: 0 auto;"></mat-progress-bar>  
  <table *ngIf="dataSource" mat-table [dataSource]="dataSource"  matSort class="mat-elevation-z8" style="width: 90%; margin: 0 auto;">
     <!--- Note that these columns can be defined in any order.
           The actual rendered columns are set as a property on the row definition" -->
-  
     <!-- Position Column -->
     <ng-container  matColumnDef="folio">
       <th mat-header-cell  *matHeaderCellDef > FOLIO. </th>
@@ -106,11 +102,7 @@
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
   </table>
     </mat-tab>
-    <mat-tab label="Nuevo Compronbante" style="width: 100%;">
-
-
-  
-    
+    <mat-tab label="Nuevo Compronbante" style="width: 100%;">  
     <div>
       <table style="width: 80%; margin: 20px auto;">
         <tr>

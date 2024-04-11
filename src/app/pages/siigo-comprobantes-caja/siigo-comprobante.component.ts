@@ -779,9 +779,12 @@ convertirJsonComprobante(){
         this.log= false;
     }
 
+    console.log('comprobante',this.comprobante)
+
     console.log(this.diasInforme)
 
-    for (let i  = 0; i  < this.diasInforme.length; i ++) {
+
+    for (let i  = 0; i  < this.diasInforme.length; i ++){
       const element = this.diasInforme[i ];
       let dtaComprobanteCaja = {
         account: {
@@ -853,21 +856,16 @@ convertirJsonComprobante(){
         cost_center: 669,
         value: element.total
       }
-  
       this.comprobante.data.push(VentaMostrador)
-
     }
-
-    
-
-    this.totalizarComprobante()
-   
 
     this.comprobante.iddoc=34002+''
 
     this.selected.setValue(1)
 
     console.log(this.comprobante)
+
+    this.totalizarComprobante()
 
 }
 
@@ -1396,7 +1394,8 @@ saveComprobante(){
   this.comprobante._id = this.pOperacion._id;
   this.comprobante._idOperacionstring = this.pOperacion._id;
 
-  //(this.comprobante)
+  console.log(this.comprobante)
+
   this._siigoService.saveComprobantesSiigo(this.comprobante).subscribe(
     res=>{
       this.log= false;
@@ -1422,7 +1421,8 @@ saveComprobante(){
         data: data
       });
       //(err)
-  })}
+  })
+}
 
 }
 
