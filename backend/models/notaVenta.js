@@ -25,6 +25,7 @@ var Schema = Schema({
     trm_euro:Number,
     mediosPago:Schema.Types.Mixed,
     productos:Schema.Types.Mixed,
+    observaciones:String,
 
     created_at: Date,
     update_at: Date,  

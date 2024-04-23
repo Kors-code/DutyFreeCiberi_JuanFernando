@@ -1,8 +1,8 @@
 {
   "name": "duty_free",
-  "version": "1.5.3",
+  "version": "1.5.5",
   "description": "backend duty-free",
-  "index": "index.js",
+  "main": "main.js",
   "scripts": {
     "postinstall": "",
     "on": "electron .",

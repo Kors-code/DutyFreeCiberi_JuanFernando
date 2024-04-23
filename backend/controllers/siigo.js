@@ -358,16 +358,16 @@ async function sendComprobanteSiigo(req, res){
   }
   console.log('comprobante de caja', params.iddoc)
   if(params.iddoc == 34002){
-    console.log('comprobante de caja DAVIVIENDA')
+    console.log('comprobante de caja envio')
     let confi = await collection.findOneAndUpdate({operacion:params._id},
       { $inc: {consecutivoCompCaja: 1 }},
       { upsert: false }, function(err,doc) {
           if (err) { throw err; }
           else { 
-              console.log('dataLength', params.data.length);
-              console.log('dataLength', params.iddoc);
-              console.log('dataLength', params.date);
-              console.log('dataLength', params.obs);
+              console.log('items', params.data.length);
+              console.log('id doc', params.iddoc);
+              console.log('date', params.date);
+              console.log('obs', params.obs);
 
               Consecutivo = doc.value.consecutivoCompCosto
                 var token;
@@ -407,7 +407,7 @@ async function sendComprobanteSiigo(req, res){
                        
                       });
                     })
-              console.log('consecutivo', Consecutivo)
+              // console.log('consecutivo', Consecutivo)
               client.close();
           }     
         });

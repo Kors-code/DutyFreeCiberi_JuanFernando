@@ -1231,11 +1231,22 @@ async function getProductoEan(req, res){
                     res.status(200).send(arrayCollections);
                  }else{
 
-                    let dato =  new RegExp( ID, "i");
-                    let reg = await collection.find({DESCRIPCION: {$regex:dato}}).forEach(element => {
+                    var reg3 = await collection.find({UPC3:ID}).forEach(element => {
                         arrayCollections.push(element)
-                    }); 
-                    res.status(200).send(arrayCollections);
+                     }); 
+                     if(arrayCollections.length != 0){
+                        res.status(200).send(arrayCollections);
+                     }else{
+
+                            let dato =  new RegExp( ID, "i");
+                            let reg = await collection.find({DESCRIPCION: {$regex:dato}}).forEach(element => {
+                                arrayCollections.push(element)
+                            }); 
+                            res.status(200).send(arrayCollections);
+
+                        }
+
+
                 }
 
              }

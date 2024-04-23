@@ -218,8 +218,8 @@ export class SiigoComprobantesComponent implements OnInit {
       const wb: XLSX.WorkBook = XLSX.read(bstr, { type: 'binary' });
       const wsname : string = wb.SheetNames[0];
       const ws: XLSX.WorkSheet = wb.Sheets[wsname];
-      this.data = (XLSX.utils.sheet_to_json(ws, { header: 1 }));
-
+      this.data = (XLSX.utils.sheet_to_json(ws));
+      
       // this.data.flat()  
       // ////// //////(this.data);
       this.log= false;
@@ -709,9 +709,12 @@ export class SiigoComprobantesComponent implements OnInit {
 
       const wsname : string = wb.SheetNames[0];
       const ws: XLSX.WorkSheet = wb.Sheets[wsname];
-      this.data = (XLSX.utils.sheet_to_json(ws, { header: 1 }));
+      this.data = (XLSX.utils.sheet_to_json(ws));
 
-      this.convertirJsonComprobante()
+      // console.log(this.data)
+
+
+      this.convertirJsonComprobante(this.data)
       this.log= false;
     };
 
@@ -721,33 +724,18 @@ export class SiigoComprobantesComponent implements OnInit {
 }
 
 diasInforme:any=[]
-convertirJsonComprobante(){
+convertirJsonComprobante(data:any){
+  this.registros=data;
   this.totalReteFuente=0;
   this.totalComision=0;
   this.totalNeto=0;
   this.totalVenta=0;
   this.diasInforme=[];
   this.log= true;
-    let keys = Object.values(this.data[0])
-    for(var i = 1;i < this.data.length; i++){
-      let arr = this.data[i];
-      // console.log(arr)
-      let par = Object.values(arr);
-      // let pary=Object.arguments(arr)
-      // console.log(par)
-      let reg = []
-      for (let i = 0; i < keys.length; i++) {
-        let obje = [keys[i], par[i] || '' ]
-        reg.push(obje)
-      }
-      this.registros.push(Object.fromEntries(reg))
-    }
-
-    // console.log(this.registros)
-
+  
     for(var i = 0;i < this.registros.length; i++){
 
-      this.totalReteFuente=this.totalReteFuente+parseInt(this.registros[i]['Ret. Fuente']);
+      this.totalReteFuente=this.totalReteFuente+parseInt(this.registros[i]['Ret Fuente']);
       this.totalComision=this.totalComision+parseInt(this.registros[i]['Valor Comisión']);
       this.totalNeto=this.totalNeto+parseInt(this.registros[i]['Valor Neto']);
       this.totalVenta=this.totalVenta+parseInt(this.registros[i]['Valor Consumo']);
@@ -755,34 +743,33 @@ convertirJsonComprobante(){
       let fecha = this.registros[i]['Fecha Proceso'];  
 
       fecha = fecha.replaceAll('|','/');
-      console.log('fecha', fecha);
-
       let id= fecha+' '+this.registros[i]['Tipo Tarjeta']
       let pos2 = this.diasInforme.map(function(e: { id: string; }) { return e.id; }).indexOf(id);
       if(pos2 == -1){
+
+        console.log(this.registros[i]);
+
         let info= {
           id:id,
-          valor:parseInt(this.registros[i]['Valor Neto']),
+          valor: parseInt(this.registros[i]['Valor Neto']),
           fecha:fecha,
           tarjeta:this.registros[i]['Tipo Tarjeta'],
-          retefuente:parseInt(this.registros[i]['Ret. Fuente']),
+          retefuente:parseInt(this.registros[i]['Ret Fuente']),
           comision:parseInt(this.registros[i]['Valor Comisión']),
           total:parseInt(this.registros[i]['Valor Consumo'])
         }
         this.diasInforme.push(info)
       }else{
         this.diasInforme[pos2].valor = parseInt(this.diasInforme[pos2].valor) + parseInt(this.registros[i]['Valor Neto'])
-        this.diasInforme[pos2].retefuente = parseInt(this.diasInforme[pos2].retefuente) + parseInt(this.registros[i]['Ret. Fuente'])
+        this.diasInforme[pos2].retefuente = parseInt(this.diasInforme[pos2].retefuente) + parseInt(this.registros[i]['Ret Fuente'])
         this.diasInforme[pos2].comision = parseInt(this.diasInforme[pos2].comision) + parseInt(this.registros[i]['Valor Comisión'])
         this.diasInforme[pos2].total = parseInt(this.diasInforme[pos2].total) + parseInt(this.registros[i]['Valor Consumo'])
         }
         this.log= false;
     }
 
-    console.log('comprobante',this.comprobante)
-
-    console.log(this.diasInforme)
-
+    // console.log('comprobante',this.comprobante)
+    // console.log(this.diasInforme)
 
     for (let i  = 0; i  < this.diasInforme.length; i ++){
       const element = this.diasInforme[i ];
@@ -863,7 +850,7 @@ convertirJsonComprobante(){
 
     this.selected.setValue(1)
 
-    console.log(this.comprobante)
+    // console.log(this.comprobante)
 
     this.totalizarComprobante()
 
@@ -890,7 +877,7 @@ onFileSelectedItau(event:any) {
     const wb: XLSX.WorkBook = XLSX.read(bstr, { type: 'binary' });
     const wsname : string = wb.SheetNames[0];
     const ws: XLSX.WorkSheet = wb.Sheets[wsname];
-    this.data = (XLSX.utils.sheet_to_json(ws, { header: 1 }));
+    this.data = (XLSX.utils.sheet_to_json(ws));
     this.convertirJsonComprobanteItau()
     this.log= false;
   };
@@ -940,18 +927,19 @@ convertirJsonComprobanteItau(){
   let fecha 
   this.log= true;
   this.diasINfo=''
+  this.registros = this.data;
   
-    let keys = Object.values(this.data[0])
-    for(var i = 1;i < this.data.length; i++){
-      let arr = this.data[i];
-      let par = Object.values(arr);
-      let reg = []
-      for (let i = 0; i < keys.length; i++) {
-        let obje = [keys[i], par[i] || '' ]
-        reg.push(obje)
-      }
-      this.registros.push(Object.fromEntries(reg))
-    }
+    // let keys = Object.values(this.data[0])
+    // for(var i = 1;i < this.data.length; i++){
+    //   let arr = this.data[i];
+    //   let par = Object.values(arr);
+    //   let reg = []
+    //   for (let i = 0; i < keys.length; i++) {
+    //     let obje = [keys[i], par[i] || '' ]
+    //     reg.push(obje)
+    //   }
+    //   this.registros.push(Object.fromEntries(reg))
+    // }
 
     for(var i = 0;i < this.registros.length; i++){
       
@@ -959,7 +947,6 @@ convertirJsonComprobanteItau(){
       this.totalComision=this.totalComision+parseInt(this.registros[i]['VLR.COMISION']);
       this.totalNeto=this.totalNeto+parseInt(this.registros[i]['VALOR NETO']);
       this.totalVenta=this.totalVenta+parseInt(this.registros[i]['VALOR VENTA']);
-
      
       if(this.diasINfo == ''){
         this.mes = ' '+ this.meses[this.registros[i]['MES']-1]+' '
@@ -1001,15 +988,15 @@ convertirJsonComprobanteItau(){
 
     }
 
-  console.log(
-    this.totalVisa,
-    this.totalMaster,
-    this.totalAmex,
-    this.totalReteFuente,
-    this.totalComision,
-    this.totalNeto,
-    this.totalVenta,
-  )
+  // console.log(
+  //   this.totalVisa,
+  //   this.totalMaster,
+  //   this.totalAmex,
+  //   this.totalReteFuente,
+  //   this.totalComision,
+  //   this.totalNeto,
+  //   this.totalVenta,
+  // )
    
     let dtaComprobanteCaja = {
       account: {

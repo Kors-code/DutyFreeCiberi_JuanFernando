@@ -110,7 +110,7 @@
             <th>ESTADO</th>
             <th>VALOR</th>
             <th>FOLIO</th>
-            
+            <th>OBSERVACIONES</th>
           </tr>
           <ng-template let-item let-i="index" ngFor [ngForOf]="notasVentas">
             <tr (click)="pasNota(item)" class="over">
@@ -121,6 +121,7 @@
               <td > {{item.estado}}</td>
               <td style="text-align: right;"> {{item.total | number:'1.0-2'}}</td>
               <td style="text-align: center;"> {{item.folio}}</td>
+              <td style="text-align: center;"> {{item.observaciones}}</td>
             </tr>
 
           </ng-template>
@@ -154,6 +155,15 @@
                   </ng-template>
                 </mat-select>
               </mat-form-field>
+            </td>
+          </tr>
+          <tr >
+            <td colspan="4">
+              <mat-form-field appearance="fill" style="text-align: center; font-size: 1em; margin-right: 20px; width: 100%;">
+                <mat-label>Motivo de Registro</mat-label>
+                <input matInput placeholder="" type="text" name="comprobanteobs" [(ngModel)]="notaVenta.observaciones">
+              </mat-form-field>
+    
             </td>
           </tr>
         
@@ -271,18 +281,7 @@
               </button> -->
             </td>
           
-            <th style="text-align: right;">
-    
-              <!-- <mat-form-field *ngIf="notaVenta._id">
-                <input matInput [matDatepicker]="picker" placeholder="Fecha Registro" name="incial" [(ngModel)]="fechaInicialInfo">
-                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                <mat-datepicker #picker></mat-datepicker>
-            </mat-form-field> -->
-    
-            </th>
-            <th>
-          
-            </th>
+            
            
           </tr>
           <tr>
@@ -305,25 +304,21 @@
                   <mat-icon>search</mat-icon>
                 </button>
              </mat-form-field>
-        
-    <!--      
+              <!--      
                   <input   placeholder="" style="font-size: 1.2em; text-align: center; border-radius: 10px; margin: 10px 10px;">
                   <button  mat-stroked-button aria-label="Clear" color="accent" style="margin: 10px 10px;" (click)="getProducto(search)">
                     <mat-icon>search</mat-icon>
                   </button> -->
-    
             </td>
             <th>
               TRM USD
               <input [disabled]="notaVenta._id != ''"  placeholder="" style="font-size: 1.2em; text-align: center; border-radius: 10px; margin: 10px 10px;" [(ngModel)]="trm"> 
-
             </th>
             
             <th>
               TRM EUR
               <input  [disabled]="notaVenta._id != ''"  placeholder="" style="font-size: 1.2em; text-align: center; border-radius: 10px; margin: 10px 10px;"  [(ngModel)]="trm_euro">
             </th>
-            
           </tr>
     
         </table>

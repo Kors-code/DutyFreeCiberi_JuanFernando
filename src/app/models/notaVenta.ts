@@ -17,6 +17,7 @@ export class NotaVenta {
         public info:string = "",
         public total:number = 0,
         public descuento:number = 0,
+        public observaciones:string = "",
 
         public trm:number = 0,
         public trm_euro:number = 0,
