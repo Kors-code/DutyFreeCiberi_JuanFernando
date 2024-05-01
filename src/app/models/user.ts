@@ -12,6 +12,7 @@ export class User{
         public image:string= 'assets/m.svg',
         public portada:string= '',
         public color:string= '',
+        public cargo:string= '',
         public perfil:string= '',
         public origen:string= '',
         public rol:string= '',
@@ -21,27 +22,7 @@ export class User{
         public update_at:Date = new Date(),
         public modulos:any[] = [],
         public operaciones:any[] = []
-    ){
-        // this._id = undefined,
-        // this.identificacion= undefined,
-        // this.name= undefined,
-        // this.surname= undefined,
-        // this.email= undefined,
-        // this.password= undefined,
-        // this.estado= undefined,
-        // this.image= undefined,
-        // this.portada= undefined,
-        // this.perfil= undefined,
-        // this.origen= undefined,
-        // this.rol= undefined,
-        // this.company = [],
-        // this.color = 'orange',
-        // this.confirm = false,
-        // this.created_at= new Date(),
-        // this.update_at = new Date(),
-        // this.modulos= [] ;
-        // this.operaciones= []
-    }  
+    ){ }  
 
 
 }
@@ -102,6 +83,15 @@ export class Permisos {
                 editar:true,
                 eliminar:true,
                 escribir:true,
+            },{   
+                titulo:"Ordenes de Compra",
+                description:"Solicitudes de compras",
+                link:'/Compras',
+                img:'ordenes.svg',
+                editar:true,
+                eliminar:true,
+                escribir:true,
+                autoriza:false,
             },
             {   
                 titulo:"Usuarios",
@@ -223,6 +213,27 @@ export class Permisos {
         ]
     ){}
     }
+
+    export class Funcionalidad{
+        constructor(  
+            public description:string = '',
+            public titulo:string = '',
+            public escribir:any = undefined,
+            public eliminar:any = undefined,
+            public editar:any = undefined,
+            public autoriza:any=undefined
+           
+        ){}
+    }
+    
+    export class Acceso{
+        constructor(
+            public escribir:any = undefined,
+            public eliminar:any = undefined,
+            public editar:any = undefined,
+            public autorizar:any = undefined,
+        ){}
+    }    
 
 
 

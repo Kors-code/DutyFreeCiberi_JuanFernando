@@ -383,20 +383,25 @@ async function sendComprobanteSiigo(req, res){
                       if (resp.error) {throw new Error(resp.error)
                       console.log(resp.error)}; 
                       token = resp.body.access_token;
-                      var req2 = unirest('POST', 'https://api.siigo.com/v1/journals')
-                      .headers({
-                        'Content-Type': 'application/json',
-                        'Partner-ID': 'TestNat',
-                        'Authorization': 'Bearer '+ token
-                      })
-                      .send(JSON.stringify({
+
+                      let string = JSON.stringify({
                         document: {
                           id: params.iddoc
                         },
                         date: params.date,
                         items:params.data,
                         observations: params.obs
-                      }))
+                      })
+
+                      console.log(string)
+
+                      var req2 = unirest('POST', 'https://api.siigo.com/v1/journals')
+                      .headers({
+                        'Content-Type': 'application/json',
+                        'Partner-ID': 'TestNat',
+                        'Authorization': 'Bearer '+ token
+                      })
+                      .send(string)
                       .end(function (respu) { 
                         // console.log(respu)
                         if (respu.error){

@@ -8,6 +8,7 @@ import { Permisos, User } from 'src/app/models/user';
 import { OperacionesService } from 'src/app/services/operacion.service';
 import { UserService } from 'src/app/services/user.service';
 import { DialogConfirm } from '../confirm-dialog/confirm-dialog.component';
+import { GLOBAL } from 'src/app/global';
 
 @Component({
   selector: 'app-users',
@@ -485,5 +486,8 @@ deleteUser(){
       )
 
  }
+
+
+
 
 }

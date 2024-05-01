@@ -575,6 +575,18 @@ export class SiigoComprobantesComponent implements OnInit {
       _id:this.pOperacion._id,
       obs: this.obs
     }
+
+   let string=  JSON.stringify({
+      document: {
+        id: 34002
+      },
+      date: this.date,
+      items:this.itemsContable,
+      observations: this.obs
+    })
+
+    console.log(string)
+
     //(credenciales);
     this._siigoService.saveComprobantesSiigo(credenciales).subscribe(
       res=>{
@@ -890,6 +902,8 @@ onFileSelectedItau(event:any) {
 
 nuevo(){
   this.comprobante = new Comprobante();
+  this.credit = 0;
+  this.debit = 0;
 }
 
 passComprobante(item:Comprobante){
@@ -929,18 +943,6 @@ convertirJsonComprobanteItau(){
   this.diasINfo=''
   this.registros = this.data;
   
-    // let keys = Object.values(this.data[0])
-    // for(var i = 1;i < this.data.length; i++){
-    //   let arr = this.data[i];
-    //   let par = Object.values(arr);
-    //   let reg = []
-    //   for (let i = 0; i < keys.length; i++) {
-    //     let obje = [keys[i], par[i] || '' ]
-    //     reg.push(obje)
-    //   }
-    //   this.registros.push(Object.fromEntries(reg))
-    // }
-
     for(var i = 0;i < this.registros.length; i++){
       
       this.totalReteFuente=this.totalReteFuente+parseInt(this.registros[i]['RETEFUENTE']);
@@ -953,14 +955,14 @@ convertirJsonComprobanteItau(){
         this.diasINfo = this.registros[i]['DIA']+''
       }else{
         let pos =  this.diasINfo.indexOf(this.registros[i]['DIA']);
-        console.log(pos)
+        // console.log(pos)
         if(pos == -1){
           this.diasINfo = this.diasINfo+' Y ' + this.registros[i]['DIA']
         }
       }
 
-      console.log(this.diasINfo)
-      console.log(this.mes)
+      // console.log(this.diasINfo)
+      // console.log(this.mes)
     
       fecha = this.registros[i]['DIA']+'-'+this.registros[i]['MES']+'-'+new Date().getFullYear();
     
@@ -1102,11 +1104,9 @@ convertirJsonComprobanteItau(){
       value: this.totalReteFuente+this.totalComision+this.totalAmex+this.totalMaster+this.totalVisa
     }
 
-    this.comprobante.data.push(VentaMostrador)
-
-    this.totalizarComprobante()
+    this.comprobante.data.push(VentaMostrador);
+    this.totalizarComprobante();
    
-
     this.comprobante.iddoc=34002+''
 
     this.selected.setValue(1)
@@ -1382,6 +1382,17 @@ saveComprobante(){
   this.comprobante._idOperacionstring = this.pOperacion._id;
 
   console.log(this.comprobante)
+
+  let string=  JSON.stringify({
+    document: {
+      id: 34002
+    },
+    date: this.comprobante.date,
+    items:this.comprobante.data,
+    observations: this.comprobante.obs
+  })
+
+  console.log(string)
 
   this._siigoService.saveComprobantesSiigo(this.comprobante).subscribe(
     res=>{

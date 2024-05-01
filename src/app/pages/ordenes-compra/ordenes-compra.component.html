@@ -1,0 +1,285 @@
+<mat-card-content style="font-family: Arial, Helvetica, sans-serif;">
+    <div style="display: flex; flex-wrap: wrap; justify-content: center;" class="mat-elevation-z8">
+        
+        <button  *ngIf="!verListado" mat-stroked-button aria-label="Clear" color="scondary" style="margin: 10px 10px;" (click)="listado()">
+            <mat-icon>list</mat-icon> LISTADO
+          </button>
+          <button   mat-stroked-button aria-label="Clear" color="scondary" style="margin: 10px 10px;" (click)="nuevo()">
+            <mat-icon>fiber_new</mat-icon> NUEVO
+          </button>
+      <button  *ngIf="!orden._id && orden.productos.length != 0" mat-stroked-button aria-label="Clear" color="scondary" style="margin: 10px 10px;" (click)="guardar()">
+          <mat-icon>add</mat-icon> GUARDAR
+      </button>
+      <button  *ngIf="orden._id" mat-stroked-button aria-label="Clear" color="scondary" style="margin: 10px 10px;" (click)="update()">
+        <mat-icon>save</mat-icon> GUARDAR
+      </button>     
+    </div>
+
+    <div *ngIf="verListado">
+        <table  style="margin: 0 auto;  width: 80%; font-size: 1em; margin-top: 15px;" class="mat-elevation-z8">
+            <tr>
+              <th>FECHA</th>
+              <th>N°</th>
+              <th>ESTADO</th>
+              <th>SOLICITA</th>
+              <th>PROVEEDOR</th>
+              <th>VALOR</th>
+            </tr>
+            <ng-template let-item let-i="index" ngFor [ngForOf]="ordenes">
+              <tr (click)="pasOrden(item)" class="over stripedd">
+                <td> <span style="margin-left: 20px;">{{item.created_at | date:'medium'}}</span></td>
+                <td>{{item.consecutivo}}</td>
+                <td>{{item.estado}}</td>
+                <td> {{item.solicita_nombre}} - {{item.solicita_area}} </td>
+                <td> {{item.proveedor.titulo}} </td>
+                <td style="text-align: right;"> {{item.total + item.impuestos | number:'1.0-2'}}</td>
+   
+              </tr>
+  
+            </ng-template>
+           
+          </table>
+    </div>
+    <div *ngIf="!verListado">
+
+        <table style="margin: 0 auto;  width: 100%;  margin-top: 15px; font-size: 0.4;" class="mat-elevation-z8">
+            <tr>
+                <th colspan="7"><h1 style="text-align: center;">ORDENES DE COMPRA N° {{orden.consecutivo}}</h1></th>
+            </tr>
+            <tr>
+              <th>SOLICITANTE</th>
+            
+              <th colspan="2">
+                  <mat-form-field style="margin-right: 20px; width: 100%;" appearance="fill">
+                      <mat-label>NOMBRES</mat-label>
+                      <input matInput type="text" name="Nombres" [(ngModel)]="orden.solicita_nombre">
+                  </mat-form-field>
+              </th>
+              <th colspan="1">
+                  <mat-form-field appearance="fill">
+                      <mat-label>CARGO</mat-label>
+                      <input matInput type="text" name="cargo" [(ngModel)]="orden.solicita_cargo">
+                  </mat-form-field>
+              </th>
+              <th colspan="1">
+                  <mat-form-field  appearance="fill">
+                      <mat-label>AREA</mat-label>
+                      <input matInput type="text" name="cargo" [(ngModel)]="orden.solicita_area">
+                  </mat-form-field>
+              </th>
+              <th>
+                <mat-form-field appearance="fill">
+                    <mat-label>ESTADO</mat-label>
+                    <mat-select [(ngModel)]="orden.estado" [disabled]="!permisos.autorizar">
+                      <mat-option  value="Autorizada">
+                        Autorizada
+                      </mat-option> 
+                      <mat-option  value="Rechazada">
+                        Rechazada
+                      </mat-option>
+                      <mat-option  value="Activa">
+                        Activa
+                      </mat-option>
+                      <mat-option  value="Activa">
+                        Anulada
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field> 
+              </th>
+            </tr>
+            <tr>
+                <th>
+                    <mat-form-field appearance="fill" style="text-align: center; font-size: 1em;">
+                    <mat-label>Fecha Entrega</mat-label>
+                    <input matInput placeholder="" type="date" name="date" [(ngModel)]="orden.fecha_entrega">
+                  </mat-form-field>
+                </th>
+                <th>
+                    <mat-form-field appearance="fill" style="text-align: center; font-size: 1em; ">
+                    <mat-label>Fecha Pago</mat-label>
+                    <input matInput placeholder="" type="date" name="date" [(ngModel)]="orden.fecha_pago">
+                  </mat-form-field>
+                </th>
+                <th>Condiciones Pago:</th>
+                <td>
+                    <textarea  style="font-size: 1em; text-align: center; border-radius: 5px;" type="text" [(ngModel)]="orden.condiciones_pago"></textarea>
+                </td>
+                <td colspan="2">
+                    <button *ngIf="!orden.proveedor.titulo" (click)="openDialogProveedores()" mat-stroked-button aria-label="Clear" color="scondary">
+                        <mat-icon>local_grocery_store</mat-icon> PROVEEDOR
+                    </button>
+                    <button *ngIf="orden.cotizaciones == 0" mat-stroked-button size="small" slot="end" fill="outline" (click)="fileManifiesto.click()" color="tertiary">
+                        <mat-icon>attach_file</mat-icon> COTIZACION
+                      </button>
+                     
+                      <ng-template let-item let-i="index" ngFor [ngForOf]="orden.cotizaciones">
+                        <button  mat-stroked-button  size="small" slot="end" fill="outline"  color="secondary" (click)="verCotizacion(item)">
+                            <mat-icon>file_open</mat-icon> Cotizacion: {{item}}
+                        </button>  
+                      </ng-template>
+                     <input type="file" multiple="false"  (change)="onFileSelect($event)" #fileManifiesto style="display: none;" accept=".pdf">
+                </td>
+                
+
+            </tr>
+     
+          <tr *ngIf="orden.proveedor.titulo" style="background-color: rgb(1, 1, 77); color: white; font-size: 1.3em;">
+              <th >
+                  NIT:
+                
+              </th>
+              <th colspan="1">
+                  Empresa:
+              
+              </th>
+              <th>
+                  Ciudad:
+                
+              </th>
+              <th>
+                  Direccion:
+                 
+              </th>
+              <th>
+                  Telefono:
+                
+              </th>
+              <th colspan="2">
+                 Contacto: 
+                
+              </th>
+          </tr>
+          <tr *ngIf="orden.proveedor.titulo" style="font-size: 1.3em;">
+            <th>
+                {{orden.proveedor.nit}}
+            </th>
+            <th colspan="1">
+                {{orden.proveedor.titulo}}
+            </th>
+            <th>
+                {{orden.proveedor.ciudad}}
+            </th>
+            <th>
+                {{orden.proveedor.direccion}}
+            </th>
+            <th>
+                {{orden.proveedor.telefono}}
+            </th>
+            <th colspan="2">
+               {{orden.proveedor.contacto}}
+            </th>
+        </tr>
+            <tr >
+              <th colspan="7" >PRODUCTOS | SERVICIOS   
+                  <button  (click)="agregar()" mat-stroked-button aria-label="Clear" color="scondary" style="margin: 10px 10px;">
+                      <mat-icon>add</mat-icon> AGREGAR
+                  </button>
+              </th>
+            </tr>
+            <tr  style="background-color: rgb(1, 1, 77); color: white;">
+              <th>CODIGO INT</th>
+           
+              <th>DETALLE</th>
+          
+              <th>APLICACION</th>
+          
+              <th>CANTIDAD</th>
+            
+              <th>PRECIO UNITARIO</th>
+            
+              <th>TOTAL</th>
+           
+              <th>OBS.</th>
+            </tr>
+            <ng-template let-item let-i="index" ngFor [ngForOf]="orden.productos">
+              <tr>
+                  <td style="text-align: center;">
+                      <div style="display: flex; align-items: center;">
+                        <mat-icon (click)="deleteProd(i)">delete</mat-icon>
+                        <input  placeholder="" style="font-size: 1em; text-align: center; border-radius: 5px; " type="text" [(ngModel)]="item.codigo"> 
+                      </div>  
+                    
+                  </td>    
+                  <td style="text-align: center;">
+                      <textarea  style="font-size: 1em; text-align: center; border-radius: 5px; " type="text" [(ngModel)]="item.producto"></textarea>
+                  </td> 
+                  <td style="text-align: center;">
+                      <textarea  style="font-size: 1em; text-align: center; border-radius: 5px; " type="text" [(ngModel)]="item.aplicacion"></textarea>
+                  </td> 
+                  <td style="text-align: center;">
+                      <input  placeholder="" style="font-size: 1em; text-align: center; border-radius: 5px;" type="text" [(ngModel)]="item.cantidad" (change)="totalizar()"> 
+                  </td> 
+                  <td style="text-align: center;">
+                      <input  placeholder="" style="font-size: 1em; text-align: center; border-radius: 5px;  width: 150px;" type="text" [(ngModel)]="item.precio" (change)="totalizar()"> 
+                  </td> 
+                  <td style="text-align: center;">
+                      <h2>
+                          {{item.cantidad * item.precio | number}}
+                      </h2>
+                  </td>
+                  <td style="text-align: center;">
+                      <textarea  style="font-size: 1em; text-align: center; border-radius: 5px;" type="text" [(ngModel)]="item.observaciones"></textarea>
+                  </td>     
+              </tr>
+            </ng-template>
+            <tr>
+                <th>
+                   
+                </th>
+            </tr>
+     
+  
+      </table>
+      <table style="margin: 0 auto; margin-top: 15px; width: 100%;  " class="mat-elevation-z8">
+        <tr>
+            <th>Observaciones</th>
+            <td colspan="2">
+                <textarea  style="font-size: 1em; text-align: center; border-radius: 5px; " type="text" [(ngModel)]="orden.observaciones"></textarea>
+            </td>
+            <th style=" font-size: 1em; border-radius: 20px; width: 150px;">
+                SUBTOTAL
+            </th>
+            <th style="font-size: 1.3em; width: 150px; background-color: rgb(113, 113, 163); color: white; border-radius: 5px;">{{orden.total | number}}</th>
+            <th style="font-size: 1em; border-radius: 20px; width: 150px;">
+                IVA
+            </th>
+            <th>
+                <input  placeholder="" style="font-size: 1.3em; text-align: center; " type="number" [(ngModel)]="orden.impuestos"> 
+            </th>
+            <th style="font-size: 1em; border-radius: 20px; width: 150px; border-radius: 5px;">
+                TOTAL
+            </th>
+            <th style="font-size: 1.3em; width: 150px; background-color: rgb(1, 1, 77); color: white; ">
+                {{orden.total + orden.impuestos | number}}
+            </th>
+        </tr>
+      </table>
+
+      <table style="margin: 30px auto; width: 100%;" class="mat-elevation-z8">
+        <tr><th colspan="9" style="background-color: rgb(1, 1, 77); color: white;">AUTORIZA 
+            <button *ngIf="orden._id && permisos.autorizar &&  verBoton()" mat-stroked-button size="small" slot="end" fill="outline" color="accent" style="margin-left: 15px;" (click)="autorizar()">
+            <mat-icon>price_check</mat-icon> AUTORIZAR {{identity.name}} {{identity.surname}}
+        </button></th></tr>
+        <tr>
+            <br>
+        </tr>
+        <tr>
+            <ng-template let-item let-i="index" ngFor [ngForOf]="orden.autorizaciones">
+                <th colspan="3">
+                    {{item.name}} <br>
+                    {{item.cargo}} <br>
+                    {{item.fecha | date:'medium'}}
+                </th>
+            </ng-template>
+        </tr>
+        <tr>
+            <br>
+            <br>
+        </tr>
+      </table>
+
+ 
+    </div>
+ 
+
+</mat-card-content>

@@ -9,6 +9,8 @@ var OperacionController = require('../controllers/operacion');
 var ElectronicaController = require('../controllers/electronica');
 var ConsecutivoController = require('../controllers/consecutivo');
 var NotasVentaController = require('../controllers/notaVenta');
+var OrdebesCompraController = require('../controllers/compra');
+var ProveedoresController = require('../controllers/proveedor');
 
 var api = express.Router();
 var md_auth = require('../middelwares/authenticated');
@@ -166,6 +168,20 @@ api.get('/notas-venta-activa-op/:id',md_auth.ensureAuth, NotasVentaController.ge
 api.post('/nota-venta', md_auth.ensureAuth, NotasVentaController.saveNotaVenta);
 // api.delete('/consecutivo/:id',md_auth.ensureAuth, ConsecutivoController.deleteConsecutivo);
 api.put('/nota-venta', md_auth.ensureAuth,  NotasVentaController.updateNotaVenta);
+
+// RUTAS ORDENES DE COMPRA
+api.get('/ordenes',md_auth.ensureAuth, OrdebesCompraController.getComprasOperacion);
+api.post('/reg-orden', md_auth.ensureAuth, OrdebesCompraController.saveCompra);
+api.delete('/orden/:id',md_auth.ensureAuth, OrdebesCompraController.deleteCompra);
+api.put('/orden', md_auth.ensureAuth,  OrdebesCompraController.updateCompra);
+
+
+// RUTAS PROVEEDORES
+api.get('/proveedores',md_auth.ensureAuth, ProveedoresController.getProveedores);
+api.post('/proveedor', md_auth.ensureAuth, ProveedoresController.saveProveedor);
+api.delete('/proveedor/:id',md_auth.ensureAuth, ProveedoresController.deleteProveedor);
+api.get('/proveedor-titulo/:id',md_auth.ensureAuth, ProveedoresController.getProveedoresTitulo);
+api.put('/proveedor', md_auth.ensureAuth,  ProveedoresController.updateProveedor);
 
 module.exports = api;
 

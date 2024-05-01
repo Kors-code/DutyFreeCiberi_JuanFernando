@@ -1,0 +1,76 @@
+<div style="display: flex; flex-wrap: wrap; justify-content: center;" class="mat-elevation-z8">
+<button  (click)="cancelar()" mat-stroked-button aria-label="Clear" color="scondary" style="margin: 10px 10px;">
+    <mat-icon>cancel</mat-icon> Cerrar
+</button>
+<button  (click)="getProveedores()" mat-stroked-button aria-label="Clear" color="scondary" style="margin: 10px 10px;">
+  <mat-icon>listi</mat-icon> PROVEEDORRES
+</button>
+<button *ngIf="proveedor.titulo" (click)="save()" mat-stroked-button aria-label="Clear" color="scondary" style="margin: 10px 10px;">
+  <mat-icon>save</mat-icon> GUARDAR
+</button>
+<button *ngIf="proveedor._id" (click)="confirmar()" mat-stroked-button aria-label="Clear" color="scondary" style="margin: 10px 10px;">
+  ASIGNAR  <mat-icon>send</mat-icon>
+</button>
+<mat-form-field style="margin-right: 20px; margin-top: 10px;" appearance="fill">
+  <input  matInput type="text" placeholder="Buscar" style="text-align: center;" (change)="buscarProveedor()" [(ngModel)]="search">
+  <button mat-icon-button matSuffix  (click)="buscarProveedor()">
+    <mat-icon> search </mat-icon>
+  </button>
+</mat-form-field>
+
+        
+  
+</div>
+
+<div *ngIf="!verListado" class="mat-elevation-z8" style="margin-top: 15px; display: flex; justify-content: center; flex-wrap: wrap; padding: 10px;">
+    <mat-form-field style="margin-right: 20px;" appearance="fill">
+        <mat-label>NIT | ID</mat-label>
+        <input matInput type="text" name="nit" [(ngModel)]="proveedor.nit">
+      </mat-form-field>
+      <mat-form-field style="margin-right: 20px;" appearance="fill">
+        <mat-label>EMPRESA</mat-label>
+        <input matInput type="text" name="titulo" [(ngModel)]="proveedor.titulo">
+      </mat-form-field>
+      <mat-form-field style="margin-right: 20px;" appearance="fill">
+        <mat-label>CONTACTO</mat-label>
+        <input matInput type="text" name="contacto" [(ngModel)]="proveedor.contacto">
+      </mat-form-field>
+      <mat-form-field style="margin-right: 20px;" appearance="fill">
+        <mat-label>CIUDAD</mat-label>
+        <input matInput type="text" name="ciudad" [(ngModel)]="proveedor.ciudad">
+      </mat-form-field>
+      <mat-form-field style="margin-right: 20px;" appearance="fill">
+        <mat-label>DIRECCION</mat-label>
+        <input matInput type="text" name="direccion" [(ngModel)]="proveedor.direccion">
+      </mat-form-field>
+      <mat-form-field style="margin-right: 20px;" appearance="fill">
+        <mat-label>TELEFONO</mat-label>
+        <input matInput type="text" name="telefono" [(ngModel)]="proveedor.telefono">
+      </mat-form-field>
+     
+</div>
+<div *ngIf="verListado">
+  <table  style="margin: 0 auto;  width: 100%; font-size: 1em; margin-top: 15px;" class="mat-elevation-z8">
+    <tr>
+      <th>NIT | ID</th>
+      <th>EMPRESA</th>
+      <th>CIUDAD</th>
+      <th>TELEFONO</th>
+      <th>CONTACTO</th>
+     
+    </tr>
+    <ng-template let-item let-i="index" ngFor [ngForOf]="proveedores">
+      <tr (click)="pasProveedor(item)" class="over stripedd">
+        <td>{{item.nit}}</td>
+        <td>{{item.titulo}}</td>
+        <td> {{item.ciudad}} </td>
+        <td> {{item.telefono}} </td>
+        <td> {{item.contacto}} </td>
+      </tr>
+
+    </ng-template>
+  </table>
+</div>
+
+
+

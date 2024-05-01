@@ -1,0 +1,11 @@
+.stripedd:nth-child(even) {
+    background-color: #f2f2f2;
+    border-radius: 20px;
+  }
+  
+  .stripedd:hover{
+    background-color: #0e8df5bb;
+    border-radius: 20px;
+    cursor: pointer;
+    
+  }

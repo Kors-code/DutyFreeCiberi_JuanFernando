@@ -10,6 +10,7 @@ var http = require('http');
 mongoose.Promise = global.Promise;
 //cargar rutas
 var app_routes = require('./routes/app_rutes');
+var upload_routes = require('./routes/upload');
 
 app.use(bodyParser.urlencoded({extended: false, limit: '850mb',
         parameterLimit: 1000000,}));
@@ -29,7 +30,7 @@ app.use((req, res, next)=>{
 //rutas base de controladores
 app.use('/',express.static('public', {redirect: false}));
 app.use('/api', app_routes);
-
+app.use('/api/', upload_routes);
 
 app.get('*', function(request, response, next) {
     response.sendFile(path.resolve('public/index.html'));

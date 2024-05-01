@@ -142,6 +142,7 @@ function registerUser(req, res){
             user.rol = params.rol;
             user.confirm = false;
             user.color = params.color;
+            user.cargo= params.cargo;
         
             user.created_at = new Date();
             

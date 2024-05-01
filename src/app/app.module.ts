@@ -29,6 +29,8 @@ import { DialogClienteDetail } from './pages/pos/clientes.component';
 import { DialogMediosPagoDetail } from './pages/pos/mediosPago.component';
 import { ValidacionComponent } from './pages/validacionElectronicas/validacion.component';
 import { SiigoComprobantesComponent } from './pages/siigo-comprobantes-caja/siigo-comprobante.component';
+import { OrdenesCompra } from './pages/ordenes-compra/ordenes-compra.component';
+import { DialogProveedor } from './pages/ordenes-compra/proveedor.component';
 
 
 @NgModule({
@@ -57,7 +59,9 @@ import { SiigoComprobantesComponent } from './pages/siigo-comprobantes-caja/siig
     DialogClienteDetail,
     DialogMediosPagoDetail,
     ValidacionComponent,
-    SiigoComprobantesComponent
+    SiigoComprobantesComponent,
+    OrdenesCompra,
+    DialogProveedor
 
   ],
   imports: [
@@ -76,6 +80,6 @@ import { SiigoComprobantesComponent } from './pages/siigo-comprobantes-caja/siig
   providers: [],
   bootstrap: [AppComponent],
   entryComponents:[DialogConfirm, DialogDataJson, DialogDataVendedor,
-    DialogConteoDetail, DialogChangePass, DialogClienteDetail, DialogMediosPagoDetail]
+    DialogConteoDetail, DialogChangePass, DialogClienteDetail, DialogMediosPagoDetail, DialogProveedor]
 })
 export class AppModule { }

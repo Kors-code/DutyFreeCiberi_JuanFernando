@@ -88,7 +88,5 @@ module.exports = {
     saveConsecutivo,
     getConsecutivoOperacion,
     deleteConsecutivo,
-    updateConsecutivo
-
-    
+    updateConsecutivo    
 }

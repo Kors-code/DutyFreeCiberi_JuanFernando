@@ -303,7 +303,6 @@ getVentasPeriodo(feha_inicial:any, fecha_final:any) {
         // console.log(this.notaVenta)
       }
     })
-
   }
 
   search=""
@@ -329,7 +328,6 @@ getVentasPeriodo(feha_inicial:any, fecha_final:any) {
       }
     )
   }
-
 
   searchCajeroS:string = '';
 

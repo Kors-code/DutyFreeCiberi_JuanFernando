@@ -101,7 +101,8 @@ async function updateDataConfiguracion(req, res){
             consecutivoCompVenta:params.consecutivoCompVenta,
             consecutivoCompCaja:params.consecutivoCompCaja,
             cuentas:params.cuentas,
-            comprobantes:params.comprobantes
+            comprobantes:params.comprobantes,
+            consecutivoOrdenCompra:params.consecutivoOrdenCompra
         }},{ upsert: false }, function(err,doc) {
             if (err) { throw err; }
             else { 

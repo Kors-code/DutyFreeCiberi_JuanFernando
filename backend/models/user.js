@@ -26,6 +26,7 @@ var UserSchema = Schema({
     emails: Boolean,
     ubicaciones:Schema.Types.Mixed,
     color:String,
+    cargo:String,
     
     confirm:Boolean,
     created_at: Date,
