@@ -174,7 +174,11 @@ api.get('/ordenes',md_auth.ensureAuth, OrdebesCompraController.getComprasOperaci
 api.post('/reg-orden', md_auth.ensureAuth, OrdebesCompraController.saveCompra);
 api.delete('/orden/:id',md_auth.ensureAuth, OrdebesCompraController.deleteCompra);
 api.put('/orden', md_auth.ensureAuth,  OrdebesCompraController.updateCompra);
-
+api.get('/ordenes-activas',md_auth.ensureAuth, OrdebesCompraController.getComprasActivas);
+api.get('/ordenes-autorizadas',md_auth.ensureAuth, OrdebesCompraController.getComprasAutorizadas);
+api.get('/ordenes-rechazadas',md_auth.ensureAuth, OrdebesCompraController.getComprasRechazadas);
+api.get('/ordenes-cerradas',md_auth.ensureAuth, OrdebesCompraController.getComprasCerradas);
+api.get('/ordenes-anuladas',md_auth.ensureAuth, OrdebesCompraController.getComprasAnuladas);
 
 // RUTAS PROVEEDORES
 api.get('/proveedores',md_auth.ensureAuth, ProveedoresController.getProveedores);

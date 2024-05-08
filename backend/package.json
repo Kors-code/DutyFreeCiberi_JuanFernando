@@ -1,8 +1,8 @@
 {
   "name": "duty_free",
-  "version": "1.5.5",
+  "version": "1.5.9",
   "description": "backend duty-free",
-  "index": "index.js",
+  "main": "main.js",
   "scripts": {
     "postinstall": "",
     "on": "electron .",
@@ -48,7 +48,7 @@
       "publish": [
         {
           "provider": "s3",
-          "bucket": "duty-free-app",
+          "bucket": "app-duty-free",
           "region": "us-east-2",
           "channel": "latest"
         }

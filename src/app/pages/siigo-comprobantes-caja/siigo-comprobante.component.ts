@@ -747,7 +747,7 @@ convertirJsonComprobante(data:any){
   
     for(var i = 0;i < this.registros.length; i++){
 
-      this.totalReteFuente=this.totalReteFuente+parseInt(this.registros[i]['Ret Fuente']);
+      this.totalReteFuente=this.totalReteFuente+parseInt(this.registros[i]['Ret. Fuente']);
       this.totalComision=this.totalComision+parseInt(this.registros[i]['Valor Comisión']);
       this.totalNeto=this.totalNeto+parseInt(this.registros[i]['Valor Neto']);
       this.totalVenta=this.totalVenta+parseInt(this.registros[i]['Valor Consumo']);
@@ -766,14 +766,14 @@ convertirJsonComprobante(data:any){
           valor: parseInt(this.registros[i]['Valor Neto']),
           fecha:fecha,
           tarjeta:this.registros[i]['Tipo Tarjeta'],
-          retefuente:parseInt(this.registros[i]['Ret Fuente']),
+          retefuente:parseInt(this.registros[i]['Ret. Fuente']),
           comision:parseInt(this.registros[i]['Valor Comisión']),
           total:parseInt(this.registros[i]['Valor Consumo'])
         }
         this.diasInforme.push(info)
       }else{
         this.diasInforme[pos2].valor = parseInt(this.diasInforme[pos2].valor) + parseInt(this.registros[i]['Valor Neto'])
-        this.diasInforme[pos2].retefuente = parseInt(this.diasInforme[pos2].retefuente) + parseInt(this.registros[i]['Ret Fuente'])
+        this.diasInforme[pos2].retefuente = parseInt(this.diasInforme[pos2].retefuente) + parseInt(this.registros[i]['Ret. Fuente'])
         this.diasInforme[pos2].comision = parseInt(this.diasInforme[pos2].comision) + parseInt(this.registros[i]['Valor Comisión'])
         this.diasInforme[pos2].total = parseInt(this.diasInforme[pos2].total) + parseInt(this.registros[i]['Valor Consumo'])
         }

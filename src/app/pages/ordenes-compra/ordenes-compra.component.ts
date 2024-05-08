@@ -15,6 +15,7 @@ import { HttpClient } from '@angular/common/http';
 import { GLOBAL } from 'src/app/global';
 import { ComprasService } from 'src/app/services/compras.service';
 import { DialogConfirm } from '../confirm-dialog/confirm-dialog.component';
+import * as XLSX from 'xlsx';
 
 @Component({
   selector: 'ordenes-compra',
@@ -30,16 +31,17 @@ export class OrdenesCompra implements OnInit {
   public identity:any;
   pOperacion:Operacion
   public url: string;
-  // public url_dw:string;
+  public url_dw:string;
   verListado=false;
   constructor(  public dialog: MatDialog, @Inject(DOCUMENT) doc: any,
     public _infoService:InfoService,  public _userService:UserService,private _http: HttpClient,private _ordenesService :ComprasService) { 
     this.config = new Config();
     this.identity = this._userService.getIdentity();
     this.orden=new Ordencompra()
-    console.log(this.orden);
+  
     this.pOperacion= this._userService.getPredetermidaOperacion();
     this.url = GLOBAL.url_app;
+    this.url_dw = GLOBAL.url_dw
     this.permisos = new Acceso();
   }
 
@@ -98,6 +100,7 @@ export class OrdenesCompra implements OnInit {
         producto:'',
         aplicacion:'',
         cantidad:1,
+        cantidad_pedida:1,
         precio:0,
         observaciones:''
       }
@@ -146,7 +149,7 @@ export class OrdenesCompra implements OnInit {
 
   verCotizacion(item:string){
     //.log(item);
-    let url =  this.url+'pdf/'+item;
+    let url =  this.url_dw+'pdf/'+item;
     var win = window.open(url, '_blank');
   
   }
@@ -155,7 +158,7 @@ export class OrdenesCompra implements OnInit {
     console.log(this.orden);
     this._ordenesService.saveCompra(this.orden).subscribe(
       res=>{
-
+        this.orden = res;
         let data = {titulo: 'Exito ', info:'Orden Generada Correctamente' ,type: 'Confirm', icon:'done_all'}
         let dialogRef = this.dialog.open(DialogConfirm,{
           data: data
@@ -196,14 +199,80 @@ export class OrdenesCompra implements OnInit {
     )
   }
 
+
+  getOrdenesActivas(){
+    this._ordenesService.getComprasActivas().subscribe(
+      res=>{
+        console.log(res)
+        if(res){
+          this.verListado=true;
+          this.ordenes = res;
+        }
+      }
+    )
+  }
+
+  getOrdenesAutorizadas(){
+    this._ordenesService.getComprasAutorizadas().subscribe(
+      res=>{
+        console.log(res)
+        if(res){
+          this.verListado=true;
+          this.ordenes = res;
+        }
+      }
+    )
+  }
+
+
+  getOrdenesAnuladas(){
+    this._ordenesService.getComprasAnuladas().subscribe(
+      res=>{
+        console.log(res)
+        if(res){
+          this.verListado=true;
+          this.ordenes = res;
+        }
+      }
+    )
+  }
+
+  getOrdenesCerradas(){
+    this._ordenesService.getComprasCerradas().subscribe(
+      res=>{
+        console.log(res)
+        if(res){
+          this.verListado=true;
+          this.ordenes = res;
+        }
+      }
+    )
+  }
+
+  getOrdenesRechazadas(){
+    this._ordenesService.getComprasRechazadas().subscribe(
+      res=>{
+        console.log(res)
+        if(res){
+          this.verListado=true;
+          this.ordenes = res;
+        }
+      }
+    )
+  }
+
+
   pasOrden(item:Ordencompra){
+    console.log(item)
     this.verListado=false;
     this.orden = item;
+    this.impuesto = (item.impuestos/item.total)*100
   }
 
   listado(){
     this.orden = new Ordencompra();
     this.verListado=true;
+    this.getOrdenesActivas();
   }
 
   nuevo(){
@@ -223,7 +292,7 @@ export class OrdenesCompra implements OnInit {
       this.orden.total= this.orden.total + (element.precio * element.cantidad)
     }
 
-    console.log(this.orden)
+    // console.log(this.orden)
   }
 
   autorizar(){
@@ -237,7 +306,7 @@ export class OrdenesCompra implements OnInit {
 
   verBoton():boolean{
     let pos2 = this.orden.autorizaciones.map(function(e: { _id: string; }) { return e._id; }).indexOf(this.identity._id);
-    console.log(pos2)
+    // console.log(pos2)
     if(pos2 == -1){
       return true
     }else{
@@ -245,6 +314,83 @@ export class OrdenesCompra implements OnInit {
     }
   }
 
+  printNotaVenta(): void {
+    let printContents
+    let  popupWin:any;
+    printContents = document.getElementById('orden')?.innerHTML;
+    popupWin = window.open('', '_blank', 'top=0,left=0,height=100%,width=auto');
+    popupWin.document.open();
+    popupWin.document.write(`
+       <html>
+           <head>
+               <title>Orden Compra</title>
+               <style>
+                  .blue{
+                    background-color: rgb(1, 1, 77); 
+                    color: white;
+                  }
+                  
+               </style>
+           </head>
+           <body onload="window.print();window.close()">
+           
+           ${printContents}
+           
+           </body>
+       </html>`
+    );
+    popupWin.document.close();
+  }
+
+  exportexcel() {
+    /**passing table id**/
+    let data = document.getElementById('table-data');
+    const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(data);
+
+    /**Generate workbook and add the worksheet**/
+    const wb: XLSX.WorkBook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+
+    /*save to file*/
+    XLSX.writeFile(wb,'ORDENES COMPRA.xlsx');
+  }
+
+  impuesto=0;
+  CambiarImpuesto(){
+    console.log(this.impuesto)
+    this.orden.impuestos = this.orden.total *  (this.orden.impuestoporcentaje/100);
+  }
+
+  cambiarPedido(item:any){
+    item.cantidad = item.cantidad_pedida;
+    this.totalizar();
+  }
+
+
+  duplicarOrden(){
+    console.log(this.orden)
+    this.orden._id ='';
+    this.orden.created_at= new Date();
+    this.orden.fecha_entrega= new Date();
+    this.orden.fecha_pago= new Date();
+    this.orden.update_at= new Date();
+    this.orden.estado= 'Activa';
+    this.orden.autorizaciones = [];
+    this._ordenesService.saveCompra(this.orden).subscribe(
+      res=>{
+        this.orden = new Ordencompra();
+        this.orden = res;
+        let data = {titulo: 'Exito ', info:'Orden Generada Correctamente' ,type: 'Confirm', icon:'done_all'}
+        let dialogRef = this.dialog.open(DialogConfirm,{
+          data: data
+        });
+        dialogRef.afterClosed().subscribe(result => {
+          // window.location.reload();
+        })
+        console.log(res)
+      }
+    )  
+  }
 }
 
 

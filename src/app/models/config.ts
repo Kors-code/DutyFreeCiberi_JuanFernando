@@ -31,6 +31,7 @@ export class DataOperacion {
         public dv: string = '',
         public business_name: string = '',
         public address: string = '',
+        public city: string = '',
         public phone: string = '',
         public email: string = '',
         public trm_euro: number = 0,

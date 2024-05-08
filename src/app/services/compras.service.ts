@@ -55,6 +55,76 @@ getOrdenesOperacion(){
        
 }
 
+
+getComprasOperacion(){
+    let headers = new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': this.getToken()
+    });
+
+    return this._http.get<Ordencompra[]>(this.url+'ordenes/',
+        {headers:headers})
+       
+}
+
+
+getComprasActivas(){
+    let headers = new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': this.getToken()
+    });
+
+    return this._http.get<Ordencompra[]>(this.url+'ordenes-activas/',
+        {headers:headers})
+       
+}
+
+getComprasAutorizadas(){
+    let headers = new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': this.getToken()
+    });
+
+    return this._http.get<Ordencompra[]>(this.url+'ordenes-autorizadas/',
+        {headers:headers})
+       
+}
+
+getComprasCerradas(){
+    let headers = new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': this.getToken()
+    });
+
+    return this._http.get<Ordencompra[]>(this.url+'ordenes-cerradas/',
+        {headers:headers})
+       
+}
+
+
+getComprasRechazadas(){
+    let headers = new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': this.getToken()
+    });
+
+    return this._http.get<Ordencompra[]>(this.url+'ordenes-rechazadas/',
+        {headers:headers})
+       
+}
+
+getComprasAnuladas(){
+    let headers = new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': this.getToken()
+    });
+    return this._http.get<Ordencompra[]>(this.url+'ordenes-anuladas/',
+        {headers:headers})
+}
+
+
+
+
     updateOrden(update:any){
         let params = JSON.stringify(update);
         let headers = new HttpHeaders({

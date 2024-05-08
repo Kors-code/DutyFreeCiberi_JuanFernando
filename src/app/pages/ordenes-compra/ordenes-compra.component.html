@@ -1,9 +1,8 @@
 <mat-card-content style="font-family: Arial, Helvetica, sans-serif;">
-    <div style="display: flex; flex-wrap: wrap; justify-content: center;" class="mat-elevation-z8">
-        
+    <div style="display: flex; flex-wrap: wrap; justify-content: center;" class="mat-elevation-z8">  
         <button  *ngIf="!verListado" mat-stroked-button aria-label="Clear" color="scondary" style="margin: 10px 10px;" (click)="listado()">
             <mat-icon>list</mat-icon> LISTADO
-          </button>
+        </button>
           <button   mat-stroked-button aria-label="Clear" color="scondary" style="margin: 10px 10px;" (click)="nuevo()">
             <mat-icon>fiber_new</mat-icon> NUEVO
           </button>
@@ -12,16 +11,45 @@
       </button>
       <button  *ngIf="orden._id" mat-stroked-button aria-label="Clear" color="scondary" style="margin: 10px 10px;" (click)="update()">
         <mat-icon>save</mat-icon> GUARDAR
+      </button>
+      <button  *ngIf="orden._id" mat-stroked-button aria-label="Clear" color="scondary" style="margin: 10px 10px;" (click)="duplicarOrden()">
+        <mat-icon>file_copy</mat-icon> DUPLICAR ORDEN DE COMPRA
+      </button>      
+      <button  *ngIf="orden._id" mat-stroked-button aria-label="Clear" color="scondary" style="margin: 10px 10px;" (click)="printNotaVenta()">
+        <mat-icon>print</mat-icon> IMPRIMIR
       </button>     
     </div>
 
     <div *ngIf="verListado">
-        <table  style="margin: 0 auto;  width: 80%; font-size: 1em; margin-top: 15px;" class="mat-elevation-z8">
+        <div style="display: flex; flex-wrap: wrap; justify-content: center;" class="mat-elevation-z8">
+    
+            <button mat-stroked-button aria-label="Clear" color="scondary" style="margin: 10px 10px;" (click)="getOrdenesActivas()">
+                <mat-icon>list</mat-icon> ACTIVAS
+            </button>
+            <button   mat-stroked-button aria-label="Clear" color="scondary" style="margin: 10px 10px;" (click)="getOrdenesAutorizadas()">
+                <mat-icon>list</mat-icon> AUTORIZADAS
+            </button>
+            <button   mat-stroked-button aria-label="Clear" color="scondary" style="margin: 10px 10px;" (click)="getOrdenesRechazadas()">
+                <mat-icon>list</mat-icon> RECHAZADAS
+            </button>
+            <button  mat-stroked-button aria-label="Clear" color="scondary" style="margin: 10px 10px;" (click)="getOrdenesAnuladas()">
+                <mat-icon>list</mat-icon> ANULADAS
+            </button>
+            <button mat-stroked-button aria-label="Clear" color="scondary" style="margin: 10px 10px;" (click)="getOrdenesCerradas()">
+                <mat-icon>list</mat-icon> CERRADAS
+            </button>
+
+            <button mat-stroked-button aria-label="Clear" color="scondary" style="margin: 10px 10px;" (click)="exportexcel()">
+                <mat-icon>cloud_download</mat-icon> DESCARGAR
+            </button>
+        </div>
+        <table id="table-data" style="margin: 0 auto;  width: 80%; font-size: 1.3em; margin-top: 15px;" class="mat-elevation-z8">
             <tr>
               <th>FECHA</th>
               <th>N°</th>
               <th>ESTADO</th>
               <th>SOLICITA</th>
+              <th>OBSERVACIONES</th>
               <th>PROVEEDOR</th>
               <th>VALOR</th>
             </tr>
@@ -31,11 +59,10 @@
                 <td>{{item.consecutivo}}</td>
                 <td>{{item.estado}}</td>
                 <td> {{item.solicita_nombre}} - {{item.solicita_area}} </td>
+                <td> {{item.observaciones}} </td>
                 <td> {{item.proveedor.titulo}} </td>
                 <td style="text-align: right;"> {{item.total + item.impuestos | number:'1.0-2'}}</td>
-   
               </tr>
-  
             </ng-template>
            
           </table>
@@ -52,25 +79,25 @@
               <th colspan="2">
                   <mat-form-field style="margin-right: 20px; width: 100%;" appearance="fill">
                       <mat-label>NOMBRES</mat-label>
-                      <input matInput type="text" name="Nombres" [(ngModel)]="orden.solicita_nombre">
+                      <input matInput type="text" name="Nombres" [(ngModel)]="orden.solicita_nombre" [disabled]="orden.estado != 'Activa'">
                   </mat-form-field>
               </th>
               <th colspan="1">
                   <mat-form-field appearance="fill">
                       <mat-label>CARGO</mat-label>
-                      <input matInput type="text" name="cargo" [(ngModel)]="orden.solicita_cargo">
+                      <input matInput type="text" name="cargo" [disabled]="orden.estado != 'Activa'" [(ngModel)]="orden.solicita_cargo">
                   </mat-form-field>
               </th>
               <th colspan="1">
                   <mat-form-field  appearance="fill">
                       <mat-label>AREA</mat-label>
-                      <input matInput type="text" name="cargo" [(ngModel)]="orden.solicita_area">
+                      <input matInput type="text" name="cargo" [disabled]="orden.estado != 'Activa'" [(ngModel)]="orden.solicita_area">
                   </mat-form-field>
               </th>
               <th>
                 <mat-form-field appearance="fill">
                     <mat-label>ESTADO</mat-label>
-                    <mat-select [(ngModel)]="orden.estado" [disabled]="!permisos.autorizar">
+                    <mat-select [(ngModel)]="orden.estado"  [disabled]="!permisos.autorizar">
                       <mat-option  value="Autorizada">
                         Autorizada
                       </mat-option> 
@@ -80,7 +107,10 @@
                       <mat-option  value="Activa">
                         Activa
                       </mat-option>
-                      <mat-option  value="Activa">
+                      <mat-option  value="Cerrada">
+                        Cerrada
+                      </mat-option>
+                      <mat-option  value="Anulada">
                         Anulada
                       </mat-option>
                     </mat-select>
@@ -91,18 +121,18 @@
                 <th>
                     <mat-form-field appearance="fill" style="text-align: center; font-size: 1em;">
                     <mat-label>Fecha Entrega</mat-label>
-                    <input matInput placeholder="" type="date" name="date" [(ngModel)]="orden.fecha_entrega">
+                    <input matInput placeholder="" type="date" name="date"  [disabled]="orden.estado != 'Activa'" [(ngModel)]="orden.fecha_entrega">
                   </mat-form-field>
                 </th>
                 <th>
                     <mat-form-field appearance="fill" style="text-align: center; font-size: 1em; ">
                     <mat-label>Fecha Pago</mat-label>
-                    <input matInput placeholder="" type="date" name="date" [(ngModel)]="orden.fecha_pago">
+                    <input matInput placeholder="" type="date" name="date" [disabled]="orden.estado != 'Activa'" [(ngModel)]="orden.fecha_pago">
                   </mat-form-field>
                 </th>
                 <th>Condiciones Pago:</th>
                 <td>
-                    <textarea  style="font-size: 1em; text-align: center; border-radius: 5px;" type="text" [(ngModel)]="orden.condiciones_pago"></textarea>
+                    <textarea [disabled]="orden.estado != 'Activa'" style="font-size: 1em; text-align: center; border-radius: 5px;" type="text" [(ngModel)]="orden.condiciones_pago"></textarea>
                 </td>
                 <td colspan="2">
                     <button *ngIf="!orden.proveedor.titulo" (click)="openDialogProveedores()" mat-stroked-button aria-label="Clear" color="scondary">
@@ -169,9 +199,11 @@
                {{orden.proveedor.contacto}}
             </th>
         </tr>
+        </table>
+        <table style="margin: 0 auto;  width: 100%;  margin-top: 15px; font-size: 0.4;" class="mat-elevation-z8">
             <tr >
               <th colspan="7" >PRODUCTOS | SERVICIOS   
-                  <button  (click)="agregar()" mat-stroked-button aria-label="Clear" color="scondary" style="margin: 10px 10px;">
+                  <button  (click)="agregar()" mat-stroked-button [disabled]="orden.estado != 'Activa'" aria-label="Clear" color="scondary" style="margin: 10px 10px;">
                       <mat-icon>add</mat-icon> AGREGAR
                   </button>
               </th>
@@ -183,7 +215,9 @@
           
               <th>APLICACION</th>
           
-              <th>CANTIDAD</th>
+              <th>CANT. PEDID</th>
+
+              <th>CANT. AUTO</th>
             
               <th>PRECIO UNITARIO</th>
             
@@ -195,22 +229,25 @@
               <tr>
                   <td style="text-align: center;">
                       <div style="display: flex; align-items: center;">
-                        <mat-icon (click)="deleteProd(i)">delete</mat-icon>
-                        <input  placeholder="" style="font-size: 1em; text-align: center; border-radius: 5px; " type="text" [(ngModel)]="item.codigo"> 
+                        <mat-icon (click)="deleteProd(i)" *ngIf="orden.estado == 'Activa'">delete</mat-icon>
+                        <input [disabled]="orden.estado != 'Activa'"  placeholder="" style="font-size: 1em; text-align: center; border-radius: 5px; " type="text" [(ngModel)]="item.codigo"> 
                       </div>  
                     
                   </td>    
                   <td style="text-align: center;">
-                      <textarea  style="font-size: 1em; text-align: center; border-radius: 5px; " type="text" [(ngModel)]="item.producto"></textarea>
+                      <textarea [disabled]="orden.estado != 'Activa'" style="font-size: 1em; text-align: center; border-radius: 5px; " type="text" [(ngModel)]="item.producto"></textarea>
                   </td> 
                   <td style="text-align: center;">
-                      <textarea  style="font-size: 1em; text-align: center; border-radius: 5px; " type="text" [(ngModel)]="item.aplicacion"></textarea>
+                      <textarea  [disabled]="orden.estado != 'Activa'" style="font-size: 1em; text-align: center; border-radius: 5px; " type="text" [(ngModel)]="item.aplicacion"></textarea>
                   </td> 
                   <td style="text-align: center;">
-                      <input  placeholder="" style="font-size: 1em; text-align: center; border-radius: 5px;" type="text" [(ngModel)]="item.cantidad" (change)="totalizar()"> 
+                      <input  [disabled]="orden.estado != 'Activa'" placeholder="" style="font-size: 1em; text-align: center; border-radius: 5px;" type="number" [(ngModel)]="item.cantidad_pedida" (change)="cambiarPedido(item)"> 
                   </td> 
                   <td style="text-align: center;">
-                      <input  placeholder="" style="font-size: 1em; text-align: center; border-radius: 5px;  width: 150px;" type="text" [(ngModel)]="item.precio" (change)="totalizar()"> 
+                    <input  [disabled]="!permisos.autorizar" placeholder="" style="font-size: 1em; text-align: center; border-radius: 5px;" type="number" [(ngModel)]="item.cantidad" (change)="totalizar()"> 
+                </td> 
+                  <td style="text-align: center;">
+                      <input  [disabled]="orden.estado != 'Activa'" placeholder="" style="font-size: 1em; text-align: center; border-radius: 5px;  width: 150px;" type="number" [(ngModel)]="item.precio" (change)="totalizar()"> 
                   </td> 
                   <td style="text-align: center;">
                       <h2>
@@ -218,7 +255,7 @@
                       </h2>
                   </td>
                   <td style="text-align: center;">
-                      <textarea  style="font-size: 1em; text-align: center; border-radius: 5px;" type="text" [(ngModel)]="item.observaciones"></textarea>
+                      <textarea [disabled]="orden.estado != 'Activa'" style="font-size: 1em; text-align: center; border-radius: 5px;" type="text" [(ngModel)]="item.observaciones"></textarea>
                   </td>     
               </tr>
             </ng-template>
@@ -234,7 +271,7 @@
         <tr>
             <th>Observaciones</th>
             <td colspan="2">
-                <textarea  style="font-size: 1em; text-align: center; border-radius: 5px; " type="text" [(ngModel)]="orden.observaciones"></textarea>
+                <textarea [disabled]="orden.estado != 'Activa'" style="font-size: 1em; text-align: center; border-radius: 5px; " type="text" [(ngModel)]="orden.observaciones"></textarea>
             </td>
             <th style=" font-size: 1em; border-radius: 20px; width: 150px;">
                 SUBTOTAL
@@ -242,9 +279,22 @@
             <th style="font-size: 1.3em; width: 150px; background-color: rgb(113, 113, 163); color: white; border-radius: 5px;">{{orden.total | number}}</th>
             <th style="font-size: 1em; border-radius: 20px; width: 150px;">
                 IVA
+                <mat-form-field appearance="fill" style="margin-left: 10px;">
+                    <mat-label>IMPUESTO</mat-label>
+                    <mat-select [(ngModel)]="orden.impuestoporcentaje" (selectionChange)="CambiarImpuesto()"  [disabled]="orden.estado != 'Activa'">
+                      <mat-option  [value]="19">
+                        IVA 19%
+                      </mat-option> 
+                      <mat-option  [value]="5">
+                        IVA 5%
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field> 
+
+                  <!-- <h5 *ngIf="orden.estado == 'Activa'"> {{impuesto}}%</h5> -->
             </th>
             <th>
-                <input  placeholder="" style="font-size: 1.3em; text-align: center; " type="number" [(ngModel)]="orden.impuestos"> 
+                <input [disabled]="orden.estado != 'Activa'" placeholder="" style="font-size: 1.3em; text-align: center; " type="number" [(ngModel)]="orden.impuestos"> 
             </th>
             <th style="font-size: 1em; border-radius: 20px; width: 150px; border-radius: 5px;">
                 TOTAL
@@ -283,3 +333,181 @@
  
 
 </mat-card-content>
+
+<div id="orden" style="display: none;" >
+    <table style="width: 100%;">
+        <tr>
+            <td rowspan="3"  style="border: 1px solid black; width: 110px;">
+                <img src="assets/DFP.jpg" width="100px">
+            </td>
+            <th rowspan="3"  style="border: 1px solid black;"> SOLICITUD DE COMPRA</th>
+            <td  style="border: 1px solid black; width: 100px;">Código</td>
+            <td  style="border: 1px solid black; text-align: center; width: 200px;">{{orden.protocolo}}</td>
+            
+        </tr>
+        <tr>
+            <td  style="border: 1px solid black;">Versión</td>
+            <td  style="border: 1px solid black; text-align: center;"> 0 </td>
+        </tr>
+        <tr>
+            <td  style="border: 1px solid black;">Emisión</td>
+            <td  style="border: 1px solid black; text-align: center;">22/08/2022</td>
+        </tr>
+    </table>
+    <table style="width: 100%; border: 1px solid black;">
+        <tr style="background: rgb(1, 1, 100); color: black;">
+            <th colspan="6">Datos del Solicitante</th>
+        </tr>
+        <tr>
+            <td>Razón Social:</td>
+            <td>{{config.dataOperacion.business_name}}</td>
+
+            <td>Solicitado por:</td>
+            <td>{{orden.solicita_nombre}}</td>
+
+            <td>Fecha:</td>
+            <td>{{orden.created_at | date}}</td>
+        </tr>
+        <tr>
+            <td>NIT:</td>
+            <td>{{config.dataOperacion.identification_number}}</td>
+
+            <td>Área Solicitante:</td>
+            <td>{{orden.solicita_area}}</td>
+
+            <td>N°</td>
+            <th>
+                {{orden.consecutivo}}
+            
+            </th>
+        </tr>
+        <tr>
+            <td>Dirección:</td>
+            <td  style="width: 30%;">{{config.dataOperacion.address}}</td>
+
+            <td>Fecha Estimada Entrega:</td>
+            <td>{{orden.fecha_entrega | date}}</td>
+        </tr>
+        <tr>
+            <td>Ciudad:</td>
+            <td>{{config.dataOperacion.city}}</td>
+
+            <td>Fecha Estimada Pago:</td>
+            <td>{{orden.fecha_pago | date}}</td>
+        </tr>
+        <tr>
+            <td>Teléfono:</td>
+            <td>{{config.dataOperacion.phone}}</td>
+            <td>Condiciones Pago:</td>
+            <td>{{orden.condiciones_pago}}</td>
+        </tr>
+
+    </table>
+    <table style="width: 100%; border: 1px solid black;">
+        <tr>
+            <th colspan="4">Informacón del Proveedor</th>
+        </tr>
+        <tr>
+            <td>Empresa:</td>
+            <td>{{orden.proveedor.titulo}}</td>
+            <td>Dirección</td>
+            <td>{{orden.proveedor.direccion}}</td>
+        </tr>
+        <tr>
+            <td>Ciudad:</td>
+            <td>{{orden.proveedor.ciudad}}</td>
+            <td>Teléfono:</td>
+            <td>{{orden.proveedor.telefono}}</td>
+        </tr>
+    </table>
+    <table style="width: 100%; border: 1px solid black;">
+        <tr>
+            <th colspan="7">Detalle del Pedido</th>
+        </tr>
+        <tr>
+            <th style="border: 1px solid black;"> Codigo Int</th>
+            <th style="border: 1px solid black;"> Producto</th>
+            <th style="border: 1px solid black;"> Aplicacion</th>
+            <th style="border: 1px solid black;">Cantidad</th>
+            <th style="border: 1px solid black;">Precio und</th>
+            <th style="border: 1px solid black;"> Totales</th>
+            <th style="border: 1px solid black;"> Observaciones</th>
+        </tr>
+        <ng-template let-item let-i="index" ngFor [ngForOf]="orden.productos">
+            <tr>
+                <td style="text-align: center; border: 1px solid black;">
+                    {{item.codigo}}
+                </td>    
+                <td style="text-align: center; border: 1px solid black;">
+                    {{item.producto}}
+                </td> 
+                <td style="text-align: center; border: 1px solid black;">
+                    {{item.aplicacion}}
+                </td> 
+                <td style="text-align: center; border: 1px solid black;">
+                    {{item.cantidad}}
+                </td> 
+                <td style="text-align: center; border: 1px solid black;">
+                    {{item.precio}}
+                </td> 
+                <td style="text-align: center; border: 1px solid black;">
+                        {{item.cantidad * item.precio | number}}
+                </td>
+                <td style="text-align: center; border: 1px solid black;">
+                    {{item.observaciones}}
+                </td>     
+            </tr>
+          </ng-template>
+    </table>
+    <table style="margin: 0 auto; margin-top: 15px; width: 100%;  " class="mat-elevation-z8">
+        <tr>
+            <td rowspan="4" style="border: 1px solid black;">
+                Observaciones <br>
+                {{orden.observaciones}}
+            </td>
+        </tr>
+        <tr>
+            <th style=" font-size: 1em;width: 150px; border: 1px solid black;">
+                SUBTOTAL
+            </th>
+            <th style="font-size: 1.3em; width: 150px;  border: 1px solid black; text-align: right;">{{orden.total | number}}</th>
+        </tr>
+        <tr>
+            <th style="font-size: 1em; width: 150px;border: 1px solid black; text-align: right;">
+                IVA {{orden.impuestoporcentaje}}%
+            </th>
+            <th style="font-size: 1em; width: 150px;border: 1px solid black; text-align: right;">
+                {{orden.impuestos | number}}
+            </th>
+        </tr>
+        <tr>
+            <th style="font-size: 1em;  width: 150px; border: 1px solid black; text-align: right;">
+                TOTAL
+            </th>
+            <th style="font-size: 1.3em; width: 150px; border: 1px solid black; text-align: right;">
+                {{orden.total + orden.impuestos | number}}
+            </th>
+        </tr>
+      </table>
+      <table style="width: 100%;">
+        <tr>
+            <th colspan="9" rowspan="2">AUTORIZA 
+            </th>
+            <ng-template let-item let-i="index" ngFor [ngForOf]="orden.autorizaciones">
+                <th colspan="3" style="font-size: 1em; width: 150px; border: 1px solid black;">
+                    <br>
+                    <br>
+                </th>
+            </ng-template>
+        </tr>
+        <tr>
+            <ng-template let-item let-i="index" ngFor [ngForOf]="orden.autorizaciones">
+                <th colspan="3">
+                    {{item.name}} <br>
+                    {{item.cargo}} <br>
+                    {{item.fecha | date:'medium'}}
+                </th>
+            </ng-template>
+        </tr>
+      </table>
+</div>

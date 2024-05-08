@@ -8,7 +8,7 @@ let appWin;
 const Menu = electron.Menu;
 const log = require('electron-log');
 log.transports.file.resolvePathFn = () => path.join('C:/duty-free/Logs/','main.log');
-const feedUrl = 'https://duty-free-app.s3.us-east-2.amazonaws.com';
+const feedUrl = 'https://app-duty-free.s3.us-east-2.amazonaws.com';
 require("./index");
 createWindow = () => {
     appWin = new BrowserWindow({
@@ -56,14 +56,14 @@ app.on('ready', function(){
           autoUpdater.checkForUpdates();
         }
       }
-  
+
     ]
     const menu = Menu.buildFromTemplate(template)
     Menu.setApplicationMenu(menu);
-    autoUpdater.setFeedURL(feedUrl);
-    autoUpdater.checkForUpdates(res=>{
-      log.info(res)
-    });
+    // autoUpdater.setFeedURL(feedUrl);
+    // autoUpdater.checkForUpdates(res=>{
+    //   log.info(res)
+    // });
   })
 
 app.on("window-all-closed", () => {

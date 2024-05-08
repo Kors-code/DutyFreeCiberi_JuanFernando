@@ -34,6 +34,8 @@ import { DialogConfirm } from '../confirm-dialog/confirm-dialog.component';
             this.dialogRef.close(this.proveedor);
           }
 
+   
+
           save(){
             console.log(this.proveedor)
             if(!this.proveedor._id){
@@ -103,4 +105,17 @@ import { DialogConfirm } from '../confirm-dialog/confirm-dialog.component';
             }
             
           }
+
+          nuevo(){
+            this.proveedor=new Proveedor();
+            this.proveedores = [];
+            this.verListado = false;;
+         
+          }
+
+
+    
+
+
+        
   }

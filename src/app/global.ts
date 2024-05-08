@@ -1,9 +1,9 @@
 export var GLOBAL = {
-    // url_app: '/api/',
-    // url_dw:'https://dutyfree.ciberi.net/api/',
-
-    url_app: 'http://localhost:6511/api/',
-    url_dw:'https://localhost:6511/api/',
+    url_app: '/api/',
+    url_dw:'https://dutyfree.ciberi.net/api/',
+    
+    // url_app: 'http://localhost:6511/api/',
+    // url_dw:'https://localhost:6511/api/',
 
     // url_app: 'https://dutyfree.ciberi.net/api/',
   

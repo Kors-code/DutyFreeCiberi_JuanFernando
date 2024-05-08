@@ -15,6 +15,7 @@ export class Ordencompra {
         public cotizaciones:any = [],
         public total:number = 0,
         public impuestos:number = 0,
+        public impuestoporcentaje:number = 0,
         public descuento:number = 0,
 
         public observaciones:string = "",

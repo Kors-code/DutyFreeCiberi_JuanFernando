@@ -77,7 +77,7 @@ function saveCompra(req, res){
                 compra.fecha_entrega = params.fecha_entrega;
                 compra.fecha_pago = params.fecha_pago;
                 compra.condiciones_pago = params.condiciones_pago;
-
+                compra.impuestoporcentaje = param.impuestoporcentaje;
                 compra.created_at = params.created_at
                 compra.update_at = params.update_at
                 
@@ -113,6 +113,123 @@ function getComprasOperacion(req, res){
             }
     });
 }
+
+
+function getComprasActivas(req, res){
+    // var OperacionId = req.params.id;
+    // console.log(OperacionId);
+    Compra.find({estado:'Activa'}, (err, response) => {
+       if(err){
+            res.status(500).send({message: 'Error al consultar Orden de Compra'});
+        }else {
+            if(!response){
+                res.status(404).send({message: 'No se ha encontrado la Orden de Compra'});
+            }else {
+                res.status(200).send(response);
+                }
+            }
+    });
+}
+
+function getComprasAutorizadas(req, res){
+    // var OperacionId = req.params.id;
+    // console.log(OperacionId);
+    Compra.find({estado:'Autorizada'}, (err, response) => {
+       if(err){
+            res.status(500).send({message: 'Error al consultar Orden de Compra'});
+        }else {
+            if(!response){
+                res.status(404).send({message: 'No se ha encontrado la Orden de Compra'});
+            }else {
+                res.status(200).send(response);
+                }
+            }
+    });
+}
+
+function getComprasAutorizadas(req, res){
+    // var OperacionId = req.params.id;
+    // console.log(OperacionId);
+    Compra.find({estado:'Autorizada'}, (err, response) => {
+       if(err){
+            res.status(500).send({message: 'Error al consultar Orden de Compra'});
+        }else {
+            if(!response){
+                res.status(404).send({message: 'No se ha encontrado la Orden de Compra'});
+            }else {
+                res.status(200).send(response);
+                }
+            }
+    });
+}
+
+
+function getComprasRechazadas(req, res){
+    // var OperacionId = req.params.id;
+    // console.log(OperacionId);
+    Compra.find({estado:'Rechazada'}, (err, response) => {
+       if(err){
+            res.status(500).send({message: 'Error al consultar Orden de Compra'});
+        }else {
+            if(!response){
+                res.status(404).send({message: 'No se ha encontrado la Orden de Compra'});
+            }else {
+                res.status(200).send(response);
+                }
+            }
+    });
+}
+
+
+function getComprasAnuladas(req, res){
+    // var OperacionId = req.params.id;
+    // console.log(OperacionId);
+    Compra.find({estado:'Anulada'}, (err, response) => {
+       if(err){
+            res.status(500).send({message: 'Error al consultar Orden de Compra'});
+        }else {
+            if(!response){
+                res.status(404).send({message: 'No se ha encontrado la Orden de Compra'});
+            }else {
+                res.status(200).send(response);
+                }
+            }
+    });
+}
+
+function getComprasCerradas(req, res){
+    // var OperacionId = req.params.id;
+    // console.log(OperacionId);
+    Compra.find({estado:'Cerrada'}, (err, response) => {
+       if(err){
+            res.status(500).send({message: 'Error al consultar Orden de Compra'});
+        }else {
+            if(!response){
+                res.status(404).send({message: 'No se ha encontrado la Orden de Compra'});
+            }else {
+                res.status(200).send(response);
+                }
+            }
+    });
+}
+
+function getComprasAnuladas(req, res){
+    // var OperacionId = req.params.id;
+    // console.log(OperacionId);
+    Compra.find({estado:'Anulada'}, (err, response) => {
+       if(err){
+            res.status(500).send({message: 'Error al consultar Orden de Compra'});
+        }else {
+            if(!response){
+                res.status(404).send({message: 'No se ha encontrado la Orden de Compra'});
+            }else {
+                res.status(200).send(response);
+                }
+            }
+    });
+}
+
+
 
 function deleteCompra(req, res){
     var Id = req.params.id;
@@ -152,5 +269,11 @@ module.exports = {
     saveCompra,
     getComprasOperacion,
     deleteCompra,
-    updateCompra
+    updateCompra,
+    getComprasActivas,
+    getComprasAutorizadas,
+    getComprasRechazadas,
+    getComprasCerradas,
+    getComprasAnuladas
+
 }

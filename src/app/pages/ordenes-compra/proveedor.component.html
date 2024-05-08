@@ -5,6 +5,9 @@
 <button  (click)="getProveedores()" mat-stroked-button aria-label="Clear" color="scondary" style="margin: 10px 10px;">
   <mat-icon>listi</mat-icon> PROVEEDORRES
 </button>
+<button  (click)="nuevo()" mat-stroked-button aria-label="Clear" color="scondary" style="margin: 10px 10px;">
+  <mat-icon>group_add</mat-icon> NUEVO
+</button>
 <button *ngIf="proveedor.titulo" (click)="save()" mat-stroked-button aria-label="Clear" color="scondary" style="margin: 10px 10px;">
   <mat-icon>save</mat-icon> GUARDAR
 </button>
@@ -18,8 +21,6 @@
   </button>
 </mat-form-field>
 
-        
-  
 </div>
 
 <div *ngIf="!verListado" class="mat-elevation-z8" style="margin-top: 15px; display: flex; justify-content: center; flex-wrap: wrap; padding: 10px;">

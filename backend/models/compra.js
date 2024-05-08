@@ -17,6 +17,7 @@ var Schema = Schema({
     cotizaciones:Schema.Types.Mixed,
     total:Number,
     impuestos:Number,
+    impuestoporcentaje:Number,
     descuento:Number,
     observaciones:Schema.Types.Mixed,
     mediosPago:Schema.Types.Mixed,
