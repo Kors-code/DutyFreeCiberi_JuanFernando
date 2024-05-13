@@ -116,6 +116,7 @@ export class OrdenesCompra implements OnInit {
       if(result){
         console.log(result)
         this.orden.proveedor = result;
+        this.verListado = false;
 
       }
     })
@@ -286,12 +287,13 @@ export class OrdenesCompra implements OnInit {
   }
 
   totalizar(){
-    this.orden.total=0
+    this.orden.total=0;
+    this.orden.impuestos=0;
     for (let i  = 0; i  < this.orden.productos.length; i ++) {
       const element = this.orden.productos[i ];
       this.orden.total= this.orden.total + (element.precio * element.cantidad)
     }
-
+    this.orden.impuestos = this.orden.total *  (this.orden.impuestoporcentaje/100);
     // console.log(this.orden)
   }
 

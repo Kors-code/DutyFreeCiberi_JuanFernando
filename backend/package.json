@@ -1,6 +1,6 @@
 {
   "name": "duty_free",
-  "version": "1.5.9",
+  "version": "1.5.10",
   "description": "backend duty-free",
   "main": "main.js",
   "scripts": {

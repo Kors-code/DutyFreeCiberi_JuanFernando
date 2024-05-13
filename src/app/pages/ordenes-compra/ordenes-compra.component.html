@@ -3,6 +3,10 @@
         <button  *ngIf="!verListado" mat-stroked-button aria-label="Clear" color="scondary" style="margin: 10px 10px;" (click)="listado()">
             <mat-icon>list</mat-icon> LISTADO
         </button>
+        <button  *ngIf="verListado" mat-stroked-button aria-label="Clear" color="scondary" style="margin: 10px 10px;" (click)="openDialogProveedores()">
+            <mat-icon>local_grocery_store</mat-icon> PROVEEDORES
+        </button>
+   
           <button   mat-stroked-button aria-label="Clear" color="scondary" style="margin: 10px 10px;" (click)="nuevo()">
             <mat-icon>fiber_new</mat-icon> NUEVO
           </button>
@@ -244,7 +248,7 @@
                       <input  [disabled]="orden.estado != 'Activa'" placeholder="" style="font-size: 1em; text-align: center; border-radius: 5px;" type="number" [(ngModel)]="item.cantidad_pedida" (change)="cambiarPedido(item)"> 
                   </td> 
                   <td style="text-align: center;">
-                    <input  [disabled]="!permisos.autorizar" placeholder="" style="font-size: 1em; text-align: center; border-radius: 5px;" type="number" [(ngModel)]="item.cantidad" (change)="totalizar()"> 
+                    <input  *ngIf="orden._id"  [disabled]="!permisos.autorizar" placeholder="" style="font-size: 1em; text-align: center; border-radius: 5px;" type="number" [(ngModel)]="item.cantidad" (change)="totalizar()"> 
                 </td> 
                   <td style="text-align: center;">
                       <input  [disabled]="orden.estado != 'Activa'" placeholder="" style="font-size: 1em; text-align: center; border-radius: 5px;  width: 150px;" type="number" [(ngModel)]="item.precio" (change)="totalizar()"> 
@@ -265,7 +269,7 @@
                 </th>
             </tr>
      
-  
+
       </table>
       <table style="margin: 0 auto; margin-top: 15px; width: 100%;  " class="mat-elevation-z8">
         <tr>

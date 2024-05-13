@@ -5,6 +5,9 @@
 <button  (click)="getProveedores()" mat-stroked-button aria-label="Clear" color="scondary" style="margin: 10px 10px;">
   <mat-icon>listi</mat-icon> PROVEEDORRES
 </button>
+<button *ngIf="proveedor._id" (click)="deleteProveedor()" mat-stroked-button aria-label="Clear" color="scondary" style="margin: 10px 10px;">
+  ELIMINAR  <mat-icon>delete</mat-icon>
+</button>
 <button  (click)="nuevo()" mat-stroked-button aria-label="Clear" color="scondary" style="margin: 10px 10px;">
   <mat-icon>group_add</mat-icon> NUEVO
 </button>
@@ -24,7 +27,12 @@
 </div>
 
 <div *ngIf="!verListado" class="mat-elevation-z8" style="margin-top: 15px; display: flex; justify-content: center; flex-wrap: wrap; padding: 10px;">
-    <mat-form-field style="margin-right: 20px;" appearance="fill">
+  <mat-progress-bar  *ngIf="register"  mode="determinate" [value]="(register/upload.length)"></mat-progress-bar>
+  <!-- <ion-progress-bar></ion-progress-bar> -->
+  <mat-tab-group mat-align-tabs="center">
+    <mat-tab label="Detalle cliente" style="width: 100%;">
+  
+  <mat-form-field style="margin-right: 20px;" appearance="fill">
         <mat-label>NIT | ID</mat-label>
         <input matInput type="text" name="nit" [(ngModel)]="proveedor.nit">
       </mat-form-field>
@@ -48,9 +56,46 @@
         <mat-label>TELEFONO</mat-label>
         <input matInput type="text" name="telefono" [(ngModel)]="proveedor.telefono">
       </mat-form-field>
+      <mat-form-field style="margin-right: 20px;" appearance="fill">
+        <mat-label>EMAIL</mat-label>
+        <input matInput type="text" name="telefono" [(ngModel)]="proveedor.email">
+      </mat-form-field>
+    </mat-tab>
+    <mat-tab label="Subir Proveedores" style="width: 100%;">
+      <button  mat-stroked-button color="warn" (click)="exportexcel()" > Descarga Formato
+        <mat-icon>attach_file</mat-icon>
+      </button>
+      <table  id="table-proveedores" style="display:none;" >
+        <tr>
+          <th>nit</th>
+          <th>titulo</th>
+          <th>contacto</th>
+          <th>email</th>
+          <th>telefono</th>
+          <th>direccion</th>
+        </tr>
+      </table>
+
+      <div *ngIf="!fileName">
+        <input type="file" class="file-input"
+        (change)="onFileSelected($event)" #fileUpload style="display: none;">
+          <div style="margin: 20px 20px;">
+            <h3>{{fileName || "Proveedores"}}</h3>
+            <button *ngIf="upload.length == 0" mat-stroked-button color="accent" class="upload-btn"
+              (click)="fileUpload.click()"> ARCHIVO PROVEEDORES
+                <mat-icon>attach_file</mat-icon>
+            </button>
+          </div>
+          <button *ngIf="upload.length != 0" mat-stroked-button color="accent" class="upload-btn"
+            (click)="subirProveedores()"> SUBIR {{upload.length}} PROVEEDORES
+            <mat-icon>attach_file</mat-icon>
+        </button>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
      
 </div>
-<div *ngIf="verListado">
+<div *ngIf="verListado" style="overflow-y: scroll; height: 80vh;">
   <table  style="margin: 0 auto;  width: 100%; font-size: 1em; margin-top: 15px;" class="mat-elevation-z8">
     <tr>
       <th>NIT | ID</th>

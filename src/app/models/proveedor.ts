@@ -7,7 +7,7 @@ export class Proveedor {
         public direccion:string = "",
         public ciudad:string = "",
         public contacto:string = "",
-
+        public email:string = "",
         public created_at:Date = new Date,
         public update_at:Date = new Date,
     ){}

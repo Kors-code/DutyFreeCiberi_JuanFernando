@@ -13,6 +13,7 @@ function saveProveedor(req, res){
     proveedor.ciudad = params.ciudad;
     proveedor.contacto = params.contacto;
     proveedor.email = params.email;
+    
 
     proveedor.created_at = params.created_at
     proveedor.update_at = params.update_at

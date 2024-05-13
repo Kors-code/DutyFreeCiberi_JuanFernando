@@ -13,6 +13,7 @@ var Schema = Schema({
     ciudad:String,
     contacto:String,
     email:String,
+    email:String,
 
     created_at: Date,
     update_at: Date,  
