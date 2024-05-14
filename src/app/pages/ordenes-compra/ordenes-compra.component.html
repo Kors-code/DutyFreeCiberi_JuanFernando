@@ -286,7 +286,11 @@
                 <mat-form-field appearance="fill" style="margin-left: 10px;">
                     <mat-label>IMPUESTO</mat-label>
                     <mat-select [(ngModel)]="orden.impuestoporcentaje" (selectionChange)="CambiarImpuesto()"  [disabled]="orden.estado != 'Activa'">
-                      <mat-option  [value]="19">
+                       
+                        <mat-option  [value]="0">
+                            IVA 0%
+                          </mat-option> 
+                        <mat-option  [value]="19">
                         IVA 19%
                       </mat-option> 
                       <mat-option  [value]="5">

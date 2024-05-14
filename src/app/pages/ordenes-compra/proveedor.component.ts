@@ -24,7 +24,7 @@ import * as XLSX from 'xlsx';
         @Inject(MAT_DIALOG_DATA) public data: any,
         public _userService:UserService, private _proveedorService:ProveedorService){
             this.proveedor=new Proveedor();
-            console.log(this.proveedor)
+            //.log(this.proveedor)
         }
 
         cancelar(){
@@ -38,11 +38,11 @@ import * as XLSX from 'xlsx';
    
 
           save(){
-            console.log(this.proveedor)
+            //.log(this.proveedor)
             if(!this.proveedor._id){
               this._proveedorService.registerProveedor(this.proveedor).subscribe(
                 res=>{
-                  console.log(res)
+                  //.log(res)
                   this.proveedor = res;
                   this.verListado = false;
                   let data = {titulo: 'Exito ', info:'Proveedor Guardado Correctamente' ,type: 'Confirm', icon:'done_all'}
@@ -57,7 +57,7 @@ import * as XLSX from 'xlsx';
             }else{
               this._proveedorService.updateProveedor(this.proveedor).subscribe(
                 res=>{
-                  console.log(res)
+                  //.log(res)
                   this.proveedor = res
                   let data = {titulo: 'Exito ', info:'Proveedor Actualizado Correctamente' ,type: 'Confirm', icon:'done_all'}
                   let dialogRef = this.dialog.open(DialogConfirm,{
@@ -74,7 +74,7 @@ import * as XLSX from 'xlsx';
           getProveedores(){
             this._proveedorService.getProveedores().subscribe(
               res=>{
-                console.log(res)
+                //.log(res)
                 this.proveedor=new Proveedor();
                 this.proveedores = res;
                 this.verListado = true;
@@ -90,7 +90,7 @@ import * as XLSX from 'xlsx';
 
 
           buscarProveedor(){
-            console.log(this.search)
+            //.log(this.search)
             if(this.search != ''){
               this._proveedorService.getProveedorTitulo(this.search).subscribe(
                 res=>{
@@ -100,7 +100,7 @@ import * as XLSX from 'xlsx';
                     this.verListado = true;
                   }
                 
-                  console.log(res)
+                  //.log(res)
                 }
               )
             }
@@ -139,7 +139,7 @@ import * as XLSX from 'xlsx';
 
           register=0
           subirProveedores(){
-            console.log(this.upload)
+            //.log(this.upload)
             this.register = 0
             for (let i = 0; i < this.upload.length; i++) {
               const element:any = this.upload[i];
@@ -153,7 +153,7 @@ import * as XLSX from 'xlsx';
                   Prov.direccion= element.direccion;
                   Prov.email= element.email;
 
-                  console.log(Prov)
+                  //.log(Prov)
 
                   this._proveedorService.registerProveedor(Prov).subscribe(
                     res=>{

@@ -16,8 +16,15 @@
         </mat-option>
       </mat-select>
     </mat-form-field> 
-      <input *ngIf="tag" type="file" multiple="false" (change)="onFileChange($event)" style="font-size: 1.3em; margin-left: 10px;">
-  </div>
+
+      <input  type="file" multiple="false" #fileUpload  (change)="onFileChange($event)" style="font-size: 1.3em; margin-left: 10px;display: none;">
+      <button *ngIf="tag" mat-stroked-button color="warn" class="upload-btn"
+      (click)="fileUpload.click()" style="margin-left: 20px;"> {{data.length}} REGISTROS
+        <mat-icon>attach_file</mat-icon>
+      </button>
+
+
+    </div>
 
   <!-- <button *ngIf="registros.length != 0" flex mat-raised-button color="accent" [disabled]="log"  (click)="saveInfoCompleto(registros)" class="text-upper" style="width: 90%; margin:15px auto;margin-left: 20px;"> {{registros.length}} Documentos - Registrar Informacion<mat-icon layout-padding>send</mat-icon></button> -->
   <!-- <button *ngIf="dataSource" flex mat-raised-button color="accent" [disabled]="progreso != 0"  (click)="authSiigo(tag)" class="text-upper" style="width: 90%; margin:15px auto;margin-left: 20px;">  Generar PDF {{documentos.length}} Respaldo POS <mat-icon>update_file</mat-icon></button> -->

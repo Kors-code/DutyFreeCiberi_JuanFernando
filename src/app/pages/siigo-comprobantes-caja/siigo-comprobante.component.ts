@@ -66,7 +66,7 @@ export class SiigoComprobantesComponent implements OnInit {
   getComprobantes(){
     this._siigoService.getDataComprobantes().subscribe(
       res=>{
-        // //(res)
+        console.log(res)
         this.listadoComprobantes= res;
       });
   }

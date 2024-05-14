@@ -43,8 +43,8 @@ export class ImportarInfoComponent implements OnInit {
       // this.trmApi =  new TrmApi("aEOKmLbbPROhCr6iDiieAGCqt");
       // this.trmApi
       //   .latest()
-      //   .then((data:any) =>  //console.log(this.trm =  data.valor))
-      //   .catch((error:any) =>  //console.log(error));
+      //   .then((data:any) =>  ////.log(this.trm =  data.valor))
+      //   .catch((error:any) =>  ////.log(error));
 
         this.pOperacion=_userService.getPredetermidaOperacion();
     }
@@ -172,7 +172,7 @@ export class ImportarInfoComponent implements OnInit {
           this.config = res[0];
           localStorage.setItem('categ',JSON.stringify(this.config.categorias))
 
-          ////console.log(this.config)
+          //////.log(this.config)
         }
        
       }
@@ -194,7 +194,7 @@ export class ImportarInfoComponent implements OnInit {
       this.data = (XLSX.utils.sheet_to_json(ws, { header: 1 }));
 
       // this.data.flat()  
-      // ////// ////console.log(this.data);
+      // ////// //////.log(this.data);
       this.log= false;
 
     };
@@ -218,7 +218,7 @@ export class ImportarInfoComponent implements OnInit {
    }
 
    sortData(event:any){
-     // ////// ////console.log(event)
+     // ////// //////.log(event)
    }
 
    onFileChange(evt: any) {
@@ -241,18 +241,14 @@ export class ImportarInfoComponent implements OnInit {
       this.convertirJson()
       this.log= false;
     };
-
     reader.readAsBinaryString(target.files[0]);
-
   }
 
   progreso = 0
   authSiigo(tag:string){
     this.progreso = 1;
     this.newDataUp =  this._socketService.listen('UpSiigo').subscribe((data:any)=>{
-      // ////// ////console.log(data);
       this.progreso = (data.i / data.length)*100
-      // ////// ////console.log(this.progreso)
     })
 
 
@@ -263,9 +259,9 @@ export class ImportarInfoComponent implements OnInit {
 
     this._siigoService.sendInvoicesPeriodo(credenciales, tag).subscribe(
       res => {
-        // ////// ////console.log(res)
+        // ////// //////.log(res)
       },err=>{
-        // ////// ////console.log(err.status)
+        // ////// //////.log(err.status)
         if(err.status == 200){
           let data = {titulo: 'Confirmaciòn', info:err.error.text, type: 'Confirm', icon:'done_all'}
   
@@ -282,7 +278,7 @@ export class ImportarInfoComponent implements OnInit {
   }
 
   saveInfoSocket(){
-    // ////// ////console.log(JSON.stringify(this.registros))
+    // ////// //////.log(JSON.stringify(this.registros))
     this._socketService.emit('dataUpNow', JSON.stringify(this.registros))
   }
 
@@ -294,7 +290,7 @@ export class ImportarInfoComponent implements OnInit {
       res =>{
         let dato = res
         this.procesado++
-        // ////console.log(this.procesado)
+        // //////.log(this.procesado)
         if(this.procesado <= this.lotesCmprobantes.length){
           if(this.procesado << this.lotesCmprobantes.length){
             this.generarRegistros(this.lotesCmprobantes[this.procesado])
@@ -333,7 +329,7 @@ export class ImportarInfoComponent implements OnInit {
           this._infoServce.saveInfo(this.registros[i]).subscribe(
             res=>{
               this.register ++
-              // ////// ////console.log(res)
+              // ////// //////.log(res)
               if(this.register ==  this.registros.length){
                
                 let data: Object
@@ -383,7 +379,7 @@ export class ImportarInfoComponent implements OnInit {
     for(var i = 0;i < this.registros.length; i++){
       let fecha =  this.registros[i].FECHA;
       let split = fecha.split("/");
-      // // ////// ////console.log(split)
+      // // ////// //////.log(split)
       this.registros[i].Importe = Number(this.registros[i].TOTAL)
       this.registros[i].Estado = 'Activa';
       this.registros[i].Siigo = [];
@@ -396,12 +392,12 @@ export class ImportarInfoComponent implements OnInit {
         this.registros[i].Costo_de_v = 0;
       }
 
-      //console.log(this.registros[i]['COSTO DE VENTA'])
-      //console.log(this.registros[i].Costo_de_v)
+      ////.log(this.registros[i]['COSTO DE VENTA'])
+      ////.log(this.registros[i].Costo_de_v)
 
       for (let q = 0; q < this.config.categorias.length; q++) {
         const element = this.config.categorias[q];
-        // ////console.log(element)
+        // //////.log(element)
         let subc = element.subscat.map(function(e: { cod: number; }) { return e; }).indexOf( parseInt(this.registros[i]['CLASIFICACION']));
          if(subc != -1){
           this.registros[i].CATEGORIA = element.titulo;
@@ -409,14 +405,14 @@ export class ImportarInfoComponent implements OnInit {
          } 
       }
 
-      // ////console.log(this.registros[i]['COSTO DE VENTA'])
+      // //////.log(this.registros[i]['COSTO DE VENTA'])
 
       if(parseInt(split[0]) <= 9){
         this.registros[i].Day = '0'+ split[0];
-        // ////// ////console.log( this.registros[i].Day)
+        // ////// //////.log( this.registros[i].Day)
       }else{
         this.registros[i].Day = split[0];
-        // ////// ////console.log( this.registros[i].Day)
+        // ////// //////.log( this.registros[i].Day)
       }
 
       this.registros[i].Month = split[1];
@@ -432,7 +428,7 @@ export class ImportarInfoComponent implements OnInit {
     }
     this.log= false;
    
-    console.log(this.registros)
+    //.log(this.registros)
     let lotes = 200;
     this.chunckArrayInGroups(this.registros, lotes)
    
@@ -442,18 +438,18 @@ export class ImportarInfoComponent implements OnInit {
     var chunk = [], i; // declara array vacio e indice de for
     for (i = 0; i <= arr.length; i+= size) // loop que recorre el array 
       chunk.push(arr.slice(i, i + size)); // push al array el tramo desde el indice del loop hasta el valor size + el indicador 
-      // ////console.log(chunk)
+      // //////.log(chunk)
       return this.lotesCmprobantes = chunk;
   }
 
   generarRegistros(registros: any[]){
-    console.log( registros)
+    //.log( registros)
     if(registros){
     this.log = true
     this.itemsContable =[]
     this.itemsFacturaVentas=[]
     for(var i = 0;i < registros.length; i++){
-      //console.log(registros[i].Costo_de_v)
+      ////.log(registros[i].Costo_de_v)
       if(!registros[i].Costo_de_v){
         registros[i].Costo_de_v = 0;
       }
@@ -465,7 +461,7 @@ export class ImportarInfoComponent implements OnInit {
         let posTienda = this.config.tiendas.map(function(e: { tienda: any; }) { return e.tienda; }).indexOf(registros[i]['PDV']);
         let tienda :any
 
-        console.log('tienda en configuracion',posTienda)
+        //.log('tienda en configuracion',posTienda)
 
         if(posTienda != -1){
           tienda =this.config.tiendas[posTienda].centro_costos;
@@ -572,7 +568,7 @@ export class ImportarInfoComponent implements OnInit {
         this.itemsFacturaVentas.push(dtaComprobanteVentaDeb)
         
       }else{
-        // ////console.log('Registo no encontrado '+ registros[i].Clasi)
+        // //////.log('Registo no encontrado '+ registros[i].Clasi)
       }
     }
 
@@ -598,11 +594,11 @@ export class ImportarInfoComponent implements OnInit {
       _id:this.pOperacion._id
     }
 
-    // console.log(credenciales)
+    // //.log(credenciales)
 
     this._siigoService.saveComprobantesSiigo(credenciales).subscribe(
       res=>{
-        console.log(res);
+        //.log(res);
         this.openSnackBar('CMV GENERADO CORRECTAMENTE','EXITO')
         this._siigoService.saveComprobantesSiigo(credencialesVentas).subscribe(
           resp=>{
@@ -628,7 +624,7 @@ export class ImportarInfoComponent implements OnInit {
         dialogRef.afterClosed().subscribe(result => {
 
         })
-        console.log(err)
+        //.log(err)
 
       }
     )
@@ -683,14 +679,14 @@ export class ImportarInfoComponent implements OnInit {
     this.registros.forEach((element: {
       FOLIO: any; Costo_de_v: number; 
       }) => {
-      // ////console.log(element.FOLIO, element.Costo_de_v)
+      // //////.log(element.FOLIO, element.Costo_de_v)
       if(element.Costo_de_v != 0){
         valor = valor + element.Costo_de_v
-        // ////console.log(valor)
+        // //////.log(valor)
       }
      
     });
-    ////console.log(valor)
+    //////.log(valor)
     return valor
   }
 

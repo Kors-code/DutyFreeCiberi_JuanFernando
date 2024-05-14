@@ -250,11 +250,14 @@ async function sendComprobanteSiigo(req, res){
       { upsert: false }, function(err,doc) {
           if (err) { throw err; }
           else { 
-              console.log('doc 1', doc.value.consecutivoCompCosto)
+              // console.log('doc 1', doc.value.consecutivoCompCosto)
 
               Consecutivo = doc.value.consecutivoCompCosto
 
-                var token;
+              console.log('USER: ',params.user)
+              console.log('PASS: ',params.key)
+
+                  var token;
                   var req = unirest('POST', 'https://api.siigo.com/auth')
                     .headers({
                       'Content-Type': 'application/json'
@@ -267,10 +270,21 @@ async function sendComprobanteSiigo(req, res){
                       if (resp.error) throw new Error(resp.error); 
                       token = resp.body.access_token;
 
+                      console.log('token: ', token)
+
+                      console.log(JSON.stringify({
+                        document: {
+                          id: params.iddoc
+                        },
+                        date: params.date,
+                        items:params.data,
+                        observations: params.obs
+                      }))
+
                       var req2 = unirest('POST', 'https://api.siigo.com/v1/journals')
                       .headers({
                         'Content-Type': 'application/json',
-                        'Partner-ID': 'TestNat',
+                        'Partner-ID': 'DutyFreeCol',
                         'Authorization': 'Bearer '+ token
                       })
                       .send(JSON.stringify({
@@ -323,10 +337,21 @@ async function sendComprobanteSiigo(req, res){
                       if (resp.error) throw new Error(resp.error); 
                       token = resp.body.access_token;
 
+                      console.log('31800 token: ', token)
+
+                      console.log(JSON.stringify({
+                        document: {
+                          id: params.iddoc
+                        },
+                        date: params.date,
+                        items:params.data,
+                        observations: params.obs
+                      }))
+
                       var req2 = unirest('POST', 'https://api.siigo.com/v1/journals')
                       .headers({
                         'Content-Type': 'application/json',
-                        'Partner-ID': 'TestNat',
+                        'Partner-ID': 'DutyFreeCol',
                         'Authorization': 'Bearer '+ token
                       })
                       .send(JSON.stringify({
@@ -354,7 +379,7 @@ async function sendComprobanteSiigo(req, res){
                     client.close();
           }
               
-        });
+    });
   }
   console.log('comprobante de caja', params.iddoc)
   if(params.iddoc == 34002){
@@ -398,7 +423,196 @@ async function sendComprobanteSiigo(req, res){
                       var req2 = unirest('POST', 'https://api.siigo.com/v1/journals')
                       .headers({
                         'Content-Type': 'application/json',
-                        'Partner-ID': 'TestNat',
+                        'Partner-ID': 'DutyFreeCol',
+                        'Authorization': 'Bearer '+ token
+                      })
+                      .send(string)
+                      .end(function (respu) { 
+                        // console.log(respu)
+                        if (respu.error){
+                          res.status(400).send({message: 'Error ' +respu.raw_body }); 
+                        }else{
+                          res.status(200).send(respu.body)
+                        }
+                       
+                      });
+                    })
+              // console.log('consecutivo', Consecutivo)
+              client.close();
+          }     
+        });
+  }
+
+}
+
+
+async function sendComprobanteSiigopRUEBAS(req, res){
+  var unirest = require('unirest');
+  var params = req.body;
+  // console.log(params)
+
+  await client.connect();
+  const db = client.db(dbName);
+  const collection = await db.collection('Config');
+
+  let Consecutivo = 0;
+  // console.log(collection)
+
+  if(params.iddoc == 5086){
+
+                     console.log('PASS: ',params.key)
+
+                      var token;
+                      token = params.key;
+                      console.log('token: ', token)
+
+                      console.log(JSON.stringify({
+                        document: {
+                          id: params.iddoc
+                        },
+                        date: params.date,
+                        items:params.data,
+                        observations: params.obs
+                      }))
+
+                      var req2 = unirest('POST', 'https://api.siigo.com/v1/journals')
+                      .headers({
+                        'Content-Type': 'application/json',
+                        'Partner-ID': 'DutyFreeCol',
+                        'Authorization': 'Bearer '+ token
+                      })
+                      .send(JSON.stringify({
+                        document: {
+                          id: params.iddoc
+                        },
+                        date: params.date,
+                        items:params.data,
+                        observations: params.obs
+                      }))
+                      .end(function (respu) { 
+                        console.log(respu)
+                        if (respu.error){
+                          res.status(400).send({message: 'Error ' +respu.raw_body }); 
+                        }else{
+                          console.log(respu.body)
+                          res.status(200).send(respu.body)
+                        }
+                       
+                      });
+                    
+              console.log('consecutivo', Consecutivo)
+              client.close();
+  }
+
+  if(params.iddoc == 31800){
+    let confi = await
+    collection.findOneAndUpdate({operacion:params._id},
+      { $inc: {consecutivoCompVenta: 1 }},
+      { upsert: false }, function(err,doc) {
+          if (err) { throw err; }
+          else { 
+              // console.log('doc', doc)
+              Consecutivo = doc.value.consecutivoCompVenta
+              var token;
+                  var req = unirest('POST', 'https://api.siigo.com/auth')
+                    .headers({
+                      'Content-Type': 'application/json'
+                    })
+                    .send(JSON.stringify({
+                      "username": params.user,
+                      "access_key": params.key
+                    }))
+                    .end(async function (resp){ 
+                      if (resp.error) throw new Error(resp.error); 
+                      token = resp.body.access_token;
+
+                      console.log('31800 token: ', token)
+
+                      console.log(JSON.stringify({
+                        document: {
+                          id: params.iddoc
+                        },
+                        date: params.date,
+                        items:params.data,
+                        observations: params.obs
+                      }))
+
+                      var req2 = unirest('POST', 'https://api.siigo.com/v1/journals')
+                      .headers({
+                        'Content-Type': 'application/json',
+                        'Partner-ID': 'DutyFreeCol',
+                        'Authorization': 'Bearer '+ token
+                      })
+                      .send(JSON.stringify({
+                        document: {
+                          id: params.iddoc
+                        },
+                        date: params.date,
+                        items:params.data,
+                        observations: params.obs
+                      }))
+                      .end(function (respu) { 
+                        // console.log(respu)
+                        if (respu.error){
+                          // console.log(respu.error)
+
+                          res.status(400).send({message: 'Error ' +respu.raw_body }); 
+                        }else{
+                          res.status(200).send(respu.body)
+                        }
+                        console.log(respu.raw_body);
+                      });
+                    
+                    })
+
+                    client.close();
+          }
+              
+    });
+  }
+  console.log('comprobante de caja', params.iddoc)
+  if(params.iddoc == 34002){
+    console.log('comprobante de caja envio')
+    let confi = await collection.findOneAndUpdate({operacion:params._id},
+      { $inc: {consecutivoCompCaja: 1 }},
+      { upsert: false }, function(err,doc) {
+          if (err) { throw err; }
+          else { 
+              console.log('items', params.data.length);
+              console.log('id doc', params.iddoc);
+              console.log('date', params.date);
+              console.log('obs', params.obs);
+
+              Consecutivo = doc.value.consecutivoCompCosto
+                var token;
+                  var req = unirest('POST', 'https://api.siigo.com/auth')
+                    .headers({
+                      'Content-Type': 'application/json'
+                    })
+                    .send(JSON.stringify({
+                      "username": params.user,
+                      "access_key": params.key
+                    }))
+                    .end(async function (resp){ 
+                      if (resp.error) {throw new Error(resp.error)
+                      console.log(resp.error)}; 
+                      token = resp.body.access_token;
+
+                      let string = JSON.stringify({
+                        document: {
+                          id: params.iddoc
+                        },
+                        date: params.date,
+                        items:params.data,
+                        observations: params.obs
+                      })
+
+                      console.log(string)
+
+                      var req2 = unirest('POST', 'https://api.siigo.com/v1/journals')
+                      .headers({
+                        'Content-Type': 'application/json',
+                        'Partner-ID': 'DutyFreeCol',
                         'Authorization': 'Bearer '+ token
                       })
                       .send(string)
