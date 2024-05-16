@@ -267,8 +267,20 @@ export class OrdenesCompra implements OnInit {
     console.log(item)
     this.verListado=false;
     this.orden = item;
+    this.orden.fecha_entrega = new Date(this.orden.fecha_entrega)
     this.impuesto = (item.impuestos/item.total)*100
   }
+
+
+  cancelEntrega(){
+    this.orden.fecha_entrega = undefined
+
+  }
+
+  cancelFPago(){
+    this.orden.fecha_pago = undefined
+  }
+
 
   listado(){
     this.orden = new Ordencompra();

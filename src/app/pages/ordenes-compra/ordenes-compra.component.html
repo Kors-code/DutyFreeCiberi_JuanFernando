@@ -123,16 +123,27 @@
             </tr>
             <tr>
                 <th>
-                    <mat-form-field appearance="fill" style="text-align: center; font-size: 1em;">
+                   <mat-form-field *ngIf="!orden.fecha_entrega" appearance="fill" style="text-align: center; font-size: 1em;">
                     <mat-label>Fecha Entrega</mat-label>
-                    <input matInput placeholder="" type="date" name="date"  [disabled]="orden.estado != 'Activa'" [(ngModel)]="orden.fecha_entrega">
+                    <input matInput placeholder="" type="date"  [disabled]="orden.estado != 'Activa'" [(ngModel)]="orden.fecha_entrega">
                   </mat-form-field>
+
+                  <h4 *ngIf="orden.fecha_entrega" >
+                    <mat-icon *ngIf="orden.estado == 'Activa'" (click)="cancelEntrega()">cancel</mat-icon>
+                    FECHA ENTREGA:  <br> {{orden.fecha_entrega | date }} 
+                </h4>
                 </th>
                 <th>
-                    <mat-form-field appearance="fill" style="text-align: center; font-size: 1em; ">
+                    <mat-form-field  *ngIf="!orden.fecha_pago"  appearance="fill" style="text-align: center; font-size: 1em; ">
                     <mat-label>Fecha Pago</mat-label>
-                    <input matInput placeholder="" type="date" name="date" [disabled]="orden.estado != 'Activa'" [(ngModel)]="orden.fecha_pago">
+                    <input matInput placeholder="" type="date" name="{{orden.fecha_pago}}" [disabled]="orden.estado != 'Activa'" [(ngModel)]="orden.fecha_pago">
                   </mat-form-field>
+
+                  <h4 *ngIf="orden.fecha_pago" >
+                    <mat-icon *ngIf="orden.estado == 'Activa'" (click)="cancelFPago()">cancel</mat-icon>
+                    FECHA DE PAGO: <br> {{orden.fecha_pago | date}} 
+                   
+                </h4>
                 </th>
                 <th>Condiciones Pago:</th>
                 <td>

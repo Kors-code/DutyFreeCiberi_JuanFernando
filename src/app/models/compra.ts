@@ -22,8 +22,8 @@ export class Ordencompra {
         public mediosPago:any = [], 
         public productos:any=[],
         public autorizaciones:any=[],
-        public fecha_entrega:Date = new Date,
-        public fecha_pago:Date = new Date,
+        public fecha_entrega:any = undefined,
+        public fecha_pago:any = undefined,
         public condiciones_pago:string = "",
 
         public created_at:Date = new Date,

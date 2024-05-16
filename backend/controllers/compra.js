@@ -77,7 +77,7 @@ function saveCompra(req, res){
                 compra.fecha_entrega = params.fecha_entrega;
                 compra.fecha_pago = params.fecha_pago;
                 compra.condiciones_pago = params.condiciones_pago;
-                compra.impuestoporcentaje = param.impuestoporcentaje;
+                compra.impuestoporcentaje = params.impuestoporcentaje;
                 compra.created_at = params.created_at
                 compra.update_at = params.update_at
                 
