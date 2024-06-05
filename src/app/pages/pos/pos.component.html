@@ -159,11 +159,26 @@
           </tr>
           <tr >
             <td colspan="4">
-              <mat-form-field appearance="fill" style="text-align: center; font-size: 1em; margin-right: 20px; width: 100%;">
+              <mat-form-field appearance="fill" style="margin-right: 20px; width: 100%;" >
                 <mat-label>Motivo de Registro</mat-label>
-                <input matInput placeholder="" type="text" name="comprobanteobs" [(ngModel)]="notaVenta.observaciones">
-              </mat-form-field>
-    
+                <mat-select [(ngModel)]="notaVenta.observaciones">
+                  <mat-option value="Sin Sistema">
+                    Sin Sistema
+                  </mat-option>
+                  <mat-option value="Sin Existencias">
+                    Sin Existencias
+                  </mat-option>
+                  <mat-option value="Existencias en Bodega">
+                    Existencias en Bodega
+                  </mat-option>
+                  <mat-option value="Factura Electrónica">
+                    factura Electrónica
+                  </mat-option>
+                  <mat-option value="Otra">
+                    Otra
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>    
             </td>
           </tr>
         

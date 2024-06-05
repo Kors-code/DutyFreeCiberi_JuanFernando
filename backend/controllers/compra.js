@@ -99,9 +99,9 @@ function saveCompra(req, res){
 }
 
 function getComprasOperacion(req, res){
-    // var OperacionId = req.params.id;
+    var OperacionId = req.params.id;
     // console.log(OperacionId);
-    Compra.find({}, (err, response) => {
+    Compra.find({operacion:OperacionId}, (err, response) => {
        if(err){
             res.status(500).send({message: 'Error al consultar Orden de Compra'});
         }else {
@@ -116,9 +116,9 @@ function getComprasOperacion(req, res){
 
 
 function getComprasActivas(req, res){
-    // var OperacionId = req.params.id;
+    var OperacionId = req.params.id;
     // console.log(OperacionId);
-    Compra.find({estado:'Activa'}, (err, response) => {
+    Compra.find({operacion:OperacionId, estado:'Activa'}, (err, response) => {
        if(err){
             res.status(500).send({message: 'Error al consultar Orden de Compra'});
         }else {
@@ -132,9 +132,9 @@ function getComprasActivas(req, res){
 }
 
 function getComprasAutorizadas(req, res){
-    // var OperacionId = req.params.id;
+    var OperacionId = req.params.id;
     // console.log(OperacionId);
-    Compra.find({estado:'Autorizada'}, (err, response) => {
+    Compra.find({operacion:OperacionId, estado:'Autorizada'}, (err, response) => {
        if(err){
             res.status(500).send({message: 'Error al consultar Orden de Compra'});
         }else {
@@ -148,9 +148,9 @@ function getComprasAutorizadas(req, res){
 }
 
 function getComprasAutorizadas(req, res){
-    // var OperacionId = req.params.id;
+    var OperacionId = req.params.id;
     // console.log(OperacionId);
-    Compra.find({estado:'Autorizada'}, (err, response) => {
+    Compra.find({operacion:OperacionId, estado:'Autorizada'}, (err, response) => {
        if(err){
             res.status(500).send({message: 'Error al consultar Orden de Compra'});
         }else {
@@ -165,9 +165,9 @@ function getComprasAutorizadas(req, res){
 
 
 function getComprasRechazadas(req, res){
-    // var OperacionId = req.params.id;
+    var OperacionId = req.params.id;
     // console.log(OperacionId);
-    Compra.find({estado:'Rechazada'}, (err, response) => {
+    Compra.find({operacion:OperacionId, estado:'Rechazada'}, (err, response) => {
        if(err){
             res.status(500).send({message: 'Error al consultar Orden de Compra'});
         }else {
@@ -182,9 +182,9 @@ function getComprasRechazadas(req, res){
 
 
 function getComprasAnuladas(req, res){
-    // var OperacionId = req.params.id;
+    var OperacionId = req.params.id;
     // console.log(OperacionId);
-    Compra.find({estado:'Anulada'}, (err, response) => {
+    Compra.find({operacion:OperacionId, estado:'Anulada'}, (err, response) => {
        if(err){
             res.status(500).send({message: 'Error al consultar Orden de Compra'});
         }else {
@@ -198,9 +198,9 @@ function getComprasAnuladas(req, res){
 }
 
 function getComprasCerradas(req, res){
-    // var OperacionId = req.params.id;
+    var OperacionId = req.params.id;
     // console.log(OperacionId);
-    Compra.find({estado:'Cerrada'}, (err, response) => {
+    Compra.find({operacion:OperacionId, estado:'Cerrada'}, (err, response) => {
        if(err){
             res.status(500).send({message: 'Error al consultar Orden de Compra'});
         }else {
@@ -214,9 +214,9 @@ function getComprasCerradas(req, res){
 }
 
 function getComprasAnuladas(req, res){
-    // var OperacionId = req.params.id;
+    var OperacionId = req.params.id;
     // console.log(OperacionId);
-    Compra.find({estado:'Anulada'}, (err, response) => {
+    Compra.find({operacion:OperacionId, estado:'Anulada'}, (err, response) => {
        if(err){
             res.status(500).send({message: 'Error al consultar Orden de Compra'});
         }else {

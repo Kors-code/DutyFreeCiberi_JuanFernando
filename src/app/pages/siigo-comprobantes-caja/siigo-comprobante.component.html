@@ -190,9 +190,11 @@
             </mat-form-field>
           </td>
           <td style="text-align: center;">
-            <mat-form-field style="text-align: center;">
-              <input matInput placeholder="DESCRIPCION" [disabled]="comprobante._id" type="text" style="width: 400px;"  name="item.description" [(ngModel)]="item.description" required>
-            </mat-form-field>
+            <!-- <mat-form-field style="text-align: center;"> -->
+              
+              <textarea [disabled]="comprobante._id" style="font-size: 1em; text-align: center; border-radius: 5px;" type="text" placeholder="DESCRIPCION" [(ngModel)]="item.description"></textarea>
+              <!-- <input matInput placeholder="DESCRIPCION" [disabled]="comprobante._id" type="text" style="width: 400px;"  name="item.description" [(ngModel)]="item.description" required> -->
+            <!-- </mat-form-field> -->
           </td>
           <td style="text-align: center;">
             <mat-form-field style="text-align: center;">

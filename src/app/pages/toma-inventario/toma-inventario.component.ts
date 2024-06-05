@@ -116,9 +116,17 @@ export class tomaInventarioComponent implements OnInit {
   getCollectionsInventarios(){
     this._infoServce.getCollectionsInventarios().subscribe(
       res=>{
-        this.collections = res
+        let collections = res
         // this.collections = this.collections.reverse();
-        //console.log(this.collections)
+        // console.log(this.collections)
+
+        for (let i = 0; i < collections.length; i++) {
+          const element = collections[i];
+          console.log(element)
+          if(element.indexOf(this.pOperacion.titulo) != -1){
+            this.collections.push(element)
+          }
+        }
       }
     )
   }
@@ -371,9 +379,13 @@ export class tomaInventarioComponent implements OnInit {
   progreso = 0
 
   nuevo(){
-    this.tag = 'C_'
+    this.tag = 'C_'+this.pOperacion.titulo;
   }
 
+
+  addTag(item:string){
+    this.tag = item+ this.pOperacion.titulo+'_'
+  }
 
   saveScanSocket(){
     // ////// ////console.log(JSON.stringify(this.registros))
@@ -385,12 +397,13 @@ export class tomaInventarioComponent implements OnInit {
     this.importar=false;
   }
 
-  verTagInventario(doc:string){
-    if(doc.indexOf('off_')){
-      return false;
-    }else{
-      return true;
-    }
+  verTagInventario(doc:string){  
+      if(doc.indexOf('off_')){
+        return false;
+      }else{
+        return true;
+      }
+   
   }
 
   verPrecio(doc:string){
@@ -521,6 +534,8 @@ export class tomaInventarioComponent implements OnInit {
       if(this.registros[i].Exist_Final == ''){
         this.registros[i].Exist_Final = 0
       }
+
+      this.registros[i].operacion = this.pOperacion._id;
       this.registros[i].Estado = 'Activo';
       this.registros[i].Conteo0 = [];
       this.registros[i].Conteo1 = [];
@@ -842,7 +857,8 @@ export class tomaInventarioComponent implements OnInit {
       ubicacion:this.ubicacion,
     }
 
-    console.log(this.tag)
+    // console.log(scan)
+
     if(this.scaner){
       this._infoServce.agregarScaneo(scan, this.tag).subscribe(
         res =>{

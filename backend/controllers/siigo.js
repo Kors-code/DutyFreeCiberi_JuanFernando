@@ -405,8 +405,10 @@ async function sendComprobanteSiigo(req, res){
                       "access_key": params.key
                     }))
                     .end(async function (resp){ 
-                      if (resp.error) {throw new Error(resp.error)
-                      console.log(resp.error)}; 
+                      if (resp.error) {
+                        // throw new Error(resp.error)
+                      console.log(resp.error)
+                      }; 
                       token = resp.body.access_token;
 
                       let string = JSON.stringify({

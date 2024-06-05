@@ -19,6 +19,7 @@ function saveElectronica(req, res){
     electronica.update_at = params.update_at;
     electronica.operacion = params.operacion;
     electronica.factResoluciones = params.factResoluciones;
+    electronica.operacion = params.operacion;
     electronica.created_at = new Date();
       
     electronica.save((err, electronica) => {
@@ -35,9 +36,9 @@ function saveElectronica(req, res){
 }
 
 function getElectronica(req, res){
-    // var OperacionId = req.params.id;
+    var OperacionId = req.params.id;
     // console.log(OperacionId);
-    Electronica.findOne({}, (err, electronica) => {
+    Electronica.findOne({operacion:OperacionId}, (err, electronica) => {
        if(err){
             res.status(500).send({message: 'Error al Eliminar Electronica'});
         }else {

@@ -56,69 +56,69 @@ getOrdenesOperacion(){
 }
 
 
-getComprasOperacion(){
+getComprasOperacion(id:string){
     let headers = new HttpHeaders({
         'Content-Type': 'application/json',
         'Authorization': this.getToken()
     });
 
-    return this._http.get<Ordencompra[]>(this.url+'ordenes/',
+    return this._http.get<Ordencompra[]>(this.url+'ordenes/'+id,
         {headers:headers})
        
 }
 
 
-getComprasActivas(){
+getComprasActivas(id:string){
     let headers = new HttpHeaders({
         'Content-Type': 'application/json',
         'Authorization': this.getToken()
     });
 
-    return this._http.get<Ordencompra[]>(this.url+'ordenes-activas/',
+    return this._http.get<Ordencompra[]>(this.url+'ordenes-activas/'+id,
         {headers:headers})
        
 }
 
-getComprasAutorizadas(){
+getComprasAutorizadas(id:string){
     let headers = new HttpHeaders({
         'Content-Type': 'application/json',
         'Authorization': this.getToken()
     });
 
-    return this._http.get<Ordencompra[]>(this.url+'ordenes-autorizadas/',
+    return this._http.get<Ordencompra[]>(this.url+'ordenes-autorizadas/'+id,
         {headers:headers})
        
 }
 
-getComprasCerradas(){
+getComprasCerradas(id:string){
     let headers = new HttpHeaders({
         'Content-Type': 'application/json',
         'Authorization': this.getToken()
     });
 
-    return this._http.get<Ordencompra[]>(this.url+'ordenes-cerradas/',
+    return this._http.get<Ordencompra[]>(this.url+'ordenes-cerradas/'+id,
         {headers:headers})
        
 }
 
 
-getComprasRechazadas(){
+getComprasRechazadas(id:string){
     let headers = new HttpHeaders({
         'Content-Type': 'application/json',
         'Authorization': this.getToken()
     });
 
-    return this._http.get<Ordencompra[]>(this.url+'ordenes-rechazadas/',
+    return this._http.get<Ordencompra[]>(this.url+'ordenes-rechazadas/'+id,
         {headers:headers})
        
 }
 
-getComprasAnuladas(){
+getComprasAnuladas(id:string){
     let headers = new HttpHeaders({
         'Content-Type': 'application/json',
         'Authorization': this.getToken()
     });
-    return this._http.get<Ordencompra[]>(this.url+'ordenes-anuladas/',
+    return this._http.get<Ordencompra[]>(this.url+'ordenes-anuladas/'+id,
         {headers:headers})
 }
 

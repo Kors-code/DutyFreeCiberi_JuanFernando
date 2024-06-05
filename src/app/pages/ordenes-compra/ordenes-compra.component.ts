@@ -81,7 +81,7 @@ export class OrdenesCompra implements OnInit {
 
     this._infoService.getConfig(this.pOperacion._id).subscribe(
       res=>{
-        console.log(res)
+        //.log(res)
         if(res.length != 0){
           this.config = res[0];
         }
@@ -93,7 +93,7 @@ export class OrdenesCompra implements OnInit {
 
 
   agregar(){
-    console.log('agregar')
+    //.log('agregar')
     this.orden.productos.unshift(
       {
         codigo:'',
@@ -114,7 +114,7 @@ export class OrdenesCompra implements OnInit {
     });
     dialogRef.afterClosed().subscribe(result => {
       if(result){
-        console.log(result)
+        //.log(result)
         this.orden.proveedor = result;
         this.verListado = false;
 
@@ -138,7 +138,7 @@ export class OrdenesCompra implements OnInit {
 
                 this.cotizacion = this.fileupdate.filename
                 this.orden.cotizaciones.unshift(this.cotizacion);
-                console.log(this.cotizacion);
+                //.log(this.cotizacion);
               }
             }
           );
@@ -155,8 +155,16 @@ export class OrdenesCompra implements OnInit {
   
   }
 
+  deleteCotizacion(i:number){
+    this.orden.cotizaciones.splice(i,1)
+    if(this.orden._id){
+      this.update();
+    }
+  }
+
   guardar(){
-    console.log(this.orden);
+    //.log(this.orden);
+    this.orden.operacion = this.pOperacion._id;
     this._ordenesService.saveCompra(this.orden).subscribe(
       res=>{
         this.orden = res;
@@ -167,13 +175,19 @@ export class OrdenesCompra implements OnInit {
         dialogRef.afterClosed().subscribe(result => {
           // window.location.reload();
         })
-        console.log(res)
+        //.log(res)
       }
     )
   }
 
+  cerrarCorden(){
+    this.orden.estado = 'Cerrada';
+    this.update();
+  }
+
   update(){
-    console.log(this.orden);
+    //.log(this.orden);
+    this.orden.operacion = this.pOperacion._id;
     this._ordenesService.updateOrden(this.orden).subscribe(
       res=>{
         let data = {titulo: 'Exito ', info:'Orden Actualizada Correctamente' ,type: 'Confirm', icon:'done_all'}
@@ -183,7 +197,7 @@ export class OrdenesCompra implements OnInit {
         dialogRef.afterClosed().subscribe(result => {
   
         })
-        console.log(res)
+        //.log(res)
       }
     )
   }
@@ -191,7 +205,7 @@ export class OrdenesCompra implements OnInit {
   getOrdenes(){
     this._ordenesService.getOrdenesOperacion().subscribe(
       res=>{
-        console.log(res)
+        //.log(res)
         if(res){
           this.verListado=true;
           this.ordenes = res;
@@ -202,24 +216,26 @@ export class OrdenesCompra implements OnInit {
 
 
   getOrdenesActivas(){
-    this._ordenesService.getComprasActivas().subscribe(
+    this._ordenesService.getComprasActivas(this.pOperacion._id).subscribe(
       res=>{
-        console.log(res)
+        //.log(res)
         if(res){
           this.verListado=true;
           this.ordenes = res;
+          this.ordenes = this.ordenes.reverse();
         }
       }
     )
   }
 
   getOrdenesAutorizadas(){
-    this._ordenesService.getComprasAutorizadas().subscribe(
+    this._ordenesService.getComprasAutorizadas(this.pOperacion._id).subscribe(
       res=>{
-        console.log(res)
+        //.log(res)
         if(res){
           this.verListado=true;
           this.ordenes = res;
+          this.ordenes = this.ordenes.reverse();
         }
       }
     )
@@ -227,36 +243,39 @@ export class OrdenesCompra implements OnInit {
 
 
   getOrdenesAnuladas(){
-    this._ordenesService.getComprasAnuladas().subscribe(
+    this._ordenesService.getComprasAnuladas(this.pOperacion._id).subscribe(
       res=>{
-        console.log(res)
+        //.log(res)
         if(res){
           this.verListado=true;
           this.ordenes = res;
+          this.ordenes = this.ordenes.reverse();
         }
       }
     )
   }
 
   getOrdenesCerradas(){
-    this._ordenesService.getComprasCerradas().subscribe(
+    this._ordenesService.getComprasCerradas(this.pOperacion._id).subscribe(
       res=>{
-        console.log(res)
+        //.log(res)
         if(res){
           this.verListado=true;
           this.ordenes = res;
+          this.ordenes = this.ordenes.reverse();
         }
       }
     )
   }
 
   getOrdenesRechazadas(){
-    this._ordenesService.getComprasRechazadas().subscribe(
+    this._ordenesService.getComprasRechazadas(this.pOperacion._id).subscribe(
       res=>{
-        console.log(res)
+        //.log(res)
         if(res){
           this.verListado=true;
           this.ordenes = res;
+          this.ordenes = this.ordenes.reverse();
         }
       }
     )
@@ -264,7 +283,7 @@ export class OrdenesCompra implements OnInit {
 
 
   pasOrden(item:Ordencompra){
-    console.log(item)
+    //.log(item)
     this.verListado=false;
     this.orden = item;
     this.orden.fecha_entrega = new Date(this.orden.fecha_entrega)
@@ -306,7 +325,7 @@ export class OrdenesCompra implements OnInit {
       this.orden.total= this.orden.total + (element.precio * element.cantidad)
     }
     this.orden.impuestos = this.orden.total *  (this.orden.impuestoporcentaje/100);
-    // console.log(this.orden)
+    // //.log(this.orden)
   }
 
   autorizar(){
@@ -316,11 +335,13 @@ export class OrdenesCompra implements OnInit {
       cargo: this.identity.cargo,
       fecha: new Date().getTime()
     })
+    this.orden.estado = 'Autorizada';
+    this.update()
   }
 
   verBoton():boolean{
     let pos2 = this.orden.autorizaciones.map(function(e: { _id: string; }) { return e._id; }).indexOf(this.identity._id);
-    // console.log(pos2)
+    // //.log(pos2)
     if(pos2 == -1){
       return true
     }else{
@@ -371,7 +392,7 @@ export class OrdenesCompra implements OnInit {
 
   impuesto=0;
   CambiarImpuesto(){
-    console.log(this.impuesto)
+    //.log(this.impuesto)
     this.orden.impuestos = this.orden.total *  (this.orden.impuestoporcentaje/100);
   }
 
@@ -382,7 +403,7 @@ export class OrdenesCompra implements OnInit {
 
 
   duplicarOrden(){
-    console.log(this.orden)
+    //.log(this.orden)
     this.orden._id ='';
     this.orden.created_at= new Date();
     this.orden.fecha_entrega= new Date();
@@ -401,7 +422,7 @@ export class OrdenesCompra implements OnInit {
         dialogRef.afterClosed().subscribe(result => {
           // window.location.reload();
         })
-        console.log(res)
+        //.log(res)
       }
     )  
   }

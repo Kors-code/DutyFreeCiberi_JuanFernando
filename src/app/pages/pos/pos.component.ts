@@ -62,13 +62,13 @@ export class posComponent implements OnInit {
       this.trmApi
         .latest()
         .then((data:any) => {
-          // console.log(data)
+          // //.log(data)
 
         } )
         .catch((error:any) => error);
 
         this.pOperacion=_userService.getPredetermidaOperacion();
-        // console.log(this.identity)
+        // //.log(this.identity)
     }
 
   ngOnInit(): void {
@@ -84,7 +84,7 @@ export class posComponent implements OnInit {
   nuevaNota(){
     this.fadeDiv='detalle';
     this.notaVenta = new NotaVenta();
-    // console.log(this.notaVenta)
+    // //.log(this.notaVenta)
     this.trm_euro = this.config.dataOperacion.trm_euro;
   }
 
@@ -98,7 +98,7 @@ export class posComponent implements OnInit {
 getTRM(){
   this._infoService.geTRM().subscribe(
     res=>{
-      // console.log(res)
+      // //.log(res)
     }
   )
 }
@@ -118,7 +118,7 @@ getVentasPeriodo(feha_inicial:any, fecha_final:any) {
   
   this._infoService.getNotasVentasPeriodo(pet).subscribe(
     res=>{
-      // console.log(res)
+      // //.log(res)
       this.notasVentas = res;
         this.fadeDiv='listado';
         this.notaVenta = new NotaVenta();
@@ -129,10 +129,10 @@ getVentasPeriodo(feha_inicial:any, fecha_final:any) {
 }
 
   getConfig(){
-    // console.log('cobfig')
+    // //.log('cobfig')
     this._infoService.getConfig(this.pOperacion._id).subscribe(
       res=>{
-        // console.log(res)
+        // //.log(res)
         if(res.length != 0){
           this.config = res[0];
           this.trm_euro = this.config.dataOperacion.trm_euro;
@@ -140,7 +140,7 @@ getVentasPeriodo(feha_inicial:any, fecha_final:any) {
         }
        
       },err=>{
-        // console.log(err)
+        // //.log(err)
       }
     )
   }
@@ -173,11 +173,11 @@ getVentasPeriodo(feha_inicial:any, fecha_final:any) {
     this.config.dataOperacion.trm_euro = this.trm_euro;
     this.config.dataOperacion.trm_usd = this.trm;
 
-    // console.log(this.config.dataOperacion)
+    // //.log(this.config.dataOperacion)
 
     this._infoService.updateTrmOperacion(this.config).subscribe(
       res=>{
-        console.log(res);
+        //.log(res);
         let data = {titulo: 'Registro Exitoso ', info:'Se Actualizaron las Divisas ', type: 'Confirm', icon:'done_all'}
         let dialogRef = this.dialog.open(DialogConfirm,{
           data: data
@@ -267,7 +267,7 @@ getVentasPeriodo(feha_inicial:any, fecha_final:any) {
   
 
   pasNota(item:any){
-    // console.log(item)
+    // //.log(item)
     this.notaVenta=item
     this.fadeDiv='detalle';
     this.trm = item.trm
@@ -287,7 +287,7 @@ getVentasPeriodo(feha_inicial:any, fecha_final:any) {
     dialogRef.afterClosed().subscribe(result => {
       if(result){
         this.notaVenta.cliente = result
-        // console.log( this.notaVenta)
+        // //.log( this.notaVenta)
       }
     })
 
@@ -300,7 +300,7 @@ getVentasPeriodo(feha_inicial:any, fecha_final:any) {
     dialogRef.afterClosed().subscribe(result => {
       if(result){
         this.notaVenta.mediosPago = result
-        // console.log(this.notaVenta)
+        // //.log(this.notaVenta)
       }
     })
   }
@@ -310,7 +310,7 @@ getVentasPeriodo(feha_inicial:any, fecha_final:any) {
   getProducto(item:string){
     this._infoService.getProducto(item).subscribe(
       res=>{
-        // console.log(res)
+        // //.log(res)
         if(res.length != 0){
           
           if(res.length == 1){
@@ -318,7 +318,7 @@ getVentasPeriodo(feha_inicial:any, fecha_final:any) {
             res[0].descuento = 0;
             res[0].val_descuento = 0;
             this.notaVenta.productos.unshift(res[0])
-            console.log(this.notaVenta.productos)
+            //.log(this.notaVenta.productos)
           }else{
             this.productSearch = res
           }
@@ -340,7 +340,7 @@ getVentasPeriodo(feha_inicial:any, fecha_final:any) {
       this.openSnackBar('NO SE HA ENCONTRADO EL CAJERO')
     }
 
-    // console.log(pos)
+    // //.log(pos)
 
   }
 
@@ -361,7 +361,7 @@ getVentasPeriodo(feha_inicial:any, fecha_final:any) {
       const element = this.notaVenta.productos[i];
 
       if(element.descuento != 0){
-        console.log(element)
+        //.log(element)
         element.val_descuento = element.RETAIL * (element.descuento / 100) * element.cantidad
         this.notaVenta.descuento = this.notaVenta.descuento +  element.val_descuento;
       }else{
@@ -380,7 +380,7 @@ getVentasPeriodo(feha_inicial:any, fecha_final:any) {
     this.notaVenta.trm = this.trm;
     this.notaVenta.trm_euro =  this.trm_euro;
     this.log = true;
-    // console.log(this.notaVenta)
+    // //.log(this.notaVenta)
     this._infoService.agregarNotaVenta(this.notaVenta).subscribe(
       res=>{
         
@@ -401,7 +401,7 @@ getVentasPeriodo(feha_inicial:any, fecha_final:any) {
     this.notaVenta.update_at = new Date();
     this._infoService.updateNotaVenta(this.notaVenta).subscribe(
       res=>{
-        // console.log(res)
+        // //.log(res)
       }
     )
   }
@@ -431,7 +431,7 @@ getVentasPeriodo(feha_inicial:any, fecha_final:any) {
 
   d:Date= new Date();
   getfechaSR(c:string){
-    // console.log(c)
+    // //.log(c)
     this.d = new Date();
     var month = this.d.getMonth() + 1;
     var day = this.d.getDate();
@@ -514,8 +514,8 @@ getVentasPeriodo(feha_inicial:any, fecha_final:any) {
       const ws: XLSX.WorkSheet = wb.Sheets[wsname];
       this.data = (XLSX.utils.sheet_to_json(ws, { header: 1 }));
 
-      ////// console.log('Data',this.data);
-      // ////// ////// console.log('Costumer',this.dataCostumer);
+      ////// //.log('Data',this.data);
+      // ////// ////// //.log('Costumer',this.dataCostumer);
       this.convertirJson()
 
     };
@@ -541,7 +541,7 @@ getVentasPeriodo(feha_inicial:any, fecha_final:any) {
 
     this.log= false;
    
-    // console.log(this.registros)
+    // //.log(this.registros)
     let lotes = 200;
    
   }

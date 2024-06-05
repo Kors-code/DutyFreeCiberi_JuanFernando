@@ -4,11 +4,11 @@
     <div style="display: flex; justify-content: center;">
       <button mat-button [matMenuTriggerFor]="menuRef"><mat-icon class="mat-18">menu</mat-icon> <span>Conteos Activos</span> </button>
       <mat-menu #menuRef="matMenu">
-        <button mat-menu-item (click)="tag = 'C_'" *ngIf="importar">
+        <button mat-menu-item (click)="addTag('C_')" *ngIf="importar">
             <mat-icon class="mat-18" >add</mat-icon>  
             Nuevo conteo 
         </button>
-        <button mat-menu-item (click)="tag = 'R_'" *ngIf="importar">
+        <button mat-menu-item (click)="addTag('R_')" *ngIf="importar">
           <mat-icon class="mat-18" >add</mat-icon>  
             Nueva Recepcion 
         </button>
@@ -39,7 +39,6 @@
           <h2 style="text-align: center;">TOMAS DE INVENTARIOS
             <span>{{procesado}}</span>
           </h2>
-      
           <div style="display: flex; flex-wrap: wrap; justify-content: space-around; align-items: center;">
             
             <div>
@@ -56,10 +55,12 @@
                 <input matInput placeholder="Responsable" type="text" name="Responsable" [(ngModel)]="Responsable" (change)="changeTag(Responsable)">
               </mat-form-field>
             </div>
-         
-
               <h2>{{db}}</h2>
-              <input *ngIf="tag" type="file" multiple="false" (change)="onFileChange($event)" style="font-size: 1.3em; margin-left: 10px;">
+              <input  type="file" multiple="false" (change)="onFileChange($event)" #fileManifiesto  style="display: none;font-size: 1.3em; margin-left: 10px;" accept=".xls, .xlsx">
+              <button *ngIf="tag" mat-stroked-button size="small" slot="end" fill="outline" (click)="fileManifiesto.click()" color="tertiary">
+                <mat-icon>attach_file</mat-icon>  SELECCIONA ARCHIVO
+              </button>
+              
               <div *ngIf="clasificacion.length != 0" style="display: flex; justify-content: center;">
                 <mat-form-field appearance="fill" style="width: 60%;">
                   <mat-label>Categoria</mat-label>
@@ -1165,7 +1166,7 @@
         <mat-icon>center_focus_strong</mat-icon>
       </button>
         <mat-form-field *ngIf="ubicacion" appearance="fill" style="text-align: center; font-size: 1em; margin-right: 20px; width: 60%;">
-          <input matInput placeholder="SCAN" type="number" #scanEle name="scan" [(ngModel)]="scan" (change)="saveScan()">
+          <input matInput placeholder="SCAN" type="text" #scanEle name="scan" [(ngModel)]="scan" (change)="saveScan()">
           <button *ngIf="scaner"  matSuffix mat-icon-button aria-label="Clear" (click)="scaner = !scaner">
             <mat-icon>qr_code_scanner</mat-icon>
           </button>

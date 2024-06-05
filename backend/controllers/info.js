@@ -912,7 +912,7 @@ function getInfoDato(req, res){
 async function agregarConteo(req, res){
     var params = req.body;
     var coll = req.params.tag;
-    // //console.log(params)
+
     const url = 'mongodb://localhost:27017';
     const client = new MongoClient(url);
     const dbName = 'DutyFreeInventarios';

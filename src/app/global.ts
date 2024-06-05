@@ -2,7 +2,6 @@ export var GLOBAL = {
     url_app: '/api/',
     url_dw:'https://dutyfree.ciberi.net/api/',
     // url_app: 'http://localhost:6511/api/',
-
     // url_dw:'https://localhost:6511/api/',
     // url_app: 'https://dutyfree.ciberi.net/api/',
   
@@ -20,7 +19,12 @@ export var DUTYFREEDIAN ={
     pass:'11/mi_exitototal/11',
     passApi:'dutyfree',
     url2024PCC : 'ssh -i "C:/Users/Administrador/Documents/ciberi Desarrollo/POS/puntodeventa/frontend/pen/dutyDian.pem" ubuntu@ec2-18-220-131-52.us-east-2.compute.amazonaws.com',
-    url:'https://duty-fac-electronica.ciberi.net/'
+    url:'https://duty-fac-electronica.ciberi.net/',
+
+    passAPIFacturacion:'qzzpskbsfpfoeoya',
+    emailFacturacion:'facturacionelectronica@skyfreeshop.org',
+    passEmailFacturacion:'duty2024'
+
  }
 
 

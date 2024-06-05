@@ -139,7 +139,7 @@ api.put('/operacion', md_auth.ensureAuth,  OperacionController.updateOperacion);
 
 // RUTAS ELECTRONICA
 
-api.get('/electronica',md_auth.ensureAuth, ElectronicaController.getElectronica);
+api.get('/electronica/:id',md_auth.ensureAuth, ElectronicaController.getElectronica);
 api.post('/reg-electronica/', md_auth.ensureAuth, ElectronicaController.saveElectronica);
 api.delete('/electronica/:id',md_auth.ensureAuth, ElectronicaController.deleteElectronica);
 api.put('/electronica', md_auth.ensureAuth,  ElectronicaController.updateElectronica);
@@ -170,15 +170,15 @@ api.post('/nota-venta', md_auth.ensureAuth, NotasVentaController.saveNotaVenta);
 api.put('/nota-venta', md_auth.ensureAuth,  NotasVentaController.updateNotaVenta);
 
 // RUTAS ORDENES DE COMPRA
-api.get('/ordenes',md_auth.ensureAuth, OrdebesCompraController.getComprasOperacion);
+api.get('/ordenes/:id',md_auth.ensureAuth, OrdebesCompraController.getComprasOperacion);
 api.post('/reg-orden', md_auth.ensureAuth, OrdebesCompraController.saveCompra);
 api.delete('/orden/:id',md_auth.ensureAuth, OrdebesCompraController.deleteCompra);
 api.put('/orden', md_auth.ensureAuth,  OrdebesCompraController.updateCompra);
-api.get('/ordenes-activas',md_auth.ensureAuth, OrdebesCompraController.getComprasActivas);
-api.get('/ordenes-autorizadas',md_auth.ensureAuth, OrdebesCompraController.getComprasAutorizadas);
-api.get('/ordenes-rechazadas',md_auth.ensureAuth, OrdebesCompraController.getComprasRechazadas);
-api.get('/ordenes-cerradas',md_auth.ensureAuth, OrdebesCompraController.getComprasCerradas);
-api.get('/ordenes-anuladas',md_auth.ensureAuth, OrdebesCompraController.getComprasAnuladas);
+api.get('/ordenes-activas/:id',md_auth.ensureAuth, OrdebesCompraController.getComprasActivas);
+api.get('/ordenes-autorizadas/:id',md_auth.ensureAuth, OrdebesCompraController.getComprasAutorizadas);
+api.get('/ordenes-rechazadas/:id',md_auth.ensureAuth, OrdebesCompraController.getComprasRechazadas);
+api.get('/ordenes-cerradas/:id',md_auth.ensureAuth, OrdebesCompraController.getComprasCerradas);
+api.get('/ordenes-anuladas/:id',md_auth.ensureAuth, OrdebesCompraController.getComprasAnuladas);
 
 // RUTAS PROVEEDORES
 api.get('/proveedores',md_auth.ensureAuth, ProveedoresController.getProveedores);

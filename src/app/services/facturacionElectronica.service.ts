@@ -463,13 +463,13 @@ export class FacturaElectronicaService {
            
     }
     
-    getElectronica(){
+    getElectronica(id:string){
         let headers = new HttpHeaders({
             'Content-Type': 'application/json',
             'Authorization': this.getToken()
         });
     
-        return this._http.get<AdminPvconfigFacElectronica>(this.url+'electronica/',
+        return this._http.get<AdminPvconfigFacElectronica>(this.url+'electronica/'+id,
             {headers:headers})
            
     }

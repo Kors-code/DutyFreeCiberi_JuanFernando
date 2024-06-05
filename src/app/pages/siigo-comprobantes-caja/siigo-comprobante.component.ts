@@ -66,7 +66,7 @@ export class SiigoComprobantesComponent implements OnInit {
   getComprobantes(){
     this._siigoService.getDataComprobantes().subscribe(
       res=>{
-        console.log(res)
+        //.log(res)
         this.listadoComprobantes= res;
       });
   }
@@ -585,7 +585,7 @@ export class SiigoComprobantesComponent implements OnInit {
       observations: this.obs
     })
 
-    console.log(string)
+    //.log(string)
 
     //(credenciales);
     this._siigoService.saveComprobantesSiigo(credenciales).subscribe(
@@ -723,7 +723,7 @@ export class SiigoComprobantesComponent implements OnInit {
       const ws: XLSX.WorkSheet = wb.Sheets[wsname];
       this.data = (XLSX.utils.sheet_to_json(ws));
 
-      // console.log(this.data)
+      // //.log(this.data)
 
 
       this.convertirJsonComprobante(this.data)
@@ -759,7 +759,7 @@ convertirJsonComprobante(data:any){
       let pos2 = this.diasInforme.map(function(e: { id: string; }) { return e.id; }).indexOf(id);
       if(pos2 == -1){
 
-        console.log(this.registros[i]);
+        //.log(this.registros[i]);
 
         let info= {
           id:id,
@@ -780,8 +780,8 @@ convertirJsonComprobante(data:any){
         this.log= false;
     }
 
-    // console.log('comprobante',this.comprobante)
-    // console.log(this.diasInforme)
+    // //.log('comprobante',this.comprobante)
+    // //.log(this.diasInforme)
 
     for (let i  = 0; i  < this.diasInforme.length; i ++){
       const element = this.diasInforme[i ];
@@ -862,7 +862,7 @@ convertirJsonComprobante(data:any){
 
     this.selected.setValue(1)
 
-    // console.log(this.comprobante)
+    // //.log(this.comprobante)
 
     this.totalizarComprobante()
 
@@ -915,7 +915,7 @@ passComprobante(item:Comprobante){
   this.comprobante.obs = item.observations;
   this.totalizarComprobante();
 
-  console.log(this.comprobante);
+  //.log(this.comprobante);
 }
 
 compItau:any=[]
@@ -955,14 +955,14 @@ convertirJsonComprobanteItau(){
         this.diasINfo = this.registros[i]['DIA']+''
       }else{
         let pos =  this.diasINfo.indexOf(this.registros[i]['DIA']);
-        // console.log(pos)
+        // //.log(pos)
         if(pos == -1){
           this.diasINfo = this.diasINfo+' Y ' + this.registros[i]['DIA']
         }
       }
 
-      // console.log(this.diasINfo)
-      // console.log(this.mes)
+      // //.log(this.diasINfo)
+      // //.log(this.mes)
     
       fecha = this.registros[i]['DIA']+'-'+this.registros[i]['MES']+'-'+new Date().getFullYear();
     
@@ -990,7 +990,7 @@ convertirJsonComprobanteItau(){
 
     }
 
-  // console.log(
+  // //.log(
   //   this.totalVisa,
   //   this.totalMaster,
   //   this.totalAmex,
@@ -1111,7 +1111,7 @@ convertirJsonComprobanteItau(){
 
     this.selected.setValue(1)
 
-    console.log(this.comprobante)
+    //.log(this.comprobante)
 }
 
 async generarRegistrosItaU(){
@@ -1381,7 +1381,7 @@ saveComprobante(){
   this.comprobante._id = this.pOperacion._id;
   this.comprobante._idOperacionstring = this.pOperacion._id;
 
-  console.log(this.comprobante)
+  //.log(this.comprobante)
 
   let string=  JSON.stringify({
     document: {
@@ -1392,7 +1392,7 @@ saveComprobante(){
     observations: this.comprobante.obs
   })
 
-  console.log(string)
+  //.log(string)
 
   this._siigoService.saveComprobantesSiigo(this.comprobante).subscribe(
     res=>{

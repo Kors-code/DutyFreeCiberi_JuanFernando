@@ -10,18 +10,18 @@
           <button   mat-stroked-button aria-label="Clear" color="scondary" style="margin: 10px 10px;" (click)="nuevo()">
             <mat-icon>fiber_new</mat-icon> NUEVO
           </button>
-      <button  *ngIf="!orden._id && orden.productos.length != 0" mat-stroked-button aria-label="Clear" color="scondary" style="margin: 10px 10px;" (click)="guardar()">
-          <mat-icon>add</mat-icon> GUARDAR
-      </button>
-      <button  *ngIf="orden._id" mat-stroked-button aria-label="Clear" color="scondary" style="margin: 10px 10px;" (click)="update()">
-        <mat-icon>save</mat-icon> GUARDAR
-      </button>
-      <button  *ngIf="orden._id" mat-stroked-button aria-label="Clear" color="scondary" style="margin: 10px 10px;" (click)="duplicarOrden()">
-        <mat-icon>file_copy</mat-icon> DUPLICAR ORDEN DE COMPRA
-      </button>      
-      <button  *ngIf="orden._id" mat-stroked-button aria-label="Clear" color="scondary" style="margin: 10px 10px;" (click)="printNotaVenta()">
-        <mat-icon>print</mat-icon> IMPRIMIR
-      </button>     
+            <button  *ngIf="!orden._id && orden.productos.length != 0" mat-stroked-button aria-label="Clear" color="scondary" style="margin: 10px 10px;" (click)="guardar()">
+                <mat-icon>add</mat-icon> GUARDAR
+            </button>
+            <button  *ngIf="orden._id" mat-stroked-button aria-label="Clear" color="scondary" style="margin: 10px 10px;" (click)="update()">
+                <mat-icon>save</mat-icon> GUARDAR
+            </button>
+            <button  *ngIf="orden._id" mat-stroked-button aria-label="Clear" color="scondary" style="margin: 10px 10px;" (click)="duplicarOrden()">
+                <mat-icon>file_copy</mat-icon> DUPLICAR ORDEN DE COMPRA
+            </button>      
+            <button  *ngIf="orden._id" mat-stroked-button aria-label="Clear" color="scondary" style="margin: 10px 10px;" (click)="printNotaVenta()">
+                <mat-icon>print</mat-icon> IMPRIMIR
+            </button>     
     </div>
 
     <div *ngIf="verListado">
@@ -43,7 +43,7 @@
                 <mat-icon>list</mat-icon> CERRADAS
             </button>
 
-            <button mat-stroked-button aria-label="Clear" color="scondary" style="margin: 10px 10px;" (click)="exportexcel()">
+            <button *ngIf="ordenes.length != 0" mat-stroked-button aria-label="Clear" color="scondary" style="margin: 10px 10px;" (click)="exportexcel()">
                 <mat-icon>cloud_download</mat-icon> DESCARGAR
             </button>
         </div>
@@ -69,13 +69,17 @@
               </tr>
             </ng-template>
            
-          </table>
+        </table>
     </div>
     <div *ngIf="!verListado">
 
         <table style="margin: 0 auto;  width: 100%;  margin-top: 15px; font-size: 0.4;" class="mat-elevation-z8">
             <tr>
-                <th colspan="7"><h1 style="text-align: center;">ORDENES DE COMPRA N° {{orden.consecutivo}}</h1></th>
+                <th colspan="7"><h1 style="text-align: center;">ORDENES DE COMPRA N° {{orden.consecutivo}}</h1>
+                    <button *ngIf="orden.estado == 'Autorizada'" (click)="cerrarCorden()" mat-stroked-button  aria-label="Clear" color="scondary" style="margin: 10px 10px;">
+                        <mat-icon>archive</mat-icon> Cerrar Orden
+                    </button>
+                </th>
             </tr>
             <tr>
               <th>SOLICITANTE</th>
@@ -153,19 +157,20 @@
                     <button *ngIf="!orden.proveedor.titulo" (click)="openDialogProveedores()" mat-stroked-button aria-label="Clear" color="scondary">
                         <mat-icon>local_grocery_store</mat-icon> PROVEEDOR
                     </button>
-                    <button *ngIf="orden.cotizaciones == 0" mat-stroked-button size="small" slot="end" fill="outline" (click)="fileManifiesto.click()" color="tertiary">
+                    <button *ngIf="orden.estado == 'Activa'" mat-stroked-button size="small" slot="end" fill="outline" (click)="fileManifiesto.click()" color="tertiary">
                         <mat-icon>attach_file</mat-icon> COTIZACION
-                      </button>
+                    </button>
                      
                       <ng-template let-item let-i="index" ngFor [ngForOf]="orden.cotizaciones">
-                        <button  mat-stroked-button  size="small" slot="end" fill="outline"  color="secondary" (click)="verCotizacion(item)">
-                            <mat-icon>file_open</mat-icon> Cotizacion: {{item}}
-                        </button>  
+                        <div>
+                            <button  mat-stroked-button  size="small" slot="end" fill="outline"  color="secondary" (click)="verCotizacion(item)" style="margin: 5px 5px">
+                                <mat-icon>file_open</mat-icon> Cotizacion: {{item}}
+                            </button>  
+                            <mat-icon  *ngIf="orden.estado == 'Activa'" style="margin-top: 30px; color: red; cursor: pointer;" (click)="deleteCotizacion(i)">delete</mat-icon> 
+                        </div>
                       </ng-template>
                      <input type="file" multiple="false"  (change)="onFileSelect($event)" #fileManifiesto style="display: none;" accept=".pdf">
                 </td>
-                
-
             </tr>
      
           <tr *ngIf="orden.proveedor.titulo" style="background-color: rgb(1, 1, 77); color: white; font-size: 1.3em;">
@@ -191,7 +196,6 @@
               </th>
               <th colspan="2">
                  Contacto: 
-                
               </th>
           </tr>
           <tr *ngIf="orden.proveedor.titulo" style="font-size: 1.3em;">

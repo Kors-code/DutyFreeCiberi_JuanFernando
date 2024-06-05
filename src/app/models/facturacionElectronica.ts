@@ -35,7 +35,6 @@ export class FactOperacion {
             public activa:boolean = false,
             public representante:string = "",
             public cedula:number = 0,
-            
     ){}
 }
 

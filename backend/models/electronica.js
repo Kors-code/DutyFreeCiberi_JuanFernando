@@ -12,7 +12,6 @@ var operacionSchema = Schema({
      factResolucionDS:Schema.Types.Mixed,
      factNotaCredito:Schema.Types.Mixed,
      factNotaDebito:Schema.Types.Mixed,
-
      set_pruebas:String,
      pruebas:Boolean,
      created_at: Date,

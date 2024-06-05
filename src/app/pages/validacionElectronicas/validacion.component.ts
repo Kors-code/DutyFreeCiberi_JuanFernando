@@ -61,7 +61,7 @@ export class ValidacionComponent implements OnInit {
   
 
   getElectronica(){
-    this._facturaElectronicaService.getElectronica().subscribe(
+    this._facturaElectronicaService.getElectronica(this.pOperacion._id).subscribe(
       res=>{
         if(res._id){
           this.facturacionElectronica = res;

@@ -34,7 +34,7 @@ export class ElectronicaComponent implements OnInit {
   constructor(private _router: Router, private _factElecService:FacturaElectronicaService,
     private _userService:UserService, public dialog: MatDialog, @Inject(DOCUMENT) doc: any,) {
       this.operacion = new Operacion();
-      this.pOperacion = new Operacion();
+      this.pOperacion = this._userService.getPredetermidaOperacion();
       this.facturacionElectronica = new AdminPvconfigFacElectronica();
 
       this.Type_document_identification_id = type_document_identification_id;
@@ -447,7 +447,7 @@ ActualizarResolucionNotasDebito(){
 }
 
 getElectronica(){
-  this._factElecService.getElectronica().subscribe(
+  this._factElecService.getElectronica(this.pOperacion._id).subscribe(
     res=>{
       if(res._id){
         this.facturacionElectronica = res;
@@ -493,6 +493,7 @@ passResolucion(item:FactResolucion){
 }
 
 RegisterElectronica(){
+  this.facturacionElectronica.operacion = this.pOperacion._id;
   this._factElecService.saveElectronica(this.facturacionElectronica).subscribe(
     res=>{
       this.facturacionElectronica = res;
@@ -511,6 +512,8 @@ RegisterElectronica(){
 
 updateElectronica(){
   this.facturacionElectronica.factResolucion = new FactResolucion();
+  this.facturacionElectronica.operacion = this.pOperacion._id;
+  console.log(this.facturacionElectronica)
   this._factElecService.updateElectronica(this.facturacionElectronica).subscribe(
     res=>{
       let data = {titulo: 'Exito', info:'Actualizado Correctamente', type: 'Confirm', icon:'done_all'}
