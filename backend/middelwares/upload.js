@@ -8,7 +8,9 @@ const storage = new GridFsStorage({
 
     file: (req, file) => {
 
-        const match = ["image/png", "image/jpeg", "application/pdf"];
+        const match = ["image/png", "image/jpeg", "application/pdf", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"];
+
+        console.log(file.mimetype)
 
         if (match.indexOf(file.mimetype) === -1) {
             const filename = file.originalname;

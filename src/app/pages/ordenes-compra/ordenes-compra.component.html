@@ -169,7 +169,7 @@
                             <mat-icon  *ngIf="orden.estado == 'Activa'" style="margin-top: 30px; color: red; cursor: pointer;" (click)="deleteCotizacion(i)">delete</mat-icon> 
                         </div>
                       </ng-template>
-                     <input type="file" multiple="false"  (change)="onFileSelect($event)" #fileManifiesto style="display: none;" accept=".pdf">
+                     <input type="file" multiple="false"  (change)="onFileSelect($event)" #fileManifiesto style="display: none;" accept=".pdf, .xls, .xlsx">
                 </td>
             </tr>
      
@@ -239,6 +239,7 @@
               <th>CANT. AUTO</th>
             
               <th>PRECIO UNITARIO</th>
+              <th>IMPUESTO</th>
             
               <th>TOTAL</th>
            
@@ -249,7 +250,7 @@
                   <td style="text-align: center;">
                       <div style="display: flex; align-items: center;">
                         <mat-icon (click)="deleteProd(i)" *ngIf="orden.estado == 'Activa'">delete</mat-icon>
-                        <input [disabled]="orden.estado != 'Activa'"  placeholder="" style="font-size: 1em; text-align: center; border-radius: 5px; " type="text" [(ngModel)]="item.codigo"> 
+                        <input [disabled]="orden.estado != 'Activa'"  placeholder="" style="font-size: 1.5em; text-align: center; border-radius: 5px;  padding: 5px; width: 100px;" type="text" [(ngModel)]="item.codigo"> 
                       </div>  
                     
                   </td>    
@@ -260,14 +261,39 @@
                       <textarea  [disabled]="orden.estado != 'Activa'" style="font-size: 1em; text-align: center; border-radius: 5px; " type="text" [(ngModel)]="item.aplicacion"></textarea>
                   </td> 
                   <td style="text-align: center;">
-                      <input  [disabled]="orden.estado != 'Activa'" placeholder="" style="font-size: 1em; text-align: center; border-radius: 5px;" type="number" [(ngModel)]="item.cantidad_pedida" (change)="cambiarPedido(item)"> 
+                      <input  [disabled]="orden.estado != 'Activa'" placeholder="" style="font-size: 1.5em; text-align: center; border-radius: 5px; padding: 5px;" type="number" [(ngModel)]="item.cantidad_pedida" (change)="cambiarPedido(item)"> 
                   </td> 
                   <td style="text-align: center;">
-                    <input  *ngIf="orden._id"  [disabled]="!permisos.autorizar" placeholder="" style="font-size: 1em; text-align: center; border-radius: 5px;" type="number" [(ngModel)]="item.cantidad" (change)="totalizar()"> 
-                </td> 
-                  <td style="text-align: center;">
-                      <input  [disabled]="orden.estado != 'Activa'" placeholder="" style="font-size: 1em; text-align: center; border-radius: 5px;  width: 150px;" type="number" [(ngModel)]="item.precio" (change)="totalizar()"> 
+                    <input  *ngIf="orden._id"  [disabled]="!permisos.autorizar" placeholder="" style="font-size: 1.5em; text-align: center; border-radius: 5px;  padding: 5px;" type="number" [(ngModel)]="item.cantidad" (change)="totalizar()"> 
                   </td> 
+                  <td style="text-align: center;">
+                      <input  [disabled]="orden.estado != 'Activa'" placeholder="" style="font-size: 1.5em; text-align: center; border-radius: 5px;  width: 150px; padding: 5px;" type="number" [(ngModel)]="item.precio" (change)="totalizar()"> 
+                  </td> 
+        
+                    <th style="font-size: 1em; border-radius: 20px; width: 150px;">
+                        <mat-icon *ngIf="orden.estado == 'Activa' && item.tasaImpuesto != 0" (click)="canceliMpu(item)">cancel</mat-icon>
+                        IVA {{item.tasaImpuesto}}% {{item.impuestound | number:'0.0-0'}}
+                        <mat-form-field appearance="fill" style="margin-left: 10px;" *ngIf="!item.impuestound">
+                            <mat-label>IMPUESTO</mat-label>
+                            <mat-select [(ngModel)]="impuestoProducto" (selectionChange)="CambiarImpuesto(item)"  [disabled]="orden.estado != 'Activa'">
+                                <mat-option  [value]="">
+                                   EXC
+                                  </mat-option> 
+                                <mat-option  [value]="0">
+                                    IVA 0%
+                                  </mat-option> 
+                                <mat-option  [value]="19">
+                                IVA 19%
+                              </mat-option> 
+                              <mat-option  [value]="5">
+                                IVA 5%
+                              </mat-option>
+                            </mat-select>
+                          </mat-form-field> 
+        
+                          <!-- <h5 *ngIf="orden.estado == 'Activa'"> {{impuesto}}%</h5> -->
+                    </th>
+           
                   <td style="text-align: center;">
                       <h2>
                           {{item.cantidad * item.precio | number}}
@@ -295,35 +321,24 @@
             <th style=" font-size: 1em; border-radius: 20px; width: 150px;">
                 SUBTOTAL
             </th>
-            <th style="font-size: 1.3em; width: 150px; background-color: rgb(113, 113, 163); color: white; border-radius: 5px;">{{orden.total | number}}</th>
-            <th style="font-size: 1em; border-radius: 20px; width: 150px;">
-                IVA
-                <mat-form-field appearance="fill" style="margin-left: 10px;">
-                    <mat-label>IMPUESTO</mat-label>
-                    <mat-select [(ngModel)]="orden.impuestoporcentaje" (selectionChange)="CambiarImpuesto()"  [disabled]="orden.estado != 'Activa'">
-                       
-                        <mat-option  [value]="0">
-                            IVA 0%
-                          </mat-option> 
-                        <mat-option  [value]="19">
-                        IVA 19%
-                      </mat-option> 
-                      <mat-option  [value]="5">
-                        IVA 5%
-                      </mat-option>
-                    </mat-select>
-                  </mat-form-field> 
+            <th style="font-size: 1.3em; width: 150px; background-color: rgb(113, 113, 163); color: white; border-radius: 5px;">{{orden.total - orden.impuestos | number:'0.0-0'}}</th>
+           
+            <th>
 
-                  <!-- <h5 *ngIf="orden.estado == 'Activa'"> {{impuesto}}%</h5> -->
+                IMPUESTOS
+                <!-- <input [disabled]="orden.estado != 'Activa'" placeholder="" style="font-size: 1.3em; text-align: center; " type="number" [(ngModel)]="orden.impuestos">  -->
             </th>
             <th>
-                <input [disabled]="orden.estado != 'Activa'" placeholder="" style="font-size: 1.3em; text-align: center; " type="number" [(ngModel)]="orden.impuestos"> 
+
+                <h5>{{orden.impuestos | number:'0.0-0'}}</h5>
+                
+                <!-- <input [disabled]="orden.estado != 'Activa'" placeholder="" style="font-size: 1.3em; text-align: center; " type="number" [(ngModel)]="orden.impuestos">  -->
             </th>
             <th style="font-size: 1em; border-radius: 20px; width: 150px; border-radius: 5px;">
                 TOTAL
             </th>
             <th style="font-size: 1.3em; width: 150px; background-color: rgb(1, 1, 77); color: white; ">
-                {{orden.total + orden.impuestos | number}}
+                {{orden.total | number}}
             </th>
         </tr>
       </table>
@@ -453,6 +468,7 @@
             <th style="border: 1px solid black;"> Aplicacion</th>
             <th style="border: 1px solid black;">Cantidad</th>
             <th style="border: 1px solid black;">Precio und</th>
+            <th style="border: 1px solid black;">Impuesto</th>
             <th style="border: 1px solid black;"> Totales</th>
             <th style="border: 1px solid black;"> Observaciones</th>
         </tr>
@@ -468,10 +484,13 @@
                     {{item.aplicacion}}
                 </td> 
                 <td style="text-align: center; border: 1px solid black;">
-                    {{item.cantidad}}
+                    {{item.cantidad | number:'0.0-0'}}
                 </td> 
                 <td style="text-align: center; border: 1px solid black;">
-                    {{item.precio}}
+                    {{item.precio | number:'0.0-0'}}
+                </td>
+                <td style="text-align: center; border: 1px solid black;">
+                   <span *ngIf="item.tasaImpuesto != 0"> IVA {{item.tasaImpuesto}}% {{item.impuestound | number:'0.0-0'}}</span> 
                 </td> 
                 <td style="text-align: center; border: 1px solid black;">
                         {{item.cantidad * item.precio | number}}
@@ -493,11 +512,11 @@
             <th style=" font-size: 1em;width: 150px; border: 1px solid black;">
                 SUBTOTAL
             </th>
-            <th style="font-size: 1.3em; width: 150px;  border: 1px solid black; text-align: right;">{{orden.total | number}}</th>
+            <th style="font-size: 1.3em; width: 150px;  border: 1px solid black; text-align: right;">{{orden.total - orden.impuestos  | number}}</th>
         </tr>
         <tr>
             <th style="font-size: 1em; width: 150px;border: 1px solid black; text-align: right;">
-                IVA {{orden.impuestoporcentaje}}%
+                IMPUESTOS
             </th>
             <th style="font-size: 1em; width: 150px;border: 1px solid black; text-align: right;">
                 {{orden.impuestos | number}}
@@ -508,7 +527,7 @@
                 TOTAL
             </th>
             <th style="font-size: 1.3em; width: 150px; border: 1px solid black; text-align: right;">
-                {{orden.total + orden.impuestos | number}}
+                {{orden.total | number}}
             </th>
         </tr>
       </table>

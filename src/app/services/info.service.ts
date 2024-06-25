@@ -560,6 +560,27 @@ getProducto(tag:string){
     return this._http.get<any>(this.url+'producto/'+tag, {headers:headers});
 }
 
+getProductoCollection(tag:string, coll:string){
+    // let paramas = JSON.stringify(register);
+    let headers = new HttpHeaders({
+        // 'Content-Type': 'application/json',
+        'Authorization': this.getToken()
+    });
+    return this._http.get<any>(this.url+'producto-collection/'+tag +'/'+coll, {headers:headers});
+}
+
+
+getCotizacionxls(tag:string){
+    // let paramas = JSON.stringify(register);
+    let headers = new HttpHeaders({
+        'Content-Type': 'application/json',
+        // 'Authorization': this.getToken()
+    });
+    return this._http.get(tag, {headers:headers, responseType:'blob' as 'json'});
+}
+
+
+
 // NOTAS DE VENTA
 
 agregarNotaVenta(register:any){

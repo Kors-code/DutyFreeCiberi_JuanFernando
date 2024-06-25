@@ -102,7 +102,10 @@ export class OrdenesCompra implements OnInit {
         cantidad:1,
         cantidad_pedida:1,
         precio:0,
-        observaciones:''
+        observaciones:'', 
+        tasaImpuesto:0,
+        baseImpuestound:0,
+        impuestound:0
       }
     )
   }
@@ -149,11 +152,48 @@ export class OrdenesCompra implements OnInit {
   }
 
   verCotizacion(item:string){
-    //.log(item);
-    let url =  this.url_dw+'pdf/'+item;
-    var win = window.open(url, '_blank');
+    // console.log(item);
+    if(item.indexOf('pdf') != -1){
+      let url =  this.url_dw+'pdf/'+item;
+      var win = window.open(url, '_blank');
+    }else{
+
+      let url =  this.url_dw+'xls/'+item;
+      this._infoService.getCotizacionxls(url).subscribe(
+        res =>{
+          // console.log(res)
+          this.manageFileXls(res, item)
+        }
+      )
+
+      // var win = window.open(url, '_blank');
+      console.log('getArchivo');
+
+
+    }
+
+
+    
+
+
   
   }
+
+
+  manageFileXls(response:any, fileName:string){
+      const dataType = response.type
+      const binaryData = []
+      binaryData.push(response)
+
+      const filePath= window.URL.createObjectURL(new Blob(binaryData, {type:dataType}) )
+      const downloadLink = document.createElement('a');
+      downloadLink.href= filePath
+      downloadLink.setAttribute('download',fileName)
+      document.body.appendChild(downloadLink);
+      downloadLink.click()
+  
+  }
+ 
 
   deleteCotizacion(i:number){
     this.orden.cotizaciones.splice(i,1)
@@ -322,9 +362,11 @@ export class OrdenesCompra implements OnInit {
     this.orden.impuestos=0;
     for (let i  = 0; i  < this.orden.productos.length; i ++) {
       const element = this.orden.productos[i ];
+      console.log(element)
       this.orden.total= this.orden.total + (element.precio * element.cantidad)
+      this.orden.impuestos = this.orden.impuestos + (element.impuestound*element.cantidad);
     }
-    this.orden.impuestos = this.orden.total *  (this.orden.impuestoporcentaje/100);
+    // this.orden.impuestos = this.orden.total *  (this.orden.impuestoporcentaje/100);
     // //.log(this.orden)
   }
 
@@ -391,13 +433,39 @@ export class OrdenesCompra implements OnInit {
   }
 
   impuesto=0;
-  CambiarImpuesto(){
-    //.log(this.impuesto)
-    this.orden.impuestos = this.orden.total *  (this.orden.impuestoporcentaje/100);
+  impuestoProducto= 0
+  CambiarImpuesto(item:any){
+
+    if(this.impuestoProducto){
+      console.log(this.impuestoProducto/100) 
+      item.tasaImpuesto = this.impuestoProducto,
+      item.baseImpuestound= item.precio / (1+(this.impuestoProducto/100)),
+  
+      item.impuestound = item.baseImpuestound * (this.impuestoProducto/100),
+  
+      console.log(item)
+    
+    }
+    this.totalizar()
+
+ 
+    // this.orden.impuestos = this.orden.total *  (this.orden.impuestoporcentaje/100);
   }
+
+  canceliMpu(item:any){
+
+    item.tasaImpuesto = 0;
+    item.baseImpuestound= 0;
+    item.impuestound = 0,
+    console.log(item)
+    this.totalizar()
+  }
+
 
   cambiarPedido(item:any){
     item.cantidad = item.cantidad_pedida;
+    item.baseImpuestound= item.precio / (1+(item.tasaImpuesto/100)),
+    item.impuestound = item.baseImpuestound * (item.tasaImpuesto/100),
     this.totalizar();
   }
 

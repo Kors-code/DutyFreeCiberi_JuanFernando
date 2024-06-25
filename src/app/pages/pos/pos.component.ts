@@ -55,6 +55,7 @@ export class posComponent implements OnInit {
     ) { 
       this.config = new Config();
       this.notaVenta = new NotaVenta();
+  
 
       this.identity = this._userService.getIdentity();
 
@@ -68,7 +69,7 @@ export class posComponent implements OnInit {
         .catch((error:any) => error);
 
         this.pOperacion=_userService.getPredetermidaOperacion();
-        // //.log(this.identity)
+        console.log(this.pOperacion)
     }
 
   ngOnInit(): void {
@@ -308,9 +309,9 @@ getVentasPeriodo(feha_inicial:any, fecha_final:any) {
   search=""
   productSearch:any=[]
   getProducto(item:string){
-    this._infoService.getProducto(item).subscribe(
+    this._infoService.getProductoCollection(item, 'Productos_'+this.pOperacion.titulo).subscribe(
       res=>{
-        // //.log(res)
+        console.log(res)
         if(res.length != 0){
           
           if(res.length == 1){
@@ -512,10 +513,7 @@ getVentasPeriodo(feha_inicial:any, fecha_final:any) {
 
       const wsname : string = wb.SheetNames[0];
       const ws: XLSX.WorkSheet = wb.Sheets[wsname];
-      this.data = (XLSX.utils.sheet_to_json(ws, { header: 1 }));
-
-      ////// //.log('Data',this.data);
-      // ////// ////// //.log('Costumer',this.dataCostumer);
+      this.data = (XLSX.utils.sheet_to_json(ws));
       this.convertirJson()
 
     };
@@ -527,28 +525,16 @@ getVentasPeriodo(feha_inicial:any, fecha_final:any) {
   registros:any = [];
   convertirJson(){
     this.log= true;
-    let keys = Object.values(this.data[0])
-    for(var i = 1;i < this.data.length; i++){
-      let arr = this.data[i];
-      let par = Object.values(arr);
-      let reg = []
-      for (let i = 0; i < keys.length; i++) {
-        let obje = [keys[i], par[i] || '' ]
-        reg.push(obje)
-      }
-      this.registros.push(Object.fromEntries(reg))
-    }
+
+    this.registros = this.data
+    console.log(this.registros)
 
     this.log= false;
-   
-    // //.log(this.registros)
-    let lotes = 200;
-   
   }
 
   AgregarProductos(){
     this.log = true
-    this._infoService.remplazarInfo(this.registros, 'Productos').subscribe(
+    this._infoService.remplazarInfo(this.registros, 'Productos_'+this.pOperacion.titulo).subscribe(
       res=>{
         this.registros = [];
         this.data=[];

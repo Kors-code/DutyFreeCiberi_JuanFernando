@@ -29,8 +29,6 @@
             <mat-icon>save</mat-icon> GUARDAR
           </button>
         </div>
-
-
   
         <h3>Actualizar Productos</h3>
         <div *ngIf="!fileName">
@@ -45,11 +43,9 @@
     
             </div>
         </div >
-        
         <!-- <input type="file" multiple="false" (change)="onFileChange($event)" style="font-size: 1.3em; margin-left: 10px; background-color: orange;color:white;"> -->
-       
         <button *ngIf="registros.length != 0" [disabled]="" mat-raised-button aria-label="Clear" style="color: white; background-color: orange; margin-left: 20px;" (click)="AgregarProductos()">
-          <mat-icon>save</mat-icon> Agregar {{registros.length}} Productos</button>
+          <mat-icon>save</mat-icon> Agregar {{registros.length}} Productos_{{pOperacion.titulo}}</button>
         </mat-card-content>
 
       <div style="display: flex; justify-content: center;" *ngIf="getfechaSRcalendar">

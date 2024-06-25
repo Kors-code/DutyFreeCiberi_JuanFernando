@@ -95,6 +95,43 @@ router.get("/pdf/:filename", async (req, res) => {
     }
 });
 
+router.get("/xls/:filename", async (req, res) => {
+    id=req.params.filename 
+    // console.log('xls  ', id)
+    try {
+        // let files = await gfs.find({"_id": new mongoose.isObjectIdOrHexString(id)}).toArray();
+        let files = await gfs.find({filename: id}).toArray();
+        let pdf = files[0]
+      
+        if(pdf.contentType === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'){
+            // console.log('xls ..', pdf)
+
+            let mimeType = pdf.contentType;
+            if (!mimeType) {
+                mimeType = mime.lookup(pdf.filename);
+            }
+            res.set({
+                'Content-Type': mimeType,
+                'Content-Disposition': 'attachment; filename=' + pdf.filename
+            });
+
+            const readStream = gfs.openDownloadStream(pdf._id);
+                readStream.on("error", (err) => {
+                console.error("Error reading file stream:", err);
+                     res.status(500).json({ error: "Error reading file stream" });
+                });
+
+                // console.log(readStream.pipe(res));
+                readStream.pipe(res);
+
+        }
+      
+    } catch (err) {
+        console.log(err)
+        res.json({err})
+    }
+});
+
 
 router.get("/files", async (req, res) => {
     try {

@@ -156,7 +156,7 @@ api.put('/consecutivo', md_auth.ensureAuth,  ConsecutivoController.updateConsecu
 // RUTAS PRODUCTOS
 
 api.get('/producto/:id',md_auth.ensureAuth, infoController.getProductoEan);
-
+api.get('/producto-collection/:id/:coll',md_auth.ensureAuth, infoController.getProductoEanCollection);
 
 // RUTAS CONSECUTIVOS
 

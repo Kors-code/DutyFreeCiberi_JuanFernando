@@ -443,7 +443,7 @@ export class ImportarInfoComponent implements OnInit {
   }
 
   generarRegistros(registros: any[]){
-    //.log( registros)
+    console.log(registros)
     if(registros){
     this.log = true
     this.itemsContable =[]
@@ -461,11 +461,13 @@ export class ImportarInfoComponent implements OnInit {
         let posTienda = this.config.tiendas.map(function(e: { tienda: any; }) { return e.tienda; }).indexOf(registros[i]['PDV']);
         let tienda :any
 
-        //.log('tienda en configuracion',posTienda)
+        console.log('tienda en configuracion',posTienda)
 
         if(posTienda != -1){
           tienda =this.config.tiendas[posTienda].centro_costos;
         }
+
+        console.log(tienda)
 
         let dtaComprobante = {
           account:{
