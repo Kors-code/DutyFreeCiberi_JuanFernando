@@ -1,4 +1,7 @@
-
+::ng-deep.mat-menu-panel {
+    max-width: none !important;
+  }
+  
 ._100{
     background:rgb(7, 231, 7);
     text-align:center;

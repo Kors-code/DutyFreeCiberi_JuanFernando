@@ -161,7 +161,14 @@ export class ImportarInfoComponent implements OnInit {
       Debit:'61359598',
       Credit:'14350198',
       Venta:'41359598'
-    }
+    },
+    {
+      cod:20,
+      name:'Presentes',
+      Debit:'61359520',
+      Credit:'14350120',
+      Venta:'41359520'
+    },
   ]; 
 		
 
@@ -232,12 +239,12 @@ export class ImportarInfoComponent implements OnInit {
     reader.onload = (e: any) => {
       const bstr: string = e.target.result;
 
-      const wb: XLSX.WorkBook = XLSX.read(bstr, { type: 'binary' });
+      const wb: XLSX.WorkBook = XLSX.read(bstr, { type: 'binary', cellDates: true, dateNF: 'dd/mm/yyyy' });
 
       const wsname : string = wb.SheetNames[0];
       const ws: XLSX.WorkSheet = wb.Sheets[wsname];
-      this.data = (XLSX.utils.sheet_to_json(ws, { header: 1 }));
-
+      this.data = (XLSX.utils.sheet_to_json(ws));
+      this.registros = this.data;
       this.convertirJson()
       this.log= false;
     };
@@ -363,22 +370,24 @@ export class ImportarInfoComponent implements OnInit {
   itemsFacturaVentas:any = [];
   convertirJson(){
     this.log= true;
-    let keys = Object.values(this.data[0])
-    for(var i = 1;i < this.data.length; i++){
-      let arr = this.data[i];
-      let par = Object.values(arr);
-      let reg = []
-      for (let i = 0; i < keys.length; i++) {
-        let obje = [keys[i], par[i] || '' ]
-        reg.push(obje)
-      }
-      this.registros.push(Object.fromEntries(reg))
-    }
+    // let keys = Object.values(this.data[0])
+    // for(var i = 1;i < this.data.length; i++){
+    //   let arr = this.data[i];
+    //   let par = Object.values(arr);
+    //   let reg = []
+    //   for (let i = 0; i < keys.length; i++) {
+    //     let obje = [keys[i], par[i] || '' ]
+    //     reg.push(obje)
+    //   }
+    //   this.registros.push(Object.fromEntries(reg))
+    // }
 
-    
+    //.log(this.registros)
     for(var i = 0;i < this.registros.length; i++){
-      let fecha =  this.registros[i].FECHA;
-      let split = fecha.split("/");
+      let fecha:Date =  new Date(this.registros[i]['FECHA']);
+  
+      //.log(fecha)
+      // let split = fecha.split("/");
       // // ////// //////.log(split)
       this.registros[i].Importe = Number(this.registros[i].TOTAL)
       this.registros[i].Estado = 'Activa';
@@ -392,8 +401,6 @@ export class ImportarInfoComponent implements OnInit {
         this.registros[i].Costo_de_v = 0;
       }
 
-      ////.log(this.registros[i]['COSTO DE VENTA'])
-      ////.log(this.registros[i].Costo_de_v)
 
       for (let q = 0; q < this.config.categorias.length; q++) {
         const element = this.config.categorias[q];
@@ -405,18 +412,18 @@ export class ImportarInfoComponent implements OnInit {
          } 
       }
 
-      // //////.log(this.registros[i]['COSTO DE VENTA'])
+      //.log(fecha.getMonth())
 
-      if(parseInt(split[0]) <= 9){
-        this.registros[i].Day = '0'+ split[0];
+      if(fecha.getDate() <= 9){
+        this.registros[i].Day = '0'+ fecha.getDate();
         // ////// //////.log( this.registros[i].Day)
       }else{
-        this.registros[i].Day = split[0];
+        this.registros[i].Day = fecha.getDate();
         // ////// //////.log( this.registros[i].Day)
       }
 
-      this.registros[i].Month = split[1];
-      this.registros[i].Year = '20'+split[2];
+      this.registros[i].Month = fecha.getMonth();
+      this.registros[i].Year = fecha.getFullYear();
 
       let detalle = 'FAC '+this.registros[i].FOLIO + ' SKU: '+this.registros[i].CODIGO + ' CANT: ' +this.registros[i].CANTIDAD + ' TRM: '+this.registros[i].TRM + ' USD: '+this.registros[i].TOTAL + ' ' + this.registros[i].DESCRIPCION;
       if(detalle.length >= 101){
@@ -428,7 +435,7 @@ export class ImportarInfoComponent implements OnInit {
     }
     this.log= false;
    
-    //.log(this.registros)
+    //.log(this.registros);
     let lotes = 200;
     this.chunckArrayInGroups(this.registros, lotes)
    
@@ -438,21 +445,25 @@ export class ImportarInfoComponent implements OnInit {
     var chunk = [], i; // declara array vacio e indice de for
     for (i = 0; i <= arr.length; i+= size) // loop que recorre el array 
       chunk.push(arr.slice(i, i + size)); // push al array el tramo desde el indice del loop hasta el valor size + el indicador 
-      // //////.log(chunk)
+      //.log(chunk)
       return this.lotesCmprobantes = chunk;
   }
 
   generarRegistros(registros: any[]){
-    console.log(registros)
+    //.log(registros)
     if(registros){
     this.log = true
-    this.itemsContable =[]
-    this.itemsFacturaVentas=[]
+    this.itemsContable =[];
+    this.itemsFacturaVentas=[];
+
+    var lote = 0
     for(var i = 0;i < registros.length; i++){
       ////.log(registros[i].Costo_de_v)
       if(!registros[i].Costo_de_v){
         registros[i].Costo_de_v = 0;
       }
+
+      lote = registros[i].Lote;
 
       let pos2 = this.cuentas.map(function(e: { cod: any; }) { return e.cod; }).indexOf( parseInt(registros[i]['CLASIFICACION']));
 
@@ -461,13 +472,13 @@ export class ImportarInfoComponent implements OnInit {
         let posTienda = this.config.tiendas.map(function(e: { tienda: any; }) { return e.tienda; }).indexOf(registros[i]['PDV']);
         let tienda :any
 
-        console.log('tienda en configuracion',posTienda)
+        //.log('tienda en configuracion',posTienda)
 
         if(posTienda != -1){
           tienda =this.config.tiendas[posTienda].centro_costos;
         }
 
-        console.log(tienda)
+        
 
         let dtaComprobante = {
           account:{
@@ -596,23 +607,75 @@ export class ImportarInfoComponent implements OnInit {
       _id:this.pOperacion._id
     }
 
-    // //.log(credenciales)
-
     this._siigoService.saveComprobantesSiigo(credenciales).subscribe(
       res=>{
         //.log(res);
+        let dialogRef
+        var siigo:any = []
         this.openSnackBar('CMV GENERADO CORRECTAMENTE','EXITO')
         this._siigoService.saveComprobantesSiigo(credencialesVentas).subscribe(
           resp=>{
+
             this.openSnackBar('COMPROVANTE DE VENTA GENERADO CORRECTAMENTE','EXITO')
             for(var i = 0;i < registros.length; i++){
               res.items = null
               resp.items = null
-              registros[i].Siigo.push(res)
-              registros[i].Siigo.push(resp)
-              registros[i].Estado = 'Siigo'
+              registros[i].Siigo.push(res);
+              registros[i].Siigo.push(resp);
+              registros[i].Estado = 'Siigo';
+              registros[i].Lote = lote;
+              siigo.push(res)
+              siigo.push(resp)
             }
-            this.saveInfoCompleto(registros)
+
+            if(!this.dia){
+              this.saveInfoCompleto(registros)
+            }else{
+              let up = {
+                Day:this.dia,
+                Siigo:siigo,
+                Estado:'Siigo',
+                Lote:lote
+              }
+              this.procesado++
+              registros.forEach(element => {
+                  this._infoServce.updateRegistroSiigo(element, this.tag).subscribe(
+                    resUp=>{
+                        console.log(resUp)
+                    }
+                  )
+              });
+
+              if(this.procesado <= this.lotesCmprobantes.length){
+                if(this.procesado << this.lotesCmprobantes.length){
+                  this.generarRegistros(this.lotesCmprobantes[this.procesado])
+                  this.dialog.closeAll()
+                  let data = {titulo: 'Progreso '+ this.procesado + ' de ' + this.lotesCmprobantes.length, info:'Se Registraron '  + ' de ' + registros.length, type: 'Confirm', icon:'done_all'}
+                  dialogRef = this.dialog.open(DialogConfirm,{
+                    data: data
+                  });
+                }else{
+                  this.log = false
+                  let data = {titulo: 'Registro Exitoso '+ this.procesado + 'de ' + this.lotesCmprobantes.length, info:'Se Registraron '  + ' de ' + registros.length, type: 'Confirm', icon:'done_all'}
+                  let dialogRef = this.dialog.open(DialogConfirm,{
+                    data: data
+                  });
+                }
+              }
+
+        
+            }
+          },err=>{
+            this.log = true
+            let data = {titulo: 'Error', info:err.error.message, type: 'Confirm', icon:'error'}
+      
+            let dialogRef = this.dialog.open(DialogConfirm,{
+              data: data
+            });
+          
+            dialogRef.afterClosed().subscribe(result => {
+    
+            })
           })
         
       },err =>{
@@ -626,7 +689,6 @@ export class ImportarInfoComponent implements OnInit {
         dialogRef.afterClosed().subscribe(result => {
 
         })
-        //.log(err)
 
       }
     )
@@ -641,9 +703,41 @@ export class ImportarInfoComponent implements OnInit {
     }
   }
 
+
+  guardarRegistros(){
+
+    let dialogRef
+    console.log('GUARDAR REGISTROS')
+    this.procesado = 0;
+
+    for (let i = 0; i < this.lotesCmprobantes.length; i++) {
+      const element = this.lotesCmprobantes[i];
+      for (let a = 0; a < element.length; a++) {
+        const reg = element[a];
+        reg.Lote = i
+      }
+      this._infoServce.agregarInfo(element, this.tag).subscribe(
+        res =>{
+          let dato = res
+          this.procesado++
+          // //////.log(this.procesado)
+          if(this.procesado == this.lotesCmprobantes.length){
+
+            this.log = false
+              let data = {titulo: 'Registro Exitoso '+ this.procesado + ' de ' + this.lotesCmprobantes.length, info:'Se Registraron ' + res.insertedCount + ' de ' + element.length, type: 'Confirm', icon:'done_all'}
+              let dialogRef = this.dialog.open(DialogConfirm,{
+                data: data
+              });
+          
+          }
+        })
+    }
+  }
+
+
   procesado = 0
   procesarInformacion(){
-    this.procesado = 0
+    this.procesado = 0;
     this.generarRegistros(this.lotesCmprobantes[0])
   }
 
@@ -694,6 +788,45 @@ export class ImportarInfoComponent implements OnInit {
 
   reload(){
     window.location.reload();
+  }
+
+
+  activos =[];
+  dias=[]
+  passTag(){
+    this.activos =[];
+    this.dias=[];
+    //.log(this.tag)
+    this._infoServce.getCollectionsEstadoActivo(this.tag).subscribe(
+      res=>{
+        //.log(res)
+        if(res.lenth != 0){
+          this.activos = res;
+          for (let i = 0; i < this.activos.length; i++) {
+            const element = this.activos[i]['Day'];
+            let subc = this.dias.map(function(e) { return e; }).indexOf(element);
+            if(subc == -1){
+              this.dias.push(element)
+            }
+          }
+        }
+      }
+    )
+  }
+
+  dia:string = ''
+  passDia(item:string){
+    //.log(item)
+
+    this.activos.forEach(element => {
+      if(element['Day'] === this.dia){
+        this.registros.push(element)
+      }
+    });
+
+    this.convertirJson();
+    //.log(this.registros)
+
   }
 
 

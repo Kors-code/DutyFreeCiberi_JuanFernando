@@ -10,12 +10,21 @@
     </mat-form-field> -->
     <mat-form-field appearance="fill">
       <mat-label>Tag Base Datos</mat-label>
-      <mat-select [(ngModel)]="tag">
-        <mat-option *ngFor="let item of config.tags" [value]="item.tag">
+      <mat-select [(ngModel)]="tag" >
+        <mat-option *ngFor="let item of config.tags" [value]="item.tag" (click)="passTag()">
           {{item.tag}}
         </mat-option>
       </mat-select>
     </mat-form-field> 
+
+    <mat-form-field appearance="fill" *ngIf="dias.length != 0">
+      <mat-label>Informe {{dias.length}} Dias Pendientes</mat-label>
+      <mat-select [(ngModel)]="dia" style="text-align: center;" >
+        <mat-option *ngFor="let item of dias" [value]="item" (click)="passDia(item)">
+         Dia: {{item}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
 
       <input  type="file" multiple="false" #fileUpload  (change)="onFileChange($event)" style="font-size: 1.3em; margin-left: 10px;display: none;">
       <button *ngIf="tag" mat-stroked-button color="warn" class="upload-btn"
@@ -45,7 +54,7 @@
       COMPROBANTECOSTO MERCANCIA VENDIDA {{totalCostos() | number:'0.0-0'}}
     </mat-chip>
    </div>
-    <mat-chip-list  style="margin: 0 auto;">
+    <mat-chip-list  style="display: flex; justify-content: center; align-items: center; width: 100%;">
       <ng-template let-doc let-i="index" ngFor [ngForOf]="lotesCmprobantes">
         <mat-chip color="accent"  [class._100]=" procesado != 0 &&i <= procesado" [disabled]="!obs || log"   (click)="generarRegistros(doc)"  >
           <mat-chip-avatar>
@@ -56,7 +65,7 @@
       </ng-template>
       
     </mat-chip-list>
-
+     <button *ngIf="!dia"  flex mat-raised-button color="accent" [disabled]="!obs || log || procesado == lotesCmprobantes.length "  (click)="guardarRegistros()" class="text-upper" style="width: 90%; margin:15px auto;margin-left: 20px; color: white;"> GUARDAR {{registros.length}} registros <span style="font-size: 1.3em; color:blue" > {{lotesCmprobantes.length * 2}}</span> SIN ENVIAR <mat-icon>save</mat-icon></button>
      <button  flex mat-raised-button color="warn" [disabled]="!obs || log || procesado == lotesCmprobantes.length "  (click)="procesarInformacion()" class="text-upper" style="width: 90%; margin:15px auto;margin-left: 20px; color: white;"> Subir {{registros.length}} registros <span style="font-size: 1.3em; color:blue"> {{lotesCmprobantes.length * 2}}</span> Comprobantes  Siigo <mat-icon>save</mat-icon></button>
 
      <button *ngIf="procesado == lotesCmprobantes.length " flex mat-raised-button color="warn" [disabled]=""  (click)="reload()" class="text-upper" style="width: 90%; margin:15px auto;margin-left: 20px; color: white;"> se registraron los comprobamtes agregar nuevos<mat-icon>refresh</mat-icon></button>

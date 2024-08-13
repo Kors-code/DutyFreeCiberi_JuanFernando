@@ -71,6 +71,34 @@ router.get("/image/:filename", async (req, res) => {
     }
 });
 
+
+router.get("/image-other/:filename", async (req, res) => {
+    id=req.params.filename 
+
+    try {
+        // let files = await gfs.find({"_id": new mongoose.isObjectIdOrHexString(id)}).toArray();
+        let files = await gfs.find({filename: id}).toArray();
+
+        let img = files[0]
+
+        // console.log(img)
+        if(img.contentType === 'image/jpeg' || img.contentType === 'image/png' || img.contentType === 'image/webp'){
+  
+            const readStream = gfs.openDownloadStream(img._id);
+                readStream.on("error", (err) => {
+                console.error("Error reading file stream:", err);
+                res.status(500).json({ error: "Error reading file stream" });
+                });
+                readStream.pipe(res);
+
+        }
+      
+    } catch (err) {
+        console.log(err)
+        res.json({err})
+    }
+});
+
 router.get("/pdf/:filename", async (req, res) => {
     id=req.params.filename 
     console.log(id)

@@ -12,6 +12,7 @@ var UserSchema = Schema({
     password: String,
     estado: String, //activo, inactivo, suspendido etc. 
     image: String, // imagen de perfil de usuario.
+    firma:Schema.Types.Mixed, // imagen de firma de usuario.
     portada:String, // imagen de portada de perfil.
     origen:String, // fuente de ingreso generador o vinculado.
     perfil:String, // frace de perfil de usuario. 

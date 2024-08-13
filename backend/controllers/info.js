@@ -442,6 +442,26 @@ async function getDataCollection(req, res){
         res.status(200).send(arrayCollections);
 }
 
+
+async function getDataCollectionEstadoActive(req, res){
+    var params = req.body;
+    var coll = req.params.tag;
+    const url = 'mongodb://localhost:27017';
+    const client = new MongoClient(url);
+    const dbName = 'DutyFree';
+        await client.connect();
+        //console.log('Connected successfully to server');
+        const db = client.db(dbName);
+        const collection = await db.collection(coll);
+        let arrayCollections = []
+        var reg = await collection.find({Estado:'Activa'}).forEach(element => {
+            // //console.log(element)    
+            arrayCollections.push(element)
+         });
+        // //console.log(reg)
+        res.status(200).send(arrayCollections);
+}
+
 async function getDataCollectionPaginate(req, res){
     var params = req.body;
     const page = req.query.page || 0;
@@ -559,6 +579,63 @@ async function getHeadersCollection(req, res){
 async function updateDataCollection(req, res){
     var params = req.body;
     var coll = req.params.tag;
+    console.log('//console update' + coll)
+    console.log('entro Guardar Datata collections', params._id)
+    const url = 'mongodb://localhost:27017';
+    const client = new MongoClient(url);
+    const dbName = 'DutyFree';
+   
+        await client.connect();
+        //console.log('Connected successfully to server');
+        const db = client.db(dbName);
+        const collection = await db.collection(coll);
+
+        collection.findOneAndUpdate({_id : ObjectId(params._id)},{$set:{params}},{ upsert: true }, function(err,doc) {
+            if (err) { throw err; }
+            else { 
+                //console.log(doc)
+                res.status(200).send(doc); }
+          });
+
+        // var reg = await collection.mod({_id:params._id}, params, { returnNewDocument: true })
+        
+}
+
+async function updateDataCollectionSIIGO(req, res){
+    var params = req.body;
+    var coll = req.params.tag;
+    console.log('//console update' + coll)
+    console.log('entro Guardar Datata collections', params._id)
+    const url = 'mongodb://localhost:27017';
+    const client = new MongoClient(url);
+    const dbName = 'DutyFree';
+   
+        await client.connect();
+        //console.log('Connected successfully to server');
+        const db = client.db(dbName);
+        const collection = await db.collection(coll);
+
+        collection.findOneAndUpdate({_id : ObjectId(params._id)},{$set:{
+            Estado:params.Estado,
+            Day:params.Day,
+            Siigo:params.Siigo,
+            Lote:params.Lote
+        }},{ upsert: true }, function(err,doc) {
+            if (err) { throw err; }
+            else { 
+                //console.log(doc)
+                res.status(200).send(doc); }
+          });
+
+        // var reg = await collection.mod({_id:params._id}, params, { returnNewDocument: true })
+        
+}
+
+async function updateDataManyCollection(req, res){
+    var params = req.body;
+    var coll = req.params.tag;
+
+    console.log(params)
     //console.log('//console update' + coll)
     //console.log(params)
     const url = 'mongodb://localhost:27017';
@@ -570,7 +647,7 @@ async function updateDataCollection(req, res){
         const db = client.db(dbName);
         const collection = await db.collection(coll);
 
-        collection.findOneAndUpdate({_id : ObjectId(params._id)},{$set:{params}},{ upsert: true }, function(err,doc) {
+        collection.updateMany({Day:params.Day, Lote:params.Lote},{$set:{Estado:params.Estado, Siigo:params.Siigo}}, function(err,doc) {
             if (err) { throw err; }
             else { 
                 //console.log(doc)
@@ -856,6 +933,7 @@ function getRegistros(req, res){
     var update = req.body;
     var Id = req.body._id;
     const options = req.body;
+    console.log('info get')
     Info.paginate({}, options ,function(err, finders){
         if(err){
             res.status(500).send({message: 'Error al Buscar Informacion'});
@@ -1326,6 +1404,7 @@ module.exports = {
     getDataCollectionEstado,
     getDataCollectionVendedor,
     getDataCollectionPaginate,
+
     agregarInfo,
     consultarInfoCategoria,
     consultarInfoCategoriaTienda,
@@ -1335,6 +1414,8 @@ module.exports = {
     getHeadersCollection,
     getDataCollectionKey,
     updateDataCollection,
+    updateDataManyCollection,
+    updateDataCollectionSIIGO,
     consultarInfoFolio,
     deleteDataCollection,
 

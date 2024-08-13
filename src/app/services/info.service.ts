@@ -110,6 +110,16 @@ export class InfoService {
     
     }
 
+    getCollectionsEstadoActivo(tag:string){
+        // let paramas = JSON.stringify(register);
+        let headers = new HttpHeaders({
+            // 'Content-Type': 'application/json',
+            'Authorization': this.getToken()
+        });
+        return this._http.get<any>(this.url+'info-collection-estado/'+tag +'/Activa', {headers:headers});
+    
+    }
+
     getCollectionsInventarios(){
         // let paramas = JSON.stringify(register);
         let headers = new HttpHeaders({
@@ -260,6 +270,31 @@ export class InfoService {
         return this._http.post<response>(this.url +'update-document/'+ tag,
                 params, {headers:headers})
     }
+
+    updateRegistroSiigo(update:any, tag:string){
+        let params = JSON.stringify(update);
+        let headers = new HttpHeaders({
+            'Content-Type': 'application/json',
+            'Authorization': this.getToken()
+        });
+        return this._http.post<response>(this.url +'update-document-siigo/'+ tag,
+                params, {headers:headers})
+    }
+
+    
+
+    updateDataManyCollection(update:any, tag:string){
+        let params = JSON.stringify(update);
+        let headers = new HttpHeaders({
+            'Content-Type': 'application/json',
+            'Authorization': this.getToken()
+        });
+        return this._http.post<response>(this.url +'update-many-documents/'+ tag,
+                params, {headers:headers})
+    }
+
+
+    
 
     updateRegistroVendedor(update:any, tag:string){
         let params = JSON.stringify(update);

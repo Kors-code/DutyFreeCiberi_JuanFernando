@@ -364,9 +364,7 @@ export class DashBoardComponent implements OnInit {
         // this.getDataCollections(this.key)
       }
       item = result
-
     })
-    ////////////console.log(item)
   }
 
   getPresupuestosTag(tag:string){

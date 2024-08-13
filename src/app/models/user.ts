@@ -10,6 +10,7 @@ export class User{
         public password: string = '',
         public estado: string = '',
         public image:string= 'assets/m.svg',
+        public firma:any= [],
         public portada:string= '',
         public color:string= '',
         public cargo:string= '',

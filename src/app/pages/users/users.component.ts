@@ -9,6 +9,9 @@ import { OperacionesService } from 'src/app/services/operacion.service';
 import { UserService } from 'src/app/services/user.service';
 import { DialogConfirm } from '../confirm-dialog/confirm-dialog.component';
 import { GLOBAL } from 'src/app/global';
+import * as XLSX from 'xlsx';
+import { HttpClient } from '@angular/common/http';
+
 
 @Component({
   selector: 'app-users',
@@ -39,13 +42,14 @@ export class UsersComponent implements OnInit {
   invalidError:any
   public categorias:any;
   event_seat:any;
-
+  url_app
   Modulos:any;
 
   constructor(private _userService:UserService,
               private _router: Router,
               public dialog: MatDialog, @Inject(DOCUMENT) doc: any,
               private _operacionesService: OperacionesService,
+              private _http: HttpClient
               ) {
                 // this.company = GLOBAL.company;
                 this.user = new User();
@@ -53,7 +57,7 @@ export class UsersComponent implements OnInit {
                 // this.pCompany = this._userService.getPredetermidaCompany();
                 // this.operacion = this._userService.getPredetermidaOperacion();
                 this.Modulos = new Permisos().permisos;
-
+                this.url_app = GLOBAL.url_app;
                 //console.log(this.Modulos)
 
   }
@@ -206,7 +210,6 @@ export class UsersComponent implements OnInit {
     return this.companyUsers = usuariosArr;
     }
     else{
-
       return this.companyUsers = this.companyUsersArr;
       }
   }
@@ -486,6 +489,91 @@ deleteUser(){
       )
 
  }
+
+ upload = [];
+ onFileSelected(evt: any) {
+   const target : DataTransfer =  <DataTransfer>(evt.target);
+   
+   if (target.files.length !== 1) throw new Error('Cannot use multiple files');
+
+   const reader: FileReader = new FileReader();
+
+   reader.onload = (e: any) => {
+     const bstr: string = e.target.result;
+
+     const wb: XLSX.WorkBook = XLSX.read(bstr, { type: 'binary' });
+     const wsname : string = wb.SheetNames[0];
+     const ws: XLSX.WorkSheet = wb.Sheets[wsname];
+     this.upload = (XLSX.utils.sheet_to_json(ws));
+
+   };
+
+   reader.readAsBinaryString(target.files[0]);
+
+ }
+
+
+ files: File[] = [];
+
+onSelect(event:any) {
+  console.log(event);
+  this.files.push(...event.addedFiles);
+}
+
+onRemove(event:any) {
+  console.log(event);
+  this.files.splice(this.files.indexOf(event), 1);
+}
+
+onFileSelect(){
+
+  const file_data = this.files[0];
+  console.log(file_data);
+
+  try {
+    const formData = new FormData();
+        formData.append('file', file_data)
+        this._http.post(this.url_app+'upload', formData).subscribe(
+          res=>{
+            console.log(res)
+             let fileupdate:any = res
+              if(fileupdate.filename){
+                this.user.firma =fileupdate.filename;
+                this.update();
+              }
+              console.log(this.user)
+          }
+        );
+
+  } catch (error) {
+    
+  }
+}
+
+
+deleteFirma(){
+  this.user.firma = ''
+}
+
+// deleteImageServer(item){
+//   console.log(item)
+//   this._albumService.deleteIMG(item.img).subscribe(
+//     result => {
+//       console.log(result)
+//       // this.categoria.img = 'local.png' ;
+//     },
+//     error => {
+//       var errorMessage = <any>error;
+//      if(errorMessage != null){
+//          var body = JSON.parse(error._body);
+//          this.errorMessage = body.message;
+//      }
+     
+//     }
+//   );
+// }
+
+
 
 
 

@@ -322,16 +322,12 @@
                 SUBTOTAL
             </th>
             <th style="font-size: 1.3em; width: 150px; background-color: rgb(113, 113, 163); color: white; border-radius: 5px;">{{orden.total - orden.impuestos | number:'0.0-0'}}</th>
-           
             <th>
-
                 IMPUESTOS
                 <!-- <input [disabled]="orden.estado != 'Activa'" placeholder="" style="font-size: 1.3em; text-align: center; " type="number" [(ngModel)]="orden.impuestos">  -->
             </th>
             <th>
-
                 <h5>{{orden.impuestos | number:'0.0-0'}}</h5>
-                
                 <!-- <input [disabled]="orden.estado != 'Activa'" placeholder="" style="font-size: 1.3em; text-align: center; " type="number" [(ngModel)]="orden.impuestos">  -->
             </th>
             <th style="font-size: 1em; border-radius: 20px; width: 150px; border-radius: 5px;">
@@ -353,7 +349,11 @@
         </tr>
         <tr>
             <ng-template let-item let-i="index" ngFor [ngForOf]="orden.autorizaciones">
+                <th>
+                    
+                </th>
                 <th colspan="3">
+                    <img  width="100%" src="{{url+'image/'+ item.firma}}" style="max-width: 200px;  margin: 5px auto;" /><br>
                     {{item.name}} <br>
                     {{item.cargo}} <br>
                     {{item.fecha | date:'medium'}}
@@ -545,6 +545,7 @@
         <tr>
             <ng-template let-item let-i="index" ngFor [ngForOf]="orden.autorizaciones">
                 <th colspan="3">
+                    <img  width="100%" src="{{url+'image/'+ item.firma}}" style="max-width: 200px;  margin: 5px auto;" /><br>
                     {{item.name}} <br>
                     {{item.cargo}} <br>
                     {{item.fecha | date:'medium'}}

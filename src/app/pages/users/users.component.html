@@ -88,6 +88,41 @@
             </mat-form-field>
           </div>
 
+          <div *ngIf="user.firma">
+            <p>Firma: 
+              <mat-icon class="mat-18" (click)="deleteFirma()">cancel</mat-icon>
+            </p>
+            <img  width="100%" src="{{url_app+'image/'+ user.firma}}" style="max-width: 300px;  margin: 5px auto;" />
+          </div>
+
+        <div style="width: 100%;" *ngIf="!user.firma">
+          <ngx-dropzone (change)="onSelect($event)" style="margin: 20px;">
+            <ngx-dropzone-label>Trae la imagen!</ngx-dropzone-label>
+            <ngx-dropzone-image-preview
+              ngProjectAs="ngx-dropzone-preview"
+              *ngFor="let f of files"
+              [file]="f"
+              [removable]="true"
+              (removed)="onRemove(f)"
+            >
+              <ngx-dropzone-label> ({{ f.type }})</ngx-dropzone-label>
+            </ngx-dropzone-image-preview>
+          </ngx-dropzone>
+          <div>
+            <button mat-stroked-button (click)="onFileSelect()" [disabled]="files.length == 0"> Guardar Firma</button>
+            <!-- <button mat-stroked-button (click)="onUpload()" [disabled]="files.length == 0" color="accent">Subir Ciberi.co</button> -->
+          </div>
+        </div>
+
+        <!-- <ng-template let-item let-i="index" ngFor [ngForOf]="orden.cotizaciones">
+            <div>
+                <button  mat-stroked-button  size="small" slot="end" fill="outline"  color="secondary" (click)="verCotizacion(item)" style="margin: 5px 5px">
+                    <mat-icon>file_open</mat-icon> Cotizacion: {{item}}
+                </button>  
+                <mat-icon  *ngIf="orden.estado == 'Activa'" style="margin-top: 30px; color: red; cursor: pointer;" (click)="deleteCotizacion(i)">delete</mat-icon> 
+            </div>
+          </ng-template> -->
+        
             
 
               <mat-expansion-panel style="width: 80%; margin: 0 auto;">

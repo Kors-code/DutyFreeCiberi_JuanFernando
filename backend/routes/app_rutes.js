@@ -74,6 +74,9 @@ api.get('/data-collections-paginate/:tag',md_auth.ensureAuth, infoController.get
 api.get('/headers-collections/:tag',md_auth.ensureAuth, infoController.getHeadersCollection);
 api.post('/key-collections/:tag',md_auth.ensureAuth, infoController.getDataCollectionKey);
 api.post('/update-document/:tag',md_auth.ensureAuth, infoController.updateDataCollection);
+api.post('/update-many-documents/:tag',md_auth.ensureAuth, infoController.updateDataManyCollection);
+api.post('/update-document-siigo/:tag',md_auth.ensureAuth, infoController.updateDataCollectionSIIGO);
+
 api.post('/update-document-vendedor/:tag',md_auth.ensureAuth, infoController.updateDataVendedorCollection);
 // api.get('/info-categrias',md_auth.ensureAuth, infoController.getInformeCategoria);
 api.get('/info-categrias/:tag',md_auth.ensureAuth, infoController.consultarInfoCategoria);

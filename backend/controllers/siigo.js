@@ -254,8 +254,8 @@ async function sendComprobanteSiigo(req, res){
 
               Consecutivo = doc.value.consecutivoCompCosto
 
-              console.log('USER: ',params.user)
-              console.log('PASS: ',params.key)
+              // console.log('USER: ',params.user)
+              // console.log('PASS: ',params.key)
 
                   var token;
                   var req = unirest('POST', 'https://api.siigo.com/auth')
@@ -270,16 +270,16 @@ async function sendComprobanteSiigo(req, res){
                       if (resp.error) throw new Error(resp.error); 
                       token = resp.body.access_token;
 
-                      console.log('token: ', token)
+                      // console.log('token: ', token)
 
-                      console.log(JSON.stringify({
-                        document: {
-                          id: params.iddoc
-                        },
-                        date: params.date,
-                        items:params.data,
-                        observations: params.obs
-                      }))
+                      // console.log(JSON.stringify({
+                      //   document: {
+                      //     id: params.iddoc
+                      //   },
+                      //   date: params.date,
+                      //   items:params.data,
+                      //   observations: params.obs
+                      // }))
 
                       var req2 = unirest('POST', 'https://api.siigo.com/v1/journals')
                       .headers({
@@ -308,7 +308,7 @@ async function sendComprobanteSiigo(req, res){
                     })
 
 
-              console.log('consecutivo', Consecutivo)
+              // console.log('consecutivo', Consecutivo)
               client.close();
           }
               
@@ -337,16 +337,16 @@ async function sendComprobanteSiigo(req, res){
                       if (resp.error) throw new Error(resp.error); 
                       token = resp.body.access_token;
 
-                      console.log('31800 token: ', token)
+                      // console.log('31800 token: ', token)
 
-                      console.log(JSON.stringify({
-                        document: {
-                          id: params.iddoc
-                        },
-                        date: params.date,
-                        items:params.data,
-                        observations: params.obs
-                      }))
+                      // console.log(JSON.stringify({
+                      //   document: {
+                      //     id: params.iddoc
+                      //   },
+                      //   date: params.date,
+                      //   items:params.data,
+                      //   observations: params.obs
+                      // }))
 
                       var req2 = unirest('POST', 'https://api.siigo.com/v1/journals')
                       .headers({
@@ -365,13 +365,13 @@ async function sendComprobanteSiigo(req, res){
                       .end(function (respu) { 
                         // console.log(respu)
                         if (respu.error){
-                          // console.log(respu.error)
+                          console.log(respu.error)
 
                           res.status(400).send({message: 'Error ' +respu.raw_body }); 
                         }else{
                           res.status(200).send(respu.body)
                         }
-                        console.log(respu.raw_body);
+                        // console.log(respu.raw_body);
                       });
                     
                     })
@@ -389,10 +389,10 @@ async function sendComprobanteSiigo(req, res){
       { upsert: false }, function(err,doc) {
           if (err) { throw err; }
           else { 
-              console.log('items', params.data.length);
-              console.log('id doc', params.iddoc);
-              console.log('date', params.date);
-              console.log('obs', params.obs);
+              // console.log('items', params.data.length);
+              // console.log('id doc', params.iddoc);
+              // console.log('date', params.date);
+              // console.log('obs', params.obs);
 
               Consecutivo = doc.value.consecutivoCompCosto
                 var token;
@@ -407,7 +407,7 @@ async function sendComprobanteSiigo(req, res){
                     .end(async function (resp){ 
                       if (resp.error) {
                         // throw new Error(resp.error)
-                      console.log(resp.error)
+                      // console.log(resp.error)
                       }; 
                       token = resp.body.access_token;
 
@@ -420,7 +420,7 @@ async function sendComprobanteSiigo(req, res){
                         observations: params.obs
                       })
 
-                      console.log(string)
+                      // console.log(string)
 
                       var req2 = unirest('POST', 'https://api.siigo.com/v1/journals')
                       .headers({
@@ -430,7 +430,7 @@ async function sendComprobanteSiigo(req, res){
                       })
                       .send(string)
                       .end(function (respu) { 
-                        // console.log(respu)
+                        console.log(respu)
                         if (respu.error){
                           res.status(400).send({message: 'Error ' +respu.raw_body }); 
                         }else{

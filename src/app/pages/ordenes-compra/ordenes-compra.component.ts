@@ -375,9 +375,11 @@ export class OrdenesCompra implements OnInit {
       _id:this.identity._id,
       name:this.identity.name + ' ' + this.identity.surname,
       cargo: this.identity.cargo,
-      fecha: new Date().getTime()
+      fecha: new Date().getTime(),
+      firma: this.identity.firma
     })
     this.orden.estado = 'Autorizada';
+    console.log(this.orden)
     this.update()
   }
 

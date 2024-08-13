@@ -143,6 +143,7 @@ function registerUser(req, res){
             user.confirm = false;
             user.color = params.color;
             user.cargo= params.cargo;
+            user.firma = params.firma;
         
             user.created_at = new Date();
             

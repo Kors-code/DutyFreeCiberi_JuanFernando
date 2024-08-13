@@ -31,6 +31,7 @@ import { ValidacionComponent } from './pages/validacionElectronicas/validacion.c
 import { SiigoComprobantesComponent } from './pages/siigo-comprobantes-caja/siigo-comprobante.component';
 import { OrdenesCompra } from './pages/ordenes-compra/ordenes-compra.component';
 import { DialogProveedor } from './pages/ordenes-compra/proveedor.component';
+import { NgxDropzoneModule } from 'ngx-dropzone';
 
 
 @NgModule({
@@ -61,7 +62,8 @@ import { DialogProveedor } from './pages/ordenes-compra/proveedor.component';
     ValidacionComponent,
     SiigoComprobantesComponent,
     OrdenesCompra,
-    DialogProveedor
+    DialogProveedor,
+
 
   ],
   imports: [
@@ -75,6 +77,7 @@ import { DialogProveedor } from './pages/ordenes-compra/proveedor.component';
     NgxJsonViewerModule,
     NgJsonEditorModule,
     NgxChartsModule,
+    NgxDropzoneModule,
   
   ],
   providers: [],

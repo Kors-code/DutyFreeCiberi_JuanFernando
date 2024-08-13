@@ -3,7 +3,6 @@
 <div style="display: flex; justify-content: center;">
   <button mat-button [matMenuTriggerFor]="menuRef"><mat-icon class="mat-18">menu</mat-icon> <span>Presupuesto Activo</span> </button>
   <button mat-button [matMenuTriggerFor]="menuRef2"><mat-icon class="mat-18">menu</mat-icon> <span>Presupuesto Historico</span> </button>
-
   <mat-menu #menuRef="matMenu">
     <ng-template let-doc let-i="index" ngFor [ngForOf]="collections">
         <button *ngIf="doc.Activo" mat-menu-item (click)="passDataCollections(doc.tag)">
