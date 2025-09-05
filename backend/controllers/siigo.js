@@ -252,9 +252,14 @@ async function sendComprobanteSiigo(req, res){
           else { 
               // console.log('doc 1', doc.value.consecutivoCompCosto)
 
-              Consecutivo = doc.value.consecutivoCompCosto
-
-              // console.log('USER: ',params.user)
+              if(doc.value.enviarConsecutivo){
+                Consecutivo = doc.value.consecutivoCompCosto;
+              }else{
+                Consecutivo = undefined;
+              }
+              
+              console.log('CONSECUTIVO ', Consecutivo);
+              console.log('DATA : ', params.data.length)
               // console.log('PASS: ',params.key)
 
                   var token;
@@ -271,7 +276,6 @@ async function sendComprobanteSiigo(req, res){
                       token = resp.body.access_token;
 
                       // console.log('token: ', token)
-
                       // console.log(JSON.stringify({
                       //   document: {
                       //     id: params.iddoc
@@ -293,7 +297,8 @@ async function sendComprobanteSiigo(req, res){
                         },
                         date: params.date,
                         items:params.data,
-                        observations: params.obs
+                        observations: params.obs,
+                        number:Consecutivo
                       }))
                       .end(function (respu) { 
                         // console.log(respu)
@@ -381,6 +386,7 @@ async function sendComprobanteSiigo(req, res){
               
     });
   }
+  
   console.log('comprobante de caja', params.iddoc)
   if(params.iddoc == 34002){
     console.log('comprobante de caja envio')
@@ -446,7 +452,6 @@ async function sendComprobanteSiigo(req, res){
   }
 
 }
-
 
 async function sendComprobanteSiigopRUEBAS(req, res){
   var unirest = require('unirest');
@@ -635,7 +640,6 @@ async function sendComprobanteSiigopRUEBAS(req, res){
   }
 
 }
-
 
 async function agregarInfoComprobante(req, res){
   var coll = 'ComprobantesSiigo';

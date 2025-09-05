@@ -102,7 +102,8 @@ async function updateDataConfiguracion(req, res){
             consecutivoCompCaja:params.consecutivoCompCaja,
             cuentas:params.cuentas,
             comprobantes:params.comprobantes,
-            consecutivoOrdenCompra:params.consecutivoOrdenCompra
+            consecutivoOrdenCompra:params.consecutivoOrdenCompra,
+            enviarConsecutivo:params.enviarConsecutivo
         }},{ upsert: false }, function(err,doc) {
             if (err) { throw err; }
             else { 
@@ -291,6 +292,8 @@ async function deleteDataPresupuesto(req, res){
         // var reg = await collection.mod({_id:params._id}, params, { returnNewDocument: true })
         
 }
+
+
 
 async function remplazarInfo(req, res){
     var params = req.body;
@@ -572,8 +575,13 @@ async function getHeadersCollection(req, res){
    
         let reg =  await collection.findOne()
 
-        // //console.log(reg)
-        res.status(200).send(Object.keys(reg));
+        console.log(reg)
+        if(reg){
+            res.status(200).send(Object.keys(reg));
+        }else{
+            res.status(200).send([]);
+        }
+       
 }
 
 async function updateDataCollection(req, res){
