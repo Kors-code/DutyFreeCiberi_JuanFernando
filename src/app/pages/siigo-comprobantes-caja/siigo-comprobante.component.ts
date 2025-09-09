@@ -188,7 +188,8 @@ export class SiigoComprobantesComponent implements OnInit {
       key:this.config.siigoKey
     }
     this._siigoService.ListadosSiigo(credenciales,list).subscribe(
-      res=>{//(res)
+      res=>{
+        console.log(res);
       }
     )
   }
@@ -199,7 +200,7 @@ export class SiigoComprobantesComponent implements OnInit {
         if(res.length != 0){
           this.config = res[0];
           localStorage.setItem('categ',JSON.stringify(this.config.categorias))
-          // this.getListadoSiigo('cost-centers')
+          this.getListadoSiigo('cost-centers')
           //////(this.config)
         }
       }

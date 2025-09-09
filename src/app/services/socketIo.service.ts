@@ -11,7 +11,7 @@ export class SocketIOService {
     public url: string = '';
     
 constructor(){
-    this.url='localhost:6511'
+    this.url='ws:https://dutyfree.ciberi.net'
     this.socket = io.connect(this.url);   
     //   console.log(this.url)
 };

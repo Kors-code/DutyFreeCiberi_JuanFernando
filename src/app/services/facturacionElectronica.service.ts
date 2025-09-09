@@ -439,6 +439,17 @@ export class FacturaElectronicaService {
                         
     }
 
+    getFacturaElectronicasFecha(data:any){
+        let headers = new HttpHeaders({
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer '+ data.token
+        });
+    
+        return this._http.get<any>(this.url_fact+'information/'+data.id +'/'+data.fechaI +'/'+data.fechaF,
+            {headers:headers})
+           
+    }
+
 
     // RUTAS ELECTRINICA
 
@@ -462,6 +473,8 @@ export class FacturaElectronicaService {
             {headers:headers})
            
     }
+
+  
     
     getElectronica(id:string){
         let headers = new HttpHeaders({

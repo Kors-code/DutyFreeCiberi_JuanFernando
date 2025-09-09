@@ -323,7 +323,7 @@ export class OrdenesCompra implements OnInit {
 
 
   pasOrden(item:Ordencompra){
-    //.log(item)
+    console.log(item);
     this.verListado=false;
     this.orden = item;
     this.orden.fecha_entrega = new Date(this.orden.fecha_entrega)

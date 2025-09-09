@@ -27,7 +27,7 @@ export class DataBaseComponent implements OnInit {
   log:boolean = false;
   config:any;
   check= false;
-  displayedColumns: string[] = ['folio', 'fecha', 'vendedor','siigo', 'facsiigo','importe', 'trm', 'cop', 'ver'];
+  displayedColumns: string[] = ['folio','dia', 'fecha', 'vendedor','siigo', 'facsiigo','importe', 'trm', 'cop', 'ver'];
   pOperacion:Operacion
   constructor(public _infoService:InfoService,  public _socketService:SocketIOService,
     public _siigoService:SiigoService,
@@ -49,8 +49,6 @@ export class DataBaseComponent implements OnInit {
         if(res.length != 0){
           this.config = res[0];
           // localStorage.setItem('categ',JSON.stringify(this.config.categorias))
-
-          ////// console.log(this.config)
         }
        
       }
@@ -62,8 +60,12 @@ export class DataBaseComponent implements OnInit {
   getCollections(){
     this._infoService.getCollections().subscribe(
       res=>{
-        this.collections = res
-        this.collections.reverse();
+        if(res.length != 0){
+          this.collections = res
+          this.collections.reverse();
+          this.progreso = 0
+        }
+        
       }
     )
   }
@@ -78,23 +80,28 @@ export class DataBaseComponent implements OnInit {
     this._infoService.getDataCollectionsPaginate(tag, 0).subscribe(
       res=>{
         console.log(res)
-        this.documentos = res;
-        this.headers= Object.keys(this.documentos[0])
-        this.subir = this.documentos.map(function(e: { Estado: any; }) { return e.Estado; }).indexOf('Siigo');
-        // // console.log(this.subir)
-        this.progreso = 0
-        this.totalCop=0
-        this.totalUsd=0
-        this.documentos.forEach((element: { COP: number; Importe: number; check: boolean; }) => {
-          this.totalCop= this.totalCop + element.COP
-          this.totalUsd= this.totalUsd + element.Importe
-          element.check = false
-        });
-
-        if(this.subir != -1){
-          // this.authSiigo(this.key)
+        if(res.length != 0){
+          this.documentos = res;
+          this.headers= Object.keys(this.documentos[0])
+          this.subir = this.documentos.map(function(e: { Estado: any; }) { return e.Estado; }).indexOf('Siigo');
+          // // console.log(this.subir)
+          this.progreso = 0
+          this.totalCop=0
+          this.totalUsd=0
+          this.documentos.forEach((element: { COP: number; Importe: number; check: boolean; }) => {
+            this.totalCop= this.totalCop + element.COP
+            this.totalUsd= this.totalUsd + element.Importe
+            element.check = false
+          });
+  
+          if(this.subir != -1){
+            // this.authSiigo(this.key)
+          }
+         
         }
+
         this.log = false;
+       
       }
     )
   }
@@ -126,6 +133,7 @@ export class DataBaseComponent implements OnInit {
   campo = "";
   getRegistroCollections(doc:string){
     this.campo = doc;
+    this.documentos = [];
     ////// console.log(doc)
 
 
@@ -311,6 +319,51 @@ export class DataBaseComponent implements OnInit {
 
 
 
+  deleteRegistros(){
+
+    let data: Object
+    data = {titulo: 'Alerta', info:'Se eliminara la Informacion No se recupera mas adelante', icon:'warning' }
+
+    let dialogRef = this.dialog.open(DialogConfirm,{
+      data: data
+    
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if(result){
+        this.progreso = 0;
+        for (let i = 0; i < this.documentos.length; i++) {
+          const element = this.documentos[i];
+    
+          this._infoService.deleteRegistro(element._id, this.key).subscribe(
+            res=>{
+              this.progreso = (i/(this.documentos.length-1))*100
+              if(this.progreso == 100){
+    
+                let data = {titulo: 'Procesado Correctamente ', type: 'Confirm', icon:'done_all'}
+                let dialogRef = this.dialog.open(DialogConfirm,{
+                  data: data
+                });
+    
+                dialogRef.afterClosed().subscribe(result => {
+                  window.location.reload();
+                })
+    
+              }
+            }
+          )
+          
+        }
+      }
+      // this.loading  = false;
+    })
+
+   
+
+  }
+
+
+
 }
 
 
@@ -398,26 +451,40 @@ export class DialogDataJson {
   }
 
   deleteRegistro(){
-    ////// console.log(this.doc);
-    this._infoService.deleteRegistro(this.info._id, this.data.coll).subscribe(
-      res=>{
-        let data: Object
-        data = {titulo: 'Exito', info:'Se elimino la Informacion Correctamente', icon:'done_all' }
+    let data: Object
+    data = {titulo: 'Alerta', info:'Se eliminará la Información No se recupera mas adelante', icon:'warning' }
 
-        let dialogRef = this.dialog.open(DialogConfirm,{
-          data: data
-        
-        });
-  
-        dialogRef.afterClosed().subscribe(result => {
+    let dialogRef = this.dialog.open(DialogConfirm,{
+      data: data
+    
+    });
 
-          // this.loading  = false;
-        })
-        ////// console.log(res)
-      }
-    )
+    dialogRef.afterClosed().subscribe(result => {
+      if(result){
+        console.log(this.doc);
+        this._infoService.deleteRegistro(this.info._id, this.data.coll).subscribe(
+          res=>{
+            let data: Object
+            data = {titulo: 'Exito', info:'Se elimino la Informacion Correctamente', icon:'done_all' }
+
+            let dialogRef = this.dialog.open(DialogConfirm,{
+              data: data
+            
+            });
+      
+            dialogRef.afterClosed().subscribe(result => {
+              this.dialogRef.close('ok');
+              // this.loading  = false;
+            })
+            ////// console.log(res)
+          }
+        )
+      }})
     
   }
+
+
+  
 
   getConfig(){
     this._infoService.getConfig(this.pOperacion._id).subscribe(

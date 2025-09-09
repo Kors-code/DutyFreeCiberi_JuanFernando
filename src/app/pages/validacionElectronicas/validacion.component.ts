@@ -18,6 +18,7 @@ export class ValidacionComponent implements OnInit {
   public pOperacion:Operacion;
   public facturacionElectronica:AdminPvconfigFacElectronica;
   public cufe = '';
+  public date:Date = new Date();
   public response:any;
   constructor(private _router: Router,
     private _userService:UserService, private _facturaElectronicaService:FacturaElectronicaService) {
@@ -30,7 +31,6 @@ export class ValidacionComponent implements OnInit {
     this.identity = this._userService.getIdentity();
     this.getElectronica()
   }
-
   
   getFacturacionStatus(cufe:string){
     this.response=undefined;
@@ -48,7 +48,7 @@ export class ValidacionComponent implements OnInit {
           console.log(res)
         this.response = res.ResponseDian.Envelope.Body.GetStatusResponse.GetStatusResult;
         console.log(this.response)
-        this.cufe = ''
+        // this.cufe = ''
       }, err=>{
         console.log(err.error.text)
         let message = JSON.parse(err.error.text) 
@@ -69,6 +69,33 @@ export class ValidacionComponent implements OnInit {
         }
       }
     )
+  }
+  
+
+  getCambioMesElectronicas(){
+    console.log(this.date);
+
+    let d = new Date(this.date)
+    var month = d.getMonth() + 1;
+    var day = d.getDate();
+    var year = d.getFullYear();
+
+    let body = {
+      token: this.facturacionElectronica.token,
+      id: this.facturacionElectronica.factOperacion.identification_number,
+      fechaI : year +'-'+month+'-'+ day,
+      fechaF : year +'-'+month+'-'+ day
+    }
+
+    this._facturaElectronicaService.getFacturaElectronicasFecha(body).subscribe(
+      res=>{
+        console.log(res)
+      }
+    )
+
+
+  console.log(body)
+
   }
  
 }

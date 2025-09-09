@@ -450,7 +450,7 @@ export class ImportarInfoComponent implements OnInit {
   }
 
   generarRegistros(registros: any[]){
-    //.log(registros)
+      console.log(registros)
     if(registros){
     this.log = true
     this.itemsContable =[];
@@ -465,6 +465,7 @@ export class ImportarInfoComponent implements OnInit {
 
       lote = registros[i].Lote;
 
+      // console.log(registros[i]['CLASIFICACION'])
       let pos2 = this.cuentas.map(function(e: { cod: any; }) { return e.cod; }).indexOf( parseInt(registros[i]['CLASIFICACION']));
 
       if(pos2 != -1){
@@ -477,7 +478,6 @@ export class ImportarInfoComponent implements OnInit {
         if(posTienda != -1){
           tienda =this.config.tiendas[posTienda].centro_costos;
         }
-
         
 
         let dtaComprobante = {
@@ -534,7 +534,7 @@ export class ImportarInfoComponent implements OnInit {
         dtaComprobante2.description = dtaComprobante.description.slice(0,99)
     
         this.itemsContable.push(dtaComprobante2)  
-     
+
 
         let dtaComprobanteVenta = {
           account:{
@@ -579,12 +579,15 @@ export class ImportarInfoComponent implements OnInit {
         }
 
         this.itemsFacturaVentas.push(dtaComprobanteVentaDeb)
-        
+
+        console.log(this.itemsContable)
       }else{
-        // //////.log('Registo no encontrado '+ registros[i].Clasi)
+        console.log('Registo no encontrado '+ registros[i].Clasi)
       }
     }
 
+
+    console.log(this.itemsContable)
 
     let credenciales={
       user:this.config.siigoUser,
@@ -607,15 +610,16 @@ export class ImportarInfoComponent implements OnInit {
       _id:this.pOperacion._id
     }
 
+    console.log(credenciales)
     this._siigoService.saveComprobantesSiigo(credenciales).subscribe(
       res=>{
-        //.log(res);
+          console.log(res);
         let dialogRef
         var siigo:any = []
-        this.openSnackBar('CMV GENERADO CORRECTAMENTE','EXITO')
+        this.openSnackBar('CMV GENERADO CORRECTAMENTE','EXITO');
         this._siigoService.saveComprobantesSiigo(credencialesVentas).subscribe(
           resp=>{
-
+            console.log(resp);
             this.openSnackBar('COMPROVANTE DE VENTA GENERADO CORRECTAMENTE','EXITO')
             for(var i = 0;i < registros.length; i++){
               res.items = null
@@ -679,7 +683,7 @@ export class ImportarInfoComponent implements OnInit {
           })
         
       },err =>{
-        this.log = true
+        this.log = true;
         let data = {titulo: 'Error', info:err.error.message, type: 'Confirm', icon:'error'}
   
         let dialogRef = this.dialog.open(DialogConfirm,{
@@ -826,6 +830,34 @@ export class ImportarInfoComponent implements OnInit {
 
     this.convertirJson();
     //.log(this.registros)
+
+  }
+
+
+  eliminarRegistros(){
+    this.procesado = 0;
+    for (let i = 0; i < this.registros.length; i++) {
+      const element = this.registros[i];
+
+      this._infoServce.deleteRegistro(element._id, this.tag).subscribe(
+        res=>{
+          this.procesado ++
+          if(this.procesado == this.registros.length-1){
+
+            let data = {titulo: 'Procesado Correctamente ', type: 'Confirm', icon:'done_all'}
+            let dialogRef = this.dialog.open(DialogConfirm,{
+              data: data
+            });
+
+            dialogRef.afterClosed().subscribe(result => {
+              window.location.reload();
+            })
+
+          }
+        }
+      )
+      
+    }
 
   }
 

@@ -117,7 +117,7 @@ export class ElectronicaComponent implements OnInit {
         }
       },err =>{
         let data: Object
-        //(err);
+        console.log(err);
             data = {titulo: 'ERROR', info:err._body, type: 'Confirm', icon:'bug_report'}
     
               let dialogRef = this.dialog.open(DialogConfirm,{
@@ -154,7 +154,7 @@ export class ElectronicaComponent implements OnInit {
     
     this._factElecService.putResolucion(resol).subscribe(
       res =>{
-        //console(res);
+        console.log(res);
         this._factElecService.updateElectronica(this.facturacionElectronica).subscribe(
           result =>{ 
            let data = {titulo: 'Exito', info:'Actualizado correctamente', type: 'Confirm', icon:'done_all'}

@@ -353,7 +353,7 @@
                     
                 </th>
                 <th colspan="3">
-                    <img  width="100%" src="{{url+'image/'+ item.firma}}" style="max-width: 200px;  margin: 5px auto;" /><br>
+                    <img *ngIf="item.firma"  width="100%" src="{{url+'image/'+ item.firma}}" style="max-width: 200px;  margin: 5px auto;" /><br>
                     {{item.name}} <br>
                     {{item.cargo}} <br>
                     {{item.fecha | date:'medium'}}
@@ -545,7 +545,7 @@
         <tr>
             <ng-template let-item let-i="index" ngFor [ngForOf]="orden.autorizaciones">
                 <th colspan="3">
-                    <img  width="100%" src="{{url+'image/'+ item.firma}}" style="max-width: 200px;  margin: 5px auto;" /><br>
+                    <img  *ngIf="item.firma" width="100%" src="{{url+'image/'+ item.firma}}" style="max-width: 200px;  margin: 5px auto;" /><br>
                     {{item.name}} <br>
                     {{item.cargo}} <br>
                     {{item.fecha | date:'medium'}}

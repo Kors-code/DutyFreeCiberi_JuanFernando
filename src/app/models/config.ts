@@ -21,6 +21,7 @@ export class Config{
             public consecutivoCompCosto=0,
             public consecutivoCompVenta=0,
             public consecutivoCompCaja=0,
+            public enviarConsecutivo=false,
         ){}
 }
 
