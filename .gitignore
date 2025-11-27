@@ -17,6 +17,8 @@ yarn-error.log
 #Electronjs
 /backend/dist
 /backend/public
+/backend/duty_free-*/
+/backend/*.exe
 
 # IDEs and editors
 .idea/
